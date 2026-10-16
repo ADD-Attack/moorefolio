@@ -16,6 +16,42 @@ const BENCHMARKS := [
 		"desc": "Forty agents A*-pathfinding around obstacles on a grid, repathing the moment they arrive.",
 		"scene": "res://scenes/path_grid.tscn",
 	},
+	{
+		"name": "Galaga — Luna · Run 1",
+		"slot": "Same prompt, three models",
+		"desc": "GPT-6 Luna · max effort · ~3m 20s · in 1,963 / out 911 tokens · est. $0.0007\nAs submitted: script error — enemies don't render",
+		"scene": "res://galaga_luna/galaga_luna.tscn",
+	},
+	{
+		"name": "Galaga — Sol · Run 1",
+		"slot": "Same prompt, three models",
+		"desc": "GPT-6.1 Sol · low effort · ~1m 43s · in 31,331 / out 2,726 tokens · est. $0.0899",
+		"scene": "res://galaga_sol/galaga_sol.tscn",
+	},
+	{
+		"name": "Galaga — Opus 5.5 · Run 1",
+		"slot": "Same prompt, three models",
+		"desc": "Claude Opus 5.5 · low effort · ~1m 06s · 62,727 total tokens · est. $0.25–$1.25",
+		"scene": "res://galaga_opus/galaga_opus.tscn",
+	},
+	{
+		"name": "Galaga — Luna · Run 2",
+		"slot": "Same prompt, three models",
+		"desc": "GPT-6 Luna · max effort · ~4m 28s · in 82,571 / out 18,229 tokens · est. $0.0174\nRunning total: ~7m 48s · in 84,534 / out 19,140 tokens · est. $0.018\nRun 2 did not fix the Run 1 mesh bug",
+		"scene": "res://galaga_luna_r2/galaga_luna.tscn",
+	},
+	{
+		"name": "Galaga — Sol · Run 2",
+		"slot": "Same prompt, three models",
+		"desc": "GPT-6.1 Sol · low effort · ~3m 32s · in 47,309 / out 7,438 tokens · est. $0.1690\nRunning total: ~5m 15s · in 78,640 / out 10,164 tokens · est. $0.2589",
+		"scene": "res://galaga_sol_r2/galaga_sol.tscn",
+	},
+	{
+		"name": "Galaga — Opus 5.5 · Run 2",
+		"slot": "Same prompt, three models",
+		"desc": "Claude Opus 5.5 · low effort · ~2m 25s · 73,193 total tokens · est. $0.29–$1.46\nRunning total: ~3m 31s · 135,920 total tokens · est. $0.54–$2.72",
+		"scene": "res://galaga_opus_r2/galaga_opus.tscn",
+	},
 ]
 
 const BG := Color("10131a")
@@ -101,15 +137,22 @@ func _build_menu(layer: CanvasLayer) -> void:
 	spacer.custom_minimum_size = Vector2(0, 10)
 	vbox.add_child(spacer)
 
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	vbox.add_child(scroll)
+
+	var cards := VBoxContainer.new()
+	cards.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cards.add_theme_constant_override("separation", 14)
+	scroll.add_child(cards)
+
 	for i in BENCHMARKS.size():
-		vbox.add_child(_make_card(i))
+		cards.add_child(_make_card(i))
 
 	var foot := _label(
 		"Built with Godot 4.7 · The picker, the HUD and the benchmarks are all one embedded app.",
 		14, MUTED)
-	var foot_spacer := Control.new()
-	foot_spacer.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	vbox.add_child(foot_spacer)
 	vbox.add_child(foot)
 
 func _make_card(index: int) -> PanelContainer:

@@ -78,6 +78,21 @@ h1 em{font-family:Newsreader,serif;font-style:italic;font-weight:500;letter-spac
 .bench-card h3{margin:8px 0 6px;font-size:1.25rem;letter-spacing:-.02em}
 .bench-card p{margin:0;color:var(--ink2);font-size:.96rem}
 
+/* Research documentation */
+.bench-docs{margin:48px 0 6px;border-top:1px solid var(--line);padding-top:36px}
+.bench-docs h2{font-size:clamp(1.6rem,3vw,2.2rem);letter-spacing:-.03em;margin:12px 0 12px;font-weight:800}
+.bench-docs h3{font-size:1.12rem;letter-spacing:-.01em;margin:30px 0 8px}
+.bench-docs p{color:var(--ink2);max-width:75ch}
+.bench-docs blockquote{margin:10px 0;padding:14px 18px;background:var(--surface2);border-left:3px solid var(--rust);border-radius:0 12px 12px 0;color:var(--ink);font-family:Newsreader,serif;font-style:italic;font-size:1.05rem}
+.bench-docs .prompt-label{margin:16px 0 0}
+table.results{border-collapse:collapse;width:100%;margin:14px 0 6px;font-size:.94rem}
+table.results th,table.results td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+table.results th{font-family:"IBM Plex Mono",monospace;font-size:.7rem;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);font-weight:500}
+table.results td.num{font-variant-numeric:tabular-nums;white-space:nowrap}
+table.results tr.total td{font-weight:700;color:var(--ink);background:var(--surface2)}
+.bench-docs ul{color:var(--ink2);max-width:75ch;padding-left:20px}
+.bench-docs li{margin:5px 0}
+
 footer{padding:28px 0 36px;color:var(--muted);font-size:.86rem;display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
 </style>
 </head>
@@ -126,7 +141,59 @@ footer{padding:28px 0 36px;color:var(--muted);font-size:.86rem;display:flex;just
       <p>Forty agents A*-pathfind across an obstacle grid and repath the instant they arrive. The readout counts paths computed per second — CPU thinking, not just pixels.</p>
     </div>
   </div>
-  <p class="bench-note">New model builds land as new slots in the in-engine navigator — same container, same two tests, different author. Prototype: two benchmarks live today.</p>
+  <p class="bench-note">New model builds land as new slots in the in-engine navigator — same container, different author. Eight benchmarks live today: the two house tests above plus the six Galaga bake-off builds documented below.</p>
+
+  <section class="bench-docs" id="how-it-works">
+    <p class="hero-kicker">Research notes</p>
+    <h2>How this benchmark works</h2>
+    <p>Each Galaga build below was produced in a <strong>fresh one-shot session</strong> — one per model per run, with no prior conversation context. The session receives only the prompt, a fixed interface contract (Godot 4.7.2, a fully self-contained scene, 1152×648), and, in Run 2, its own previous code. Effort settings were held constant across both runs: Luna at max, Sol at low, Opus 5.5 at low. Integration — navigator registration, the web export, publishing — is done by the producer and is not part of the measured build time. Wall time runs from session created (spec sent) to completion; token counts are the gateway's session usage figures.</p>
+
+    <h3>The prompts, verbatim</h3>
+    <p class="prompt-label"><span class="mono">Run 1 — every model, identical</span></p>
+    <blockquote>&ldquo;Build a 3D Galaga demo in Godot 4.7: a player ship at the bottom of the screen that shoots, with effects, controlled with the arrow keys, and a few enemies. Just a demo.&rdquo;</blockquote>
+    <p class="prompt-label"><span class="mono">Run 2 — each model reviewed its own Run 1 code</span></p>
+    <blockquote>&ldquo;Review your code. Polish it, add visual features or improve visual features, and check for bugs.&rdquo;</blockquote>
+
+    <h3>Results</h3>
+    <table class="results">
+      <thead>
+        <tr><th>Model</th><th>Run</th><th>Wall time</th><th>Tokens</th><th>Est. cost</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GPT-6 Luna · max</td><td>Run 1</td><td class="num">~3m 20s</td><td class="num">in 1,963 / out 911</td><td class="num">$0.0007</td></tr>
+        <tr><td>GPT-6 Luna · max</td><td>Run 2</td><td class="num">~4m 28s</td><td class="num">in 82,571 / out 18,229</td><td class="num">$0.0174</td></tr>
+        <tr><td>GPT-6.1 Sol · low</td><td>Run 1</td><td class="num">~1m 43s</td><td class="num">in 31,331 / out 2,726</td><td class="num">$0.0899</td></tr>
+        <tr><td>GPT-6.1 Sol · low</td><td>Run 2</td><td class="num">~3m 32s</td><td class="num">in 47,309 / out 7,438</td><td class="num">$0.1690</td></tr>
+        <tr><td>Claude Opus 5.5 · low</td><td>Run 1</td><td class="num">~1m 06s</td><td class="num">62,727 total</td><td class="num">$0.25&ndash;$1.25</td></tr>
+        <tr><td>Claude Opus 5.5 · low</td><td>Run 2</td><td class="num">~2m 25s</td><td class="num">73,193 total</td><td class="num">$0.29&ndash;$1.46</td></tr>
+        <tr class="total"><td colspan="2">Running total — Luna</td><td class="num">~7m 48s</td><td class="num">in 84,534 / out 19,140</td><td class="num">$0.018</td></tr>
+        <tr class="total"><td colspan="2">Running total — Sol</td><td class="num">~5m 15s</td><td class="num">in 78,640 / out 10,164</td><td class="num">$0.2589</td></tr>
+        <tr class="total"><td colspan="2">Running total — Opus 5.5</td><td class="num">~3m 31s</td><td class="num">135,920 total</td><td class="num">$0.54&ndash;$2.72</td></tr>
+      </tbody>
+    </table>
+
+    <h3>How the costs are estimated</h3>
+    <p>Estimated cost = input tokens &times; input price + output tokens &times; output price, at the vendor's official API list price for the model:</p>
+    <table class="results">
+      <thead>
+        <tr><th>Model</th><th>Input / 1M</th><th>Output / 1M</th><th>Source</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>GPT-6 Luna (<span class="mono">gpt-6-luna</span>)</td><td class="num">$0.10</td><td class="num">$0.50</td><td><a href="https://platform.openai.com/docs/pricing">platform.openai.com/docs/pricing</a></td></tr>
+        <tr><td>GPT-6.1 Sol (<span class="mono">gpt-6.1-sol</span>)</td><td class="num">$2.00</td><td class="num">$10.00</td><td><a href="https://platform.openai.com/docs/pricing">platform.openai.com/docs/pricing</a></td></tr>
+        <tr><td>Claude Opus 5.5 (<span class="mono">claude-opus-5-5</span>)</td><td class="num">$4.00</td><td class="num">$20.00</td><td><a href="https://docs.anthropic.com/en/docs/about-claude/pricing">docs.anthropic.com — Claude pricing</a></td></tr>
+      </tbody>
+    </table>
+    <ul>
+      <li>These are <strong>API-equivalent estimates, not bills</strong>. The builds ran on subscription quota pools; no per-token invoice exists. The estimates answer "what would this have cost on the API?" and nothing more.</li>
+      <li><strong>Caching is ignored.</strong> The gateway's token counts do not separate cache reads or writes, so every token is charged at the full rate.</li>
+      <li><strong>Opus reports no usable input/output split</strong> (total tokens only), so its costs are shown as a range: all tokens at the input rate, up to all tokens at the output rate.</li>
+      <li><strong>Luna's Run 1 token total was flagged stale by the gateway</strong>; its Run 1 figures are approximate.</li>
+    </ul>
+
+    <h3>The Luna defect</h3>
+    <p>Luna's Run 1 build shipped with a typed-array script error in its mesh builder: the polygon function rejects the untyped arrays its own call sites pass, so the enemy meshes never build and no enemies render. The build is published exactly as submitted — "As submitted: script error — enemies don't render" is noted on its card in the navigator. And the Run 2 follow-up did not rescue it: <strong>Run 2 did not fix the Run 1 mesh bug</strong>. The same errors fire in the Run 2 build, and its formation still never appears on screen.</p>
+  </section>
 
   <footer>
     <span>© 2026 Christopher Moore · Kansas City, Missouri</span>
