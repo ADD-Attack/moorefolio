@@ -1,3 +1,16 @@
+# Fix-pass WIP checkpoint — op-assembly-sectional-v1-fix1-20261017
+
+Built directly on `45cb5d8`, same branch. First renderable head/material revision; NOT a quality-gate verdict.
+
+- Done: replacement section-local PBR atlases, angular head overlays, thin crest fins, modeled box cheek vent; skull/tail triangle reallocation; 28 rigid nodes retain one shared mesh; one delivered lens retained.
+- WIP counts: complete head **12,511**; module + joint **1,468**; tail + joint **2,236**; assembly **55,851**. GLB validation passes tangents, ORM, sharing, node counts and budgets.
+- New checkpoint captures: `captures/fix1-wip-full-body.png`, `captures/fix1-wip-head-closeup.png`, neutral original staging, 1920x1080. Original `captures/wip-*.png` SHA-256 checks pass unchanged.
+- In progress: resolve head-atlas projection artifacts visible in this checkpoint; improve recessed ring geometry/color; add economical layered module details and the longer, thinner tail-fin treatment.
+- Remaining: final captures, clean Godot 4.7.2 import and 120-pose regression, independent lens/WIP immutability checks, final documentation and evidence hashes. Existing final/Godot evidence below this checkpoint still describes the original build until rerun.
+- Native Windows node offline; Blender 4.5 LTS CPU rendering and Godot 4.7.2 are available locally. GPU render attempt exhausted the currently available VRAM; CPU captures succeeded.
+
+---
+
 # Final implementation handoff — op-assembly-sectional-v1-20261017
 
 Ready for independent quality-gate review; NOT an acceptance verdict.
