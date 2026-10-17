@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+IMPORT_CHECK snake_head.glb {"materials":2,"meshes":1,"missing_materials":0,"normal_textured":1,"surfaces":2,"tangent_surfaces":2,"triangles":17370}
+IMPORT_CHECK snake_segment.glb {"materials":6,"meshes":1,"missing_materials":0,"normal_textured":2,"surfaces":6,"tangent_surfaces":6,"triangles":1484}
+IMPORT_CHECK snake_full.glb {"materials":175,"meshes":30,"missing_materials":0,"normal_textured":59,"surfaces":175,"tangent_surfaces":175,"triangles":59886}
+IMPORT_RESULT PASS

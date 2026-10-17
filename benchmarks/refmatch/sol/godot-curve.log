@@ -1,0 +1,5 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+CURVE_CHECK straight: 28 joint pivots at 0.92m spacing, positive orthonormal frames PASS
+CURVE_CHECK raised 3D path: 120 deterministic poses, all 28 segment transforms finite and right-handed PASS
+ANIMATION_RESULT PASS

@@ -1,0 +1,32 @@
+{
+  "snake_head.glb": {
+    "triangles": 17370,
+    "mesh_nodes": 1,
+    "material_surfaces": 2,
+    "materials": 2,
+    "embedded_images": 4,
+    "all_tangents": true,
+    "unit_scale_positive_frames": true,
+    "draco": false
+  },
+  "snake_segment.glb": {
+    "triangles": 1484,
+    "mesh_nodes": 1,
+    "material_surfaces": 6,
+    "materials": 6,
+    "embedded_images": 7,
+    "all_tangents": true,
+    "unit_scale_positive_frames": true,
+    "draco": false
+  },
+  "snake_full.glb": {
+    "triangles": 59886,
+    "mesh_nodes": 30,
+    "material_surfaces": 175,
+    "materials": 9,
+    "embedded_images": 14,
+    "all_tangents": true,
+    "unit_scale_positive_frames": true,
+    "draco": false
+  }
+}

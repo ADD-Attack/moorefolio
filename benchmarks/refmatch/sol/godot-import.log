@@ -1,0 +1,92 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Started Project initialization (5 steps)[39m[0m
+[   0% ] [90m[1mfirst_scan_filesystem[22m | Scanning file structure...[39m[0m
+[  16% ] [90m[1mfirst_scan_filesystem[22m | Loading global class names...[39m[0m
+[  33% ] [90m[1mfirst_scan_filesystem[22m | Verifying GDExtensions...[39m[0m
+[  50% ] [90m[1mfirst_scan_filesystem[22m | Creating autoload scripts...[39m[0m
+[  66% ] [90m[1mfirst_scan_filesystem[22m | Initializing plugins...[39m[0m
+[  83% ] [90m[1mfirst_scan_filesystem[22m | Starting file scan...[39m[0m
+[92m[ DONE ][39m [1mfirst_scan_filesystem[22m
+[0m
+[   0% ] [90m[1m_update_scan_actions[22m | Started Scanning actions... (9 steps)[39m[0m
+[   0% ] [90m[1m_update_scan_actions[22m | snake_full.glb[39m[0m
+[  10% ] [90m[1m_update_scan_actions[22m | snake_full_body_orm.png[39m[0m
+[  20% ] [90m[1m_update_scan_actions[22m | snake_full_head_baked_normal.png[39m[0m
+[  30% ] [90m[1m_update_scan_actions[22m | snake_full_head_orm.png[39m[0m
+[  40% ] [90m[1m_update_scan_actions[22m | snake_head.glb[39m[0m
+[  50% ] [90m[1m_update_scan_actions[22m | snake_head_head_baked_normal.png[39m[0m
+[  60% ] [90m[1m_update_scan_actions[22m | snake_head_head_orm.png[39m[0m
+[  70% ] [90m[1m_update_scan_actions[22m | snake_segment.glb[39m[0m
+[  80% ] [90m[1m_update_scan_actions[22m | snake_segment_body_orm.png[39m[0m
+[92m[ DONE ][39m [1m_update_scan_actions[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (19 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   5% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  10% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  15% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  20% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  25% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  30% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  35% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  40% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  45% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  50% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  55% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  60% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  65% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  70% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  75% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  80% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  85% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[  90% ] [90m[1mreimport[22m | Preparing files to reimport...[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing pre-reimport operations...[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Started Preparing scenes for reload (1 steps)[39m[0m
+[   0% ] [90m[1mpreload_reimporting_scene[22m | Analyzing scene [empty][39m[0m
+[  50% ] [90m[1mpreload_reimporting_scene[22m | Preparation done.[39m[0m
+[92m[ DONE ][39m [1mpreload_reimporting_scene[22m
+[0m
+[   0% ] [90m[1mreimport[22m | snake_head_grille_orm.png[39m[0m
+[   5% ] [90m[1mreimport[22m | snake_head_grille_albedo.png[39m[0m
+[  10% ] [90m[1mreimport[22m | snake_head_cyan_emission.png[39m[0m
+[  15% ] [90m[1mreimport[22m | snake_head_head_baked_normal.png[39m[0m
+[  20% ] [90m[1mreimport[22m | snake_head_head_orm.png[39m[0m
+[  25% ] [90m[1mreimport[22m | snake_head_head_albedo.png[39m[0m
+[  30% ] [90m[1mreimport[22m | snake_full_head_normal.png[39m[0m
+[  35% ] [90m[1mreimport[22m | snake_full_grille_normal.png[39m[0m
+[  40% ] [90m[1mreimport[22m | snake_full_body_normal.png[39m[0m
+[  45% ] [90m[1mreimport[22m | snake_full_body_orm.png[39m[0m
+[  50% ] [90m[1mreimport[22m | snake_full_body_albedo.png[39m[0m
+[  55% ] [90m[1mreimport[22m | snake_full_grille_orm.png[39m[0m
+[  60% ] [90m[1mreimport[22m | snake_full_grille_albedo.png[39m[0m
+[  65% ] [90m[1mreimport[22m | snake_full_cyan_emission.png[39m[0m
+[  70% ] [90m[1mreimport[22m | snake_full_head_baked_normal.png[39m[0m
+[  75% ] [90m[1mreimport[22m | snake_full_head_orm.png[39m[0m
+[  80% ] [90m[1mreimport[22m | snake_full_head_albedo.png[39m[0m
+[  85% ] [90m[1mreimport[22m | snake_head.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  90% ] [90m[1mreimport[22m | snake_full.glb[39m[0m
+[   0% ] [90m[1mimport[22m | Started Import Scene (104 steps)[39m[0m
+[   0% ] [90m[1mimport[22m | Importing Scene...[39m[0m
+[   1% ] [90m[1mimport[22m | Running Custom Script...[39m[0m
+[  99% ] [90m[1mimport[22m | Saving...[39m[0m
+[92m[ DONE ][39m [1mimport[22m
+[0m
+[  95% ] [90m[1mreimport[22m | Finalizing Asset Import...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mreimport[22m | Started (Re)Importing Assets (19 steps)[39m[0m
+[   0% ] [90m[1mreimport[22m | Executing post-reimport operations...[39m[0m
+[92m[ DONE ][39m [1mreimport[22m
+[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Started Loading editor (5 steps)[39m[0m
+[   0% ] [90m[1mloading_editor_layout[22m | Loading editor layout...[39m[0m
+[  16% ] [90m[1mloading_editor_layout[22m | Loading docks...[39m[0m
+[92m[ DONE ][39m [1mloading_editor_layout[22m
+[0m

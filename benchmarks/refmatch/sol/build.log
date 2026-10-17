@@ -1,0 +1,121 @@
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)
+Fra:1 Mem:444.25M (Peak 465.15M) | Time:38:14:57.31 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Bake_High_Head
+Fra:1 Mem:454.86M (Peak 465.15M) | Time:38:14:57.32 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:454.86M (Peak 465.15M) | Time:38:14:57.32 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Selected_To_Active_Normal
+Fra:1 Mem:242.69M (Peak 1145.58M) | Time:38:15:00.53 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Head
+Fra:1 Mem:244.90M (Peak 1145.58M) | Time:38:15:00.53 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:244.89M (Peak 1145.58M) | Time:38:15:00.53 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Atlas_normal
+Fra:1 Mem:260.06M (Peak 1145.58M) | Time:38:15:02.13 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Head
+Fra:1 Mem:261.57M (Peak 1145.58M) | Time:38:15:02.13 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:261.57M (Peak 1145.58M) | Time:38:15:02.13 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Atlas_albedo
+Fra:1 Mem:276.73M (Peak 1145.58M) | Time:38:15:04.08 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Head
+Fra:1 Mem:278.24M (Peak 1145.58M) | Time:38:15:04.08 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:278.24M (Peak 1145.58M) | Time:38:15:04.08 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Atlas_roughness
+Fra:1 Mem:293.40M (Peak 1145.58M) | Time:38:15:05.82 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Head
+Fra:1 Mem:294.91M (Peak 1145.58M) | Time:38:15:05.82 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:294.90M (Peak 1145.58M) | Time:38:15:05.82 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Atlas_metallic
+Fra:1 Mem:310.07M (Peak 1145.58M) | Time:38:15:07.61 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Head
+Fra:1 Mem:311.58M (Peak 1145.58M) | Time:38:15:07.61 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:311.58M (Peak 1145.58M) | Time:38:15:07.61 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Atlas_emission
+Fra:1 Mem:326.74M (Peak 1145.58M) | Time:38:15:09.37 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | Head
+Fra:1 Mem:328.25M (Peak 1145.58M) | Time:38:15:09.37 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:328.25M (Peak 1145.58M) | Time:38:15:09.37 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Atlas_ao
+Info: Removed 26296 vertices
+Info: Baking map saved to internal image, save it externally or pack it
+HEAD_HIGH_LOW_BAKE C:\Users\Moore\refmatch-sol-work\textures\head_baked_normal.png
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+Info: Baking map saved to internal image, save it externally or pack it
+HEAD_UNIFIED_ATLAS_COMPLETE: all PBR maps UV0, contact AO in ORM.R
+Info: Removed 2212 vertices
+COUNTS_INITIAL 17370 1484
+INFO Draco mesh compression is available, use library at C:\Users\Moore\Blender\blender-4.5.14-windows-x64\4.5\scripts\addons_core\io_scene_gltf2\extern_draco.dll
+11:15:07 | INFO: Starting glTF 2.0 export
+11:15:07 | INFO: Extracting primitive: Head
+11:15:07 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:07 | INFO: Primitives created: 2
+11:15:07 | INFO: Finished glTF 2.0 export in 0.07434844970703125 s
+
+11:15:07 | INFO: Starting glTF 2.0 export
+11:15:07 | INFO: Extracting primitive: Segment
+11:15:07 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:08 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Finished glTF 2.0 export in 0.19787192344665527 s
+
+SEGMENT_COUNT 28
+Info: Removed 1500 vertices
+COUNTS_FINAL 17370 1484 59886
+11:15:08 | INFO: Starting glTF 2.0 export
+11:15:08 | INFO: Extracting primitive: Head
+11:15:08 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:08 | INFO: Primitives created: 2
+11:15:08 | INFO: Extracting primitive: Segment.001
+11:15:08 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:08 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.002
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.003
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.004
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.005
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.006
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.007
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.008
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.009
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.010
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.011
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.012
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.013
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.014
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.015
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.016
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.017
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.018
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.019
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.020
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.021
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.022
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.023
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.024
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.025
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.026
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.027
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Segment.028
+11:15:08 | INFO: Primitives created: 6
+11:15:08 | INFO: Extracting primitive: Tail_Joint
+11:15:08 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+11:15:08 | INFO: Primitives created: 5
+11:15:09 | INFO: Finished glTF 2.0 export in 1.3041534423828125 s
+
+Info: Saved as "snake.blend"
+
+Blender quit
