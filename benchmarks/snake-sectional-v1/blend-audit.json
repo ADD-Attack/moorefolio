@@ -1,0 +1,13 @@
+{
+  "reopened_blend": true,
+  "rigid_segments": 28,
+  "body_unique_meshes": 1,
+  "complete_lenses": 1,
+  "material_images": 9,
+  "all_material_images_packed": true,
+  "master_curve_present": true,
+  "render_size": [
+    1920,
+    1080
+  ]
+}

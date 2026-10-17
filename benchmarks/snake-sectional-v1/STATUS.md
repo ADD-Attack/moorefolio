@@ -1,3 +1,18 @@
+# Final implementation handoff — op-assembly-sectional-v1-20261017
+
+Ready for independent quality-gate review; NOT an acceptance verdict.
+
+- Implemented: repaired source-derived sections, 28 rigid shared-mesh body nodes, 29 segmented emissive inserts/dark housings, closed internal couplers, single seated modeled lens, packed PBR maps, master curve and Godot Path3D driver.
+- Final GLB counts: head including lens **15,104**; segment including joint **1,468**; tail including joint **2,736**; assembled **58,944**.
+- Verified: source package SHA-256; GLB tangents, shared meshes, ORM and rigid transforms; clean fresh-cache Godot 4.7.2 import; **120/120** driver poses with zero failures; native 1920×1080 captures; saved `.blend` reopened with all nine material images packed.
+- WIP checkpoint `793ec5e` was pushed at the first assembled pose. Its captures remain byte-for-byte unchanged. The two-eye defect is corrected to ONE front/review-facing lens.
+- No current implementation blocker. Windows C: exhaustion interrupted one save/test-copy; ticket files were moved intact to D: and all final saves/checks succeeded there.
+- Remaining for gate: judge reference fidelity and documented visual gaps in NOTE.md (soft/pitted reconstruction, approximate pose, tight-bend coupler exposure, soft tail fins). No next ticket has been started.
+
+---
+
+## Original first-pose checkpoint record
+
 # WIP checkpoint — op-assembly-sectional-v1-20261017
 
 First fully assembled pose, before polishing. NOT a quality pass.

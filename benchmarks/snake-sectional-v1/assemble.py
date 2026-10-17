@@ -1,14 +1,20 @@
 import bpy,math,os,json,random
 from mathutils import Vector,Matrix
 from math import sin,cos,pi
-D='C:/Users/Moore/assembly-sol-op-20261017';O=D+'/delivery';bpy.ops.wm.open_mainfile(filepath=O+'/sections.blend');sc=bpy.context.scene
+D=os.environ.get('ASSEMBLY_WORKDIR','D:/OpenClaw/assembly-sol-op-20261017');O=os.environ.get('ASSEMBLY_OUTPUT',D+'/delivery');bpy.ops.wm.open_mainfile(filepath=O+'/sections.blend');sc=bpy.context.scene
 head=bpy.data.objects['head_budgeted'];body=bpy.data.objects['segment2_budgeted'];tail=bpy.data.objects['tail_budgeted']
 assets=[]
+for im in bpy.data.images:
+ if im.filepath_raw.startswith('C:/Users/Moore/assembly-sol-op-20261017'):im.filepath_raw=im.filepath_raw.replace('C:/Users/Moore/assembly-sol-op-20261017',D)
+for m in bpy.data.materials:
+ if m.use_nodes:
+  for n in m.node_tree.nodes:
+   if n.type=='NORMAL_MAP':n.inputs['Strength'].default_value=.45
 def material(n,c,metal=.7,rough=.4,em=0):
  m=bpy.data.materials.new(n);m.use_nodes=True;b=m.node_tree.nodes.get('Principled BSDF');b.inputs['Base Color'].default_value=(*c,1);b.inputs['Metallic'].default_value=metal;b.inputs['Roughness'].default_value=rough
  if em:b.inputs['Emission Color'].default_value=(*c,1);b.inputs['Emission Strength'].default_value=em
  return m
-dark=material('Recessed graphite housings',(.035,.045,.047),.85,.42);silver=material('Worn machined rims',(.31,.34,.35),.88,.32);teal=material('Teal joint emitters',(.015,.75,.57),.35,.25,3);black=material('Aperture carbon',(.008,.014,.017),.5,.36);glass=material('Optical coated cover',(.025,.16,.13),.55,.14);glass.node_tree.nodes.get('Principled BSDF').inputs['Transmission Weight'].default_value=.45
+dark=material('Recessed graphite housings',(.035,.045,.047),.85,.42);silver=material('Worn machined rims',(.31,.34,.35),.88,.32);teal=material('Teal joint emitters',(.015,.75,.57),.35,.25,3);black=material('Aperture carbon',(.008,.014,.017),.5,.36);glass=material('Optical coated cover',(.025,.16,.13),.55,.14);glass.node_tree.nodes.get('Principled BSDF').inputs['Transmission Weight'].default_value=.25;glass.node_tree.nodes.get('Principled BSDF').inputs['Alpha'].default_value=.24;glass.surface_render_method='DITHERED'
 
 def mesh(n,vs,fs,mat):
  me=bpy.data.meshes.new(n);me.from_pydata(vs,[],fs);me.update();o=bpy.data.objects.new(n,me);bpy.context.collection.objects.link(o);o.data.materials.append(mat);return o
@@ -40,13 +46,19 @@ parts=[body]
 for sy in [-1,1]:
  for x in [-.17,.15]:
   bpy.ops.mesh.primitive_cylinder_add(vertices=6,radius=.028,depth=.018,location=(x,sy*.455,.14),rotation=(pi/2,0,0));o=bpy.context.object;o.data.materials.append(silver);parts.append(o)
-body=join(parts,'Segment_Module');body.data.name='Hero segment shared mesh'
+# A source-placed inset vent grille with five actual slats on the review side.
+bpy.ops.mesh.primitive_cube_add(size=1,location=(.09,-.474,.20));v=bpy.context.object;v.scale=(.30,.024,.20);v.data.materials.append(dark);parts.append(v)
+for i in range(5):
+ bpy.ops.mesh.primitive_cube_add(size=1,location=(.09,-.492,.124+i*.038));v=bpy.context.object;v.scale=(.265,.018,.012);v.data.materials.append(silver);parts.append(v)
+body=join(parts,'Segment_Module');body.data.name='Hero segment shared mesh' 
 # Camera-lens assemblies seated in the existing circular head formations.
 eyeobs=[]
-for sy in [-1,1]:
- center=Vector((-.94,sy*.395,.065))
+for sy in [-1]:
+ center=Vector((-.94,sy*.425,.065))
  for j,(a,b,d,mat,off) in enumerate([(.165,.215,.065,dark,0),(.155,.185,.045,silver,.038),(.125,.153,.035,black,.062),(.108,.125,.018,teal,.072),(.055,.108,.014,dark,.079),(.025,.055,.014,teal,.086)]):
-  o=annulus('Lens_%s_ring_%d'%(sy,j),a,b,d,mat,48,axis='Y');o.location=center+Vector((0,sy*off,0));eyeobs.append(o)
+  o=annulus('Lens_%s_ring_%d'%(sy,j),a,b,d,mat,32,axis='Y');o.location=center+Vector((0,sy*off,0));eyeobs.append(o)
+  if j<2:
+   bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o;be=o.modifiers.new('Machined rim bevel','BEVEL');be.width=.007;be.segments=1;be.limit_method='ANGLE';be.angle_limit=.6;bpy.ops.object.modifier_apply(modifier=be.name)
  # Eight actual overlapping aperture vanes.
  for i in range(8):
   a=i*2*pi/8;vs=[]
@@ -74,30 +86,40 @@ def sample(d):
 def frame(d):
  x=(sample(d+.03)-sample(d-.03)).normalized();up=Vector((0,0,1));y=up.cross(x).normalized();z=x.cross(y).normalized();return Matrix((x,y,z)).transposed().to_4x4()
 head.location=sample(0);head.rotation_euler=frame(0).to_euler();assets=[head,tail]+eyeobs
+# Dark enclosed coupler behind armor spans each joint.
+bpy.ops.mesh.primitive_cylinder_add(vertices=12,radius=.405,depth=.82,rotation=(0,pi/2,0));o=bpy.context.object;o.data.materials.append(dark);body=join([body,o],'Segment_Module')
 # Bake module length into mesh rather than introducing nonunit scales.
 for v in body.data.vertices:v.co.x*=pitch/.76
 for i in range(28):
  o=body if i==0 else bpy.data.objects.new('Segment_%02d'%i,body.data)
  if i:bpy.context.collection.objects.link(o)
- o.name='Segment_%02d'%i;o.matrix_world=frame((i+.5)*pitch);o.location=sample((i+.5)*pitch);assets.append(o)
+ o.name='Segment_%02d'%i;placement=frame((i+.5)*pitch);placement.translation=sample((i+.5)*pitch);o.matrix_world=placement;assets.append(o)
  for proto,label in [(housing,'Housing'),(bars,'GlowBars')]:
-  r=proto.copy();r.data=proto.data;bpy.context.collection.objects.link(r);r.name='Joint_%02d_%s'%(i,label);r.parent=o;r.location=(-pitch/2,0,0);r.rotation_euler=(0,0,0);assets.append(r)
+  r=proto.copy();r.data=proto.data;bpy.context.collection.objects.link(r);r.name='Joint_%02d_%s'%(i,label);r.parent=o;world=frame(i*pitch);world.translation=sample(i*pitch);r.matrix_parent_inverse=Matrix.Identity(4);r.matrix_basis=placement.inverted()@world;assets.append(r)
 tail.matrix_world=frame(L);tail.location=sample(L)
 for proto,label in [(housing,'Housing'),(bars,'GlowBars')]:
  r=proto.copy();r.data=proto.data;bpy.context.collection.objects.link(r);r.name='TailJoint_'+label;r.parent=tail;r.location=(0,0,0);assets.append(r)
 for o in [housing,bars]:bpy.data.objects.remove(o,do_unlink=True)
+bpy.context.view_layer.update()
+for i in range(28):
+ for label in ['Housing','GlowBars']:
+  assert (bpy.data.objects['Joint_%02d_%s'%(i,label)].matrix_world.translation-sample(i*pitch)).length<.0001
 # Master curve retained in .blend, never exported as geometry.
 cu=bpy.data.curves.new('Master curve','CURVE');cu.dimensions='3D';sp=cu.splines.new('POLY');sp.points.add(len(pts)-1)
 for p,v in zip(sp.points,pts):p.co=(*v,1)
 co=bpy.data.objects.new('MasterCurve',cu);bpy.context.collection.objects.link(co)
 json.dump({'points':[list(p) for p in pts[::8]]+[list(pts[-1])],'length':L,'pitch':pitch,'count':28},open(O+'/path.json','w'),indent=2)
-# Explicit triangulation and UVs for every insert / lens primitive.
+# Freeze triangulation once per shared mesh, preserving instance sharing in GLB.
+seen=set()
 for o in assets:
- if o.type!='MESH':continue
+ if o.type!='MESH' or o.data in seen:continue
+ seen.add(o.data)
  bpy.ops.object.select_all(action='DESELECT');o.select_set(True);bpy.context.view_layer.objects.active=o
  if not o.data.uv_layers:
   bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(island_margin=.02);bpy.ops.object.mode_set(mode='OBJECT')
- if not any(m.type=='TRIANGULATE' for m in o.modifiers):o.modifiers.new('Delivery triangulation','TRIANGULATE')
+ if any(abs(v-1)>1e-6 for v in o.scale):bpy.ops.object.transform_apply(location=False,rotation=False,scale=True)
+ import bmesh
+ bm=bmesh.new();bm.from_mesh(o.data);bmesh.ops.triangulate(bm,faces=list(bm.faces));bm.to_mesh(o.data);bm.free();o.data.update()
 # Plain neutral staging; no floor, environment geometry, or labels.
 sc.render.engine='CYCLES';sc.cycles.samples=32;sc.cycles.use_denoising=True
 sc.world.use_nodes=True;sc.world.node_tree.nodes.get('Background').inputs['Color'].default_value=(.22,.22,.22,1);sc.world.node_tree.nodes.get('Background').inputs['Strength'].default_value=.6
@@ -107,19 +129,29 @@ def area(n,p,power,size,color):
  bpy.ops.object.light_add(type='AREA',location=p);o=bpy.context.object;o.name=n;o.data.energy=power;o.data.shape='DISK';o.data.size=size;o.data.color=color;o.rotation_euler=(Vector((0,0,1.5))-o.location).to_track_quat('-Z','Y').to_euler()
 area('Large neutral key',(-4,-6,9),1600,6,(1,.96,.91));area('Soft fill',(5,-2,6),1100,5,(.85,.93,1));area('Rim',(1,5,8),1900,5,(1,1,1))
 bpy.ops.object.camera_add();cam=bpy.context.object;sc.camera=cam;cam.data.type='ORTHO'
-def shot(n,loc,target,scale):
- cam.location=loc;cam.rotation_euler=(Vector(target)-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=scale;sc.render.filepath=O+'/captures/'+n+'.png';bpy.ops.render.render(write_still=True)
+def shot(n,loc,target,scale,only=None):
+ cam.location=loc;cam.rotation_euler=(Vector(target)-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=scale
+ bpy.context.view_layer.update()
+ visible=assets if only is None else only
+ saved={o:o.hide_render for o in assets}
+ for o in assets:o.hide_render=o not in visible
+ # Fit the projected vertices, not loose authoring origins or a conservative world AABB.
+ inv=cam.matrix_world.inverted();points=[inv@(o.matrix_world@v.co) for o in visible for v in o.data.vertices]
+ xmin=min(p.x for p in points);xmax=max(p.x for p in points);ymin=min(p.y for p in points);ymax=max(p.y for p in points)
+ q=cam.rotation_euler.to_quaternion();cam.location+=q@Vector(((xmin+xmax)/2,(ymin+ymax)/2,0));cam.data.ortho_scale=max(xmax-xmin,(ymax-ymin)*1920/1080)*1.12
+ sc.render.filepath=O+'/captures/'+n+'.png';bpy.ops.render.render(write_still=True)
+ for o,h in saved.items():o.hide_render=h
 # Exports: rigid body nodes and separate attached inserts, no skins/compression.
 def export(path,obs):
  bpy.ops.object.select_all(action='DESELECT')
  for o in obs:o.select_set(True)
- bpy.ops.export_scene.gltf(filepath=path,export_format='GLB',use_selection=True,export_apply=True,export_yup=True,export_texcoords=True,export_normals=True,export_tangents=True,export_draco_mesh_compression_enable=False,export_materials='EXPORT')
-export(O+'/snake-sectional.glb',assets);export(O+'/head.glb',[head]+eyeobs)
+ bpy.ops.export_scene.gltf(filepath=path,export_format='GLB',use_selection=True,export_apply=False,export_yup=True,export_texcoords=True,export_normals=True,export_tangents=True,export_draco_mesh_compression_enable=False,export_materials='EXPORT')
+export(O+'/snake-sectional.glb',assets);saved=head.matrix_world.copy();head.matrix_world=Matrix.Identity(4);export(O+'/head.glb',[head]+eyeobs);head.matrix_world=saved
 # Count evaluated assembled instances, not unique mesh datablocks.
 dg=bpy.context.evaluated_depsgraph_get();counts={}
 for o in assets:
  me=o.evaluated_get(dg).to_mesh();me.calc_loop_triangles();counts[o.name]=len(me.loop_triangles);o.evaluated_get(dg).to_mesh_clear()
 json.dump({'objects':counts,'total':sum(counts.values()),'head':sum(counts[o.name] for o in [head]+eyeobs),'segment':counts['Segment_00'],'joint':counts['Joint_00_Housing']+counts['Joint_00_GlowBars'],'tail':counts['Tail']},open(O+'/counts.json','w'),indent=2)
-shot('wip-full-body',(-7,-12,7),(0.5,0,1.9),9.2);shot('wip-head',(-4,-7,5.2),(-2.2,.25,4.0),3.6)
-cam.location=(-7,-12,7);cam.rotation_euler=(Vector((.5,0,1.9))-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=9.2
-bpy.ops.wm.save_as_mainfile(filepath=O+'/snake-sectional.blend');print('ASSEMBLY_READY',counts,flush=True)
+shot('full-body',(-7,-12,7),(0.5,0,1.9),11.0);shot('head-closeup',(-4,-7,5.2),(-2.2,.25,4.0),3.6,only=[head]+eyeobs)
+cam.location=(-7,-12,7);cam.rotation_euler=(Vector((.5,0,1.9))-cam.location).to_track_quat('-Z','Y').to_euler();cam.data.ortho_scale=11.0
+bpy.ops.file.pack_all();bpy.ops.wm.save_as_mainfile(filepath=O+'/snake-sectional.blend');print('ASSEMBLY_READY',counts,flush=True)

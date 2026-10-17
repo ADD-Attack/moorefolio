@@ -1,0 +1,6 @@
+Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
+OpenGL API 3.3.0 NVIDIA 610.88 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070 Ti
+
+CAMERA center=(0.622852, 2.368655, 0.609609) position=(-8.359488, 10.79375, 16.38252) ortho_height=5.96392107009888
+CAMERA center=(-0.76812, 0.190864, 0.008114) position=(-7.992674, 3.847068, 18.29595) ortho_height=1.73968863487244
+NATIVE_CAPTURE_PASS viewport=(1920, 1080) renderer=gl_compatibility

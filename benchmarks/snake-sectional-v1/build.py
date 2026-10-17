@@ -1,7 +1,7 @@
 import bpy,bmesh,math,os,json,random
 from mathutils import Vector,Matrix
 from math import sin,cos,pi
-D='C:/Users/Moore/assembly-sol-op-20261017';O=D+'/delivery';os.makedirs(O+'/textures',exist_ok=True);os.makedirs(O+'/captures',exist_ok=True)
+D=os.environ.get('ASSEMBLY_WORKDIR','D:/OpenClaw/assembly-sol-op-20261017');O=os.environ.get('ASSEMBLY_OUTPUT',D+'/delivery');os.makedirs(O+'/textures',exist_ok=True);os.makedirs(O+'/captures',exist_ok=True)
 random.seed(17)
 bpy.ops.object.select_all(action='SELECT');bpy.ops.object.delete(use_global=False)
 sc=bpy.context.scene
@@ -21,12 +21,40 @@ def image(n,size,color=(.5,.5,.5,1)):
 
 def bake_section(kind,pred,transform,target):
  high=load(kind);crop(high,pred)
- bm=bmesh.new();bm.from_mesh(high.data);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.0001);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=.00001);bm.to_mesh(high.data);bm.free()
+ bm=bmesh.new();bm.from_mesh(high.data);bmesh.ops.remove_doubles(bm,verts=list(bm.verts),dist=.0001);bmesh.ops.dissolve_degenerate(bm,edges=list(bm.edges),dist=.00001);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(high.data);bm.free()
  for v in high.data.vertices:v.co=transform(v.co)
  # Remove isolated scraps by area-connected component where possible.
  high.name=kind+'_source_extracted';high.data.materials.clear();m=bpy.data.materials.new(kind+'_source');m.use_nodes=True;high.data.materials.append(m)
  low=high.copy();low.data=high.data.copy();bpy.context.collection.objects.link(low);low.name=kind+'_budgeted';select(low)
- mod=low.modifiers.new('Manifold reconstruction','REMESH');mod.mode='VOXEL';mod.voxel_size=.012;mod.use_smooth_shade=True;bpy.ops.object.modifier_apply(modifier=mod.name)
+ if kind=='segment2':
+  # Closed longitudinal/radial retopology sampled directly from the extracted source.
+  high.data.update();bpy.context.view_layer.update();vs=[];fs=[];N=36;K=12
+  for j in range(K+1):
+   x=-.36+.66*j/K
+   for i in range(N):
+    a=2*pi*i/N;rad=Vector((0,cos(a),sin(a)));hit,loc,n,idx=high.ray_cast(Vector((x,0,0))+rad*1.5,-rad)
+    r=max(.40,min(.57,Vector((0,loc.y,loc.z)).length)) if hit else .465
+    vs.append((x,r*cos(a),r*sin(a)))
+  for j in range(K):
+   for i in range(N):a=j*N+i;b=j*N+(i+1)%N;c=(j+1)*N+(i+1)%N;d=(j+1)*N+i;fs.append((a,b,c,d))
+  vs.extend([(-.36,0,0),(.30,0,0)]);a=len(vs)-2;b=len(vs)-1
+  for i in range(N):fs.extend([(a,(i+1)%N,i),(b,K*N+i,K*N+(i+1)%N)])
+  me=bpy.data.meshes.new('Source sampled closed segment');me.from_pydata(vs,[],fs);me.update();low.data=me
+  bm=bmesh.new();bm.from_mesh(me);bmesh.ops.recalc_face_normals(bm,faces=list(bm.faces));bm.to_mesh(me);bm.free()
+ else:
+  mod=low.modifiers.new('Manifold reconstruction','REMESH');mod.mode='SMOOTH';mod.octree_depth=7 if kind=='segment2' else 8;mod.scale=.9;mod.use_remove_disconnected=True;mod.use_smooth_shade=True;bpy.ops.object.modifier_apply(modifier=mod.name)
+  bm=bmesh.new();bm.from_mesh(low.data);unseen=set(bm.verts);components=[]
+  while unseen:
+   seed=unseen.pop();group={seed};stack=[seed]
+   while stack:
+    u=stack.pop()
+    for e in u.link_edges:
+     v=e.other_vert(u)
+     if v in unseen:unseen.remove(v);group.add(v);stack.append(v)
+   components.append(group)
+  if components:
+   keep=max(components,key=len);bmesh.ops.delete(bm,geom=[v for v in bm.verts if v not in keep],context='VERTS')
+  bm.to_mesh(low.data);bm.free()
  mod=low.modifiers.new('pretri','TRIANGULATE');bpy.ops.object.modifier_apply(modifier=mod.name)
  mod=low.modifiers.new('budget collapse','DECIMATE');mod.ratio=min(1,target/len(low.data.polygons));bpy.ops.object.modifier_apply(modifier=mod.name)
  mod=low.modifiers.new('triangulate','TRIANGULATE');bpy.ops.object.modifier_apply(modifier=mod.name)
@@ -41,13 +69,14 @@ def bake_section(kind,pred,transform,target):
  bpy.data.objects.remove(high,do_unlink=True);select(low)
  # Deterministic procedural worn PBR atlas, AO only in packed R, not albedo.
  import numpy as np
+ nr=np.array(normal.pixels[:],dtype=np.float32).reshape(size,size,4);invalid=(nr[:,:,2]<.35);nr[invalid]=(.5,.5,1,1);normal.pixels.foreach_set(nr.ravel());normal.save()
  a=np.array(ao.pixels[:],dtype=np.float32).reshape(size,size,4)[:,:,0];rng=np.random.default_rng(51);yy,xx=np.mgrid[:size,:size];grain=rng.random((size,size));scr=((np.sin(xx*.31+np.sin(yy*.015)*30)> .992)&(grain>.55));macro=(np.sin(xx*.027)*np.sin(yy*.021)+1)*.5
- edge=np.clip((a-.65)*2,0,1);value=.17+.075*macro+.035*grain+scr*.18+edge*.025
+ edge=np.clip((a-.65)*2,0,1);value=.22+.07*macro+.025*grain+scr*.12+edge*.025
  def save_arr(name,arr,noncolor=False):
   im=image(name,size);im.colorspace_settings.name='Non-Color' if noncolor else 'sRGB';im.pixels.foreach_set(arr.astype(np.float32).ravel());im.filepath_raw=O+'/textures/'+name+'.png';im.file_format='PNG';im.save();return im
  color=np.ones((size,size,4),dtype=np.float32);color[:,:,0]=value*.94;color[:,:,1]=value*.99;color[:,:,2]=value*1.04;base=save_arr(kind+'_basecolor',color)
  orm=np.ones_like(color);orm[:,:,0]=a;orm[:,:,1]=.38+.18*grain+.1*(1-a);orm[:,:,2]=.83-.18*(1-a);packed=save_arr(kind+'_ORM',orm,True)
- tex.image=normal;nm=nodes.new('ShaderNodeNormalMap');links.new(tex.outputs['Color'],nm.inputs['Color']);links.new(nm.outputs['Normal'],bs.inputs['Normal'])
+ tex.image=normal;nm=nodes.new('ShaderNodeNormalMap');nm.inputs['Strength'].default_value=.65;links.new(tex.outputs['Color'],nm.inputs['Color']);links.new(nm.outputs['Normal'],bs.inputs['Normal'])
  t=nodes.new('ShaderNodeTexImage');t.image=base;links.new(t.outputs['Color'],bs.inputs['Base Color']);t=nodes.new('ShaderNodeTexImage');t.image=packed;sep=nodes.new('ShaderNodeSeparateColor');links.new(t.outputs['Color'],sep.inputs['Color']);links.new(sep.outputs['Green'],bs.inputs['Roughness']);links.new(sep.outputs['Blue'],bs.inputs['Metallic'])
  group=bpy.data.node_groups.get('glTF Material Output')
  if not group:
