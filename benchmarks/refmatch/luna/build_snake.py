@@ -100,13 +100,12 @@ def make_eye_material():
     mat = bpy.data.materials.new("SnakeEye")
     mat.use_nodes = True
     bsdf = _principled(mat)
-    _inp(bsdf, "Base Color").default_value = (0.004, 0.02, 0.008, 1.0)
-    _inp(bsdf, "Metallic").default_value = 0.1
-    _inp(bsdf, "Roughness").default_value = 0.12
-    # Exercise 2: deepened from (0.0, 0.72, 0.30) so ACES keeps the
-    # lens green instead of clipping it toward mint-white.
-    _inp(bsdf, "Emission Color", "Emission").default_value = (0.0, 0.58, 0.22, 1.0)
-    _inp(bsdf, "Emission Strength").default_value = 1.0
+    _inp(bsdf, "Base Color").default_value = (0.003, 0.009, 0.012, 1.0)
+    _inp(bsdf, "Metallic").default_value = 0.42
+    _inp(bsdf, "Roughness").default_value = 0.10
+    # Dark coated optical glass; the separate sensor core provides the glow.
+    _inp(bsdf, "Emission Color", "Emission").default_value = (0.0, 0.025, 0.018, 1.0)
+    _inp(bsdf, "Emission Strength").default_value = 0.12
     return mat
 
 
@@ -381,68 +380,71 @@ def build_head():
         bpy.ops.object.modifier_apply(modifier=bev.name)
         plate.data.materials.append(mats()["belly"])
         crest.append(plate)
-    # Eyes: glossy emissive spheres seated in the brow sockets, each in
-    # a dark bezel ring so the emissive reads as a housed lens.
-    # Exercise 2 (fix #4): the bezel tube is fatter (0.018 -> 0.027)
-    # and the lens is smaller/flatter (r 0.095 -> 0.092, y-scale
-    # 0.72 -> 0.66) with a deeper emission hue. Placement was measured
-    # against the loft surface (ray cast along the eye normal): the
-    # brow displacement raises the surface to 0.084 from the v1 lens
-    # center, so the assembly is seated 0.050 outboard of the first
-    # Exercise 2 draft — that draft sank the lens 0.019 UNDER the
-    # brow surface and the eye vanished entirely (staging probe).
-    # Final seat: lens apex ~0.031 proud of the brow pad, bezel rim
-    # ringing it.
+    # Camera-eye assembly: dark recessed optical glass behind a raised bezel,
+    # with six individually modeled iris blades around a central aperture.
     eyes = []
     for sign in (1.0,):
-        bpy.ops.mesh.primitive_uv_sphere_add(
-            radius=0.092, location=(1.00, sign * 0.510, 0.2592))
-        eye = bpy.context.object
-        eye.name = "SnakeEye"
-        eye.scale = (1.30, 0.66, 0.88)
-        eye.rotation_euler = (0.0, 0.0, sign * -0.18)
-        eye.data.materials.append(mats()["eye"])
-        eyes.append(eye)
         n = Vector((0.0, sign * 0.909, 0.416)).normalized()
         xa = Vector((1.0, 0.0, 0.0)).cross(n).normalized()
         ya = n.cross(xa).normalized()
-        bpy.ops.mesh.primitive_torus_add(
-            major_segments=32, minor_segments=10,
-            major_radius=0.100, minor_radius=0.027,
-            location=(1.00, sign * 0.528, 0.2659))
-        bezel = bpy.context.object
-        bezel.name = "SnakeEyeBezel"
-        bezel.matrix_world = Matrix((
-            (xa.x, ya.x, n.x, bezel.location.x),
-            (xa.y, ya.y, n.y, bezel.location.y),
-            (xa.z, ya.z, n.z, bezel.location.z),
-            (0.0, 0.0, 0.0, 1.0)))
-        bezel.data.materials.append(mats()["dark"])
-        eyes.append(bezel)
-        # Concentric iris retaining ring and luminous central core: real meshes,
-        # not a decal. Their shared normal faces the camera-side cheek.
-        bpy.ops.mesh.primitive_torus_add(
-            major_segments=32, minor_segments=10,
-            major_radius=0.067, minor_radius=0.008,
-            location=(1.00, sign * 0.548, 0.2659))
-        iris = bpy.context.object
-        iris.name = "SnakeEyeIrisRing"
-        iris.matrix_world = Matrix((
-            (xa.x, ya.x, n.x, iris.location.x),
-            (xa.y, ya.y, n.y, iris.location.y),
-            (xa.z, ya.z, n.z, iris.location.z),
-            (0.0, 0.0, 0.0, 1.0)))
-        iris.data.materials.append(mats()["glow"])
-        eyes.append(iris)
+        socket = Vector((1.00, sign * 0.528, 0.2659))
+        lens_center = socket - n * 0.112
         bpy.ops.mesh.primitive_uv_sphere_add(
-            segments=24, ring_count=16, radius=0.034,
-            location=(1.00, sign * 0.558, 0.2659))
-        core = bpy.context.object
-        core.name = "SnakeEyeCore"
-        core.scale = (1.0, 0.40, 1.0)
-        bpy.ops.object.transform_apply(location=False, rotation=False, scale=True)
-        core.data.materials.append(mats()["eye_core"])
-        eyes.append(core)
+            segments=32, ring_count=20, radius=0.092, location=lens_center)
+        eye = bpy.context.object
+        eye.name = "SnakeEyeRecessedOpticalGlass"
+        eye.scale = (1.30, 0.66, 0.88)
+        eye.rotation_euler = (0.0, 0.0, sign * -0.18)
+        eye.data.materials.append(mats()["eye"]); eyes.append(eye)
+        bpy.ops.mesh.primitive_torus_add(
+            major_segments=32, minor_segments=10, major_radius=0.100,
+            minor_radius=0.027, location=socket)
+        bezel = bpy.context.object; bezel.name = "SnakeEyeBezelHousing"
+        bezel.matrix_world = Matrix(((xa.x,ya.x,n.x,bezel.location.x),
+            (xa.y,ya.y,n.y,bezel.location.y),(xa.z,ya.z,n.z,bezel.location.z),
+            (0.0,0.0,0.0,1.0)))
+        bezel.data.materials.append(mats()["dark"]); eyes.append(bezel)
+        optical = socket + n * 0.002
+        bpy.ops.mesh.primitive_torus_add(major_segments=32, minor_segments=8,
+            major_radius=0.073, minor_radius=0.006, location=optical)
+        retainer = bpy.context.object; retainer.name = "SnakeEyeOpticalRetainer"
+        retainer.matrix_world = Matrix(((xa.x,ya.x,n.x,retainer.location.x),
+            (xa.y,ya.y,n.y,retainer.location.y),(xa.z,ya.z,n.z,retainer.location.z),
+            (0.0,0.0,0.0,1.0)))
+        retainer.data.materials.append(mats()["glow"]); eyes.append(retainer)
+        # Six solid swept iris vanes overlap slightly, leaving a small hexagonal
+        # aperture. Every vane is actual closed mesh geometry, not a texture.
+        for i in range(6):
+            ang = 2.0 * math.pi * i / 6.0
+            span = math.radians(43.0)
+            pts = []
+            for radius, theta in ((0.024,ang-span/2),(0.064,ang+span/2),
+                                  (0.064,ang+span/2+0.20),(0.027,ang-span/2+0.20)):
+                pts.append(optical + (xa*math.cos(theta)+ya*math.sin(theta))*radius + n*0.008)
+            verts = [tuple(q - n*0.003) for q in pts] + [tuple(q + n*0.003) for q in pts]
+            faces = [(0,1,2,3),(7,6,5,4)]
+            for j in range(4): faces.append((j,(j+1)%4,(j+1)%4+4,j+4))
+            mesh = bpy.data.meshes.new("IrisVaneMesh"); mesh.from_pydata(verts,[],faces); mesh.update()
+            vane = bpy.data.objects.new("SnakeEyeIrisBlade_%02d" % (i+1),mesh)
+            bpy.context.collection.objects.link(vane); vane.data.materials.append(mats()["panel"] if i%2==0 else mats()["dark"])
+            eyes.append(vane)
+        # A recessed dark aperture is framed by a thin illuminated sensor ring.
+        pupil_pos = socket + n * 0.014
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=20, ring_count=12,
+            radius=0.023, location=pupil_pos)
+        pupil=bpy.context.object; pupil.name="SnakeEyeAperture"
+        pupil.scale=(1.0,0.35,1.0); pupil.data.materials.append(mats()["dark"]); eyes.append(pupil)
+        bpy.ops.mesh.primitive_torus_add(major_segments=24,minor_segments=6,
+            major_radius=0.015,minor_radius=0.003,location=socket+n*0.023)
+        sensor=bpy.context.object; sensor.name="SnakeEyeSensorRing"
+        sensor.matrix_world=Matrix(((xa.x,ya.x,n.x,sensor.location.x),
+            (xa.y,ya.y,n.y,sensor.location.y),(xa.z,ya.z,n.z,sensor.location.z),
+            (0.0,0.0,0.0,1.0)))
+        sensor.data.materials.append(mats()["glow"]); eyes.append(sensor)
+        bpy.ops.mesh.primitive_uv_sphere_add(segments=16,ring_count=10,
+            radius=0.008,location=socket+n*0.026)
+        core=bpy.context.object; core.name="SnakeEyeSensorCore"
+        core.scale=(1.0,0.4,1.0); core.data.materials.append(mats()["eye_core"]); eyes.append(core)
     # Nostrils: small dark dimples on the snout top.
     for sign in (-1.0, 1.0):
         bpy.ops.mesh.primitive_uv_sphere_add(

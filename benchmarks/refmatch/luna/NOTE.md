@@ -10,9 +10,9 @@ Built from the package's Exercise-2 `base/build_snake.py` and `assets/` model/te
 
 | GLB | Triangles | Contents |
 |---|---:|---|
-| `snake_head.glb` | 15,024 | Static head assembly with one physical eye/lens, jaw piece, crest fins and neck joint |
+| `snake_head.glb` | 15,520 | Static head assembly with one recessed geometric camera-lens, jaw piece, crest fins and neck joint |
 | `snake_segment.glb` | 1,556 | Reusable rigid body cell, centered pivot, armor panels and joint housing |
-| `snake_full.glb` | 58,516 | Complete assembled S-pose, including head, repeated body cells and tail |
+| `snake_full.glb` | 59,012 | Complete assembled S-pose, including head, repeated body cells and tail |
 
 Counts were computed from the exported GLB index accessors. Head and full-snake counts satisfy the brief's 10,000–18,000 and ≤60,000 triangle contracts. The segment is slightly above the dossier's indicative 800–1,500 segment range.
 
@@ -39,7 +39,8 @@ Godot 4.7.2 editor import pass completed for all three exact GLBs in a fresh cop
 
 ## Reference-match gaps (self-assessed)
 
-- The eye has a housing, lens and emissive core, but its internal optical/iris detailing is simpler than the reference.
+The eye is a physical camera-lens assembly: raised housing/bezel, recessed dark optical glass, six separate solid iris blades around an aperture, inner retaining ring, and luminous sensor ring/core. Its internal structure is modeled geometry, not a decal or emissive texture.
+
 - The repeating armor covers and vents are clean, uniform procedural geometry; the reference has more irregular, densely machined plates, deeper wear, and finer fasteners.
 - The joint bands read as narrow green emissive bands rather than the reference's broader, brighter teal-mint light cores.
 - The head/neck are elevated, but the overall pose is still a ground-hugging broad coil rather than the reference's taller raised S-curve. The tail is tapered and finned but less mechanically elaborate.
