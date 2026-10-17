@@ -1,0 +1,61 @@
+[
+	{
+		"angular_distance": 8.0,
+		"color_srgb": "fff1df",
+		"energy": 1.60000002384186,
+		"path": "StagingMoodRig/Key_SoftWarm",
+		"position_world": "(0.0, 8.0, 0.0)",
+		"rotation_degrees_world": "(-48.0, -32.0, 0.0)",
+		"shadows": true,
+		"specular": 1.0,
+		"type": "DirectionalLight3D"
+	},
+	{
+		"angular_distance": 0.0,
+		"color_srgb": "d3e3f4",
+		"energy": 0.379999995231628,
+		"path": "StagingMoodRig/Fill_Cool",
+		"position_world": "(0.0, 8.0, 0.0)",
+		"rotation_degrees_world": "(-24.0, 58.0, 0.0)",
+		"shadows": false,
+		"specular": 1.0,
+		"type": "DirectionalLight3D"
+	},
+	{
+		"angular_distance": 5.0,
+		"color_srgb": "d9efff",
+		"energy": 1.79999995231628,
+		"path": "StagingMoodRig/Rim_Silver",
+		"position_world": "(0.0, 8.0, 0.0)",
+		"rotation_degrees_world": "(-32.0, 155.0, 0.0)",
+		"shadows": true,
+		"specular": 1.0,
+		"type": "DirectionalLight3D"
+	},
+	{
+		"attenuation": 1.5,
+		"color_srgb": "7affbf",
+		"energy": 0.0350000001490116,
+		"path": "snake_head/CollarBounce_SnakeHeadRing_-1_0",
+		"position_world": "(1.800155, 0.523237, -0.7493)",
+		"range": 0.75,
+		"rotation_degrees_world": "(-0.0, -7.999998, 3.999998)",
+		"shadows": false,
+		"size": 0.159999996423721,
+		"specular": 0.25,
+		"type": "OmniLight3D"
+	},
+	{
+		"attenuation": 1.5,
+		"color_srgb": "7affbf",
+		"energy": 0.0350000001490116,
+		"path": "snake_head/CollarBounce_SnakeHeadRing_1_0",
+		"position_world": "(1.669332, 0.523237, 0.181552)",
+		"range": 0.75,
+		"rotation_degrees_world": "(-0.0, -7.999998, 3.999998)",
+		"shadows": false,
+		"size": 0.159999996423721,
+		"specular": 0.25,
+		"type": "OmniLight3D"
+	}
+]

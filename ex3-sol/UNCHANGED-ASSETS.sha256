@@ -1,0 +1,17 @@
+cfa522d78cfb23e5aff698610ab9231a9421bcaaa8dcae5ee94e5f39e1c7380f  ./assets/snake_full.glb
+14dc5f000c5a35237bde32f39eca375f36c65b093e05ce0d99c2e302c9ddb70e  ./assets/snake_head.glb
+59001b1ed8737d7bf9c97f2832abb90a5d2beecae7501866b46b251614ef5574  ./assets/snake_segment.glb
+239261f173d518147f805fc6d19f9b547bc82063e76a891d23f7ec23954a2bc1  ./assets/textures/snake_albedo.png
+29a8b28f0933d2483458203aa2b1f34ac117fe8cebf4b40cf0c431df2b673e9f  ./assets/textures/snake_glow.png
+0b675c6da2d795588d1b662bdb7884aa6a5d1a24486e051d872fd0dd2c12185c  ./assets/textures/snake_height.png
+685f2f038a434c69a50fe88107effd8e9a4b46cb532429eadbe225ba51608eec  ./assets/textures/snake_normal.png
+b37fe2e99de8ffa5acbbc74a54d47ef5f18ce0d6b1205f5aa9e06fc68016adb0  ./assets/textures/snake_orm.png
+c1ddbf9e1c7db893d3e1a36d2d2fe2ed0ccd93ce79067d3d735d9b23152cf652  ./game-demo/assets/tex-floor-n.png
+c7859cf73cab878f5c85029b66b8a1b4a6288c8811b175260c5f66107be41c84  ./game-demo/assets/tex-floor.png
+043f7da6e046071c5fc343e4a98249cb60ec24fa6a47c13abb09ce499a4cb1ec  ./game-demo/assets/tex-snake-n.png
+5c774f26ecc12ea5f6f21db1d2d15e3e5e32c501ea37da981818b1a680d7ed6a  ./game-demo/assets/tex-snake.png
+ef801a5dec013e8b4b457cdfac31eed026e2a0132edee4361ae03285f20bb61b  ./game-demo/assets/tex-wall-n.png
+d22c8aa532e82509fb030e3c398f7fece727dd9961b88ff993797c9626e6a700  ./game-demo/assets/tex-wall.png
+cfa522d78cfb23e5aff698610ab9231a9421bcaaa8dcae5ee94e5f39e1c7380f  ./game-demo/models/snake_full.glb
+14dc5f000c5a35237bde32f39eca375f36c65b093e05ce0d99c2e302c9ddb70e  ./game-demo/models/snake_head.glb
+59001b1ed8737d7bf9c97f2832abb90a5d2beecae7501866b46b251614ef5574  ./game-demo/models/snake_segment.glb
