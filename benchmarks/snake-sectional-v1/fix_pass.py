@@ -94,6 +94,9 @@ def join_local(base, additions):
     bpy.context.view_layer.update()
 
 # Retain the delivered skull, but flatten thick source fin tips under new thin fins.
+select(head)
+m=head.modifiers.new('Calm source reconstruction micro-relief','SMOOTH');m.factor=.6;m.iterations=5
+bpy.ops.object.modifier_apply(modifier=m.name)
 for v in head.data.vertices:
     if v.co.z > .44:v.co.z=.44
 bm=bmesh.new();bm.from_mesh(head.data)
@@ -131,6 +134,23 @@ for side in [-1,1]:
         hp.append(box('Cheek vent square rim',(x,side*.795,z),(sx,.035,sz),steel))
     for i in range(6):
         hp.append(box('Cheek grille vane',(-.50+i*.054,side*.801,-.105),(.014,.028,.17),steel))
+
+if final:
+    # A stepped, planar dorsal nose/forehead shell breaks the remaining rounded
+    # central source dome. These are cladding on the delivered skull, not a new head.
+    stations=[(-1.53,-.08,.10),(-1.32,.24,.14),(-1.08,.42,.18),
+              (-.79,.47,.22),(-.50,.47,.22)]
+    for j,(a,b) in enumerate(zip(stations,stations[1:])):
+        xa,za,wa=a;xb,zb,wb=b
+        # Small physical separation between the successive independent panels.
+        xa+=.006;xb-=.006
+        hp.append(plate('Dorsal muzzle plate',[(xa,-wa,za),(xb,-wb,zb),
+                         (xb,wb,zb),(xa,wa,za)],(0,0,1),.024,.006))
+        if j:
+            for sy in [-1,1]:
+                hp.append(plate('Forehead shoulder plate',[(xa,sy*wa,za),
+                    (xb,sy*wb,zb),(xb,sy*(wb+.12),zb-.085),
+                    (xa,sy*(wa+.12),za-.085)],(0,sy,1),.022,.005))
 
 # Three source-positioned thin crest fins with a sharp swept-back manufactured profile.
 for y in [-.39,0,.39]:
@@ -172,6 +192,9 @@ if final:
     for o in others:o.data=body.data
 
 # Keep the original tail section and attachment; sharpen and extend only its distal run.
+select(tail)
+m=tail.modifiers.new('Calm tail reconstruction micro-relief','SMOOTH');m.factor=.5;m.iterations=4
+bpy.ops.object.modifier_apply(modifier=m.name)
 reduce(tail,1900)
 if final:
     for v in tail.data.vertices:
@@ -181,8 +204,11 @@ if final:
         v.co.y*=1-.16*t;v.co.z=-.11+(v.co.z+.11)*(1-.16*t)
     tp=[]
     for sy in [-1,1]:
-        tp.append(plate('Tail blade fin',[(1.72,sy*.21,.12),(2.02,sy*.26,.48),
-                  (2.60,sy*.32,.29),(2.27,sy*.26,.09)],(0,sy,0),.024,.004))
+        # The source tail curls toward negative local Y; its dorsal blades must
+        # sit on that distal surface, not on the straight attachment axis.
+        fy=-.59+sy*.085
+        tp.append(plate('Tail blade fin',[(2.10,fy,-.12),(2.36,fy,.27),
+                  (2.87,fy,.03),(2.66,fy,-.14)],(0,sy,0),.024,.004))
     join_local(tail,tp)
 
 # Tighten existing twelve sector inserts, preserving the original triangle count.
@@ -190,8 +216,8 @@ if final:
 jointmat=bpy.data.materials['Teal joint emitters'].copy();jointmat.name='Recessed saturated teal joint emission'
 bs=jointmat.node_tree.nodes.get('Principled BSDF')
 bs.inputs['Base Color'].default_value=(.003,.30,.235,1)
-bs.inputs['Emission Color'].default_value=(.005,.80,.60,1)
-bs.inputs['Emission Strength'].default_value=5
+bs.inputs['Emission Color'].default_value=(.001,.48,.25,1)
+bs.inputs['Emission Strength'].default_value=6
 housemat=mat('Dark recessed joint housing',(.008,.014,.017),.86,.37)
 seen=set()
 for o in bpy.data.objects:
@@ -207,6 +233,36 @@ for o in bpy.data.objects:
         if o.data not in seen:
             seen.add(o.data);o.data.materials.clear();o.data.materials.append(housemat)
 
+if final:
+    # Twelve two-chord sectors follow the housing, instead of cutting through it.
+    # A six-point recessed housing profile trades 48 housing tris for 96 emitter
+    # tris: net +48/joint, still 1,588 tris for a section and its joint.
+    profile=[(-.0475,.425),(-.0475,.540),(-.026,.510),
+             (.026,.510),(.0475,.540),(.0475,.425)]
+    vs=[(x,r*cos(i*2*pi/12),r*sin(i*2*pi/12)) for x,r in profile for i in range(12)]
+    fs=[]
+    for j in range(6):
+        for i in range(12):fs.append((j*12+i,j*12+(i+1)%12,((j+1)%6)*12+(i+1)%12,((j+1)%6)*12+i))
+    ho=mesh('Recessed housing prototype',vs,fs,housemat)
+    vs=[];fs=[]
+    for sector in range(12):
+        offset=len(vs)
+        start=sector*2*pi/12+.007;end=(sector+1)*2*pi/12-.007
+        for x in [-.022,.022]:
+            for r in [.516,.531]:
+                for i in range(3):
+                    a=start+(end-start)*i/2;vs.append((x,r*cos(a),r*sin(a)))
+        for i in range(2):
+            for a,b,c,d in [(i,i+1,3+i+1,3+i),(6+i,9+i,9+i+1,6+i+1),
+                            (i,6+i,6+i+1,i+1),(3+i,3+i+1,9+i+1,9+i)]:
+                fs.append(tuple(offset+v for v in (a,b,c,d)))
+        fs.extend([tuple(offset+i for i in q) for q in [(0,3,9,6),(2,8,11,5)]])
+    em=mesh('Continuous recessed emitter prototype',vs,fs,jointmat)
+    for o in list(bpy.data.objects):
+        if o.name.endswith('_Housing'):o.data=ho.data
+        elif 'GlowBars' in o.name:o.data=em.data
+    bpy.data.objects.remove(ho,do_unlink=True);bpy.data.objects.remove(em,do_unlink=True)
+
 def atlas(o,kind,size):
     """Rasterize section-local surface coordinates to UV0, then manufacture PBR maps.
 
@@ -221,7 +277,7 @@ def atlas(o,kind,size):
     armor_indices={i for i,m in enumerate(oldm) if m and ('Gunmetal' in m.name)}
     if kind=='segment2':armor_indices.add(0)
     bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT')
-    bpy.ops.uv.smart_project(angle_limit=.75,island_margin=.008)
+    bpy.ops.uv.smart_project(angle_limit=1.2,island_margin=.0008)
     bpy.ops.object.mode_set(mode='OBJECT')
     uv=o.data.uv_layers.active.data
     pos=np.zeros((size,size,3),np.float32);normal=np.zeros_like(pos);mask=np.zeros((size,size),bool)
@@ -248,8 +304,9 @@ def atlas(o,kind,size):
         u+=.055*(np.mod(v+.15,.50)>.31)
         su=.45;sv=.50
     elif kind=='head':
-        top=np.abs(normal[:,:,2])>np.abs(normal[:,:,1])
-        u=x+1.60;v=np.where(top,y+.9,z+.65)
+        # Stable side projection: per-triangle projection switching produced
+        # broken highlights on oblique source reconstruction in the WIP.
+        u=x+1.60;v=z+.65
         su=.34;sv=.25
         u+=.055*(np.mod(v,sv)>.15)
     else:
@@ -265,28 +322,34 @@ def atlas(o,kind,size):
     value=.25+.15*h+.026*macro+.008*fine
     seam=edge<.0048;bevel=(edge>=.0048)&(edge<.011)
     value=np.where(seam,.022,value)
-    value=np.where(bevel,.49+.08*macro,value)
+    value=np.where(bevel,.24+.22*np.clip((macro-.35)*2,0,1),value)
     height=np.where(seam,-.0014,np.where(bevel,.00035,0.))
     # Recessed hex-headed fasteners at panel corners, with a narrow machined rim.
     du=np.minimum(abs(fu-.030),abs(fu-(su-.030)))
     dv=np.minimum(abs(fv-.030),abs(fv-(sv-.030)))
     rr=np.hypot(du,dv)
     rim=(rr>.009)&(rr<.014);bolt=rr<=.009
-    value=np.where(rim,.55,np.where(bolt,.075,value))
+    value=np.where(rim,.12,np.where(bolt,.37,value))
     slot=bolt&(dv<.0018);value=np.where(slot,.018,value)
-    height=np.where(rim,.001,height);height=np.where(bolt,-.0006,height)
+    height=np.where(rim,-.0006,height);height=np.where(bolt,.00025,height)
     # Regular recessed diamond-mesh service panels, not noisy all-over speckling.
     vent=(fu>su*.41)&(fu<su*.85)&(fv>sv*.34)&(fv<sv*.67)
+    if kind=='head':vent &= (z<.42)&(x>-.75)
     ve=np.minimum.reduce([fu-su*.41,su*.85-fu,fv-sv*.34,sv*.67-fv])
     wire=(abs(np.sin((fu+fv)*420))<.25)|(abs(np.sin((fu-fv)*420))<.25)
     value=np.where(vent,np.where(wire,.26,.014),value)
     value=np.where(vent&(ve<.008),.45,value)
     height=np.where(vent,np.where(wire,-.0003,-.0015),height)
     # Directional scratches with sparse broken lengths and a dark trailing abrasion.
-    scuff=(abs(np.sin((u+v*.16)*950))>.9983)&(np.sin(v*137+u*27)>.55)&(macro>.39)&(~seam)&(~vent)
+    scuff=(abs(np.sin((u+v*.16)*370))>.9990)&(np.sin(v*47+u*11)>.25)&(macro>.35)&(~seam)&(~vent)
     value=np.where(scuff,value+.13,value)
+    height=np.where(scuff,height-.00007,height)
     color=np.ones((size,size,4),np.float32)
     color[:,:,0]=value*(.97+.035*h);color[:,:,1]=value; color[:,:,2]=value*(1.035-.055*h)
+    # Smooth restrained oxidation, not hard-edged camouflage patches.
+    stain=(.5+.5*np.sin(x*38+y*47)*np.sin(z*23-x*6))**6*.5
+    stain*=~(seam|bevel|vent)
+    color[:,:,:3]*=1-stain[:,:,None]*np.array([.10,.22,.35],np.float32)
     orm=np.ones_like(color);orm[:,:,0]=np.where(seam,.48,np.where(vent,.61,1))
     orm[:,:,1]=np.where(seam,.65,np.where(bevel,.25,.32+.15*(1-h)+macro*.045))
     orm[:,:,2]=np.where(seam,.50,np.where(vent,.72,.88))
@@ -294,7 +357,7 @@ def atlas(o,kind,size):
     dy,dx=np.gradient(height.astype(np.float32))
     safe=mask.copy()
     for shift,axis in [(1,0),(-1,0),(1,1),(-1,1)]:safe &= np.roll(mask,shift,axis=axis)
-    strength=size/3.5
+    strength=size/10.0
     ns=np.stack([-dx*strength,-dy*strength,np.ones_like(dx)],axis=-1)
     ns/=np.maximum(np.linalg.norm(ns,axis=-1,keepdims=True),1e-6)
     ns[~safe]=(0,0,1)
@@ -331,7 +394,7 @@ def atlas(o,kind,size):
     for i in armor_indices:o.data.materials[i]=m
     print('ATLAS_READY',kind,tris(o),flush=True)
 
-atlas(head,'head',2048)
+atlas(head,'head',3072)
 atlas(body,'segment2',1024)
 atlas(tail,'tail',1024)
 
@@ -386,6 +449,7 @@ source=(Path(__file__).parent/'assemble.py').read_text()
 exec(source[source.index('def shot('):source.index('# Exports:')].replace("O+'/captures/'", "str(O)+'/captures/'"))
 prefix='' if final else 'fix1-wip-'
 bpy.ops.file.pack_all()
+bpy.context.preferences.filepaths.save_version=0
 bpy.ops.wm.save_as_mainfile(filepath=str(O/'snake-sectional.blend'))
 shot(prefix+'full-body',(-7,-12,7),(.5,0,1.9),11)
 shot(prefix+'head-closeup',(-4,-7,5.2),(-2.2,.25,4),3.6,only=[head]+eyes)

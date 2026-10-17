@@ -1,0 +1,26 @@
+[
+  {
+    "file": "snake-sectional.glb",
+    "triangles": 59781,
+    "meshes": 21,
+    "mesh_nodes": 104,
+    "errors": [],
+    "rigid_segments": 28,
+    "body_unique_meshes": 1,
+    "joint_insert_nodes": 29,
+    "segment_with_joint": 1588,
+    "tail_with_joint": 2372
+  },
+  {
+    "file": "head.glb",
+    "triangles": 12945,
+    "meshes": 17,
+    "mesh_nodes": 17,
+    "errors": []
+  }
+]
+FIX_VALIDATION_PASS lens_nodes= 16  protected_wip= 2
+import.log: PASS
+selftest.log: PASS
+capture.log: PASS
+FIX_GATE_EVIDENCE_PASS: fresh import; 120/120 poses; 59781 triangles; native capture= True

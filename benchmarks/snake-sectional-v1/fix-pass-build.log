@@ -1,0 +1,225 @@
+Warning: File written by newer Blender binary (405.92), expect loss of data!
+ATLAS_START head
+ATLAS_READY head 9841
+ATLAS_START segment2
+ATLAS_READY segment2 1204
+ATLAS_START tail
+ATLAS_READY tail 1988
+FIX_COUNTS {'objects': {'Aperture blade': 2, 'Aperture blade.001': 2, 'Aperture blade.002': 2, 'Aperture blade.003': 2, 'Aperture blade.004': 2, 'Aperture blade.005': 2, 'Aperture blade.006': 2, 'Aperture blade.007': 2, 'Curved optical cover': 704, 'Head': 9841, 'Joint_00_GlowBars': 240, 'Joint_00_Housing': 144, 'Joint_01_GlowBars': 240, 'Joint_01_Housing': 144, 'Joint_02_GlowBars': 240, 'Joint_02_Housing': 144, 'Joint_03_GlowBars': 240, 'Joint_03_Housing': 144, 'Joint_04_GlowBars': 240, 'Joint_04_Housing': 144, 'Joint_05_GlowBars': 240, 'Joint_05_Housing': 144, 'Joint_06_GlowBars': 240, 'Joint_06_Housing': 144, 'Joint_07_GlowBars': 240, 'Joint_07_Housing': 144, 'Joint_08_GlowBars': 240, 'Joint_08_Housing': 144, 'Joint_09_GlowBars': 240, 'Joint_09_Housing': 144, 'Joint_10_GlowBars': 240, 'Joint_10_Housing': 144, 'Joint_11_GlowBars': 240, 'Joint_11_Housing': 144, 'Joint_12_GlowBars': 240, 'Joint_12_Housing': 144, 'Joint_13_GlowBars': 240, 'Joint_13_Housing': 144, 'Joint_14_GlowBars': 240, 'Joint_14_Housing': 144, 'Joint_15_GlowBars': 240, 'Joint_15_Housing': 144, 'Joint_16_GlowBars': 240, 'Joint_16_Housing': 144, 'Joint_17_GlowBars': 240, 'Joint_17_Housing': 144, 'Joint_18_GlowBars': 240, 'Joint_18_Housing': 144, 'Joint_19_GlowBars': 240, 'Joint_19_Housing': 144, 'Joint_20_GlowBars': 240, 'Joint_20_Housing': 144, 'Joint_21_GlowBars': 240, 'Joint_21_Housing': 144, 'Joint_22_GlowBars': 240, 'Joint_22_Housing': 144, 'Joint_23_GlowBars': 240, 'Joint_23_Housing': 144, 'Joint_24_GlowBars': 240, 'Joint_24_Housing': 144, 'Joint_25_GlowBars': 240, 'Joint_25_Housing': 144, 'Joint_26_GlowBars': 240, 'Joint_26_Housing': 144, 'Joint_27_GlowBars': 240, 'Joint_27_Housing': 144, 'Lens emissive core': 336, 'Lens_-1_ring_0': 512, 'Lens_-1_ring_1': 512, 'Lens_-1_ring_2': 256, 'Lens_-1_ring_3': 256, 'Lens_-1_ring_4': 256, 'Lens_-1_ring_5': 256, 'Segment_00': 1204, 'Segment_01': 1204, 'Segment_02': 1204, 'Segment_03': 1204, 'Segment_04': 1204, 'Segment_05': 1204, 'Segment_06': 1204, 'Segment_07': 1204, 'Segment_08': 1204, 'Segment_09': 1204, 'Segment_10': 1204, 'Segment_11': 1204, 'Segment_12': 1204, 'Segment_13': 1204, 'Segment_14': 1204, 'Segment_15': 1204, 'Segment_16': 1204, 'Segment_17': 1204, 'Segment_18': 1204, 'Segment_19': 1204, 'Segment_20': 1204, 'Segment_21': 1204, 'Segment_22': 1204, 'Segment_23': 1204, 'Segment_24': 1204, 'Segment_25': 1204, 'Segment_26': 1204, 'Segment_27': 1204, 'Tail': 1988, 'TailJoint_GlowBars': 240, 'TailJoint_Housing': 144}, 'total': 59781, 'head': 12945, 'segment': 1204, 'joint': 384, 'tail': 1988, 'fix_stage': 'final', 'lens_geometry_unchanged': True}
+INFO Draco mesh compression is available, use library at /tmp/assembly-fix-tools/blender-4.5.3-linux-x64/4.5/scripts/addons_core/io_scene_gltf2/libextern_draco.so
+16:36:32 | INFO: Starting glTF 2.0 export
+16:36:32 | INFO: Extracting primitive: Mesh_0.001
+16:36:32 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:36:32 | INFO: Primitives created: 3
+16:36:32 | INFO: Extracting primitive: Aperture blade
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.001
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.002
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.003
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.004
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.005
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.006
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.007
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Sphere
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Sphere.001
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_0
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_1
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_2
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_3
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_4
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_5
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Hero segment shared mesh
+16:36:32 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:36:32 | INFO: Primitives created: 5
+16:36:32 | INFO: Extracting primitive: Continuous recessed emitter prototype
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Recessed housing prototype
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Mesh_0.005
+16:36:32 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:36:32 | INFO: Primitives created: 2
+16:36:32 | INFO: Finished glTF 2.0 export in 0.1681220531463623 s
+
+16:36:32 | INFO: Starting glTF 2.0 export
+16:36:32 | INFO: Extracting primitive: Mesh_0.001
+16:36:32 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+16:36:32 | INFO: Primitives created: 3
+16:36:32 | INFO: Extracting primitive: Aperture blade
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.001
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.002
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.003
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.004
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.005
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.006
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Aperture blade.007
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Sphere
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Sphere.001
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_0
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_1
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_2
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_3
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_4
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Extracting primitive: Lens_-1_ring_5
+16:36:32 | INFO: Primitives created: 1
+16:36:32 | INFO: Finished glTF 2.0 export in 0.0968172550201416 s
+Blender 4.5.3 LTS (hash 67807e1800cc built 2025-09-09 01:38:15)
+Read blend: "/tmp/assembly-fix-baseline/snake-sectional.blend"
+Fra:1 Mem:209.36M (Peak 209.36M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Head
+Fra:1 Mem:209.36M (Peak 209.36M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Tail
+Fra:1 Mem:209.36M (Peak 209.36M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Lens_-1_ring_2
+Fra:1 Mem:209.36M (Peak 209.36M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Lens_-1_ring_3
+Fra:1 Mem:209.36M (Peak 209.36M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Lens_-1_ring_5
+Fra:1 Mem:209.38M (Peak 209.38M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.001
+Fra:1 Mem:209.75M (Peak 209.75M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.003
+Fra:1 Mem:209.85M (Peak 209.85M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.004
+Fra:1 Mem:209.91M (Peak 209.91M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.005
+Fra:1 Mem:209.96M (Peak 209.96M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.006
+Fra:1 Mem:209.99M (Peak 209.99M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.007
+Fra:1 Mem:209.99M (Peak 209.99M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Curved optical cover
+Fra:1 Mem:210.05M (Peak 210.05M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Lens emissive core
+Fra:1 Mem:210.16M (Peak 210.16M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Joint_00_GlowBars
+Fra:1 Mem:210.44M (Peak 210.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Large neutral key
+Fra:1 Mem:210.44M (Peak 210.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Rim
+Fra:1 Mem:210.44M (Peak 210.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
+Fra:1 Mem:209.72M (Peak 210.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading head_basecolor
+Fra:1 Mem:209.72M (Peak 210.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading segment2_normal
+Fra:1 Mem:209.72M (Peak 210.44M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading segment2_basecolor
+Fra:1 Mem:339.14M (Peak 341.72M) | Time:00:00.06 | Mem:132.00M, Peak:132.00M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:339.14M (Peak 341.72M) | Time:00:00.06 | Mem:132.00M, Peak:132.00M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:339.14M (Peak 341.72M) | Time:00:00.06 | Mem:132.00M, Peak:132.00M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:339.14M (Peak 341.72M) | Time:00:00.06 | Mem:132.00M, Peak:132.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:339.23M (Peak 341.72M) | Time:00:00.06 | Mem:132.01M, Peak:132.01M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:339.23M (Peak 341.72M) | Time:00:00.06 | Mem:132.01M, Peak:132.01M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:339.23M (Peak 341.72M) | Time:00:00.06 | Mem:132.01M, Peak:132.01M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:339.23M (Peak 341.72M) | Time:00:00.06 | Mem:132.01M, Peak:132.01M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:339.23M (Peak 341.72M) | Time:00:00.06 | Mem:132.01M, Peak:132.01M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:339.23M (Peak 341.72M) | Time:00:00.06 | Mem:132.01M, Peak:132.01M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:339.25M (Peak 341.72M) | Time:00:00.06 | Mem:132.03M, Peak:132.03M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:339.25M (Peak 341.72M) | Time:00:00.06 | Mem:132.03M, Peak:132.03M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:339.25M (Peak 341.72M) | Time:00:00.06 | Mem:132.03M, Peak:132.03M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:340.00M (Peak 341.72M) | Time:00:00.07 | Mem:132.03M, Peak:132.03M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:340.00M (Peak 341.72M) | Time:00:00.07 | Mem:132.03M, Peak:132.03M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:132.04M, Peak:132.04M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:133.02M, Peak:133.02M | Scene, ViewLayer | Updating Geometry BVH Continuous recessed emitter prototype 4/3 | Building BVH
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:133.02M, Peak:133.02M | Scene, ViewLayer | Updating Geometry BVH Hero segment shared mesh 2/3 | Building BVH
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:133.02M, Peak:133.02M | Scene, ViewLayer | Updating Geometry BVH Recessed housing prototype 3/3 | Building BVH
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:133.07M, Peak:133.07M | Scene, ViewLayer | Updating Geometry BVH Recessed housing prototype 3/3 | Building BVH 0%
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:133.14M, Peak:133.17M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.07 | Mem:133.14M, Peak:133.17M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.08 | Mem:134.17M, Peak:134.62M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:340.99M (Peak 341.72M) | Time:00:00.08 | Mem:134.17M, Peak:134.62M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.17M, Peak:134.62M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.60M, Peak:134.62M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.60M, Peak:134.62M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.60M, Peak:134.62M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.60M, Peak:134.62M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.60M, Peak:134.62M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.68M, Peak:134.68M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:341.42M (Peak 341.72M) | Time:00:00.08 | Mem:134.68M, Peak:134.68M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.89M, Peak:134.89M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.89M, Peak:134.89M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.81M, Peak:134.89M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.89M, Peak:134.89M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.89M, Peak:134.89M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.89M, Peak:134.89M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:341.63M (Peak 341.72M) | Time:00:00.08 | Mem:134.89M, Peak:134.89M | Scene, ViewLayer | Sample 0/32
+Fra:1 Mem:492.09M (Peak 492.09M) | Time:00:00.65 | Remaining:00:17.57 | Mem:285.20M, Peak:285.20M | Scene, ViewLayer | Sample 1/32
+Fra:1 Mem:555.37M (Peak 650.30M) | Time:00:27.87 | Mem:285.20M, Peak:285.20M | Scene, ViewLayer | Sample 32/32
+Fra:1 Mem:555.37M (Peak 650.30M) | Time:00:27.87 | Mem:285.20M, Peak:285.20M | Scene, ViewLayer | Finished
+Saved: '/home/openclaw/.openclaw/workspace-studio-builder-2/moorefolio/benchmarks/snake-sectional-v1/captures/full-body.png'
+Time: 00:28.23 (Saving: 00:00.35)
+
+Fra:1 Mem:207.61M (Peak 207.61M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Head
+Fra:1 Mem:207.61M (Peak 207.61M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Lens_-1_ring_3
+Fra:1 Mem:207.61M (Peak 207.61M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Lens_-1_ring_5
+Fra:1 Mem:207.61M (Peak 207.61M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.001
+Fra:1 Mem:207.88M (Peak 207.89M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.003
+Fra:1 Mem:208.03M (Peak 208.03M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.004
+Fra:1 Mem:208.04M (Peak 208.04M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Aperture blade.006
+Fra:1 Mem:208.04M (Peak 208.04M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Curved optical cover
+Fra:1 Mem:208.04M (Peak 208.04M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Rim
+Fra:1 Mem:208.29M (Peak 208.29M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Large neutral key
+Fra:1 Mem:208.29M (Peak 208.29M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Synchronizing object | Soft fill
+Fra:1 Mem:208.34M (Peak 208.34M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Initializing
+Fra:1 Mem:207.98M (Peak 208.34M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading head_ORM
+Fra:1 Mem:207.98M (Peak 208.34M) | Time:00:00.00 | Mem:0.00M, Peak:0.00M | Scene, ViewLayer | Updating Images | Loading head_basecolor
+Fra:1 Mem:314.92M (Peak 315.98M) | Time:00:00.04 | Mem:108.00M, Peak:108.00M | Scene, ViewLayer | Waiting for render to start
+Fra:1 Mem:314.92M (Peak 315.98M) | Time:00:00.04 | Mem:108.00M, Peak:108.00M | Scene, ViewLayer | Updating Scene
+Fra:1 Mem:314.92M (Peak 315.98M) | Time:00:00.04 | Mem:108.00M, Peak:108.00M | Scene, ViewLayer | Updating Shaders
+Fra:1 Mem:314.92M (Peak 315.98M) | Time:00:00.04 | Mem:108.00M, Peak:108.00M | Scene, ViewLayer | Loading render kernels (may take a few minutes the first time)
+Fra:1 Mem:315.01M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Procedurals
+Fra:1 Mem:315.01M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Background
+Fra:1 Mem:315.01M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Camera
+Fra:1 Mem:315.01M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Meshes Flags
+Fra:1 Mem:315.01M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Objects
+Fra:1 Mem:315.01M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Objects | Copying Transformations to device
+Fra:1 Mem:315.02M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Particle Systems
+Fra:1 Mem:315.02M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Particle Systems | Copying Particles to device
+Fra:1 Mem:315.02M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Meshes
+Fra:1 Mem:315.58M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Objects | Applying Static Transformations
+Fra:1 Mem:315.58M (Peak 315.98M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Mesh | Computing attributes
+Fra:1 Mem:316.33M (Peak 316.33M) | Time:00:00.05 | Mem:108.01M, Peak:108.01M | Scene, ViewLayer | Updating Mesh | Copying Attributes to device
+Fra:1 Mem:316.33M (Peak 316.33M) | Time:00:00.05 | Mem:108.76M, Peak:108.76M | Scene, ViewLayer | Updating Scene BVH | Building
+Fra:1 Mem:316.33M (Peak 316.33M) | Time:00:00.05 | Mem:108.76M, Peak:108.76M | Scene, ViewLayer | Updating Scene BVH | Building BVH
+Fra:1 Mem:316.33M (Peak 316.33M) | Time:00:00.05 | Mem:109.16M, Peak:109.16M | Scene, ViewLayer | Updating Scene BVH | Building BVH 0%
+Fra:1 Mem:316.33M (Peak 316.33M) | Time:00:00.06 | Mem:109.63M, Peak:110.02M | Scene, ViewLayer | Updating Scene BVH | Copying BVH to device
+Fra:1 Mem:316.33M (Peak 316.33M) | Time:00:00.06 | Mem:109.63M, Peak:110.02M | Scene, ViewLayer | Updating Mesh | Computing normals
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:109.63M, Peak:110.02M | Scene, ViewLayer | Updating Mesh | Copying Mesh to device
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:109.97M, Peak:110.02M | Scene, ViewLayer | Updating Objects Flags
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:109.97M, Peak:110.02M | Scene, ViewLayer | Updating Primitive Offsets
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:109.97M, Peak:110.02M | Scene, ViewLayer | Updating Images
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:109.97M, Peak:110.02M | Scene, ViewLayer | Updating Camera Volume
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:109.97M, Peak:110.02M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:110.05M, Peak:110.05M | Scene, ViewLayer | Updating Lights
+Fra:1 Mem:316.67M (Peak 316.67M) | Time:00:00.06 | Mem:110.05M, Peak:110.05M | Scene, ViewLayer | Updating Lights | Computing tree
+Fra:1 Mem:316.83M (Peak 316.83M) | Time:00:00.06 | Mem:110.21M, Peak:110.21M | Scene, ViewLayer | Updating Integrator
+Fra:1 Mem:316.83M (Peak 316.83M) | Time:00:00.06 | Mem:110.21M, Peak:110.21M | Scene, ViewLayer | Updating Film
+Fra:1 Mem:316.83M (Peak 316.83M) | Time:00:00.06 | Mem:110.13M, Peak:110.21M | Scene, ViewLayer | Updating Lookup Tables
+Fra:1 Mem:316.83M (Peak 316.83M) | Time:00:00.06 | Mem:110.22M, Peak:110.22M | Scene, ViewLayer | Updating Baking
+Fra:1 Mem:316.83M (Peak 316.83M) | Time:00:00.06 | Mem:110.22M, Peak:110.22M | Scene, ViewLayer | Updating Device | Writing constant memory
+Fra:1 Mem:316.84M (Peak 316.84M) | Time:00:00.06 | Mem:110.22M, Peak:110.22M | Scene, ViewLayer | Loading denoising kernels (may take a few minutes the first time)
+Fra:1 Mem:316.84M (Peak 316.84M) | Time:00:00.06 | Mem:110.22M, Peak:110.22M | Scene, ViewLayer | Sample 0/32
+Fra:1 Mem:467.29M (Peak 467.29M) | Time:00:00.57 | Remaining:00:15.58 | Mem:260.52M, Peak:260.52M | Scene, ViewLayer | Sample 1/32
+Fra:1 Mem:530.57M (Peak 625.50M) | Time:00:25.38 | Mem:260.52M, Peak:260.52M | Scene, ViewLayer | Sample 32/32
+Fra:1 Mem:530.57M (Peak 625.50M) | Time:00:25.38 | Mem:260.52M, Peak:260.52M | Scene, ViewLayer | Finished
+Saved: '/home/openclaw/.openclaw/workspace-studio-builder-2/moorefolio/benchmarks/snake-sectional-v1/captures/head-closeup.png'
+Time: 00:25.67 (Saving: 00:00.27)
+
+
+Info: No new files have been packed
+Info: Saved as "snake-sectional.blend"
+Info: No new files have been packed
+Info: Saved as "snake-sectional.blend"
+FIX_PASS_RENDERABLE
+
+Blender quit

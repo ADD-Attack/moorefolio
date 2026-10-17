@@ -1,3 +1,22 @@
+# Fix-pass implementation handoff — op-assembly-sectional-v1-fix1-20261017
+
+Ready for independent panel/producer review; **NOT an acceptance verdict**. Stopped at this handoff; no next order started.
+
+- Built on authorized original `45cb5d8`, same branch `assembly-sectional-v1-20261017`. Required first-renderable WIP checkpoint **833805d** was pushed, then work continued without waiting.
+- Changed: section-local manufactured PBR maps; angular skull cladding and thin sharp crest fins; real box cheek vents; recessed nearly continuous teal bands; layered module shoulders and hydraulic rods; longer/thinner plated tail and attached blade fins. Detailed changes and remaining visual gaps are in NOTE.md.
+- Exact final GLB triangles: **head 12,945**, **segment + joint 1,588**, **tail + joint 2,372**, **total 59,781**. All caps pass, with 219 total triangles spare.
+- **PASS:** GLB tangents/ORM/+Y-up/no-Draco/no-skins; 28 rigid nodes reference one shared module mesh; 29 joint inserts.
+- **PASS:** original single modeled lens unchanged across all 16 child nodes, transforms, topology, vertex attributes and materials (maximum attribute error 0). No second lens.
+- **PASS:** original `captures/wip-*.png` byte-for-byte unchanged. `fix-validation.json` records protected hashes and lens comparisons.
+- **PASS:** fresh-cache Godot **4.7.2** import and **120/120 Path3D poses, zero failures, 59,781 triangles**; both GLBs instantiate; original rest-pose and PBR/tangent checks pass.
+- **PASS:** final Blender and native Godot full-body/head images inspected at **1920x1080**, original neutral staging/fixtures retained. Native Godot backend is Compatibility/Mesa llvmpipe; Blender uses CPU Cycles. Root/Godot GLB copies are byte-identical.
+- **PASS:** saved `.blend` reopened with one complete lens, master curve, 28 shared-mesh segments and all nine used material images packed.
+- No current implementation blocker. Gate verdict remains with the panel/producer. See `SHA256SUMS`, `fix-validation.json`, `glb-validation.json`, `blend-audit.json`, and `godot/selftest-result.json` for evidence.
+
+---
+
+# Historical checkpoint/status records below
+
 # Fix-pass WIP checkpoint — op-assembly-sectional-v1-fix1-20261017
 
 Built directly on `45cb5d8`, same branch. First renderable head/material revision; NOT a quality-gate verdict.

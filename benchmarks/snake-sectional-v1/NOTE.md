@@ -1,3 +1,74 @@
+# Fix-pass handoff — sectional snake v1
+
+Order: **op-assembly-sectional-v1-fix1-20261017**. Branch: `assembly-sectional-v1-20261017`.
+Built directly on **45cb5d8**; no source rebuild or other entrant consulted.
+Implementation/evidence handoff only: **independent panel/producer acceptance is pending**.
+
+## Fix-pass changes
+
+- **Materials first:** replaced the noisy source-projected normal treatment with clean section-local manufacturing atlases. Head maps are 3072²; module and tail maps are 1024². Separate basecolor, tangent normal and packed ORM retain per-plate value/roughness/metallic variation, stepped dark seams, restrained broken edge wear, directional scuffs, recessed slotted screw heads and diamond-mesh service panels. Smooth, restrained oxidation replaces uniform gunmetal. AO is only in ORM R, not multiplied into basecolor; ORM G is roughness and B metallic. The new AO channel represents procedural recess detail, not a newly ray-baked geometric AO pass. Standalone AO files match ORM R.
+- **Head:** retained and gently smoothed the delivered skull, reduced excess reconstruction density, flattened its thick source fin tips beneath three thin swept plate fins, and added actual closed angular jaw/muzzle/temple/brow shells plus stepped planar forehead cladding. Added two box-shaped cheek vent frames and real parallel vanes. No extra eye or lens was added.
+- **Lens preserved exactly:** all **16** delivered lens child meshes, their transforms, topology, POSITION/NORMAL/TANGENT/UV attributes and material definitions compare unchanged against `45cb5d8` (maximum attribute error **0**). The single complete lens remains seated in the delivered location. `fix-validation.json` records the comparison.
+- **Joints:** replaced the flat intersecting chord/housing layout with a recessed six-point housing profile and twelve separate two-chord emitter sectors. Housing triangles fall from 192 to 144; emitter triangles rise from 144 to 240; total is 384 per joint. Narrow ~0.8° sector gaps and the corrected radial clearance make the sectors read as a continuous teal band inside dark lips. Saturated joint emission has its own material, so the lens material remains unchanged.
+- **Module:** calmed only the existing source-sampled shell's radial relief into a faceted barrel. Added four economical layered shoulder strips and a pair of eight-sided hydraulic rods; retained the existing modeled hex fasteners and side grille. All 28 rigid objects still reference **one shared mesh**, including these details.
+- **Tail:** retained the original tail section/attachment, smoothed excess reconstruction micro-relief, reallocated its triangles, and extended the distal run by up to **0.62 local units**, with a 16% distal width/height reduction. Two thin angular fin plates are seated on the source tail's negative-Y curl, not left on its straight attachment axis. Its new atlas uses smaller panel spacing for a finely plated taper.
+
+## Exact final fix-pass triangle counts
+
+These are exported GLB counts, including every repeated node, not unique-mesh counts.
+
+| Part | Original v1 | Fix pass | Limit |
+| --- | ---: | ---: | ---: |
+| Complete standalone head, including unchanged lens | 15,104 | **12,945** | 10,000–18,000 |
+| Shared hero segment | 1,132 | **1,204** | — |
+| One housing + emitter insert | 336 | **384** | — |
+| Segment + joint | 1,468 | **1,588** | ≤1,600 |
+| Tail geometry | 2,400 | **1,988** | — |
+| Tail + terminal joint | 2,736 | **2,372** | ≤3,000 |
+| Assembly: head + 28×(segment+joint) + tail+joint | 58,944 | **59,781** | 30,000–60,000 |
+
+Net change: **+837** assembled triangles; **219** remain below the total cap.
+28 rigid shared-mesh section nodes, 29 independent joint inserts, no armature/skins, no merged assembly, Principled-only materials, embedded images, UV0/tangents, +Y-up glTF, and Draco OFF are retained.
+
+## Checkpoint and final evidence
+
+- Required renderable WIP checkpoint **833805d** was pushed before final polishing. `captures/fix1-wip-full-body.png` and `captures/fix1-wip-head-closeup.png` show that state, including its then-unresolved head texel-allocation artifacts. Work continued without waiting.
+- Original `captures/wip-full-body.png` and `captures/wip-head.png` remain **byte-for-byte unchanged** against `45cb5d8`; their hashes are recorded by the independent regression.
+- Final `captures/full-body.png` and `captures/head-closeup.png` are newly rendered **1920×1080** Cycles images. They reuse the original scene's gray world, exact three neutral lights, original camera directions and projected-vertex fit with 12% margin. Framing refits the changed silhouette; no background/environment/floor/HUD or image editing is used.
+- Final native Godot review captures are `captures/godot-full-body.png` and `captures/godot-head-closeup.png`, also **1920×1080**, using the unchanged neutral `godot/capture.gd` fixture. Linux Xvfb/Compatibility **Mesa llvmpipe** supplies these native rendered pixels; this is not a headless-render or hardware-GPU claim.
+- **PASS:** clean-cache Godot **4.7.2** import; both GLBs instantiate; **120/120 poses, zero failures, 59,781 triangles**. The delivered rest pose is checked before the driver can repair transforms. Existing arc-spacing, finite/unit-determinant frame, lens-count, texture-slot and tangent assertions all pass. `godot/import.log`, `godot/selftest.log`, `godot/selftest-result.json`, and `godot/capture.log` are regenerated for this revision.
+- **PASS:** exported GLB validation, lens/WIP immutability and matching root/Godot GLB bytes. Reopened `.blend` audit confirms 28 shared-mesh sections, one complete lens, master curve and all nine used material images packed.
+- This fix used local **Blender 4.5.3 LTS** and **Godot 4.7.2 Linux** because the original Windows node was offline. A CUDA render attempt exhausted available VRAM; delivered Blender captures are successful CPU renders. That failed attempt is not delivery evidence.
+
+## Reproduce the fix (do not rerun the original source build)
+
+From the repository root, extract the authorized original delivered scene to a separate location:
+
+```sh
+git show 45cb5d8:benchmarks/snake-sectional-v1/snake-sectional.blend > /tmp/sectional-v1-baseline.blend
+ASSEMBLY_BASELINE=/tmp/sectional-v1-baseline.blend \
+ASSEMBLY_OUTPUT="$PWD/benchmarks/snake-sectional-v1" \
+FIX_STAGE=final blender -b -t 12 --python benchmarks/snake-sectional-v1/fix_pass.py
+python3 benchmarks/snake-sectional-v1/check_fix.py --capture
+ASSEMBLY_OUTPUT="$PWD/benchmarks/snake-sectional-v1" \
+blender -b --python benchmarks/snake-sectional-v1/audit_blend.py
+```
+
+`GODOT` can select the Godot executable. `check_fix.py` uses a fresh temporary project with no `.godot/`, imports before testing/capture, checks the installed engine version, verifies 120 poses and exact viewport dimensions, and copies the resulting evidence back. With no DISPLAY, capture uses `xvfb-run` and software OpenGL. Do not set `FIX_STAGE=wip` on the delivery folder: that option exists for the checkpoint phase, not to overwrite protected evidence.
+
+## Remaining visual limitations for the panel
+
+- Under the new angular cladding, some source-derived transitions remain rounded, especially around the lower muzzle and rear temple. This is not a complete CAD retopology of the head.
+- The rigid barrel modules remain more uniform than the reference's densely layered armor; much of the new service detail is deliberately texture-space to respect the multiplied budgets. The modeled shoulder strips and rods are economical, not full mechanical internals.
+- Tail source transitions and the approximate raised-S/coil pose are retained. The extended terminal section is one rigid tail, not separately articulated fine subsegments. Tight bends can still reveal dark coupler gaps.
+- Compatibility captures verify emitted color and material appearance, not HDR bloom or emissive GI. The 120-pose test does not establish collision-free articulation or a panel quality score.
+
+---
+
+# Original v1 handoff below — historical baseline only
+
+The following preserves extraction provenance and the original delivery record. Its counts/results describe **45cb5d8**, not the fix-pass export above.
+
 # Sectional snake v1 — implementation handoff
 
 Order: **op-assembly-sectional-v1-20261017**. Branch: `assembly-sectional-v1-20261017`.

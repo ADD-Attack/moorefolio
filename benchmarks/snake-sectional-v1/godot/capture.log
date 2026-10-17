@@ -1,6 +1,8 @@
 Godot Engine v4.7.2.stable.official.ed1daf0bf - https://godotengine.org
-OpenGL API 3.3.0 NVIDIA 610.88 - Compatibility - Using Device: NVIDIA - NVIDIA GeForce RTX 3070 Ti
+WARNING: Could not set V-Sync mode, as changing V-Sync mode is not supported by the graphics driver.
+     at: set_use_vsync (platform/linuxbsd/x11/gl_manager_x11.cpp:372)
+OpenGL API 4.5 (Core Profile) Mesa 25.2.8-0ubuntu0.24.04.2 - Compatibility - Using Device: Mesa - llvmpipe (LLVM 20.1.2, 256 bits)
 
-CAMERA center=(0.622852, 2.368655, 0.609609) position=(-8.359488, 10.79375, 16.38252) ortho_height=5.96392107009888
-CAMERA center=(-0.76812, 0.190864, 0.008114) position=(-7.992674, 3.847068, 18.29595) ortho_height=1.73968863487244
+CAMERA center=(0.630342, 2.397041, 0.861993) position=(-8.416633, 10.96002, 16.51677) ortho_height=6.19627952575684
+CAMERA center=(-0.773309, 0.232011, 0.0) position=(-8.009427, 3.92436, 18.27598) ortho_height=1.89155757427216
 NATIVE_CAPTURE_PASS viewport=(1920, 1080) renderer=gl_compatibility

@@ -1,0 +1,99 @@
+{
+  "baseline": "45cb5d8",
+  "lens_nodes_unchanged": [
+    {
+      "node": "Aperture blade",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.001",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.002",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.003",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.004",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.005",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.006",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Aperture blade.007",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Curved optical cover",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens emissive core",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens_-1_ring_0",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens_-1_ring_1",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens_-1_ring_2",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens_-1_ring_3",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens_-1_ring_4",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    },
+    {
+      "node": "Lens_-1_ring_5",
+      "unchanged_material": true,
+      "max_attribute_error": 0
+    }
+  ],
+  "protected_wip": [
+    {
+      "file": "captures/wip-full-body.png",
+      "sha256": "ddf9618884a7cdf34f629c9a6e6b033da16076bae39c1414af549e564b547035",
+      "unchanged": true
+    },
+    {
+      "file": "captures/wip-head.png",
+      "sha256": "a9b01fea429b78d2be921134b084c86b7c0fb5d700aef8bfc44337ba044d85d5",
+      "unchanged": true
+    }
+  ],
+  "godot_assets_identical": true,
+  "pass": true
+}
