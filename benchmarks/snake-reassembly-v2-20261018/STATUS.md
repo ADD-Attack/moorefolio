@@ -1,27 +1,35 @@
 # STATUS — snake-reassembly ATTEMPT 2
 
-**Round 1 (confirmation + plan): DELIVERED. STANDING BY for the producer.** No building has started.
+**Round 2 IN PROGRESS. A mid-round step-0 flag needs a producer ruling (per F9 and the "immediately" instruction).** Building continues on the default stated below unless you rule otherwise.
 
-- Dispatch was received at about 09:22 CDT on 2026-10-18. The deadline is about 09:52 CDT. Round 1 was pushed at about 09:28 CDT.
-- Pack verified before unpacking:
-  - SHA-256 `13b07204…eb6c`, 3,869,534 B.
-  - Clay copies re-hashed against REFERENCE-SPEC §7.
-- Deliverables in this folder:
-  - `SPEC-CONFIRM.md`: the read confirmation, 14 head forms (F-a…F-n), and flags F1–F10.
-  - `PRESERVATION-PLAN.md`: the head, hero, neck-variant and tail derivation from the clay, the survival tests, and the rule-2 parametric list.
+## Step-0 baseline audit of the raw head clay (cut at the collar, x = 0.19 in clay units, no form edits)
 
-## Needs a producer ruling before R2
+Evidence is in `r2/step0/`:
+- `h0_overlay.png`: red = clay silhouette, blue = reference edges, at the landmark-solved camera;
+- `h0_sbs.png`: side-by-side;
+- `step0_head.json`: per-x profiles;
+- `probe_*`: orthographic previews (iteration previews only, not judged captures).
 
-| Flag | Ask |
-|---|---|
-| **F1** | H7 slats are **vertical** in the image, but the frozen text says horizontal. Build vertical? |
-| **F2–F4** | Score the forehead hood under H11, and the overbite and cheek bulge under H3/H1? (These forms are preserved either way.) |
-| **F5** | Build the H9 placard and window as raised frame + recessed blank floor? |
-| **F7** | Confirm 27 live features (B10 counted). |
-| **F8** | The budget does not close. Recommend module+insert ≤1,450 and head ≤14k. Otherwise the head is capped at about 12.2k. |
-| **F10** | Are the registry clay copies identical to the hash-verified attempt-1 copies? |
-| **B10 option** | Neck variant from the hero build (recommended), or from the first clay neck segment? |
+**FLAG S0-1 — skull L:H is out of band.**
+- Measurement (orthographic, clay units):
+  - snout tip x = −0.978;
+  - vent-box rear x ≈ −0.21, so L ≈ 0.77;
+  - jaw underside z ≈ 0.19;
+  - crown z ≈ 0.745 behind the eye, ≈ 0.78 at the fin roots, so H ≈ 0.56–0.59.
+- Result: **L:H ≈ 1.30–1.37 against the reference's 1.45.** That is −5.5 % to −10 %, outside ±8 % at the fin-root crown measure.
+- The overlay agrees: at the matched angle, the clay crown sits above the reference crown and the clay jaw line sits above the reference jaw. The clay head is relatively short and tall.
+- Default while you rule: **uniform scale only, no stretch** (per F9). I scale to head H = 1.3 D and accept the short read. An alternative is your call: a ≤ 10 % axial stretch of the snout only, forward of the eye line, which would keep every local form.
 
-## For later rounds
+**NOTE S0-2 — crest fins are arranged laterally in the clay.**
+- The clay's three blades stand side by side across the crown (y ≈ −0.17, 0, +0.17). FEATURES H5 / §2 say "in a row along the centreline".
+- At the solved camera (yaw ≈ 45°), the clay's lateral blades reproduce the reference's fin read almost exactly (`h0_overlay.png`).
+- I believe the spec wording is the error here, as with the slats. Default: **keep the clay arrangement** (Construction Rule 1). Please confirm.
 
-At every self-check gate, the captures and the self-scorecard go to the owner as well as the panel. NOTE.md will be written for both readers. PRESERVATION-PLAN §A has the details.
+**Forms present in the raw clay** (verified visually at the solved angle):
+- taper and sloping topline: present;
+- brow roll over the eye: present but weak, no ledge yet;
+- snout ridge running to a long nostril slot on the side: present;
+- full-length mouth seam: present, serrated;
+- jaw mass, eye ring, vent box, fins: present.
+
+**No form is absent.**
