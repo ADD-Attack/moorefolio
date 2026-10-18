@@ -69,8 +69,20 @@
    "lateral_spread": 0.022
   },
   {
+   "id": "R26-P8-plate-interiors",
+   "method": "local best-fit plane relaxation of existing plate interior vertices with cosine fade; borders retained"
+  },
+  {
    "id": "R24-P8-snout-ridge",
    "method": "local displacement of surviving formed ridge vertices; no replacement shell"
+  },
+  {
+   "id": "R28-P8-collar-finish",
+   "method": "weighted local smoothing of existing collar vertices; cut edge excluded"
+  },
+  {
+   "id": "R27-P8-inset-frames",
+   "method": "narrow machined frame rods seated on measured recess boundary"
   },
   {
    "id": "R10-cut-in-head-detail",
@@ -288,9 +300,9 @@
    "clay_ring_r": 0.1828813559322034,
    "lens_R": 0.1828813559322034,
    "normal": [
-    0.1790744960308075,
+    0.17907454073429108,
     -0.9822221994400024,
-    -0.05631927773356438
+    -0.056319329887628555
    ]
   },
   {
@@ -299,9 +311,9 @@
    "clay_ring_r": 0.1828813559322034,
    "lens_R": 0.1828813559322034,
    "normal": [
-    0.16847877204418182,
+    0.16847865283489227,
     0.9845694899559021,
-    -0.047304995357990265
+    -0.04730473458766937
    ]
   },
   {
@@ -381,16 +393,16 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.14215287839529903,
-   "p95_pct": 1.3095383340052247,
-   "p99_pct": 3.584440285815367,
-   "max_pct": 6.067562024981578
+   "p50_pct": 0.14087355198112222,
+   "p95_pct": 1.2955316816003193,
+   "p99_pct": 3.5844402829206055,
+   "max_pct": 6.06756260393394
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.14694365944253523,
-   "p95_pct": 1.3134302906048299,
-   "p99_pct": 3.584440285815367,
-   "max_pct": 6.067562024981578
+   "p50_pct": 0.14623104597621986,
+   "p95_pct": 1.3000113110325384,
+   "p99_pct": 3.5844402829206055,
+   "max_pct": 6.06756260393394
   },
   "segment_build_vs_clay": {
    "p50_pct": 1.4825655299517457,
@@ -446,8 +458,8 @@
   }
  },
  "head_master_tris": 144006,
- "head_repaired_surface_tris": 11515,
- "head_fitted_hardware_tris": 1364,
+ "head_repaired_surface_tris": 11323,
+ "head_fitted_hardware_tris": 1556,
  "segment_interior_faces_culled": 29612,
  "housing_measurement": {
   "method": "outer radial envelope of clean clay housing, original axial span .09; excludes interior-radius percentile choice in R2",

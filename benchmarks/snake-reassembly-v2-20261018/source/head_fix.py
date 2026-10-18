@@ -51,6 +51,16 @@ for side in [-1,1]:
  P[:,1]+=side*.009*w;P[:,2]+=.006*w
 setv(h,np.array([Mh@Vector(p) for p in P]))
 LOG['refines'].append({'id':'R24-P8-snout-ridge','method':'local displacement of surviving formed ridge vertices; no replacement shell'})
+# R28: relax roughness within the existing collar stack, not its silhouette borders.
+P=np.array([Mh.inverted()@v.co for v in h.data.vertices])
+vg=h.vertex_groups.new(name='P8-collar-interior')
+for i,p in enumerate(P):
+ weight=float(bump(p[0]-.09,.075))
+ if weight>.01:vg.add([i],weight,'REPLACE')
+bpy.context.view_layer.objects.active=h
+mod=h.modifiers.new('P8 collar local finish','SMOOTH');mod.factor=.45;mod.iterations=5;mod.vertex_group=vg.name
+bpy.ops.object.modifier_apply(modifier=mod.name)
+LOG['refines'].append({'id':'R28-P8-collar-finish','method':'weighted local smoothing of existing collar vertices; cut edge excluded'})
 # Frozen BVH of repaired shell for fitting cuts and machined hardware.
 bm=bmesh.new();bm.from_mesh(h.data);hbvh=BVHTree.FromBMesh(bm);EXTRA=[]
 def pform(p):
@@ -115,7 +125,7 @@ paths=[ [(-.97,.39),(-.90,.42),(-.84,.47)],
 for side in [-1,1]:
  for i,p in enumerate(paths):groove(p,side=side,name='H2-cut-%s-%d'%(side,i))
  groove([(-.958,.295),(-.93,.28),(-.84,.278),(-.74,.286),(-.62,.30),(-.50,.315),(-.39,.33)],.009,.021,side,'H3-mouth-volume')
- inset([(-.962,.385),(-.935,.407),(-.904,.415),(-.902,.401),(-.93,.38),(-.956,.371)],.042,side,'H4-nostril-recess')
+ inset([(-.967,.385),(-.939,.412),(-.898,.421),(-.892,.398),(-.93,.375),(-.961,.367)],.050,side,'H4-nostril-recess')
  inset([(-.375,.63),(-.24,.63),(-.24,.67),(-.375,.67)],.025,side,'H9-upper-inset')
  inset([(-.35,.30),(-.21,.31),(-.21,.345),(-.35,.335)],.025,side,'H9-lower-inset')
  inset([(-.405,.426),(-.255,.426),(-.255,.54),(-.405,.54)],.026,side,'H7-vent-recess')

@@ -1,3 +1,6 @@
+## P8b reviewed checkpoint
+R26 plate-interior relaxation, R27 inset frames and R28 local collar smoothing are built. Head/full preview review: subtle surface cleanup, inset borders clearer; large soft plate forms and neck gaps remain unresolved. Counts unchanged from P8a. No gate claim. Next: projected nostril rim, then B9/T2/B10/B8 and grille treatment.
+
 ## P8a checkpoint
 Built and reviewed head/full Cycles 32-sample previews with frozen P7 staging. Eye now reads as a complete seated disc; wider skull seams are visible, but the skull/collar remain soft and neck gaps remain open. Not a gate pass. Build counts 13,967 / 1,423 / 2,922 / 56,733.
 Source additionally contains R26 plate-interior relaxation and R27 inset frames, UNBUILT at this checkpoint; next action rebuild then review. No new numerical scores.
