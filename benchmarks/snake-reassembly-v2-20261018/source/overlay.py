@@ -32,8 +32,8 @@ def fit(src,dst):
     s=S.sum()/ (a**2).sum(); t=md-s*(R@ms)
     res=np.sqrt((((s*(R@src.T)).T+t-dst)**2).sum(1)).mean(); return s,R,t,res
 best=None
-for yaw in range(-30,46,3):
-    for el in range(-6,34,3):
+for yaw in range(-75,76,3):
+    for el in range(-12,61,3):
         place(yaw,el); p=project(cam,P3)/2.0
         s,R,t,res=fit(p,P2)
         if best is None or res<best[0]: best=(res,yaw,el,s,R,t)

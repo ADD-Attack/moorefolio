@@ -14,11 +14,18 @@ for axis,side,x0,x1,v0,v1 in [(1,-1,-1.12,-.86,-.08,.035),(1,1,-1.12,-.86,-.08,.
  bpy.context.view_layer.objects.active=t;m=t.modifiers.new('T5 recessed vent','BOOLEAN');m.operation='DIFFERENCE';m.solver='EXACT';m.object=cut;bpy.ops.object.modifier_apply(modifier=m.name);bpy.data.objects.remove(cut)
  # border stays on actual surface points; four slats are raised above the recess floor.
  vs=[];fs=[]
- for j in range(5):
-  x=x0+(j+1)/6*(x1-x0);a=hit(x,v0+.008)-n*.012;b=hit(x,v1-.008)-n*.012;u=Vector((.006,0,0));k=len(vs)
+ slat_count=7 if axis==2 else 5
+ for j in range(slat_count):
+  x=x0+(j+1)/(slat_count+1)*(x1-x0);a=hit(x,v0+.008)-n*.012;b=hit(x,v1-.008)-n*.012;u=Vector((.006,0,0));k=len(vs)
   vs +=[a-u,a+u,b+u,b-u,a-u-n*.012,a+u-n*.012,b+u-n*.012,b-u-n*.012]
   fs +=[(k,k+1,k+2,k+3),(k,k+3,k+7,k+4)]
  tailparts.append(mesh_from('T5-fitted-slats',vs,fs))
+# Cut the nozzle into the existing blunt clay nose, along its axis.
+nh=tbvh.ray_cast(Vector((-3,0,0)),Vector((1,0,0)))
+if nh[0] is not None:
+ q=nh[0];bpy.ops.mesh.primitive_cylinder_add(vertices=12,radius=.027,depth=.12,location=q+Vector((.025,0,0)),rotation=(0,math.pi/2,0));c=bpy.context.object
+ bpy.context.view_layer.objects.active=t;m=t.modifiers.new('T2 inset nose nozzle','BOOLEAN');m.operation='DIFFERENCE';m.solver='EXACT';m.object=c;bpy.ops.object.modifier_apply(modifier=m.name);bpy.data.objects.remove(c)
+LOG['refines'].append({'id':'R19-tail-nozzle-and-upper-slats','method':'nozzle bored into formed nose; upper vent seven modeled slats, side vents five each'})
 bm.free();nt=sum(tris(o) for o in tailparts);cap=1860-nt
 if tris(t)>cap:
  bpy.context.view_layer.objects.active=t;m=t.modifiers.new('tail budget','DECIMATE');m.ratio=(cap-4)/tris(t);m.use_collapse_triangulate=True;bpy.ops.object.modifier_apply(modifier=m.name)

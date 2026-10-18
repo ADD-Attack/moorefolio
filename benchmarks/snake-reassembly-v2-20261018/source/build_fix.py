@@ -271,12 +271,14 @@ LOG["tris"]["SegmentHero"] = tris(s); LOG["tris"]["GlowInsert"] = tris(glow)
 # ---- Neck variant (B10): derived from the hero build mesh; heavier, overlapping collar plates
 nk = dup(s, "SegmentNeck"); Vn = verts(nk); r = np.hypot(Vn[:, 1], Vn[:, 2]); rmax = np.percentile(r, 97)
 outer = r > 0.86 * rmax
-f = np.full(len(Vn),1.025)
+f = np.where(outer,1.04,1.0)
 Vn[:, 1] *= f; Vn[:, 2] *= f
 ends = outer & (Vn[:, 0] > HX - 0.25 * PITCH - 0.1)
-Vn[ends, 0] += 0.025    # plates lap forward over the next joint -> lit ring reads as partial arc
+Vn[ends, 0] += 0.09    # plates lap forward over the next joint -> lit ring reads as partial arc
 setv(nk, Vn); LOG["tris"]["SegmentNeck"] = tris(nk)
-LOG["refines"].append({"id": "B10-neck-variant", "outer_plate_scale": 1.025, "forward_lap": 0.025})
+LOG["refines"].append({"id": "B10-neck-variant", "outer_plate_scale": 1.04, "forward_lap": 0.09})
+
+LOG["refines"].append({"id":"R20-neck-plate-lap","method":"extend actual outer neck plates forward .09 and radially 4 percent; housing and core stay unchanged"})
 
 # =============================================================== TAIL
 t = import_glb(os.path.join(CLAY, "hunyuan-tail.glb")); t.name = "TAIL_master"
@@ -308,7 +310,9 @@ LOG["tris"]["TailTip"] = tris(t)
 
 # ---- T1 taper segments: derived from the hero build mesh (approved ruling), lighter LOD, radial taper
 def taper(name, s0, s1, sl, port=False, target=470):
-    o = drum_retopo(seg_master, name, 24, 10)
+    o = dup(s, name)
+    bpy.context.view_layer.objects.active=o
+    m=o.modifiers.new('derived hero taper LOD','DECIMATE');m.ratio=(target-4)/tris(o);m.use_collapse_triangulate=True;bpy.ops.object.modifier_apply(modifier=m.name)
     Vt = verts(o); k = (Vt[:, 0] - TX) / PITCH; sc_ = s0 + (s1 - s0) * k
     Vt[:, 1] *= sc_; Vt[:, 2] *= sc_; Vt[:, 0] *= sl; setv(o, Vt)
     if port:   # circular port fitting (machined)
@@ -317,7 +321,8 @@ def taper(name, s0, s1, sl, port=False, target=470):
         vs, fs = lathe_ring([(0.09, 0), (0.09, 0.03), (0.07, 0.035), (0.045, 0.02), (0.0, 0.02)], 10, M)
         o = join([o, mesh_from("port", vs, fs)], name)
     return o
-t1 = taper("TailTaper1", 0.70, 0.86, 0.90, port=True); t2 = taper("TailTaper2", 0.52, 0.70, 0.80)
+t1 = taper("TailTaper1", 0.70, 0.86, 0.90, port=True, target=480); t2 = taper("TailTaper2", 0.52, 0.70, 0.80, target=480)
+LOG["refines"].append({"id":"R17-tail-taper-plate-continuity","method":"decimate actual traced hero module, then radial taper; replaces smooth radial-projection taper; keeps fitted port"})
 def scaled_glow(name, sc_, sl):
     g = glow_insert(name, 14); Vg = verts(g); Vg[:, 1] *= sc_; Vg[:, 2] *= sc_; Vg[:, 0] *= sl; setv(g, Vg); return g
 g1 = scaled_glow("GlowInsertT1", 0.86, 0.90)

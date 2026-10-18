@@ -9,6 +9,8 @@ build=bpy.data.objects["SRC_Head"]
 before=set(bpy.data.objects); bpy.ops.import_scene.gltf(filepath=GLB)
 raw=[o for o in bpy.data.objects if o not in before and o.type=="MESH"][0]
 raw.data.transform(raw.matrix_world); raw.matrix_world=mathutils.Matrix()
+bisect_keep(raw, (0.19,0,0), (1,0,0), True)
+V=verts(raw);keep_island_near(raw,V[np.argmin(V[:,0])])
 hd=L["scales"]["head"]
 if "snout_k" in hd:   # same R5 stretch as the build, so sections compare like with like
     V=verts(raw); m=V[:,0]<hd["snout_x0"]; V[m,0]=hd["snout_x0"]+(V[m,0]-hd["snout_x0"])*hd["snout_k"]; raw.data.vertices.foreach_set("co",V.ravel())

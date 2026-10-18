@@ -88,27 +88,58 @@ paths=[ [(-.97,.39),(-.90,.42),(-.84,.47)],
 for side in [-1,1]:
  for i,p in enumerate(paths):groove(p,side=side,name='H2-cut-%s-%d'%(side,i))
  groove([(-.958,.295),(-.93,.28),(-.84,.278),(-.74,.286),(-.62,.30),(-.50,.315),(-.39,.33)],.009,.021,side,'H3-mouth-volume')
- inset([(-.962,.385),(-.935,.407),(-.904,.415),(-.902,.401),(-.93,.38),(-.956,.371)],.022,side,'H4-nostril-recess')
- inset([(-.375,.63),(-.24,.63),(-.24,.67),(-.375,.67)],.012,side,'H9-upper-inset')
- inset([(-.35,.30),(-.21,.31),(-.21,.345),(-.35,.335)],.013,side,'H9-lower-inset')
+ inset([(-.962,.385),(-.935,.407),(-.904,.415),(-.902,.401),(-.93,.38),(-.956,.371)],.042,side,'H4-nostril-recess')
+ inset([(-.375,.63),(-.24,.63),(-.24,.67),(-.375,.67)],.025,side,'H9-upper-inset')
+ inset([(-.35,.30),(-.21,.31),(-.21,.345),(-.35,.335)],.025,side,'H9-lower-inset')
  inset([(-.405,.426),(-.255,.426),(-.255,.54),(-.405,.54)],.026,side,'H7-vent-recess')
  for x in np.linspace(-.395,-.265,7):
   a,n=surface(x,.434,side);b,_=surface(x,.533,side);a-=n*.012;b-=n*.012;rod('H7-vertical-slat',a,b,.0035*S_HEAD,4)
  for z in [.40,.51]:
   a,n=surface(-.18,z,side);b,_=surface(.04,z,side);a+=n*.01;b+=n*.01
   rod('H8-piston-barrel',a,a+(b-a)*.58,.025*S_HEAD,12);rod('H8-piston-rod',a+(b-a)*.58,b,.014*S_HEAD,12)
-LOG['refines'].append({'id':'R10-cut-in-head-detail','H2_paths_raw_clay':paths,'H3_mouth_depth_clay':.021,'H4_nostril_depth_clay':.022,'H9_inset_depth_clay':.012,'H7_slats_per_side':7,'H8':'two fitted barrel/rod units per flank'})
-# Cut an inset into each EXISTING planarized blade face; its original perimeter becomes the raised border.
+  rod('H8-machined-collar',a+(b-a)*.48,a+(b-a)*.58,.032*S_HEAD,12)
+LOG['refines'].append({'id':'R10-cut-in-head-detail','H2_paths_raw_clay':paths,'H3_mouth_depth_clay':.021,'H4_nostril_depth_clay':.042,'H9_inset_depth_clay':.025,'H7_slats_per_side':7,'H8':'two fitted barrel/rod units per flank'})
+# Depress the existing fin-face vertices rather than cutting through thin formed blades.
+# The outer silhouette and perimeter remain original mesh; the centre face is inset 18% toward its own midplane.
 P=np.array([Mh.inverted()@v.co for v in h.data.vertices])
-for k,(lo,hi,cy) in enumerate([(-1,-.08,-.212),(-.08,.08,-.004),(.08,1,.207)]):
- q=P[(P[:,1]>lo)&(P[:,1]<hi)&(P[:,2]>.785)&(P[:,0]>-.60)&(P[:,0]<-.10)]
+for lo,hi in [(-1,-.08),(-.08,.08),(.08,1)]:
+ ids=np.where((P[:,1]>lo)&(P[:,1]<hi)&(P[:,2]>.785)&(P[:,0]>-.60)&(P[:,0]<-.10))[0]
+ q=P[ids]
  if not len(q):continue
- hull=convex_hull_2d([Vector((p[0],p[2])) for p in q]);outline=q[hull][:,[0,2]];centre=outline.mean(0);inner=centre+(outline-centre)*.79
+ hull=convex_hull_2d([Vector((p[0],p[2])) for p in q]);outline=q[hull][:,[0,2]];centre=outline.mean(0);inner=centre+(outline-centre)*.77
+ def inside_fin(x,z):
+  inside=False
+  for a,b in zip(inner,np.roll(inner,-1,axis=0)):
+   if (a[1]>z)!=(b[1]>z) and x<(b[0]-a[0])*(z-a[1])/(b[1]-a[1])+a[0]:inside=not inside
+  return inside
+ cy=float(np.median(q[:,1]))
+ for i in ids:
+  if inside_fin(P[i,0],P[i,2]):P[i,1]=cy+.82*(P[i,1]-cy)
+setv(h,np.array([Mh@Vector(p) for p in P]))
+LOG['refines'].append({'id':'R11-fin-borders','method':'existing blade-face vertices locally inset toward measured midplane; original perimeter and silhouette preserved; no through-cut'})
+# Raised machined edging fitted to each existing blade's actual triangles.
+P=np.array([Mh.inverted()@v.co for v in h.data.vertices])
+for lo,hi in [(-1,-.08),(-.08,.08),(.08,1)]:
+ ids=set(np.where((P[:,1]>lo)&(P[:,1]<hi)&(P[:,2]>.775)&(P[:,0]>-.60)&(P[:,0]<-.10))[0])
+ faces=[tuple(poly.vertices) for poly in h.data.polygons if all(i in ids for i in poly.vertices)]
+ if not faces:continue
+ fbvh=BVHTree.FromPolygons([Vector(q) for q in P],faces)
+ q=P[sorted(ids)];hull=convex_hull_2d([Vector((p[0],p[2])) for p in q]);outline=q[hull][:,[0,2]];centre=outline.mean(0);cy=float(np.median(q[:,1]));N=len(outline)
  for side in [-1,1]:
-  N=len(inner);vs=[Mh@Vector((p[0],cy+side*y,p[1])) for y in [.032,.007] for p in inner]
-  fs=[tuple(range(N-1,-1,-1)),tuple(range(N,2*N))]+[(i,(i+1)%N,(i+1)%N+N,i+N) for i in range(N)]
-  cut_mesh(vs,fs,'H5-inset-existing-blade')
-LOG['refines'].append({'id':'R11-fin-borders','method':'local planar refinement of existing blade faces, preserved formed x/z silhouette; inset face cut leaves perimeter as raised border'})
+  rings=[]
+  for scale in [.92,.78]:
+   curve=[]
+   for x,z in centre+(outline-centre)*scale:
+    origin=Vector((x,cy+side*.12,z));direction=Vector((0,-side,0));hit=fbvh.ray_cast(origin,direction)
+    if hit[0] is None:hit=fbvh.find_nearest(Vector((x,cy,z)))
+    assert hit[0] is not None
+    pt=hit[0].copy();pt.y+=side*.004;curve.append(Mh@pt)
+   rings.append(curve)
+  vs=rings[0]+rings[1];fs=[]
+  for j in range(N):fs.append((j,(j+1)%N,N+(j+1)%N,N+j))
+  EXTRA.append(mesh_from('H5-formed-blade-edge-frame',vs,fs))
+LOG['refines'].append({'id':'R22-fin-edge-frames','method':'narrow machined frame strips projected onto each original blade triangle surface, original blade retained; no through-cut'})
+LOG['refines'].append({'id':'R21-fin-through-cut-repair','method':'replace destructive planar inset boolean with local displacement of existing face vertices; solid formed blades retained'})
 # Forehead plate seams follow the actual top surface with dense samples, never an added cap.
 def topgroove(path):
  dense=[]
@@ -129,6 +160,13 @@ def topgroove(path):
 for side in [-1,1]:topgroove([(-.95,side*.04),(-.86,side*.06),(-.72,side*.08),(-.55,side*.10)])
 for x,half in [(-.89,.10),(-.77,.15),(-.55,.19)]:topgroove([(x,-half),(x,0),(x,half)])
 bm.free()
+# Fitted low-profile round fasteners on surviving skull plates; no shell replacement.
+for side in [-1,1]:
+ for x,z in [(-.88,.44),(-.80,.49),(-.77,.35),(-.60,.35),(-.48,.37),(-.44,.60),(-.22,.62),(-.17,.32)]:
+  q,n=surface(x,z,side)
+  rod('H2-fitted-plate-bolt',q-n*.001,q+n*.009*S_HEAD,.010*S_HEAD,8)
+LOG['refines'].append({'id':'R18-head-fasteners','method':'sixteen round machined bolt heads seated by raycast on actual skull plate surface'})
+LOG['refines'].append({'id':'R15-head-recess-depth-and-piston-collars','H4_depth':.042,'H9_depth':.025,'method':'deeper cuts into repaired formed surface; machined collars on fitted H8 rods'})
 # Protect hardware separately; only collapse repaired clay if Boolean cuts exceed its allocation.
 extra_tris=sum(tris(o) for o in EXTRA);cap=14000-1104-extra_tris
 if tris(h)>cap:

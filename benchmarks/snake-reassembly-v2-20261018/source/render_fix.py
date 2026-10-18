@@ -119,7 +119,13 @@ for v in VIEWS:
         f=FROZEN['frames'][v];cam.location=f['location'];cam.rotation_euler=f['rotation'];cd.lens=f['lens'];frames[v]=f
     else: frames[v] = frame(objs, d, m)
     sc.render.filepath = os.path.join(OUT, f"{TAG}-{ {'full': 'full-body', 'head': 'head-closeup'}.get(v, v + '-detail') }.png")
-    print("RENDER_START", v, MODE, sc.cycles.device, flush=True); bpy.ops.render.render(write_still=True); print("RENDER_DONE", sc.render.filepath, flush=True)
+    print("RENDER_START", v, MODE, sc.cycles.device, flush=True)
+    try: bpy.ops.render.render(write_still=True)
+    except RuntimeError as exc:
+        if 'memory' not in str(exc).lower(): raise
+        print('GPU memory exhausted; retrying same stage on CPU',flush=True)
+        sc.cycles.device='CPU';bpy.ops.render.render(write_still=True)
+    print("RENDER_DONE", sc.render.filepath, flush=True)
 json.dump(dict(mode=MODE, device=sc.cycles.device, samples=sc.cycles.samples, adaptive=sc.cycles.adaptive_threshold,
                denoise="OIDN", res=[sc.render.resolution_x, sc.render.resolution_y], backdrop="#C1C1BF (linear %s)" % BG,
                glare=None, materials="single clay (Principled, base linear 0.22/0.22/0.21, rough .55, metal 0, no emission)", frames=frames, seg_pair=SEGPAIR,

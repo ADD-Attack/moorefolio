@@ -78,7 +78,7 @@ def ring(name,xprofile,n=20):
 
 # Original map traces: main shield near -Y; opposite-side plate traced separately.
 Gtop=[(-.295,113),(-.06,113),(-.065,125),(-.275,125)]
-Gside=[(-.035,137),(.145,137),(.145,154),(-.035,154)]
+Gside=[(-.035,143),(.015,137),(.145,137),(.145,154),(-.035,154)]
 Gback=[(-.28,35),(-.045,35),(-.045,44),(-.28,44)]
 upper=[(-.485,94),(-.30,94),(-.30,111),(-.06,111),(-.06,94),(.175,94),(.175,125),(.175,156),(.01,165),(-.045,174),(-.045,165),(-.29,165),(-.32,159),(-.485,157),(-.485,125)]
 plate('B2-main-shield',upper,[Gtop,Gside],[(-.40,142),(-.17,140),(.09,126)])
@@ -111,23 +111,32 @@ for ang in [0,180]:
    for j in range(6):fs.append((k*6+j,k*6+(j+1)%6,(k+1)*6+(j+1)%6,(k+1)*6+j))
   fs.append(tuple(range(24,30)))
   add('B4-pistons',vs,fs)
-  strip('B5-bracket',x0,x0+.025,ang-10,ang+10,rr+.025,1)
+  bx=-.345 if x0<-.3 else -.045
+  strip('B5-bracket',bx,bx+.045,ang-12,ang+12,rr+.04,2)
+  # Narrow machined end collar, fitted to this piston axis.
+  cv=[];cf=[]
+  for x in [x1-.065,x1-.045]:
+   for j in range(6):
+    t=j*math.tau/6;cv.append(tuple(ct+Vector((x*KAX,.064*math.cos(t),.064*math.sin(t)))))
+  for j in range(6):cf.append((j,(j+1)%6,(j+1)%6+6,j+6))
+  add('B4-end-collars',cv,cf)
 # Hexagonal heads fitted against the FINISHED traced panel, not the pre-panel source.
 finished_bvh=BVHTree.FromPolygons([Vector(v) for v in BMV],BMF)
-for x,a in [(-.43,130),(-.40,151),(.11,127),(-.25,159),(-.43,32),(.12,30),(-.40,72),(.1,75),(-.40,-143),(.11,-145),(-.40,-32),(.1,-33)]:
+for x,a in [(-.43,130),(-.40,151),(.11,127),(-.25,159),(-.43,32),(.12,30),(-.40,72),(.1,75),(-.40,-143),(.11,-145)]:
  r=max(.425,min(.515,sampled(x,a)));n=Vector((0,math.cos(math.radians(a)),math.sin(math.radians(a))));hit=finished_bvh.ray_cast(Vector((x*KAX,0,0))+n*2,-n)
  assert hit[0] is not None,('fastener seat miss',x,a)
  c=hit[0];nh=hit[1].normalized();n=nh if nh.dot(n)>0 else -nh;u=Vector((1,0,0));u=(u-n*u.dot(n)).normalized();v=n.cross(u);vs=[];fs=[]
- for rad,height in [(.027,.002),(.023,.013),(.010,.013),(.010,.002)]:
-  for j in range(6):
-   t=j*math.tau/6;vs.append(tuple(c+n*height+rad*(math.cos(t)*u+math.sin(t)*v)))
- for k in range(3):
-  for j in range(6):fs.append((k*6+j,k*6+(j+1)%6,(k+1)*6+(j+1)%6,(k+1)*6+j))
- fs.append(tuple(range(18,24)))
+ for rad,height in [(.025,.002),(.025,.012),(.009,.007)]:
+  for j in range(8):
+   t=j*math.tau/8;vs.append(tuple(c+n*height+rad*(math.cos(t)*u+math.sin(t)*v)))
+ for k in range(2):
+  for j in range(8):fs.append((k*8+j,k*8+(j+1)%8,(k+1)*8+(j+1)%8,(k+1)*8+j))
+ fs.append(tuple(range(16,24)))
  add('B7-fasteners',vs,fs)
 bmm.free()
 s=mesh_from('SegmentHero',BMV,BMF);s.data['smooth_hardware_faces']=SMOOTH_FACES
 LOG['body_feature_tris']=PARTS;LOG['body_traces']=TRACE
 LOG['refines'].append({'id':'R7-F8-machined-panels','source':'R2 radius map; vertices raycast from S0-3 corrected clay','feature_tris':PARTS})
+LOG['refines'].append({'id':'R16-module-notch-brackets-fasteners','method':'diagonal traced side-window corner; wider raised brackets; eight-sided round bolt heads; two hidden underside fasteners removed to fund visible forms'})
 print('BODY_PARTS',PARTS,'TOTAL',tris(s),flush=True)
 assert tris(s)+120 <=1450, ('F8_STOP_BUDGET',tris(s)+120)
