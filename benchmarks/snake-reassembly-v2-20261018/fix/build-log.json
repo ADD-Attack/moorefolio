@@ -55,6 +55,13 @@
    "not_a_primitive": true
   },
   {
+   "id": "R23-fin-height-thickness",
+   "region": "clay z>.75 fin band",
+   "height_gain": 1.38,
+   "thickness_gain": 1.25,
+   "tris_added": 0
+  },
+  {
    "id": "R9-fin-separation",
    "region": "clay z>.735, x between -.55 and -.12",
    "axial_stagger": ".28 * lateral centre, smooth root blend",
@@ -366,16 +373,16 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.13817211502632926,
-   "p95_pct": 1.2516035263459215,
-   "p99_pct": 3.596818104958895,
-   "max_pct": 6.067563182886303
+   "p50_pct": 0.13858838177507687,
+   "p95_pct": 1.30953832676832,
+   "p99_pct": 3.584440285815367,
+   "max_pct": 6.06756260393394
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.14385859870150458,
-   "p95_pct": 1.2573542022689166,
-   "p99_pct": 3.596818104958895,
-   "max_pct": 6.067563182886303
+   "p50_pct": 0.1443479672321678,
+   "p95_pct": 1.3134302906048299,
+   "p99_pct": 3.584440285815367,
+   "max_pct": 6.06756260393394
   },
   "segment_build_vs_clay": {
    "p50_pct": 1.4825655299517457,
@@ -431,8 +438,8 @@
   }
  },
  "head_master_tris": 144006,
- "head_repaired_surface_tris": 11538,
- "head_fitted_hardware_tris": 1340,
+ "head_repaired_surface_tris": 11514,
+ "head_fitted_hardware_tris": 1364,
  "segment_interior_faces_culled": 29612,
  "housing_measurement": {
   "method": "outer radial envelope of clean clay housing, original axial span .09; excludes interior-radius percentile choice in R2",

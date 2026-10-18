@@ -19,6 +19,14 @@ else:
  m=h.modifiers.new('remove voxel stair steps','SMOOTH');m.factor=.28;m.iterations=2;bpy.ops.object.modifier_apply(modifier=m.name)
  h.data.calc_loop_triangles();np.savez(os.path.join(WORK,'head-reduced.npz'),v=verts(h),f=np.array([q.vertices[:] for q in h.data.loop_triangles]))
 LOG['refines'].append({'id':'R8-shell-repair','source':'R1-R5 actual master triangles','method':'.006 surface voxelization; one-cell gap close; fill enclosed sections; outer isosurface; collapse; 2 mild smoothing iterations','not_a_primitive':True})
+# R23 (P7): H5 panel read "short/thin" -> raise existing blade vertices from their roots and thicken about each blade's own midplane. Zero tris.
+V=verts(h);P=np.array([Mh.inverted()@Vector(v) for v in V])
+w=np.clip((P[:,2]-.75)/.05,0,1)*((P[:,0]>-.62)&(P[:,0]<-.08))
+P[:,2]+=.38*(P[:,2]-.75)*w
+cent=np.where(P[:,1]<-.08,-.19-.022,np.where(P[:,1]>.08,.185+.022,-.004))
+P[:,1]+=.25*(P[:,1]-cent)*w
+setv(h,np.array([Mh@Vector(p) for p in P]))
+LOG['refines'].append({'id':'R23-fin-height-thickness','region':'clay z>.75 fin band','height_gain':1.38,'thickness_gain':1.25,'tris_added':0})
 LOG['refines'].append({'id':'R9-fin-separation','region':'clay z>.735, x between -.55 and -.12','axial_stagger':'.28 * lateral centre, smooth root blend','thickness_scale':1.22,'lateral_spread':.022})
 # Flatten the existing machined blade faces locally; retain their formed x/z outlines and blended roots.
 V=verts(h);P=np.array([Mh.inverted()@Vector(v) for v in V]);w=np.clip((P[:,2]-.77)/.04,0,1)*((P[:,0]>-.60)&(P[:,0]<-.10))
