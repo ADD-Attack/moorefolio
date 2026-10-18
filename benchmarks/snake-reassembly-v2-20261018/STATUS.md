@@ -1,3 +1,15 @@
+# P8 — ACTIVE, panel-directed fix round
+
+P7 baseline verified at 361f26b; clean checkout before changes. Opened P7 full-body and head/segment/tail reference comparisons. No geometry changed during inventory. P7 counts: 13966 / 1423 / 2922 / 56732.
+
+Panel FAIL retained: head 5/5; body+tail 6/6; silhouette 5.5/6.5; massing 5.8/5.5; detail 4.7/5. No advancement.
+
+Open, priority order: H2, H6, H12, H4, H9, H10, B9, T2, B10, B8; secondary H3, B3. Head receives first pass. Current evidence visibly shows weak panel relief, exposed/incomplete eye seating, soft snout and neck discontinuity. No new self-scores yet.
+
+Recovery: baseline build and staged blend remain untouched; source/build_fix.py and source/head_fix.py drive next build. Fresh previews and STATUS required at each checkpoint. Deadline 21:00 CDT.
+
+---
+
 # STATUS — snake-reassembly ATTEMPT 2
 
 ## FIX-PASS DELIVERY P7 (2026-10-18 CDT) — pushed, NOT READY for acceptance
