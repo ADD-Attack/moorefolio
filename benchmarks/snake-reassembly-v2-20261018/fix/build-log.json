@@ -299,6 +299,10 @@
    "method": "deeper cuts into repaired formed surface; machined collars on fitted H8 rods"
   },
   {
+   "id": "R32-P8-beveled-seams",
+   "method": "flared cross-section on surface-following skull cutters for modeled bevel highlights, not just deeper cracks"
+  },
+  {
    "id": "H6-lens-seat",
    "side": -1,
    "clay_ring_r": 0.1828813559322034,
@@ -382,6 +386,10 @@
    "method": "local radial refinement of existing terminal vertices; fin envelope excluded"
   },
   {
+   "id": "R33-P8-terminal-plate-seams",
+   "method": "surface-raycast flared seams cut into existing formed terminal"
+  },
+  {
    "id": "R19-tail-nozzle-and-upper-slats",
    "method": "nozzle bored into formed nose; upper vent seven modeled slats, side vents five each"
   },
@@ -389,7 +397,7 @@
    "id": "R13-tail-surface-and-vents",
    "method": "surface-derived volume repair; three recessed T5 vents with 5 actual slats each",
    "vent_depth": 0.04,
-   "tail_tip_tris": 1806
+   "tail_tip_tris": 1856
   },
   {
    "id": "R17-tail-taper-plate-continuity",
@@ -405,13 +413,13 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.14057461807018384,
+   "p50_pct": 0.14196872179025666,
    "p95_pct": 1.291690665571723,
    "p99_pct": 3.5844402829206055,
    "max_pct": 6.06756260393394
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.14601861116671416,
+   "p50_pct": 0.14720354120738652,
    "p95_pct": 1.2974044984137447,
    "p99_pct": 3.5844402829206055,
    "max_pct": 6.06756260393394
@@ -423,22 +431,22 @@
    "max_pct": 7.448198283534688
   },
   "tailtip_build_vs_clay": {
-   "p50_pct": 0.3643620956830265,
-   "p95_pct": 1.5838898681991787,
-   "p99_pct": 2.68118601661889,
+   "p50_pct": 0.36326839136768885,
+   "p95_pct": 1.5752058417103334,
+   "p99_pct": 2.6577714248206634,
    "max_pct": 3.8326528723822544
   }
  },
  "tris": {
-  "Head": 13967,
+  "Head": 13968,
   "SegmentHero": 1311,
   "GlowInsert": 120,
   "SegmentNeck": 1311,
-  "TailTip": 1806,
+  "TailTip": 1856,
   "TailTaper1": 555,
   "TailTaper2": 475,
   "GlowInsertT1": 84,
-  "tail_section_total": 2920
+  "tail_section_total": 2970
  },
  "scales": {
   "head": {
@@ -470,7 +478,7 @@
   }
  },
  "head_master_tris": 144006,
- "head_repaired_surface_tris": 11179,
+ "head_repaired_surface_tris": 11180,
  "head_fitted_hardware_tris": 1700,
  "segment_interior_faces_culled": 29612,
  "housing_measurement": {
@@ -889,7 +897,7 @@
   }
  ],
  "curve_scale": 0.997328700371159,
- "instanced_total_tris": 56955,
+ "instanced_total_tris": 57006,
  "n_nodes": 61,
  "module_plus_insert": 1431
 }

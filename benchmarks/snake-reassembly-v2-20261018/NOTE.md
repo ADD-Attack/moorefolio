@@ -1,3 +1,9 @@
+# Current round: P8
+
+See [P8-NOTE.md](P8-NOTE.md) for current build, render-only self-review, open defects and recovery. The P7 and R2 notes below are historical.
+
+---
+
 # NOTE — FIX PASS (P7, handover #5, 2026-10-18) — supersedes the R2 scorecard below
 
 Everything under "Round 2" further down is historical R2 evidence; the scorecard in THIS section is current.

@@ -93,7 +93,7 @@ def groove(path,width=.007,depth=.014,side=-1,name='panel-seam'):
  vs=[];fs=[]
  for i,(q,n) in enumerate(zip(pts,ns)):
   tangent=(pts[min(i+1,len(pts)-1)]-pts[max(0,i-1)]).normalized();ac=n.cross(tangent).normalized()*width*S_HEAD/2
-  vs.extend([q-ac+n*.008,q+ac+n*.008,q+ac-n*depth*S_HEAD,q-ac-n*depth*S_HEAD])
+  vs.extend([q-ac*1.6+n*.008,q+ac*1.6+n*.008,q+ac*.4-n*depth*S_HEAD,q-ac*.4-n*depth*S_HEAD])
  for i in range(len(pts)-1):
   for j in range(4):fs.append((i*4+j,i*4+(j+1)%4,(i+1)*4+(j+1)%4,(i+1)*4+j))
  fs +=[(3,2,1,0),tuple(range(len(vs)-4,len(vs)))]
@@ -204,7 +204,7 @@ def topgroove(path):
  vs=[];fs=[]
  for i,q in enumerate(pts):
   tangent=(pts[min(i+1,len(pts)-1)]-pts[max(0,i-1)]).normalized();ac=n.cross(tangent).normalized()*.0035*S_HEAD
-  vs.extend([q-ac+n*.012,q+ac+n*.012,q+ac-n*.012*S_HEAD,q-ac-n*.012*S_HEAD])
+  vs.extend([q-ac*1.6+n*.012,q+ac*1.6+n*.012,q+ac*.4-n*.018*S_HEAD,q-ac*.4-n*.018*S_HEAD])
  for i in range(len(pts)-1):
   for j in range(4):fs.append((i*4+j,i*4+(j+1)%4,(i+1)*4+(j+1)%4,(i+1)*4+j))
  fs +=[(3,2,1,0),tuple(range(len(vs)-4,len(vs)))];cut_mesh(vs,fs,'H2-forehead-seam')
@@ -225,3 +225,5 @@ if tris(h)>cap:
  bpy.context.view_layer.objects.active=h;m=h.modifiers.new('head surface budget','DECIMATE');m.ratio=(cap-16)/tris(h);m.use_collapse_triangulate=True;bpy.ops.object.modifier_apply(modifier=m.name)
 LOG['head_repaired_surface_tris']=tris(h);LOG['head_fitted_hardware_tris']=extra_tris
 h=join([h]+EXTRA,'HEAD_repaired')
+
+LOG['refines'].append({'id':'R32-P8-beveled-seams','method':'flared cross-section on surface-following skull cutters for modeled bevel highlights, not just deeper cracks'})

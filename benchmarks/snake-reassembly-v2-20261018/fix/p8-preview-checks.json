@@ -1,0 +1,79 @@
+{
+  "staging_matches_p7": {
+    "frames": true,
+    "lights": true,
+    "catcher": true,
+    "backdrop": true,
+    "glare": true,
+    "materials": true
+  },
+  "preview_only": true,
+  "samples": 32,
+  "images": {
+    "fix-p8d-full-body.png": {
+      "size": [
+        960,
+        540
+      ],
+      "top_left_pixel": [
+        193,
+        193,
+        191
+      ],
+      "background_sample": true,
+      "sha256": "f28b1f44dbca23dac25421a532024fd4a304b7b891465115462d2f4d3ad38506"
+    },
+    "fix-p8d-head-closeup.png": {
+      "size": [
+        960,
+        540
+      ],
+      "top_left_pixel": [
+        193,
+        193,
+        191
+      ],
+      "background_sample": true,
+      "sha256": "e3817cf5599735475f4da6c6d025056c182e3c4f4e87c1cf24e29c2106efbfb3"
+    },
+    "fix-p8d-seg-detail.png": {
+      "size": [
+        960,
+        540
+      ],
+      "top_left_pixel": [
+        193,
+        193,
+        191
+      ],
+      "background_sample": false,
+      "sha256": "d0f07ac730b657431575fae8894252fe2a31ea60c9e9a94eb9793b663834a90b"
+    },
+    "fix-p8d-tail-detail.png": {
+      "size": [
+        960,
+        540
+      ],
+      "top_left_pixel": [
+        193,
+        193,
+        191
+      ],
+      "background_sample": false,
+      "sha256": "0c11b4a75cd9aff9d4ca35be9ad705af4176244ead7960d805a91119c66af077"
+    },
+    "fix-p8d-tail_top-detail.png": {
+      "size": [
+        960,
+        540
+      ],
+      "top_left_pixel": [
+        153,
+        151,
+        144
+      ],
+      "background_sample": false,
+      "sha256": "63cac541cd7e9274fa72f65cd72c00f57d6ad96f55b17965b1067b8ad31a6784"
+    }
+  }
+}

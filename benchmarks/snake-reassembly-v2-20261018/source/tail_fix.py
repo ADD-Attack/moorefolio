@@ -25,6 +25,24 @@ for axis,side,x0,x1,v0,v1 in [(1,-1,-1.12,-.86,-.08,.035),(1,1,-1.12,-.86,-.08,.
   vs +=[a-u,a+u,b+u,b-u,a-u-n*.012,a+u-n*.012,b+u-n*.012,b-u-n*.012]
   fs +=[(k,k+1,k+2,k+3),(k,k+3,k+7,k+4)]
  tailparts.append(mesh_from('T5-fitted-slats',vs,fs))
+# R33: cut plate boundaries into the existing torpedo shell with flared seam walls.
+for path in [[(-1.22,-.055),(-1.05,-.07),(-.91,-.075)],[(-1.22,.055),(-1.05,.07),(-.91,.075)],[(-1.04,-.10),(-1.04,0),(-1.04,.10)],[(-.43,-.13),(-.43,0),(-.43,.13)]]:
+ pts=[]
+ for a,b in zip(path[:-1],path[1:]):
+  for u in np.linspace(0,1,8,endpoint=False):
+   x,y=np.array(a)*(1-u)+np.array(b)*u;hit=tbvh.ray_cast(Vector((x,y,2)),Vector((0,0,-1)))
+   if hit[0] is not None:pts.append(hit[0])
+ if len(pts)<3:continue
+ vs=[];fs=[];normal=Vector((0,0,1))
+ for i,q in enumerate(pts):
+  tan=(pts[min(i+1,len(pts)-1)]-pts[max(0,i-1)]).normalized();ac=normal.cross(tan).normalized()*.005
+  vs.extend([q-ac+normal*.02,q+ac+normal*.02,q+ac*.35-normal*.012,q-ac*.35-normal*.012])
+ for i in range(len(pts)-1):
+  for j in range(4):fs.append((i*4+j,i*4+(j+1)%4,(i+1)*4+(j+1)%4,(i+1)*4+j))
+ fs.extend([(3,2,1,0),tuple(range(len(vs)-4,len(vs)))])
+ cut=mesh_from('T2 plate seam cutter',vs,fs);bb=bmesh.new();bb.from_mesh(cut.data);bmesh.ops.recalc_face_normals(bb,faces=bb.faces);bb.to_mesh(cut.data);bb.free()
+ bpy.context.view_layer.objects.active=t;mod=t.modifiers.new('T2 formed plate boundary','BOOLEAN');mod.operation='DIFFERENCE';mod.solver='EXACT';mod.object=cut;bpy.ops.object.modifier_apply(modifier=mod.name);bpy.data.objects.remove(cut)
+LOG['refines'].append({'id':'R33-P8-terminal-plate-seams','method':'surface-raycast flared seams cut into existing formed terminal'})
 # Cut the nozzle into the existing blunt clay nose, along its axis.
 nh=tbvh.ray_cast(Vector((-3,0,0)),Vector((1,0,0)))
 if nh[0] is not None:

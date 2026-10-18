@@ -1,0 +1,19 @@
+libEGL warning: failed to get driver name for fd -1
+
+libEGL warning: MESA-LOADER: failed to retrieve device information
+
+libEGL warning: failed to get driver name for fd -1
+
+MESA: error: ZINK: failed to choose pdev
+libEGL warning: egl: failed to create dri2 screen
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+EGL Error (0x3009): EGL_BAD_MATCH: Arguments are inconsistent (for example, a valid context requires buffers not supplied by a valid surface).
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:31:19)
+Read blend: "/home/openclaw/.openclaw/workspace-studio-3d/tickets/snake-reassembly-v2-20261018/repo/benchmarks/snake-reassembly-v2-20261018/fix/snake-v2-r2-fix.blend"
+Saved: 'fix/overlays/p8-head_render.png'
+Time: 00:03.11 (Saving: 00:00.25)
+
+SOLVE yaw 30 el 12 resid 9.5px scale 1.428
+
+Blender quit
