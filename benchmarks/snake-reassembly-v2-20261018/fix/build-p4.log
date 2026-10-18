@@ -1,0 +1,68 @@
+14:50:34 | INFO: Data are loaded, start creating Blender stuff
+14:50:34 | INFO: Blender create Mesh node 0
+14:50:34 | INFO: glTF import finished in 0.19s
+R5 1.3200133268555843 1.3016949152542372 1.42
+CUT H2-cut--1-0 9100 9244
+CUT H2-cut--1-1 9244 9422
+CUT H2-cut--1-2 9422 9658
+CUT H2-cut--1-3 9658 9776
+CUT H2-cut--1-4 9776 9866
+CUT H2-cut--1-5 9866 9960
+CUT H2-cut--1-6 9960 10056
+CUT H2-cut--1-7 10056 10176
+CUT H2-cut--1-8 10176 10306
+CUT H2-cut--1-9 10306 10420
+CUT H2-cut--1-10 10420 10480
+CUT H2-cut--1-11 10480 10548
+CUT H2-cut--1-12 10548 10616
+CUT H3-mouth-volume 10616 11164
+CUT H4-nostril-recess 11164 11222
+CUT H9-upper-inset 11222 11274
+CUT H9-lower-inset 11274 11348
+CUT H7-vent-recess 11348 11384
+CUT H2-cut-1-0 11384 11532
+CUT H2-cut-1-1 11532 11710
+CUT H2-cut-1-2 11710 11946
+CUT H2-cut-1-3 11946 12060
+CUT H2-cut-1-4 12060 12152
+CUT H2-cut-1-5 12152 12254
+CUT H2-cut-1-6 12254 12366
+CUT H2-cut-1-7 12366 12482
+CUT H2-cut-1-8 12482 12612
+CUT H2-cut-1-9 12612 12736
+CUT H2-cut-1-10 12736 12784
+CUT H2-cut-1-11 12784 12848
+CUT H2-cut-1-12 12848 12934
+CUT H3-mouth-volume 12934 13528
+CUT H4-nostril-recess 13528 13564
+CUT H9-upper-inset 13564 13624
+CUT H9-lower-inset 13624 13680
+CUT H7-vent-recess 13680 13712
+CUT H5-inset-existing-blade 13712 13812
+CUT H5-inset-existing-blade 13812 13906
+CUT H5-inset-existing-blade 13906 14068
+CUT H5-inset-existing-blade 14068 14164
+CUT H5-inset-existing-blade 14164 14264
+CUT H5-inset-existing-blade 14264 14370
+CUT H2-forehead-seam 14370 14786
+CUT H2-forehead-seam 14786 15198
+CUT H2-forehead-seam 15198 15422
+CUT H2-forehead-seam 15422 15742
+CUT H2-forehead-seam 15742 16130
+DEV head_build_vs_refined_master {'p50_pct': 0.13834479209155587, 'p95_pct': 1.3072435188146618, 'p99_pct': 3.6663476292169546, 'max_pct': 6.06756260393394}
+DEV head_build_vs_raw_clay {'p50_pct': 0.1438266839525133, 'p95_pct': 1.3123221613088991, 'p99_pct': 3.6663476292169546, 'max_pct': 6.06756260393394}
+14:50:44 | INFO: Data are loaded, start creating Blender stuff
+14:50:44 | INFO: Blender create Mesh node 0
+14:50:45 | INFO: glTF import finished in 0.34s
+BODY_PARTS {'B2-main-shield': 77, 'B2-opposite-shield': 54, 'B6-lower-plate': 60, 'B6-recess-floor': 10, 'B3-upper-grille': 34, 'B3-side-grille': 34, 'B3-opposite-grille': 34, 'B3-waist-grille': 34, 'B2-tab': 12, 'B2-ledge': 6, 'B4-waist-band': 12, 'B8-core': 40, 'B8-housing': 128, 'B8-forward-lip': 40, 'B8-core-caps': 36, 'B4-pistons': 208, 'B5-bracket': 24, 'B7-fasteners': 480} TOTAL 1323
+DEV segment_build_vs_clay {'p50_pct': 1.4949906914937596, 'p95_pct': 5.350648966243096, 'p99_pct': 6.376164903262217, 'max_pct': 7.448198283534688}
+14:50:49 | INFO: Data are loaded, start creating Blender stuff
+14:50:49 | INFO: Blender create Mesh node 0
+14:50:50 | INFO: glTF import finished in 0.28s
+DEV tailtip_build_vs_clay {'p50_pct': 0.31034822679811364, 'p95_pct': 1.4471540991595864, 'p99_pct': 3.2731333386670545, 'max_pct': 4.674875101227998}
+LOG {"tris": {"Head": 13966, "SegmentHero": 1323, "GlowInsert": 120, "SegmentNeck": 1323, "TailTip": 1722, "TailTaper1": 560, "TailTaper2": 480, "GlowInsertT1": 84, "tail_section_total": 2846}, "instanced_total_tris": 57216, "scales": {"head": {"H_clay": 0.5900000000000001, "uniform_scale": 2.2033898305084745, "L_to_ventrear_clay_before_R5": 0.768, "LH_before_R5": 1.3016949152542372, "LH_after_R5": 1.42, "snout_k": 1.3200133268555843, "snout_x0": -0.76}, "segment": {"D_clay": 1.0352944426238526, "plate_span_clay": 0.6660963207483291, "LD_measured": 0.6433882896735861, "uniform_scale": 0.9659087877122161, "yc": -0.5408037565648556, "zc": 0.04214452393352924, "pitch": 1.0272485613822937, "ring_r": 0.4111912145428654}, "tail": {"len_clay": 0.6514982988759114, "base_dia_clay": 0.36960916887828826, "len_over_base_dia_before": 1.7626681200932242, "axial_k": 1.5317687823486603, "len_over_base_dia": 2.7, "uniform_scale": 1.4068915053653206}}, "deviation": {"head_build_vs_refined_master": {"p50_pct": 0.13834479209155587, "p95_pct": 1.3072435188146618, "p99_pct": 3.6663476292169546, "max_pct": 6.06756260393394}, "head_build_vs_raw_clay": {"p50_pct": 0.1438266839525133, "p95_pct": 1.3123221613088991, "p99_pct": 3.6663476292169546, "max_pct": 6.06756260393394}, "segment_build_vs_clay": {"p50_pct": 1.4949906914937596, "p95_pct": 5.350648966243096, "p99_pct": 6.376164903262217, "max_pct": 7.448198283534688}, "tailtip_build_vs_clay": {"p50_pct": 0.31034822679811364, "p95_pct": 1.4471540991595864, "p99_pct": 3.2731333386670545, "max_pct": 4.674875101227998}}}
+Info: Saved as "snake-v2-r2-fix.blend"
+BUILD_DONE
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)
+
+Blender quit

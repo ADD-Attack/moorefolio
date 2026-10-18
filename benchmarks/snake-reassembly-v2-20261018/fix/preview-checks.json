@@ -1,0 +1,65 @@
+{
+  "frozen_staging_matches_P3": true,
+  "images": {
+    "fix-p4-seg-detail.png": {
+      "sha256": "2f1e99a77fdb6dcea89a194082fa9b49fd897622e232b4a6b4d13f43665a3a7a",
+      "size": [
+        960,
+        540
+      ],
+      "corner": [
+        193,
+        193,
+        191
+      ]
+    },
+    "fix-p4-tail-detail.png": {
+      "sha256": "2bffd9b596aa43e1a77506ec51ed0c2e87e3c8f1ffabe49ba5cb6b40995cf284",
+      "size": [
+        960,
+        540
+      ],
+      "corner": [
+        193,
+        193,
+        191
+      ]
+    },
+    "fix-p4-tail_top-detail.png": {
+      "sha256": "ae56762e42b45e3a24d3ffa8a03e41efc95b5ca5e86d2afd9d66325191a40443",
+      "size": [
+        960,
+        540
+      ],
+      "corner": [
+        154,
+        152,
+        144
+      ]
+    },
+    "fix-p4-full-body.png": {
+      "sha256": "0dcbaecdf3b7b86ecca09e06ee9cddb54ca6766a078d56d69afde1d095aeb2db",
+      "size": [
+        960,
+        540
+      ],
+      "corner": [
+        193,
+        193,
+        191
+      ]
+    },
+    "fix-p4-head-closeup.png": {
+      "sha256": "ccb609a378f7680a41e0015b761dbbe28fd82a31280bc57cb456eec873af2107",
+      "size": [
+        960,
+        540
+      ],
+      "corner": [
+        193,
+        193,
+        191
+      ]
+    }
+  }
+}

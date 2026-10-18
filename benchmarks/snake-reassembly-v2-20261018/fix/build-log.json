@@ -1,0 +1,824 @@
+{
+ "refines": [
+  {
+   "id": "R1-brow-ledge",
+   "side": -1,
+   "verts": 564,
+   "max_out": 0.022,
+   "down": 0.006,
+   "region": "x=-0.667\u00b10.16, z=0.648\u00b10.045, outward-facing side verts"
+  },
+  {
+   "id": "R1-brow-ledge",
+   "side": 1,
+   "verts": 557,
+   "max_out": 0.022,
+   "down": 0.006,
+   "region": "x=-0.667\u00b10.16, z=0.648\u00b10.045, outward-facing side verts"
+  },
+  {
+   "id": "R2-forehead-hood",
+   "verts": 1022,
+   "max_normal_push": 0.012,
+   "region": "x=-0.85\u00b10.08, z=0.57\u00b10.05"
+  },
+  {
+   "id": "R3-snout-ridge-crests",
+   "verts": 1520,
+   "max_normal_push": 0.005
+  },
+  {
+   "id": "R4-mouth-serration-smooth",
+   "verts": 3979,
+   "passes": 2,
+   "axis": "z only, along-seam window 0.028, |dz|<0.014"
+  },
+  {
+   "id": "R5-snout-axial-stretch",
+   "ruling": "S0-1",
+   "x0_clay": -0.76,
+   "tip_before": -0.9781159162521362,
+   "tip_after": -1.0479159162521363,
+   "k": 1.3200133268555843,
+   "verts_moved": 8338,
+   "LH_before": 1.3016949152542372,
+   "LH_after": 1.42,
+   "LH_band": [
+    1.4065,
+    1.4935
+   ]
+  },
+  {
+   "id": "R8-shell-repair",
+   "source": "R1-R5 actual master triangles",
+   "method": ".006 surface voxelization; one-cell gap close; fill enclosed sections; outer isosurface; collapse; 2 mild smoothing iterations",
+   "not_a_primitive": true
+  },
+  {
+   "id": "R9-fin-separation",
+   "region": "clay z>.735, x between -.55 and -.12",
+   "axial_stagger": ".28 * lateral centre, smooth root blend",
+   "thickness_scale": 1.22,
+   "lateral_spread": 0.022
+  },
+  {
+   "id": "R10-cut-in-head-detail",
+   "H2_paths_raw_clay": [
+    [
+     [
+      -0.97,
+      0.39
+     ],
+     [
+      -0.9,
+      0.42
+     ],
+     [
+      -0.84,
+      0.47
+     ]
+    ],
+    [
+     [
+      -0.86,
+      0.49
+     ],
+     [
+      -0.82,
+      0.57
+     ],
+     [
+      -0.75,
+      0.61
+     ]
+    ],
+    [
+     [
+      -0.78,
+      0.62
+     ],
+     [
+      -0.7,
+      0.65
+     ],
+     [
+      -0.6,
+      0.65
+     ],
+     [
+      -0.53,
+      0.61
+     ]
+    ],
+    [
+     [
+      -0.86,
+      0.39
+     ],
+     [
+      -0.82,
+      0.34
+     ],
+     [
+      -0.8,
+      0.29
+     ]
+    ],
+    [
+     [
+      -0.73,
+      0.38
+     ],
+     [
+      -0.7,
+      0.33
+     ],
+     [
+      -0.68,
+      0.285
+     ]
+    ],
+    [
+     [
+      -0.59,
+      0.4
+     ],
+     [
+      -0.57,
+      0.345
+     ],
+     [
+      -0.54,
+      0.3
+     ]
+    ],
+    [
+     [
+      -0.47,
+      0.4
+     ],
+     [
+      -0.45,
+      0.345
+     ],
+     [
+      -0.43,
+      0.29
+     ]
+    ],
+    [
+     [
+      -0.49,
+      0.61
+     ],
+     [
+      -0.43,
+      0.66
+     ],
+     [
+      -0.35,
+      0.685
+     ]
+    ],
+    [
+     [
+      -0.41,
+      0.69
+     ],
+     [
+      -0.4,
+      0.62
+     ],
+     [
+      -0.37,
+      0.59
+     ]
+    ],
+    [
+     [
+      -0.13,
+      0.64
+     ],
+     [
+      -0.1,
+      0.6
+     ],
+     [
+      -0.09,
+      0.55
+     ]
+    ],
+    [
+     [
+      -0.85,
+      0.23
+     ],
+     [
+      -0.84,
+      0.28
+     ]
+    ],
+    [
+     [
+      -0.67,
+      0.225
+     ],
+     [
+      -0.65,
+      0.28
+     ]
+    ],
+    [
+     [
+      -0.48,
+      0.23
+     ],
+     [
+      -0.47,
+      0.29
+     ]
+    ]
+   ],
+   "H3_mouth_depth_clay": 0.021,
+   "H4_nostril_depth_clay": 0.022,
+   "H9_inset_depth_clay": 0.012,
+   "H7_slats_per_side": 7,
+   "H8": "two fitted barrel/rod units per flank"
+  },
+  {
+   "id": "R11-fin-borders",
+   "method": "local planar refinement of existing blade faces, preserved formed x/z silhouette; inset face cut leaves perimeter as raised border"
+  },
+  {
+   "id": "H6-lens-seat",
+   "side": -1,
+   "clay_ring_r": 0.1828813559322034,
+   "lens_R": 0.1828813559322034,
+   "normal": [
+    0.1452627182006836,
+    -0.987538754940033,
+    -0.060547374188899994
+   ]
+  },
+  {
+   "id": "H6-lens-seat",
+   "side": 1,
+   "clay_ring_r": 0.1828813559322034,
+   "lens_R": 0.1828813559322034,
+   "normal": [
+    0.10313880443572998,
+    0.9936084151268005,
+    -0.04587705433368683
+   ]
+  },
+  {
+   "id": "R6-segment-axial-stretch",
+   "ruling": "S0-3",
+   "k": 1.3211306665703155,
+   "LD_before": 0.6433882896735861,
+   "LD_after": 0.8500000000000001,
+   "before_projection": true
+  },
+  {
+   "id": "R7-F8-machined-panels",
+   "source": "R2 radius map; vertices raycast from S0-3 corrected clay",
+   "feature_tris": {
+    "B2-main-shield": 77,
+    "B2-opposite-shield": 54,
+    "B6-lower-plate": 60,
+    "B6-recess-floor": 10,
+    "B3-upper-grille": 34,
+    "B3-side-grille": 34,
+    "B3-opposite-grille": 34,
+    "B3-waist-grille": 34,
+    "B2-tab": 12,
+    "B2-ledge": 6,
+    "B4-waist-band": 12,
+    "B8-core": 40,
+    "B8-housing": 128,
+    "B8-forward-lip": 40,
+    "B8-core-caps": 36,
+    "B4-pistons": 208,
+    "B5-bracket": 24,
+    "B7-fasteners": 480
+   }
+  },
+  {
+   "id": "B10-neck-variant",
+   "outer_plate_scale": 1.025,
+   "forward_lap": 0.025
+  },
+  {
+   "id": "R12-tail-axial-stretch",
+   "ruling": "S0-4",
+   "k": 1.5317687823486603,
+   "LD_before": 1.7626681200932242,
+   "LD_after": 2.7
+  },
+  {
+   "id": "R13-tail-surface-and-vents",
+   "method": "surface-derived volume repair; three recessed T5 vents with 5 actual slats each",
+   "vent_depth": 0.04,
+   "tail_tip_tris": 1722
+  },
+  {
+   "id": "R14-neck-pose",
+   "transport": "fixed lateral axis through upper neck, slerped to upright ground frame",
+   "coil_xy_scale": 0.85,
+   "height_scale": 0.9,
+   "instance_advance_fraction": 0.9
+  }
+ ],
+ "deviation": {
+  "head_build_vs_refined_master": {
+   "p50_pct": 0.13834479209155587,
+   "p95_pct": 1.3072435188146618,
+   "p99_pct": 3.6663476292169546,
+   "max_pct": 6.06756260393394
+  },
+  "head_build_vs_raw_clay": {
+   "p50_pct": 0.1438266839525133,
+   "p95_pct": 1.3123221613088991,
+   "p99_pct": 3.6663476292169546,
+   "max_pct": 6.06756260393394
+  },
+  "segment_build_vs_clay": {
+   "p50_pct": 1.4949906914937596,
+   "p95_pct": 5.350648966243096,
+   "p99_pct": 6.376164903262217,
+   "max_pct": 7.448198283534688
+  },
+  "tailtip_build_vs_clay": {
+   "p50_pct": 0.31034822679811364,
+   "p95_pct": 1.4471540991595864,
+   "p99_pct": 3.2731333386670545,
+   "max_pct": 4.674875101227998
+  }
+ },
+ "tris": {
+  "Head": 13966,
+  "SegmentHero": 1323,
+  "GlowInsert": 120,
+  "SegmentNeck": 1323,
+  "TailTip": 1722,
+  "TailTaper1": 560,
+  "TailTaper2": 480,
+  "GlowInsertT1": 84,
+  "tail_section_total": 2846
+ },
+ "scales": {
+  "head": {
+   "H_clay": 0.5900000000000001,
+   "uniform_scale": 2.2033898305084745,
+   "L_to_ventrear_clay_before_R5": 0.768,
+   "LH_before_R5": 1.3016949152542372,
+   "LH_after_R5": 1.42,
+   "snout_k": 1.3200133268555843,
+   "snout_x0": -0.76
+  },
+  "segment": {
+   "D_clay": 1.0352944426238526,
+   "plate_span_clay": 0.6660963207483291,
+   "LD_measured": 0.6433882896735861,
+   "uniform_scale": 0.9659087877122161,
+   "yc": -0.5408037565648556,
+   "zc": 0.04214452393352924,
+   "pitch": 1.0272485613822937,
+   "ring_r": 0.4111912145428654
+  },
+  "tail": {
+   "len_clay": 0.6514982988759114,
+   "base_dia_clay": 0.36960916887828826,
+   "len_over_base_dia_before": 1.7626681200932242,
+   "axial_k": 1.5317687823486603,
+   "len_over_base_dia": 2.7,
+   "uniform_scale": 1.4068915053653206
+  }
+ },
+ "head_master_tris": 144006,
+ "head_repaired_surface_tris": 12358,
+ "head_fitted_hardware_tris": 520,
+ "segment_interior_faces_culled": 29612,
+ "housing_measurement": {
+  "method": "outer radial envelope of clean clay housing, original axial span .09; excludes interior-radius percentile choice in R2",
+  "radius": 0.4111912145428654,
+  "old_percentile60": 0.3139504704709396
+ },
+ "body_feature_tris": {
+  "B2-main-shield": 77,
+  "B2-opposite-shield": 54,
+  "B6-lower-plate": 60,
+  "B6-recess-floor": 10,
+  "B3-upper-grille": 34,
+  "B3-side-grille": 34,
+  "B3-opposite-grille": 34,
+  "B3-waist-grille": 34,
+  "B2-tab": 12,
+  "B2-ledge": 6,
+  "B4-waist-band": 12,
+  "B8-core": 40,
+  "B8-housing": 128,
+  "B8-forward-lip": 40,
+  "B8-core-caps": 36,
+  "B4-pistons": 208,
+  "B5-bracket": 24,
+  "B7-fasteners": 480
+ },
+ "body_traces": [
+  {
+   "name": "B2-main-shield",
+   "outline": [
+    [
+     -0.485,
+     94
+    ],
+    [
+     -0.3,
+     94
+    ],
+    [
+     -0.3,
+     111
+    ],
+    [
+     -0.06,
+     111
+    ],
+    [
+     -0.06,
+     94
+    ],
+    [
+     0.175,
+     94
+    ],
+    [
+     0.175,
+     125
+    ],
+    [
+     0.175,
+     156
+    ],
+    [
+     0.01,
+     165
+    ],
+    [
+     -0.045,
+     174
+    ],
+    [
+     -0.045,
+     165
+    ],
+    [
+     -0.29,
+     165
+    ],
+    [
+     -0.32,
+     159
+    ],
+    [
+     -0.485,
+     157
+    ],
+    [
+     -0.485,
+     125
+    ]
+   ],
+   "holes": [
+    [
+     [
+      -0.295,
+      113
+     ],
+     [
+      -0.06,
+      113
+     ],
+     [
+      -0.065,
+      125
+     ],
+     [
+      -0.275,
+      125
+     ]
+    ],
+    [
+     [
+      -0.035,
+      137
+     ],
+     [
+      0.145,
+      137
+     ],
+     [
+      0.145,
+      154
+     ],
+     [
+      -0.035,
+      154
+     ]
+    ]
+   ],
+   "heights": "radial ray cast corrected source; .425-.515 structural plate bounds"
+  },
+  {
+   "name": "B2-opposite-shield",
+   "outline": [
+    [
+     -0.485,
+     22
+    ],
+    [
+     -0.3,
+     14
+    ],
+    [
+     -0.045,
+     14
+    ],
+    [
+     0.175,
+     22
+    ],
+    [
+     0.175,
+     54
+    ],
+    [
+     0.175,
+     84
+    ],
+    [
+     -0.06,
+     84
+    ],
+    [
+     -0.06,
+     94
+    ],
+    [
+     -0.3,
+     94
+    ],
+    [
+     -0.3,
+     84
+    ],
+    [
+     -0.485,
+     84
+    ],
+    [
+     -0.485,
+     54
+    ]
+   ],
+   "holes": [
+    [
+     [
+      -0.28,
+      35
+     ],
+     [
+      -0.045,
+      35
+     ],
+     [
+      -0.045,
+      44
+     ],
+     [
+      -0.28,
+      44
+     ]
+    ]
+   ],
+   "heights": "radial ray cast corrected source; .425-.515 structural plate bounds"
+  },
+  {
+   "name": "B6-lower-plate",
+   "outline": [
+    [
+     -0.485,
+     -157
+    ],
+    [
+     -0.3,
+     -164
+    ],
+    [
+     -0.045,
+     -164
+    ],
+    [
+     0.175,
+     -157
+    ],
+    [
+     0.175,
+     -125
+    ],
+    [
+     0.175,
+     -95
+    ],
+    [
+     0.175,
+     -65
+    ],
+    [
+     0.175,
+     -22
+    ],
+    [
+     -0.045,
+     -14
+    ],
+    [
+     -0.3,
+     -14
+    ],
+    [
+     -0.485,
+     -22
+    ],
+    [
+     -0.485,
+     -65
+    ],
+    [
+     -0.485,
+     -95
+    ],
+    [
+     -0.485,
+     -125
+    ]
+   ],
+   "holes": [
+    [
+     [
+      -0.285,
+      -145
+     ],
+     [
+      -0.045,
+      -145
+     ],
+     [
+      -0.045,
+      -129
+     ],
+     [
+      -0.285,
+      -129
+     ]
+    ]
+   ],
+   "heights": "radial ray cast corrected source; .425-.515 structural plate bounds"
+  },
+  {
+   "name": "B6-recess-floor",
+   "outline": [
+    [
+     -0.279,
+     -144
+    ],
+    [
+     -0.051,
+     -144
+    ],
+    [
+     -0.051,
+     -130
+    ],
+    [
+     -0.279,
+     -130
+    ]
+   ],
+   "holes": [],
+   "heights": "radial ray cast corrected source; .425-.515 structural plate bounds"
+  },
+  {
+   "name": "B3-upper-grille",
+   "outline": [
+    [
+     -0.295,
+     113
+    ],
+    [
+     -0.06,
+     113
+    ],
+    [
+     -0.065,
+     125
+    ],
+    [
+     -0.275,
+     125
+    ]
+   ],
+   "radius": 0.47767019762875695,
+   "depth": 0.055,
+   "slats": 4
+  },
+  {
+   "name": "B3-side-grille",
+   "outline": [
+    [
+     -0.035,
+     137
+    ],
+    [
+     0.145,
+     137
+    ],
+    [
+     0.145,
+     154
+    ],
+    [
+     -0.035,
+     154
+    ]
+   ],
+   "radius": 0.44,
+   "depth": 0.055,
+   "slats": 4
+  },
+  {
+   "name": "B3-opposite-grille",
+   "outline": [
+    [
+     -0.28,
+     35
+    ],
+    [
+     -0.045,
+     35
+    ],
+    [
+     -0.045,
+     44
+    ],
+    [
+     -0.28,
+     44
+    ]
+   ],
+   "radius": 0.4535150682022835,
+   "depth": 0.055,
+   "slats": 4
+  },
+  {
+   "name": "B3-waist-grille",
+   "outline": [
+    [
+     -0.28,
+     170
+    ],
+    [
+     -0.055,
+     170
+    ],
+    [
+     -0.055,
+     190
+    ],
+    [
+     -0.28,
+     190
+    ]
+   ],
+   "radius": 0.44,
+   "depth": 0.055,
+   "slats": 4
+  }
+ ],
+ "drum_retopo": {
+  "TailTaper1": {
+   "nu": 24,
+   "nv": 10,
+   "ray_misses_filled": 4
+  },
+  "TailTaper2": {
+   "nu": 24,
+   "nv": 10,
+   "ray_misses_filled": 4
+  }
+ },
+ "curve_scale": 0.997328700371159,
+ "instanced_total_tris": 57216,
+ "n_nodes": 61,
+ "module_plus_insert": 1443
+}

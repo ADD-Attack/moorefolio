@@ -1,0 +1,150 @@
+diff --git a/benchmarks/snake-reassembly-v2-20261018/NOTE.md b/benchmarks/snake-reassembly-v2-20261018/NOTE.md
+index 66016c6..a2c7f9b 100644
+--- a/benchmarks/snake-reassembly-v2-20261018/NOTE.md
++++ b/benchmarks/snake-reassembly-v2-20261018/NOTE.md
+@@ -13,6 +13,7 @@
+ | Full body | `r2/captures/r2-full-body.png` |
+ | Head close-up | `r2/captures/r2-head-closeup.png` |
+ | Segment detail | `r2/captures/r2-seg-detail.png` |
++| Tail detail (added for the Decision-36 render review, same staging) | `r2/captures/r2tail-tail-detail.png` |
+ | Settings | `r2/captures/r2-render-settings.json` |
+ 
+ - **Render:** Blender 4.5.14 Cycles on GPU (OptiX), 256 samples, adaptive threshold 0.01, OIDN denoise, 1920×1080.
+@@ -159,49 +160,66 @@ Residual dark speckles remain on the head and tail where split seams did not ful
+ 
+ ## 7. Self-scorecard (categories 1–4; MATCH / QUALITY, 0–10)
+ 
++**Basis (Decision 36): every score below comes ONLY from my review of the delivered renders against the reference.** No score rests on tri counts, Hausdorff/deviation numbers, refine parameters, construction intent or effort; those are technical data (§3–§5).
++
++**Renders reviewed in-session:**
++- `r2/captures/r2-full-body.png` vs `REFERENCE.png`;
++- `r2/captures/r2-head-closeup.png` and the matched-angle `r2/after-R5/h3_sbs.png` / `h3_overlay.png` vs `head-closeup.png`;
++- `r2/captures/r2-seg-detail.png` and `r2/overlays/s2_sbs.png` vs `segment2-closeup.png`;
++- `r2/captures/r2tail-tail-detail.png` vs `tail-closeup.png`. This capture was added for this rescoring, with identical staging, so the tail could be reviewed rather than guessed.
++- Section plots `r2/sections/sec_*` show build vs clay only. They are used solely to confirm that an overhang exists, not to score match.
++
++**How to read the table:**
++- A form that sits inside a render's view but is not legible is a reviewed finding and is scored low.
++- A form outside every render's view is marked **UNREVIEWED**.
++- **These scores replace my earlier §7. Those were higher (median 5.0 / 5.0) because they partly credited construction intent, which Decision 36 excludes.**
++
+ ### Category 1: per-feature shape (27 frozen features)
+ 
+-| # | Feature | MATCH | QUALITY | Basis |
++| # | Feature | MATCH | QUALITY | What the renders show |
+ |---|---|---|---|---|
+-| H1 | Skull massing | 7.0 | 6.0 | Clay taper and topline; L:H 1.444 after R5. |
+-| H2 | Plate breakup | 5.0 | 4.0 | Soft clay plates; no seams cut yet; speckles. |
+-| H3 | Jaw seam and lower jaw (+ overbite, cheek) | 6.0 | 5.0 | Full-length seam with jaw mass; groove shallow. |
+-| H4 | Nostril slot | 5.0 | 4.5 | Clay slot present; recess not deepened. |
+-| H5 | Crest fins ×3 | 6.5 | 5.5 | Three blades match the read; thin. |
+-| H6 | Eye lens assembly | 6.5 | 6.0 | Modelled rings, cover and recessed blades seated in the clay. |
+-| H7 | Cheek vent box (vertical slats) | 6.5 | 6.0 | Clay box, frame and vertical slats. |
+-| H8 | Head piston | 6.0 | 5.5 | Clay rod into the collar. |
+-| H9 | Inset panels | 4.5 | 4.0 | Window soft; placard and collar vent barely legible. |
+-| H10 | Collar | 6.0 | 5.0 | Clay stacked collar with top box. |
+-| H11 | Brow ridge + hood | 6.0 | 5.5 | Ledge lip present (section a); hood mild. |
+-| H12 | Snout-ridge complex | 6.0 | 5.0 | Clay ridge into the nostril, longer after R5; soft. |
+-| B1 | Drum massing | 5.0 | 5.0 | L:D 0.64 (S0-3). |
+-| B2 | Stepped shield plate | 4.0 | 3.5 | Tab and notch soft; no ledge. |
+-| B3 | Framed grilles ×3 | 1.5 | 1.5 | Not resolved at budget. |
+-| B4 | Waist band + pistons | 3.5 | 3.0 | Piston masses only. |
+-| B5 | Bracket blocks | 3.0 | 3.0 | Soft. |
+-| B6 | Lower plate + recess | 3.0 | 3.0 | Recess not legible. |
+-| B7 | Fasteners | 1.0 | 1.0 | Absent. |
+-| B8 | Joint housing ring | 4.0 | 4.0 | Clay ring, soft. |
+-| B9 | Segmented glow insert | 5.5 | 5.0 | Bars at every joint (clay). |
+-| B10 | Neck variant | 4.0 | 3.5 | Lapped, enlarged plates; kinks at bends. |
+-| T1 | Taper segments ×2 | 4.5 | 4.0 | Taper and port present; soft. |
+-| T2 | Torpedo terminal | 5.0 | 5.0 | Clay form; short (S0-4). |
+-| T3 | Dorsal fin | 6.0 | 5.5 | Clay fin. |
+-| T4 | Lateral fin pair | 6.0 | 5.5 | Clay fins. |
+-| T5 | Tail grille vents | 3.5 | 3.0 | Soft. |
+-
+-Category-1 medians: **MATCH 5.0 / QUALITY 5.0**. The head items alone have a median of about 6.0 / 5.25 (H1 and H12 rose after R5).
+-
+-### Categories 2–4
+-
+-| # | Category | MATCH | QUALITY |
+-|---|---|---|---|
+-| 2 | Silhouette (head silhouette improved by R5) | 6.5 | 5.5 |
+-| 3 | Massing and composition (pose per §1; neck bend kinks; short drums) | 6.0 | 5.5 |
+-| 4 | Modelled detail | 3.5 | 3.0 |
+-
+-**Gate read:** below 7.5 on every category. The head moved the right way: its forms are kept as geometry and visible in captures and sections. The blocking item is the body module (§4 ruling).
++| H1 | Skull massing | 6.5 | 5.0 | Long, low wedge, deepest at the eye line, tapering in profile and plan (head capture, h3_sbs). The surface is faceted and shard-broken rather than flat-faceted plates. |
++| H2 | Plate breakup | 2.5 | 2.0 | No readable plate pattern, seams or rivets. Facet shards and dark speckle cracks instead. |
++| H3 | Jaw seam + lower jaw (+ overbite, cheek) | 5.5 | 4.5 | Continuous seam line from the snout to under the eye, with jaw mass below (head capture, h3_sbs). Partly jagged, so it still reads slightly toothy. The overbite is not legible. A cheek mass below the eye reads. |
++| H4 | Nostril slot | 4.5 | 4.0 | A dark slot is visible near the snout tip side (h3_sbs). The framed recess and ridge surround are not legible. |
++| H5 | Crest fins ×3 | 3.0 | 3.5 | At the matched angle only ONE blade reads (h3_sbs); the full body shows one or two. The reference shows three distinct blades. Blade edges are ragged. |
++| H6 | Eye lens assembly | 6.0 | 5.5 | Concentric proud ring with a seated lens disc, in the right place and at the right relative size (head capture, h3_sbs). |
++| H7 | Cheek vent box | 5.0 | 4.5 | Chunky box with a raised frame behind the eye. Only 2–3 vertical bars are legible; the reference shows about 7–8. |
++| H8 | Head piston | 2.0 | 2.0 | Not legible in any head render, although the region is in view. |
++| H9 | Inset panels | 2.5 | 2.5 | A small recess may be present on the upper rear skull. The placard and the collar vent are not legible. |
++| H10 | Collar | 3.5 | 3.0 | A blocky rear mass. Stacked plate rings and the boxed top fitting do not read. |
++| H11 | Brow ridge + hood | 6.0 | 5.0 | A brow hood over the eye casts a shadow on the top of the eye ring (head capture). Section (a) confirms the overhang exists. The forehead hood is not separately legible. |
++| H12 | Snout-ridge complex | 4.5 | 4.0 | A soft raised edge runs from the eye toward the snout. Its convergence into the nostril surround is not legible. |
++| B1 | Drum massing | 4.5 | 4.0 | Cylindrical drums that read short and barrel-like against the reference. No plate flats (seg capture). |
++| B2 | Stepped shield plate | 3.0 | 3.0 | A top-tab recess and side notches form an I-shape. No diagonal step to a second level and no ledge. |
++| B3 | Framed grilles ×3 | 1.0 | 1.0 | Absent in every render. |
++| B4 | Waist band + pistons | 2.5 | 2.0 | Blocky side protrusions at mid-height. No band and no cylinder/rod/fitting read. |
++| B5 | Bracket blocks | 1.5 | 1.5 | Not distinguishable. |
++| B6 | Lower plate + recess | 1.5 | 1.5 | The lower drum is plain. |
++| B7 | Fasteners | 1.0 | 1.0 | None visible. |
++| B8 | Joint housing ring | 2.5 | 2.5 | Joints show a thin dark slot. No thick ring with a lip reads. |
++| B9 | Segmented insert | 4.0 | 4.0 | Segmented bars read where a joint opens: the right joint in the seg capture and the tail capture's taper ring. Mostly hidden in the coil. |
++| B10 | Neck variant | 2.5 | 2.0 | The neck reads as an offset, kinked stack of drums with gaps (full body). No heavier overlapping collar plates. The reference neck is a smooth S. |
++| T1 | Taper segments ×2 | 4.0 | 3.5 | Two smaller drums step down, with the port boss and the glow ring at the taper start visible (tail capture). No plate language. |
++| T2 | Torpedo terminal | 3.5 | 2.5 | A stubby cone, much shorter than the reference torpedo. No nozzle hole visible. Shattered, speckled surface. |
++| T3 | Dorsal fin | 3.5 | 3.0 | A small swept dorsal stub is visible. The notched trailing edge is not legible. |
++| T4 | Lateral/ventral fin pair | 3.5 | 3.0 | One swept lower fin is visible. **Far fin UNREVIEWED**: it is outside every render's view, so the pair is not confirmed. |
++| T5 | Tail grille vents | 1.0 | 1.0 | None visible. |
++
++Category-1 medians: **MATCH 3.5 / QUALITY 3.0**. The head items alone come to 4.5 / 4.0.
++
++### Categories 2–4 (from the full-body capture vs REFERENCE.png)
++
++| # | Category | MATCH | QUALITY | What the renders show |
++|---|---|---|---|---|
++| 2 | Silhouette | 5.0 | 4.0 | **Reads:** head high upper-left, one ground loop, tail curling to the front with the tip pointing left. **Gaps:** the body reads as separate beaded barrels with pinches at the joints, where the reference is a continuous armoured tube. The neck is jagged, and the crest reads as one or two blades. |
++| 3 | Massing and composition | 5.5 | 4.5 | **Reads:** layout and coil footprint follow the reference, and head-to-body scale is plausible. **Gaps:** the neck stack is offset and kinked, the drums are short, and the tail tip is stubby. |
++| 4 | Modelled detail | 2.0 | 1.5 | Almost no key detail is legible (grilles, bolts, vents, panels). The head has eye-ring and vent-box detail only; surfaces show shard and speckle artefacts. |
++
++**Gate read:** below 7.5 on every category, and well below. The renders show where the build stands:
++- The head's large forms are present: wedge, eye seat, brow hood, mouth line, vent box.
++- Its surface quality and every key detail are not.
++- The body module and the tail detail are far from the reference.
+ 
+ ## 8. Reproduce
+ 
+diff --git a/benchmarks/snake-reassembly-v2-20261018/STATUS.md b/benchmarks/snake-reassembly-v2-20261018/STATUS.md
+index f13b17c..e902c72 100644
+--- a/benchmarks/snake-reassembly-v2-20261018/STATUS.md
++++ b/benchmarks/snake-reassembly-v2-20261018/STATUS.md
+@@ -12,7 +12,11 @@ Round 2 was released at about 09:29 CDT; the deadline is about 10:44 CDT. The ch
+   - captures are Cycles 256 spp / adaptive 0.01 / OIDN / 1920×1080 on #C1C1BF with shadow-catcher;
+   - same-angle overlays and section plots are delivered;
+   - scripts are reproducible.
+-- **Acceptance: NOT READY by my own scorecard.** Category-1 medians are 5.0 / 5.0, silhouette 6.5 / 5.5, massing 6.0 / 5.5, modelled detail 3.5 / 3.0. NOTE.md §7 has the details. The head's forms now survive as geometry; the body module does not hold its B-forms at budget.
++- **Acceptance: NOT READY by my own scorecard.** The scorecard was re-scored at about 10:05 CDT under **Decision 36: render review only**, which replaces the earlier scores that credited construction intent.
++  - Category-1 medians: MATCH 3.5 / QUALITY 3.0 (head alone 4.5 / 4.0).
++  - Silhouette 5.0 / 4.0; massing 5.5 / 4.5; modelled detail 2.0 / 1.5.
++  - One fin form is UNREVIEWED: the far lateral fin of T4 is outside every render.
++  - NOTE.md §7 has the per-feature render observations. A tail-detail capture was added so the tail could be reviewed.
+ 
+ ## Needs a producer ruling (details in NOTE.md §4 and §6)
+ 
+diff --git a/benchmarks/snake-reassembly-v2-20261018/source/render_r2.py b/benchmarks/snake-reassembly-v2-20261018/source/render_r2.py
+index b38d11d..dfba1e0 100644
+--- a/benchmarks/snake-reassembly-v2-20261018/source/render_r2.py
++++ b/benchmarks/snake-reassembly-v2-20261018/source/render_r2.py
+@@ -94,7 +94,8 @@ if segdir.y < 0: segdir = -segdir
+ segdir = (segdir + Vector((0, 0, -0.18))).normalized()
+ VIEWDEF = {"full": (assets, (0.0, math.cos(el), -math.sin(el)), 1.06),
+            "head": (head + neck, (0.22, .96, -.17), 1.12),
+-           "seg": ([o for o in assets if o.name in SEGPAIR], tuple(segdir), 1.25)}
++           "seg": ([o for o in assets if o.name in SEGPAIR], tuple(segdir), 1.25),
++           "tail": ([o for o in assets if o.name in ("TailTaper_1", "TailTaper_2", "TailTip_node", "Glow_T1")], (0.15, 1.0, -0.45), 1.2)}
+ frames = {}
+ for v in VIEWS:
+     objs, d, m = VIEWDEF[v]

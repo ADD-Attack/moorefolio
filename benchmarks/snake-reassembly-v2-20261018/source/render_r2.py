@@ -94,7 +94,8 @@ if segdir.y < 0: segdir = -segdir
 segdir = (segdir + Vector((0, 0, -0.18))).normalized()
 VIEWDEF = {"full": (assets, (0.0, math.cos(el), -math.sin(el)), 1.06),
            "head": (head + neck, (0.22, .96, -.17), 1.12),
-           "seg": ([o for o in assets if o.name in SEGPAIR], tuple(segdir), 1.25)}
+           "seg": ([o for o in assets if o.name in SEGPAIR], tuple(segdir), 1.25),
+           "tail": ([o for o in assets if o.name in ("TailTaper_1", "TailTaper_2", "TailTip_node", "Glow_T1")], (0.15, 1.0, -0.45), 1.2)}
 frames = {}
 for v in VIEWS:
     objs, d, m = VIEWDEF[v]
