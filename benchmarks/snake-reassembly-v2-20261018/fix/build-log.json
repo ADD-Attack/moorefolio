@@ -69,6 +69,10 @@
    "lateral_spread": 0.022
   },
   {
+   "id": "R24-P8-snout-ridge",
+   "method": "local displacement of surviving formed ridge vertices; no replacement shell"
+  },
+  {
    "id": "R10-cut-in-head-detail",
    "H2_paths_raw_clay": [
     [
@@ -265,6 +269,10 @@
    "method": "replace destructive planar inset boolean with local displacement of existing face vertices; solid formed blades retained"
   },
   {
+   "id": "R25-P8-skull-breakup",
+   "method": "wider and deeper surface-following cuts on existing traced skull boundaries"
+  },
+  {
    "id": "R18-head-fasteners",
    "method": "sixteen round machined bolt heads seated by raycast on actual skull plate surface"
   },
@@ -280,9 +288,9 @@
    "clay_ring_r": 0.1828813559322034,
    "lens_R": 0.1828813559322034,
    "normal": [
-    0.1452627182006836,
-    -0.987538754940033,
-    -0.060547374188899994
+    0.1790744960308075,
+    -0.9822221994400024,
+    -0.05631927773356438
    ]
   },
   {
@@ -291,9 +299,9 @@
    "clay_ring_r": 0.1828813559322034,
    "lens_R": 0.1828813559322034,
    "normal": [
-    0.10313880443572998,
-    0.9936084151268005,
-    -0.04587705433368683
+    0.16847877204418182,
+    0.9845694899559021,
+    -0.047304995357990265
    ]
   },
   {
@@ -373,16 +381,16 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.13858838177507687,
-   "p95_pct": 1.30953832676832,
+   "p50_pct": 0.14215287839529903,
+   "p95_pct": 1.3095383340052247,
    "p99_pct": 3.584440285815367,
-   "max_pct": 6.06756260393394
+   "max_pct": 6.067562024981578
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.1443479672321678,
+   "p50_pct": 0.14694365944253523,
    "p95_pct": 1.3134302906048299,
    "p99_pct": 3.584440285815367,
-   "max_pct": 6.06756260393394
+   "max_pct": 6.067562024981578
   },
   "segment_build_vs_clay": {
    "p50_pct": 1.4825655299517457,
@@ -398,7 +406,7 @@
   }
  },
  "tris": {
-  "Head": 13966,
+  "Head": 13967,
   "SegmentHero": 1303,
   "GlowInsert": 120,
   "SegmentNeck": 1303,
@@ -438,7 +446,7 @@
   }
  },
  "head_master_tris": 144006,
- "head_repaired_surface_tris": 11514,
+ "head_repaired_surface_tris": 11515,
  "head_fitted_hardware_tris": 1364,
  "segment_interior_faces_culled": 29612,
  "housing_measurement": {
@@ -857,7 +865,7 @@
   }
  ],
  "curve_scale": 0.997328700371159,
- "instanced_total_tris": 56732,
+ "instanced_total_tris": 56733,
  "n_nodes": 61,
  "module_plus_insert": 1423
 }

@@ -155,7 +155,7 @@ deviation(master_ref, h, HL * S_HEAD, "head_build_vs_refined_master")
 deviation(raw, h, HL * S_HEAD, "head_build_vs_raw_clay")
 
 # ---- H6 eye lens assemblies (machined, rule 2): seated on the clay eye disc, fitted to the measured clay ring
-bmh = bmesh.new(); bmh.from_mesh(master_ref.data); bvh_h = BVHTree.FromBMesh(bmh); lens_parts = []
+bmh = bmesh.new(); bmh.from_mesh(h.data); bvh_h = BVHTree.FromBMesh(bmh); lens_parts = []
 R = 0.083 * S_HEAD          # clay eye-ring outer radius (probe_negY: 45 px @ 545 px/unit), measured not invented
 for side in (-1, 1):
     c0 = Mh @ Vector((EYE[0], 0, EYE[2]))
@@ -170,11 +170,11 @@ for side in (-1, 1):
     if ns: nrm = sum(ns, Vector()).normalized()
     if nrm.y * side < 0: nrm = -nrm
     rr = R
-    M = Matrix.Translation(ctr) @ nrm.to_track_quat("Z", "Y").to_matrix().to_4x4()
+    M = Matrix.Translation(ctr + nrm * .018) @ nrm.to_track_quat("Z", "Y").to_matrix().to_4x4()
     prof = [(R * 1.00, 0.000), (R * 1.00, 0.012), (R * 0.90, 0.016), (R * 0.84, 0.010),   # outer metal ring
             (R * 0.80, 0.004), (R * 0.76, 0.012), (R * 0.72, 0.012),                    # groove, machined lip
-            (R * 0.68, 0.006), (R * 0.52, 0.002),                                      # bezel falling to blades
-            (R * 0.50, 0.008), (R * 0.30, 0.016), (R * 0.0, 0.019)]                    # domed optical cover
+            (R * 0.70, 0.009), (R * 0.68, 0.012),                                      # bezel falling to blades
+            (R * 0.60, 0.019), (R * 0.36, 0.027), (R * 0.0, 0.031)]                    # domed optical cover
     vs, fs = lathe_ring(prof, 24, M)
     # recessed aperture blades (P2): 8 thin vanes under the cover
     for b in range(8):

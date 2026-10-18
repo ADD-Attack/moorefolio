@@ -32,6 +32,25 @@ LOG['refines'].append({'id':'R9-fin-separation','region':'clay z>.735, x between
 V=verts(h);P=np.array([Mh.inverted()@Vector(v) for v in V]);w=np.clip((P[:,2]-.77)/.04,0,1)*((P[:,0]>-.60)&(P[:,0]<-.10))
 cent=np.where(P[:,1]<-.08,-.212,np.where(P[:,1]>.08,.207,-.004));target=cent+np.where(P[:,1]<cent,-.015,.015)
 w*=.65;P[:,1]=P[:,1]*(1-w)+target*w;setv(h,np.array([Mh@Vector(p) for p in P]))
+# R26: planarize interiors of existing formed machined plates; preserve borders.
+V=verts(h);P=np.array([Mh.inverted()@Vector(v) for v in V])
+for side in [-1,1]:
+ for cx,cz,rx,rz in [(-.79,.48,.065,.055),(-.55,.37,.055,.035),(-.31,.64,.075,.035),(-.84,.345,.045,.028)]:
+  w=bump(P[:,0]-cx,rx)*bump(P[:,2]-cz,rz)*(P[:,1]*side>.10)
+  ids=np.where(w>.08)[0]
+  if len(ids)<6:continue
+  A=np.column_stack([P[ids,0],P[ids,2],np.ones(len(ids))]);coef=np.linalg.lstsq(A,P[ids,1],rcond=None)[0]
+  target=np.column_stack([P[:,0],P[:,2],np.ones(len(P))])@coef
+  P[:,1]+=.75*w*(target-P[:,1])
+setv(h,np.array([Mh@Vector(p) for p in P]))
+LOG['refines'].append({'id':'R26-P8-plate-interiors','method':'local best-fit plane relaxation of existing plate interior vertices with cosine fade; borders retained'})
+# R24: sharpen the surviving snout ridge bands by displacing formed vertices only.
+V=verts(h);P=np.array([Mh.inverted()@Vector(v) for v in V])
+for side in [-1,1]:
+ w=bump(P[:,0]+.84,.16)*bump(P[:,2]-.49,.105)*bump(P[:,1]-side*.14,.075)
+ P[:,1]+=side*.009*w;P[:,2]+=.006*w
+setv(h,np.array([Mh@Vector(p) for p in P]))
+LOG['refines'].append({'id':'R24-P8-snout-ridge','method':'local displacement of surviving formed ridge vertices; no replacement shell'})
 # Frozen BVH of repaired shell for fitting cuts and machined hardware.
 bm=bmesh.new();bm.from_mesh(h.data);hbvh=BVHTree.FromBMesh(bm);EXTRA=[]
 def pform(p):
@@ -53,7 +72,7 @@ def cut_mesh(vs,fs,name):
  bpy.ops.object.modifier_apply(modifier=mod.name);bpy.data.objects.remove(cutter)
  print('CUT',name,before_n,tris(h),flush=True)
  assert tris(h)>.5*before_n,('REJECT destructive boolean',name,before_n,tris(h))
-def groove(path,width=.004,depth=.008,side=-1,name='panel-seam'):
+def groove(path,width=.007,depth=.014,side=-1,name='panel-seam'):
  dense=[]
  for a,b in zip(path[:-1],path[1:]):
   for u in np.linspace(0,1,max(2,int(np.linalg.norm(np.array(b)-a)/.016)),endpoint=False):dense.append(tuple(np.array(a)*(1-u)+np.array(b)*u))
@@ -106,6 +125,13 @@ for side in [-1,1]:
   a,n=surface(-.18,z,side);b,_=surface(.04,z,side);a+=n*.01;b+=n*.01
   rod('H8-piston-barrel',a,a+(b-a)*.58,.025*S_HEAD,12);rod('H8-piston-rod',a+(b-a)*.58,b,.014*S_HEAD,12)
   rod('H8-machined-collar',a+(b-a)*.48,a+(b-a)*.58,.032*S_HEAD,12)
+# R27: seated machined frames around the existing upper/lower inset recesses.
+for side in [-1,1]:
+ for poly in [[(-.375,.63),(-.24,.63),(-.24,.67),(-.375,.67)],[(-.35,.30),(-.21,.31),(-.21,.345),(-.35,.335)]]:
+  for a,b in zip(poly,poly[1:]+poly[:1]):
+   qa,n=surface(*a,side);qb,_=surface(*b,side)
+   rod('H9-seated-frame',qa+n*.003,qb+n*.003,.004*S_HEAD,4)
+LOG['refines'].append({'id':'R27-P8-inset-frames','method':'narrow machined frame rods seated on measured recess boundary'})
 LOG['refines'].append({'id':'R10-cut-in-head-detail','H2_paths_raw_clay':paths,'H3_mouth_depth_clay':.021,'H4_nostril_depth_clay':.042,'H9_inset_depth_clay':.025,'H7_slats_per_side':7,'H8':'two fitted barrel/rod units per flank'})
 # Depress the existing fin-face vertices rather than cutting through thin formed blades.
 # The outer silhouette and perimeter remain original mesh; the centre face is inset 18% toward its own midplane.
@@ -160,13 +186,14 @@ def topgroove(path):
   pts.append(hit[0])
  vs=[];fs=[]
  for i,q in enumerate(pts):
-  tangent=(pts[min(i+1,len(pts)-1)]-pts[max(0,i-1)]).normalized();ac=n.cross(tangent).normalized()*.002*S_HEAD
+  tangent=(pts[min(i+1,len(pts)-1)]-pts[max(0,i-1)]).normalized();ac=n.cross(tangent).normalized()*.0035*S_HEAD
   vs.extend([q-ac+n*.012,q+ac+n*.012,q+ac-n*.012*S_HEAD,q-ac-n*.012*S_HEAD])
  for i in range(len(pts)-1):
   for j in range(4):fs.append((i*4+j,i*4+(j+1)%4,(i+1)*4+(j+1)%4,(i+1)*4+j))
  fs +=[(3,2,1,0),tuple(range(len(vs)-4,len(vs)))];cut_mesh(vs,fs,'H2-forehead-seam')
 for side in [-1,1]:topgroove([(-.95,side*.04),(-.86,side*.06),(-.72,side*.08),(-.55,side*.10)])
 for x,half in [(-.89,.10),(-.77,.15),(-.55,.19)]:topgroove([(x,-half),(x,0),(x,half)])
+LOG['refines'].append({'id':'R25-P8-skull-breakup','method':'wider and deeper surface-following cuts on existing traced skull boundaries'})
 bm.free()
 # Fitted low-profile round fasteners on surviving skull plates; no shell replacement.
 for side in [-1,1]:

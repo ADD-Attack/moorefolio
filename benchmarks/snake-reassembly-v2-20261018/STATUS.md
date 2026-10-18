@@ -1,3 +1,7 @@
+## P8a checkpoint
+Built and reviewed head/full Cycles 32-sample previews with frozen P7 staging. Eye now reads as a complete seated disc; wider skull seams are visible, but the skull/collar remain soft and neck gaps remain open. Not a gate pass. Build counts 13,967 / 1,423 / 2,922 / 56,733.
+Source additionally contains R26 plate-interior relaxation and R27 inset frames, UNBUILT at this checkpoint; next action rebuild then review. No new numerical scores.
+
 # P8 — ACTIVE, panel-directed fix round
 
 P7 baseline verified at 361f26b; clean checkout before changes. Opened P7 full-body and head/segment/tail reference comparisons. No geometry changed during inventory. P7 counts: 13966 / 1423 / 2922 / 56732.
