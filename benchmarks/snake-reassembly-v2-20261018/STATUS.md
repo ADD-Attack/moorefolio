@@ -1,5 +1,31 @@
 # STATUS — snake-reassembly ATTEMPT 2
 
+## CHECKPOINT P6 — handover #5 (Opus low, 2026-10-18 ~16:30 CDT) — CONTINUING, no producer wait
+
+P5 (4549cf8) committed SOURCE changes only; it never rebuilt or rendered and STATUS was still the P4 text. P6 = first build + render of the P5 sources. No new geometry edits in P6.
+
+### Inventory — fix list vs P5 sources (implementation ≠ success; see render review)
+| Item | In P5 source? | P6 render review |
+|---|---|---|
+| F8 machined plates on S0-3 drum | yes (traced panels, body_fix) | plates/fasteners/grille frames read machined; grilles are slats not mesh (P5 ruling: weave = material phase) |
+| S0-4 tail stretch L/D 2.7 | yes (axial_k 1.53) | tip reads torpedo; taper pieces faceted |
+| H4 nostril deepen | yes | still weak at preview res |
+| mouth groove | partial (H9-lower inset) | groove visible as a line, shallow |
+| H2 seams / H9 frames cut in | yes (CUT ops) | seams visible as cut lines; frames soft |
+| H8 piston crisper | yes (collars) | pistons read; ok-ish |
+| H5 fins thickened + separated | frames, no through-cut | fins separated; still thin/short vs reference |
+| seam-speckle re-weld | not explicitly | no black speckle visible in P6 previews |
+| B10 neck kink | lap .09 | neck still abrupt at coil base |
+| T5 vents | slats | slats visible on tip |
+| B7 fasteners | yes (480 tris) | visible on plates |
+
+### Budgets (P6 build, == P5)
+Head 13,966/14,000 · module 1,303 + insert 120 = 1,423/1,450 · tail 2,922/3,000 · assembly 56,732 (30k–60k). PASS technical.
+
+Previews `fix/previews/fix-p6-*` = Cycles 32spp ITERATION PREVIEWS, clay only, #C1C1BF, shadow catcher. Acceptance: NOT READY / ungated.
+
+---
+
 ## WIP-CHECKPOINT P4 — STANDING BY (producer order, 2026-10-18 CDT)
 
 **No further building until producer resume. Full fix-pass deadline remains 18:00 CDT.**

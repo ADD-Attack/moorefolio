@@ -240,14 +240,32 @@
     ]
    ],
    "H3_mouth_depth_clay": 0.021,
-   "H4_nostril_depth_clay": 0.022,
-   "H9_inset_depth_clay": 0.012,
+   "H4_nostril_depth_clay": 0.042,
+   "H9_inset_depth_clay": 0.025,
    "H7_slats_per_side": 7,
    "H8": "two fitted barrel/rod units per flank"
   },
   {
    "id": "R11-fin-borders",
-   "method": "local planar refinement of existing blade faces, preserved formed x/z silhouette; inset face cut leaves perimeter as raised border"
+   "method": "existing blade-face vertices locally inset toward measured midplane; original perimeter and silhouette preserved; no through-cut"
+  },
+  {
+   "id": "R22-fin-edge-frames",
+   "method": "narrow machined frame strips projected onto each original blade triangle surface, original blade retained; no through-cut"
+  },
+  {
+   "id": "R21-fin-through-cut-repair",
+   "method": "replace destructive planar inset boolean with local displacement of existing face vertices; solid formed blades retained"
+  },
+  {
+   "id": "R18-head-fasteners",
+   "method": "sixteen round machined bolt heads seated by raycast on actual skull plate surface"
+  },
+  {
+   "id": "R15-head-recess-depth-and-piston-collars",
+   "H4_depth": 0.042,
+   "H9_depth": 0.025,
+   "method": "deeper cuts into repaired formed surface; machined collars on fitted H8 rods"
   },
   {
    "id": "H6-lens-seat",
@@ -283,12 +301,12 @@
    "id": "R7-F8-machined-panels",
    "source": "R2 radius map; vertices raycast from S0-3 corrected clay",
    "feature_tris": {
-    "B2-main-shield": 77,
+    "B2-main-shield": 80,
     "B2-opposite-shield": 54,
     "B6-lower-plate": 60,
     "B6-recess-floor": 10,
     "B3-upper-grille": 34,
-    "B3-side-grille": 34,
+    "B3-side-grille": 39,
     "B3-opposite-grille": 34,
     "B3-waist-grille": 34,
     "B2-tab": 12,
@@ -299,14 +317,23 @@
     "B8-forward-lip": 40,
     "B8-core-caps": 36,
     "B4-pistons": 208,
-    "B5-bracket": 24,
-    "B7-fasteners": 480
+    "B5-bracket": 48,
+    "B4-end-collars": 48,
+    "B7-fasteners": 380
    }
   },
   {
+   "id": "R16-module-notch-brackets-fasteners",
+   "method": "diagonal traced side-window corner; wider raised brackets; eight-sided round bolt heads; two hidden underside fasteners removed to fund visible forms"
+  },
+  {
    "id": "B10-neck-variant",
-   "outer_plate_scale": 1.025,
-   "forward_lap": 0.025
+   "outer_plate_scale": 1.04,
+   "forward_lap": 0.09
+  },
+  {
+   "id": "R20-neck-plate-lap",
+   "method": "extend actual outer neck plates forward .09 and radially 4 percent; housing and core stay unchanged"
   },
   {
    "id": "R12-tail-axial-stretch",
@@ -316,10 +343,18 @@
    "LD_after": 2.7
   },
   {
+   "id": "R19-tail-nozzle-and-upper-slats",
+   "method": "nozzle bored into formed nose; upper vent seven modeled slats, side vents five each"
+  },
+  {
    "id": "R13-tail-surface-and-vents",
    "method": "surface-derived volume repair; three recessed T5 vents with 5 actual slats each",
    "vent_depth": 0.04,
-   "tail_tip_tris": 1722
+   "tail_tip_tris": 1806
+  },
+  {
+   "id": "R17-tail-taper-plate-continuity",
+   "method": "decimate actual traced hero module, then radial taper; replaces smooth radial-projection taper; keeps fitted port"
   },
   {
    "id": "R14-neck-pose",
@@ -331,40 +366,40 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.13834479209155587,
-   "p95_pct": 1.3072435188146618,
-   "p99_pct": 3.6663476292169546,
-   "max_pct": 6.06756260393394
+   "p50_pct": 0.13817211502632926,
+   "p95_pct": 1.2516035263459215,
+   "p99_pct": 3.596818104958895,
+   "max_pct": 6.067563182886303
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.1438266839525133,
-   "p95_pct": 1.3123221613088991,
-   "p99_pct": 3.6663476292169546,
-   "max_pct": 6.06756260393394
+   "p50_pct": 0.14385859870150458,
+   "p95_pct": 1.2573542022689166,
+   "p99_pct": 3.596818104958895,
+   "max_pct": 6.067563182886303
   },
   "segment_build_vs_clay": {
-   "p50_pct": 1.4949906914937596,
+   "p50_pct": 1.4825655299517457,
    "p95_pct": 5.350648966243096,
    "p99_pct": 6.376164903262217,
    "max_pct": 7.448198283534688
   },
   "tailtip_build_vs_clay": {
-   "p50_pct": 0.31034822679811364,
-   "p95_pct": 1.4471540991595864,
-   "p99_pct": 3.2731333386670545,
-   "max_pct": 4.674875101227998
+   "p50_pct": 0.3113178936233966,
+   "p95_pct": 1.4854882017146716,
+   "p99_pct": 3.158101042531762,
+   "max_pct": 4.3804134020855505
   }
  },
  "tris": {
   "Head": 13966,
-  "SegmentHero": 1323,
+  "SegmentHero": 1303,
   "GlowInsert": 120,
-  "SegmentNeck": 1323,
-  "TailTip": 1722,
-  "TailTaper1": 560,
-  "TailTaper2": 480,
+  "SegmentNeck": 1303,
+  "TailTip": 1806,
+  "TailTaper1": 556,
+  "TailTaper2": 476,
   "GlowInsertT1": 84,
-  "tail_section_total": 2846
+  "tail_section_total": 2922
  },
  "scales": {
   "head": {
@@ -396,8 +431,8 @@
   }
  },
  "head_master_tris": 144006,
- "head_repaired_surface_tris": 12358,
- "head_fitted_hardware_tris": 520,
+ "head_repaired_surface_tris": 11538,
+ "head_fitted_hardware_tris": 1340,
  "segment_interior_faces_culled": 29612,
  "housing_measurement": {
   "method": "outer radial envelope of clean clay housing, original axial span .09; excludes interior-radius percentile choice in R2",
@@ -405,12 +440,12 @@
   "old_percentile60": 0.3139504704709396
  },
  "body_feature_tris": {
-  "B2-main-shield": 77,
+  "B2-main-shield": 80,
   "B2-opposite-shield": 54,
   "B6-lower-plate": 60,
   "B6-recess-floor": 10,
   "B3-upper-grille": 34,
-  "B3-side-grille": 34,
+  "B3-side-grille": 39,
   "B3-opposite-grille": 34,
   "B3-waist-grille": 34,
   "B2-tab": 12,
@@ -421,8 +456,9 @@
   "B8-forward-lip": 40,
   "B8-core-caps": 36,
   "B4-pistons": 208,
-  "B5-bracket": 24,
-  "B7-fasteners": 480
+  "B5-bracket": 48,
+  "B4-end-collars": 48,
+  "B7-fasteners": 380
  },
  "body_traces": [
   {
@@ -511,6 +547,10 @@
     [
      [
       -0.035,
+      143
+     ],
+     [
+      0.015,
       137
      ],
      [
@@ -737,6 +777,10 @@
    "outline": [
     [
      -0.035,
+     143
+    ],
+    [
+     0.015,
      137
     ],
     [
@@ -805,20 +849,8 @@
    "slats": 4
   }
  ],
- "drum_retopo": {
-  "TailTaper1": {
-   "nu": 24,
-   "nv": 10,
-   "ray_misses_filled": 4
-  },
-  "TailTaper2": {
-   "nu": 24,
-   "nv": 10,
-   "ray_misses_filled": 4
-  }
- },
  "curve_scale": 0.997328700371159,
- "instanced_total_tris": 57216,
+ "instanced_total_tris": 56732,
  "n_nodes": 61,
- "module_plus_insert": 1443
+ "module_plus_insert": 1423
 }
