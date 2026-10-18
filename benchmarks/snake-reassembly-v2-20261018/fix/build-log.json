@@ -81,6 +81,10 @@
    "method": "weighted local smoothing of existing collar vertices; cut edge excluded"
   },
   {
+   "id": "R29-P8-nostril-rim",
+   "method": "machined trim fitted to existing formed nostril boundary"
+  },
+  {
    "id": "R27-P8-inset-frames",
    "method": "narrow machined frame rods seated on measured recess boundary"
   },
@@ -340,9 +344,9 @@
     "B2-ledge": 6,
     "B4-waist-band": 12,
     "B8-core": 40,
-    "B8-housing": 128,
+    "B8-housing": 160,
     "B8-forward-lip": 40,
-    "B8-core-caps": 36,
+    "B8-core-caps": 12,
     "B4-pistons": 208,
     "B5-bracket": 48,
     "B4-end-collars": 48,
@@ -352,6 +356,10 @@
   {
    "id": "R16-module-notch-brackets-fasteners",
    "method": "diagonal traced side-window corner; wider raised brackets; eight-sided round bolt heads; two hidden underside fasteners removed to fund visible forms"
+  },
+  {
+   "id": "R30-P8-insert-neck",
+   "method": "wider separated insert bars and .14 forward overlap of existing neck plates"
   },
   {
    "id": "B10-neck-variant",
@@ -368,6 +376,10 @@
    "k": 1.5317687823486603,
    "LD_before": 1.7626681200932242,
    "LD_after": 2.7
+  },
+  {
+   "id": "R31-P8-tail-shoulder",
+   "method": "local radial refinement of existing terminal vertices; fin envelope excluded"
   },
   {
    "id": "R19-tail-nozzle-and-upper-slats",
@@ -393,40 +405,40 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.14087355198112222,
-   "p95_pct": 1.2955316816003193,
+   "p50_pct": 0.14057461807018384,
+   "p95_pct": 1.291690665571723,
    "p99_pct": 3.5844402829206055,
    "max_pct": 6.06756260393394
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.14623104597621986,
-   "p95_pct": 1.3000113110325384,
+   "p50_pct": 0.14601861116671416,
+   "p95_pct": 1.2974044984137447,
    "p99_pct": 3.5844402829206055,
    "max_pct": 6.06756260393394
   },
   "segment_build_vs_clay": {
-   "p50_pct": 1.4825655299517457,
-   "p95_pct": 5.350648966243096,
+   "p50_pct": 1.483418612652008,
+   "p95_pct": 5.351229909260975,
    "p99_pct": 6.376164903262217,
    "max_pct": 7.448198283534688
   },
   "tailtip_build_vs_clay": {
-   "p50_pct": 0.3113178936233966,
-   "p95_pct": 1.4854882017146716,
-   "p99_pct": 3.158101042531762,
-   "max_pct": 4.3804134020855505
+   "p50_pct": 0.3643620956830265,
+   "p95_pct": 1.5838898681991787,
+   "p99_pct": 2.68118601661889,
+   "max_pct": 3.8326528723822544
   }
  },
  "tris": {
   "Head": 13967,
-  "SegmentHero": 1303,
+  "SegmentHero": 1311,
   "GlowInsert": 120,
-  "SegmentNeck": 1303,
+  "SegmentNeck": 1311,
   "TailTip": 1806,
-  "TailTaper1": 556,
-  "TailTaper2": 476,
+  "TailTaper1": 555,
+  "TailTaper2": 475,
   "GlowInsertT1": 84,
-  "tail_section_total": 2922
+  "tail_section_total": 2920
  },
  "scales": {
   "head": {
@@ -458,8 +470,8 @@
   }
  },
  "head_master_tris": 144006,
- "head_repaired_surface_tris": 11323,
- "head_fitted_hardware_tris": 1556,
+ "head_repaired_surface_tris": 11179,
+ "head_fitted_hardware_tris": 1700,
  "segment_interior_faces_culled": 29612,
  "housing_measurement": {
   "method": "outer radial envelope of clean clay housing, original axial span .09; excludes interior-radius percentile choice in R2",
@@ -479,9 +491,9 @@
   "B2-ledge": 6,
   "B4-waist-band": 12,
   "B8-core": 40,
-  "B8-housing": 128,
+  "B8-housing": 160,
   "B8-forward-lip": 40,
-  "B8-core-caps": 36,
+  "B8-core-caps": 12,
   "B4-pistons": 208,
   "B5-bracket": 48,
   "B4-end-collars": 48,
@@ -877,7 +889,7 @@
   }
  ],
  "curve_scale": 0.997328700371159,
- "instanced_total_tris": 56733,
+ "instanced_total_tris": 56955,
  "n_nodes": 61,
- "module_plus_insert": 1423
+ "module_plus_insert": 1431
 }

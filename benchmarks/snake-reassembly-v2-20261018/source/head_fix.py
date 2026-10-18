@@ -135,6 +135,13 @@ for side in [-1,1]:
   a,n=surface(-.18,z,side);b,_=surface(.04,z,side);a+=n*.01;b+=n*.01
   rod('H8-piston-barrel',a,a+(b-a)*.58,.025*S_HEAD,12);rod('H8-piston-rod',a+(b-a)*.58,b,.014*S_HEAD,12)
   rod('H8-machined-collar',a+(b-a)*.48,a+(b-a)*.58,.032*S_HEAD,12)
+# R29: a raised rim follows the actual formed nostril boundary, rather than another depth-only pass.
+for side in [-1,1]:
+ poly=[(-.967,.385),(-.939,.412),(-.898,.421),(-.892,.398),(-.93,.375),(-.961,.367)]
+ for a,b in zip(poly,poly[1:]+poly[:1]):
+  qa,n=surface(*a,side);qb,_=surface(*b,side)
+  rod('H4-fitted-nostril-rim',qa+n*.004,qb+n*.004,.005*S_HEAD,4)
+LOG['refines'].append({'id':'R29-P8-nostril-rim','method':'machined trim fitted to existing formed nostril boundary'})
 # R27: seated machined frames around the existing upper/lower inset recesses.
 for side in [-1,1]:
  for poly in [[(-.375,.63),(-.24,.63),(-.24,.67),(-.375,.67)],[(-.35,.30),(-.21,.31),(-.21,.345),(-.35,.335)]]:

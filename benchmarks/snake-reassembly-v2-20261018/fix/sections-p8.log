@@ -1,0 +1,8 @@
+18:20:24 | INFO: Data are loaded, start creating Blender stuff
+18:20:24 | INFO: Blender create Mesh node 0
+18:20:24 | INFO: glTF import finished in 0.48s
+SECTIONS {'a_eye_station_x': {'raw_segments': 622, 'build_segments': 301}, 'b_midsnout_x': {'raw_segments': 492, 'build_segments': 185}, 'c_profile_y_nearside': {'raw_segments': 1223, 'build_segments': 338}, 'd_plan_z_nostril': {'raw_segments': 1332, 'build_segments': 437}}
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:31:19)
+Read blend: "/home/openclaw/.openclaw/workspace-studio-3d/tickets/snake-reassembly-v2-20261018/repo/benchmarks/snake-reassembly-v2-20261018/fix/snake-v2-r2-fix.blend"
+
+Blender quit

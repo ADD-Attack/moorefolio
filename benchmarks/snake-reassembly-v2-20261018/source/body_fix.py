@@ -55,8 +55,11 @@ def window(name,p,slats=4):
  # straight bars along angular direction: full modeled ribbon top + side for shadow
  xmin,amin=inner.min(0);xmax,amax=inner.max(0)
  for j in range(slats):
-  x=xmin+(j+1)/(slats+1)*(xmax-xmin);w=.008
-  k=len(vs);q=[(x-w,amin),(x+w,amin),(x+w,amax),(x-w,amax)]
+  slope=1 if j<2 else -1;offset=-.45 if j%2==0 else .45
+  lo=max(-.90,(-.90-offset)/slope) if slope>0 else max(-.90,(.90-offset)/slope)
+  hi=min(.90,(.90-offset)/slope) if slope>0 else min(.90,(-.90-offset)/slope)
+  def uv(u,v):return ((xmin+xmax)/2+u*(xmax-xmin)/2,(amin+amax)/2+v*(amax-amin)/2)
+  w=.055;k=len(vs);q=[uv(lo,slope*lo+offset-w),uv(hi,slope*hi+offset-w),uv(hi,slope*hi+offset+w),uv(lo,slope*lo+offset+w)]
   vs +=[radial(v,base-.021) for v in q]+[radial(v,base-.032) for v in q]
   fs +=[(k,k+1,k+2,k+3),(k,k+3,k+7,k+4)]
  add(name,vs,fs);TRACE.append(dict(name=name,outline=p,radius=base,depth=.055,slats=slats))
@@ -92,11 +95,11 @@ strip('B2-ledge',-.045,.175,157,162,.455,1)
 strip('B4-waist-band',-.30,-.045,-14,14,.43,2)
 # fitted backing and housing lips; radii measured from actual clay housing
 ring('B8-core',[(TX/KAX,.34),(HX/KAX,.34)],20)
-ring('B8-housing',[(TX/KAX,R_RING+.01),(TX/KAX+.012,R_RING-.015),(TX/KAX+.075,R_RING-.015),(TX/KAX+.086,R_RING+.01),(TX/KAX+.10,R_RING+.01)],16)
+ring('B8-housing',[(TX/KAX,R_RING+.01),(TX/KAX+.012,R_RING-.015),(TX/KAX+.075,R_RING-.015),(TX/KAX+.086,R_RING+.01),(TX/KAX+.10,R_RING+.01)],20)
 ring('B8-forward-lip',[(HX/KAX-.025,.40),(HX/KAX,.43)],20)
 # Close only the concealed core ends, without capping the visible insert channel.
 for x in [TX/KAX,HX/KAX]:
- add('B8-core-caps',[radial((x,j*18),.34) for j in range(20)],[tuple(range(20))])
+ add('B8-core-caps',[radial((x,j*45),.34) for j in range(8)],[tuple(range(8))])
 # The reference waist pistons run axially. Clay centres are near angle 180/0.
 for ang in [0,180]:
  for x0,x1 in [(-.48,-.30),(-.045,.175)]:

@@ -255,11 +255,11 @@ exec(compile(open(os.path.join(os.path.dirname(__file__),'body_fix.py')).read(),
 deviation(seg_master, s, PITCH, "segment_build_vs_clay")
 LOG["scales"]["segment"].update({"pitch": PITCH, "ring_r": R_RING})
 
-def glow_insert(name, nb=20, r=R_RING, x0=TX + 0.015, x1=TX + 0.075):
+def glow_insert(name, nb=20, r=R_RING*1.025, x0=TX + 0.010, x1=TX + 0.090):
     """B9 machined insert: segmented bars around the full circumference (separate mesh; clay at this gate)."""
     vs = []; fs = []
     for i in range(nb):
-        a0 = 2 * math.pi * i / nb + 0.03; a1 = 2 * math.pi * (i + 1) / nb - 0.03
+        a0 = 2 * math.pi * i / nb + 0.05; a1 = 2 * math.pi * (i + 1) / nb - 0.05
         p = [Vector((x0, (r) * math.cos(a), (r) * math.sin(a))) for a in (a0, a1)] + [Vector((x1, (r) * math.cos(a), (r) * math.sin(a))) for a in (a1, a0)]
         q = [Vector((v.x, v.y * 0.94, v.z * 0.94)) for v in p]
         k = len(vs); vs += p + q
@@ -274,7 +274,8 @@ outer = r > 0.86 * rmax
 f = np.where(outer,1.04,1.0)
 Vn[:, 1] *= f; Vn[:, 2] *= f
 ends = outer & (Vn[:, 0] > HX - 0.25 * PITCH - 0.1)
-Vn[ends, 0] += 0.09    # plates lap forward over the next joint -> lit ring reads as partial arc
+Vn[ends, 0] += 0.14    # plates lap forward over the next joint -> lit ring reads as partial arc
+LOG['refines'].append({'id':'R30-P8-insert-neck','method':'wider separated insert bars and .14 forward overlap of existing neck plates'})
 setv(nk, Vn); LOG["tris"]["SegmentNeck"] = tris(nk)
 LOG["refines"].append({"id": "B10-neck-variant", "outer_plate_scale": 1.04, "forward_lap": 0.09})
 
@@ -313,6 +314,7 @@ def taper(name, s0, s1, sl, port=False, target=470):
     o = dup(s, name)
     bpy.context.view_layer.objects.active=o
     m=o.modifiers.new('derived hero taper LOD','DECIMATE');m.ratio=(target-4)/tris(o);m.use_collapse_triangulate=True;bpy.ops.object.modifier_apply(modifier=m.name)
+    if "smooth_hardware_faces" in o.data: del o.data["smooth_hardware_faces"]
     Vt = verts(o); k = (Vt[:, 0] - TX) / PITCH; sc_ = s0 + (s1 - s0) * k
     Vt[:, 1] *= sc_; Vt[:, 2] *= sc_; Vt[:, 0] *= sl; setv(o, Vt)
     if port:   # circular port fitting (machined)
@@ -395,5 +397,5 @@ bpy.ops.wm.save_as_mainfile(filepath=os.path.join(WORK, "snake-v2-r2-fix.blend")
 assert LOG['tris']['Head']<=14000
 assert LOG['module_plus_insert']<=1450
 assert LOG['tris']['tail_section_total']<=3000
-assert 30000<=LOG['instanced_total_tris']<=60000
+assert 30000<=LOG['instanced_total_tris']<=57600
 print('BUILD_DONE',flush=True)

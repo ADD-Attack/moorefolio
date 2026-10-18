@@ -2,6 +2,11 @@
 d=np.load(os.path.join(WORK,'tail-volume.npz'));me=bpy.data.meshes.new('tail-repaired-clay');me.from_pydata(d['v'].tolist(),[],d['f'][:,::-1].tolist());me.update();t.data=me
 bpy.context.view_layer.objects.active=t;m=t.modifiers.new('tail surface reduction','DECIMATE');m.ratio=1450/tris(t);m.use_collapse_triangulate=True;bpy.ops.object.modifier_apply(modifier=m.name)
 m=t.modifiers.new('tail voxel smoothing','SMOOTH');m.factor=.2;m.iterations=2;bpy.ops.object.modifier_apply(modifier=m.name)
+# R31: refine the existing torpedo shoulder and blunt tip, preserving fins and apertures.
+V=verts(t);rad=np.hypot(V[:,1],V[:,2]);w=bump(V[:,0]+.70,.42)*(rad<.22)
+V[:,1]*=1+.06*w;V[:,2]*=1+.06*w
+setv(t,V)
+LOG['refines'].append({'id':'R31-P8-tail-shoulder','method':'local radial refinement of existing terminal vertices; fin envelope excluded'})
 bm=bmesh.new();bm.from_mesh(t.data);tbvh=BVHTree.FromBMesh(bm);tailparts=[]
 for axis,side,x0,x1,v0,v1 in [(1,-1,-1.12,-.86,-.08,.035),(1,1,-1.12,-.86,-.08,.035),(2,1,-.82,-.48,-.10,.10)]:
  n=Vector((0,side,0) if axis==1 else (0,0,side));q2=Vector((0,0,1) if axis==1 else (0,1,0))

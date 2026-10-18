@@ -1,3 +1,6 @@
+## P8c reviewed checkpoint
+Five fresh previews and four head sections viewed. Crossed grille geometry and insert segmentation read more clearly; nostril rim is visible. Head/collar and terminal remain soft, neck blank plates remain a concern. Counts 13967 / 1431 / 2920 / 56955. Invalid inherited taper smooth-face indices fixed; build succeeds. Separate p8-neck-test.blend is an UNREVIEWED orientation experiment, not the candidate. Next: inspect neck experiment and bevel skull cuts / refine terminal panel seams.
+
 ## P8b reviewed checkpoint
 R26 plate-interior relaxation, R27 inset frames and R28 local collar smoothing are built. Head/full preview review: subtle surface cleanup, inset borders clearer; large soft plate forms and neck gaps remain unresolved. Counts unchanged from P8a. No gate claim. Next: projected nostril rim, then B9/T2/B10/B8 and grille treatment.
 
