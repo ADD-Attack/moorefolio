@@ -128,9 +128,23 @@ for _ in range(2):
 LOG["refines"].append({"id": "R4-mouth-serration-smooth", "verts": int(len(idx)), "passes": 2, "axis": "z only, along-seam window 0.028, |dz|<0.014"})
 setv(h, V)
 
+# ---- R5 snout-only axial stretch (producer ruling on S0-1): minimum stretch landing L:H in 1.45 +/- 3 %.
+# Applied AFTER R1-R4 so every local form rides along; only verts forward of the eye ring (x < X0) move,
+# along the head's own axis (clay -X); eye ring (centre -0.667, r 0.083) and skull behind it untouched.
+L0, H0 = 0.768, 0.78 - 0.19; LH_TARGET = 1.42
+X0 = EYE[0] - 0.083 - 0.010; TIP = float(V[:, 0].min())
+L_NEW = LH_TARGET * H0; K_SN = 1.0 + (L_NEW - L0) / (X0 - TIP)
+def snout_stretch(P):
+    m = P[:, 0] < X0; P[m, 0] = X0 + (P[m, 0] - X0) * K_SN; return int(m.sum())
+nmov = snout_stretch(V); setv(h, V)
+Vr = verts(raw); snout_stretch(Vr); setv(raw, Vr)     # baseline gets the same stretch so deviation measures refine+reduction only
+LOG["refines"].append({"id": "R5-snout-axial-stretch", "ruling": "S0-1", "x0_clay": X0, "tip_before": TIP, "tip_after": X0 + (TIP - X0) * K_SN,
+                       "k": K_SN, "verts_moved": nmov, "LH_before": L0 / H0, "LH_after": L_NEW / H0, "LH_band": [1.4065, 1.4935]})
+print("R5", K_SN, L0 / H0, L_NEW / H0, flush=True)
+
 # ---- Same-scale / pose frame: rear (collar cut) at origin, snout along +X, uniform scale to H = 1.3 D (D = 1.0)
 H_CLAY = 0.78 - 0.19; S_HEAD = 1.30 / H_CLAY; ZC = 0.435
-LOG["scales"]["head"] = {"H_clay": H_CLAY, "uniform_scale": S_HEAD, "L_to_ventrear_clay": 0.768, "LH_measured": 0.768 / H_CLAY}
+LOG["scales"]["head"] = {"H_clay": H_CLAY, "uniform_scale": S_HEAD, "L_to_ventrear_clay_before_R5": 0.768, "LH_before_R5": 0.768 / H_CLAY, "LH_after_R5": L_NEW / H0, "snout_k": K_SN, "snout_x0": X0}
 Mh = Matrix.Scale(S_HEAD, 4) @ Matrix(((-1, 0, 0, CUT_X), (0, -1, 0, 0), (0, 0, 1, -ZC), (0, 0, 0, 1)))
 for o in (h, raw): o.data.transform(Mh); o.data.update()
 

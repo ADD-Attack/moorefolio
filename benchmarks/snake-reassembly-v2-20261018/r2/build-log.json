@@ -34,6 +34,21 @@
    "axis": "z only, along-seam window 0.028, |dz|<0.014"
   },
   {
+   "id": "R5-snout-axial-stretch",
+   "ruling": "S0-1",
+   "x0_clay": -0.76,
+   "tip_before": -0.9781159162521362,
+   "tip_after": -1.0479159162521363,
+   "k": 1.3200133268555843,
+   "verts_moved": 8338,
+   "LH_before": 1.3016949152542372,
+   "LH_after": 1.42,
+   "LH_band": [
+    1.4065,
+    1.4935
+   ]
+  },
+  {
    "id": "H6-lens-seat",
    "side": -1,
    "clay_ring_r": 0.1828813559322034,
@@ -63,16 +78,16 @@
  ],
  "deviation": {
   "head_build_vs_refined_master": {
-   "p50_pct": 0.09802759890754731,
-   "p95_pct": 0.32418605262026096,
-   "p99_pct": 0.4426505631851231,
-   "max_pct": 0.7301529366955174
+   "p50_pct": 0.09839094126883083,
+   "p95_pct": 0.3311377326535122,
+   "p99_pct": 0.44610422824072415,
+   "max_pct": 0.7942192261943531
   },
   "head_build_vs_raw_clay": {
-   "p50_pct": 0.1016442917017149,
-   "p95_pct": 0.34898945375354934,
-   "p99_pct": 0.5506646043902995,
-   "max_pct": 1.4554224102120554
+   "p50_pct": 0.10233549749980811,
+   "p95_pct": 0.35718029990388406,
+   "p99_pct": 0.5754160648123727,
+   "max_pct": 1.4761266151290764
   },
   "segment_build_vs_clay": {
    "p50_pct": 0.8563397046707256,
@@ -88,7 +103,7 @@
   }
  },
  "tris": {
-  "Head": 13304,
+  "Head": 13302,
   "SegmentHero": 1296,
   "GlowInsert": 120,
   "SegmentNeck": 1296,
@@ -102,8 +117,11 @@
   "head": {
    "H_clay": 0.5900000000000001,
    "uniform_scale": 2.2033898305084745,
-   "L_to_ventrear_clay": 0.768,
-   "LH_measured": 1.3016949152542372
+   "L_to_ventrear_clay_before_R5": 0.768,
+   "LH_before_R5": 1.3016949152542372,
+   "LH_after_R5": 1.42,
+   "snout_k": 1.3200133268555843,
+   "snout_x0": -0.76
   },
   "segment": {
    "D_clay": 1.0352944426238526,
@@ -126,7 +144,7 @@
  "cleanup": {
   "HEAD_master": {
    "nonmanifold_edges_split": 9706,
-   "post_weld_verts_merged": 8377
+   "post_weld_verts_merged": 8449
   },
   "TAIL_master": {
    "nonmanifold_edges_split": 1728,
@@ -152,7 +170,7 @@
   }
  },
  "curve_scale": 0.7549054414323233,
- "instanced_total_tris": 55522,
+ "instanced_total_tris": 55520,
  "n_nodes": 61,
  "module_plus_insert": 1416
 }

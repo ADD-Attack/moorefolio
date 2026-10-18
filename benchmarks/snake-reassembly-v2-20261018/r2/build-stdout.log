@@ -1,17 +1,18 @@
-09:52:17 | INFO: Data are loaded, start creating Blender stuff
-09:52:17 | INFO: Blender create Mesh node 0
-09:52:17 | INFO: glTF import finished in 0.18s
-DEV head_build_vs_refined_master {'p50_pct': 0.09802759890754731, 'p95_pct': 0.32418605262026096, 'p99_pct': 0.4426505631851231, 'max_pct': 0.7301529366955174}
-DEV head_build_vs_raw_clay {'p50_pct': 0.1016442917017149, 'p95_pct': 0.34898945375354934, 'p99_pct': 0.5506646043902995, 'max_pct': 1.4554224102120554}
-09:52:22 | INFO: Data are loaded, start creating Blender stuff
-09:52:22 | INFO: Blender create Mesh node 0
-09:52:22 | INFO: glTF import finished in 0.30s
+09:57:02 | INFO: Data are loaded, start creating Blender stuff
+09:57:02 | INFO: Blender create Mesh node 0
+09:57:02 | INFO: glTF import finished in 0.18s
+R5 1.3200133268555843 1.3016949152542372 1.42
+DEV head_build_vs_refined_master {'p50_pct': 0.09839094126883083, 'p95_pct': 0.3311377326535122, 'p99_pct': 0.44610422824072415, 'max_pct': 0.7942192261943531}
+DEV head_build_vs_raw_clay {'p50_pct': 0.10233549749980811, 'p95_pct': 0.35718029990388406, 'p99_pct': 0.5754160648123727, 'max_pct': 1.4761266151290764}
+09:57:07 | INFO: Data are loaded, start creating Blender stuff
+09:57:07 | INFO: Blender create Mesh node 0
+09:57:07 | INFO: glTF import finished in 0.30s
 DEV segment_build_vs_clay {'p50_pct': 0.8563397046707256, 'p95_pct': 11.75881857175007, 'p99_pct': 15.765941927693087, 'max_pct': 19.698328147249615}
-09:52:27 | INFO: Data are loaded, start creating Blender stuff
-09:52:27 | INFO: Blender create Mesh node 0
-09:52:27 | INFO: glTF import finished in 0.30s
+09:57:12 | INFO: Data are loaded, start creating Blender stuff
+09:57:12 | INFO: Blender create Mesh node 0
+09:57:12 | INFO: glTF import finished in 0.28s
 DEV tailtip_build_vs_clay {'p50_pct': 0.27602032433600737, 'p95_pct': 0.8008700449649686, 'p99_pct': 1.040922809593214, 'max_pct': 2.3982980704935675}
-LOG {"tris": {"Head": 13304, "SegmentHero": 1296, "GlowInsert": 120, "SegmentNeck": 1296, "TailTip": 1446, "TailTaper1": 560, "TailTaper2": 480, "GlowInsertT1": 84, "tail_section_total": 2570}, "instanced_total_tris": 55522, "scales": {"head": {"H_clay": 0.5900000000000001, "uniform_scale": 2.2033898305084745, "L_to_ventrear_clay": 0.768, "LH_measured": 1.3016949152542372}, "segment": {"D_clay": 1.0352944426238526, "plate_span_clay": 0.6660963207483291, "LD_measured": 0.6433882896735861, "uniform_scale": 0.9659087877122161, "yc": -0.5408037565648556, "zc": 0.04214452393352924, "pitch": 0.777552604675293, "ring_r": 0.3139504704709396}, "tail": {"len_clay": 0.6514982988759114, "base_dia_clay": 0.36960916887828826, "len_over_base_dia": 1.7626681200932242, "uniform_scale": 1.4068915053653206}}, "deviation": {"head_build_vs_refined_master": {"p50_pct": 0.09802759890754731, "p95_pct": 0.32418605262026096, "p99_pct": 0.4426505631851231, "max_pct": 0.7301529366955174}, "head_build_vs_raw_clay": {"p50_pct": 0.1016442917017149, "p95_pct": 0.34898945375354934, "p99_pct": 0.5506646043902995, "max_pct": 1.4554224102120554}, "segment_build_vs_clay": {"p50_pct": 0.8563397046707256, "p95_pct": 11.75881857175007, "p99_pct": 15.765941927693087, "max_pct": 19.698328147249615}, "tailtip_build_vs_clay": {"p50_pct": 0.27602032433600737, "p95_pct": 0.8008700449649686, "p99_pct": 1.040922809593214, "max_pct": 2.3982980704935675}}}
+LOG {"tris": {"Head": 13302, "SegmentHero": 1296, "GlowInsert": 120, "SegmentNeck": 1296, "TailTip": 1446, "TailTaper1": 560, "TailTaper2": 480, "GlowInsertT1": 84, "tail_section_total": 2570}, "instanced_total_tris": 55520, "scales": {"head": {"H_clay": 0.5900000000000001, "uniform_scale": 2.2033898305084745, "L_to_ventrear_clay_before_R5": 0.768, "LH_before_R5": 1.3016949152542372, "LH_after_R5": 1.42, "snout_k": 1.3200133268555843, "snout_x0": -0.76}, "segment": {"D_clay": 1.0352944426238526, "plate_span_clay": 0.6660963207483291, "LD_measured": 0.6433882896735861, "uniform_scale": 0.9659087877122161, "yc": -0.5408037565648556, "zc": 0.04214452393352924, "pitch": 0.777552604675293, "ring_r": 0.3139504704709396}, "tail": {"len_clay": 0.6514982988759114, "base_dia_clay": 0.36960916887828826, "len_over_base_dia": 1.7626681200932242, "uniform_scale": 1.4068915053653206}}, "deviation": {"head_build_vs_refined_master": {"p50_pct": 0.09839094126883083, "p95_pct": 0.3311377326535122, "p99_pct": 0.44610422824072415, "max_pct": 0.7942192261943531}, "head_build_vs_raw_clay": {"p50_pct": 0.10233549749980811, "p95_pct": 0.35718029990388406, "p99_pct": 0.5754160648123727, "max_pct": 1.4761266151290764}, "segment_build_vs_clay": {"p50_pct": 0.8563397046707256, "p95_pct": 11.75881857175007, "p99_pct": 15.765941927693087, "max_pct": 19.698328147249615}, "tailtip_build_vs_clay": {"p50_pct": 0.27602032433600737, "p95_pct": 0.8008700449649686, "p99_pct": 1.040922809593214, "max_pct": 2.3982980704935675}}}
 Info: Saved as "snake-v2-r2.blend"
 BUILD_DONE
 Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)

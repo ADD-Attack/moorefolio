@@ -25,9 +25,10 @@
 
 Overlays use a landmark-solved camera on the reference close-up. Red = build silhouette, blue = reference edges. `*_sbs` files are side-by-side.
 
-**Head** (`r2/overlays/h2_overlay.png`, `h2_sbs.png`):
+**Head**: before R5 in `r2/before-R5/h2_*`; after R5 in `r2/after-R5/h3_overlay.png`, `h3_sbs.png`. The solve residual went from 35 px before R5 to 28 px after.
 - Kept from the clay: brow over the eye, snout taper, sloping topline, mouth seam over a separate jaw mass, eye seat, vent box, collar and the three blades.
-- Deviations: the skull is shorter and taller than the reference (S0-1), and the plate seams are softer and shallower.
+- After R5, the snout tip and the jaw underline sit on the reference lines.
+- Remaining deviation: the plate seams are softer and shallower than the reference.
 
 **Segment** (`r2/overlays/s2_overlay.png`, `s2_sbs.png`):
 - Reads: drum mass, top tab, notch step, piston masses.
@@ -50,7 +51,7 @@ Overlays use a landmark-solved camera on the reference close-up. Red = build sil
 
 The construction chain:
 1. Cut at the collar plane (x = 0.19), keeping the skull island. The clay neck is discarded.
-2. Four logged local refines of the clay (§5).
+2. Four logged local refines of the clay, then the R5 snout stretch (§5).
 3. Reduce the same surface to 13,304 tris.
 4. Uniform scale only (F9).
 
@@ -63,8 +64,8 @@ Deviation against the clay, as % of head length:
 
 | Comparison | p50 | p95 | p99 | max |
 |---|---|---|---|---|
-| Build vs refined master | 0.10 | **0.32** | 0.44 | 0.73 |
-| Build vs raw clay | 0.10 | 0.35 | 0.55 | 1.46 |
+| Build vs refined master | 0.10 | **0.33** | 0.45 | 0.79 |
+| Build vs raw clay, R5-stretched | 0.10 | 0.36 | 0.58 | 1.48 |
 
 The p95 against the refined master meets the plan's ≤0.4 % retopo gate.
 
@@ -109,11 +110,11 @@ Deviation as % of tip length: p50 0.28 %, p95 0.80 %.
 
 | Mesh | Tris | Target |
 |---|---|---|
-| Head (incl. lenses) | 13,304 | ≤ 14,000 ✔ |
+| Head (incl. lenses) | 13,302 | ≤ 14,000 ✔ |
 | Hero module + insert | 1,296 + 120 = **1,416** | ≤ 1,450 ✔ |
 | Neck variant + insert | 1,416 | ≤ 1,450 ✔ |
 | Tail section (tapers 560 + 480, insert 84, tip 1,446) | 2,570 | ≤ 3,000 ✔ |
-| **Instanced assembly** | **55,522** | 30–60k ✔ |
+| **Instanced assembly** | **55,520** | 30–60k ✔ |
 
 Tangents, ORM and GLB export are material/delivery-phase items and were not produced this round.
 
@@ -136,6 +137,7 @@ My recommendation, for the producer to rule:
 | R2 | H11 forehead hood (F2) | Forward brow swell inflated 0.012 along its own normals, at x −0.85 ± 0.08, z 0.57 ± 0.05. | 1,022 |
 | R3 | H12 snout-ridge crests | High-curvature upper-flank verts pushed 0.005 along normals. Small; the clay ridge does most of the work. | 1,520 |
 | R4 | F6 mouth serration | Along-seam z-only smoothing, 2 passes, window 0.028, \|dz\| < 0.014. Seam path and depth kept. | 3,979 |
+| **R5** | S0-1 ruling: snout-only axial stretch | Verts forward of the eye ring (clay x < −0.76, i.e. eye centre − r − 0.01) are scaled along the head axis by **k = 1.320**. It is applied after R1–R4, so every local form rides along; the eye and skull are untouched. Target L:H 1.42 (minimum landing in band). **Measured on the delivered mesh: L:H = 1.444** (band 1.4065–1.4935; no overshoot past 1.45), from `r2/after-R5/head-LH.json`. Before/after evidence: `r2/before-R5/` (overlay and sections) vs `r2/after-R5/` (overlay and H.4 sections). Sections compare against the clay given the same stretch. | all forward of x0 |
 | — | H6 lens seat | Ray-cast on the clay disc; normal from 24 disc samples. | — |
 | — | Post-reduction weld | 8,377 head and 374 tail split-seam verts re-welded (radius 0.15 % of part size). | — |
 
@@ -150,8 +152,8 @@ Residual dark speckles remain on the head and tail where split seams did not ful
 
 ## 6. Flags raised mid-round (in STATUS.md)
 
-- **S0-1:** head L:H is 1.30 against 1.45. Uniform scale was kept; your ruling is pending.
-- **S0-2:** the crest blades are lateral in the clay and match the reference at the solved angle. The clay arrangement was kept.
+- **S0-1: RULED.** The snout-only stretch is permitted. It is applied as R5; measured L:H is 1.444.
+- **S0-2: RULED, keep.** The clay's lateral blades stay. H5's centreline wording is recorded as a spec-text erratum, the same class as F1.
 - **S0-3 (new):** segment clay L:D is **0.64 against 0.85** (−24 %, out of band). Uniform scale was kept, so the drums read short and wide.
 - **S0-4 (new):** tail torpedo length / base diameter is **1.76 against 2.5–3** (out of band). Uniform scale was kept.
 
@@ -161,7 +163,7 @@ Residual dark speckles remain on the head and tail where split seams did not ful
 
 | # | Feature | MATCH | QUALITY | Basis |
 |---|---|---|---|---|
-| H1 | Skull massing | 6.5 | 6.0 | Clay taper and topline are right; short and tall (S0-1). |
+| H1 | Skull massing | 7.0 | 6.0 | Clay taper and topline; L:H 1.444 after R5. |
 | H2 | Plate breakup | 5.0 | 4.0 | Soft clay plates; no seams cut yet; speckles. |
 | H3 | Jaw seam and lower jaw (+ overbite, cheek) | 6.0 | 5.0 | Full-length seam with jaw mass; groove shallow. |
 | H4 | Nostril slot | 5.0 | 4.5 | Clay slot present; recess not deepened. |
@@ -172,7 +174,7 @@ Residual dark speckles remain on the head and tail where split seams did not ful
 | H9 | Inset panels | 4.5 | 4.0 | Window soft; placard and collar vent barely legible. |
 | H10 | Collar | 6.0 | 5.0 | Clay stacked collar with top box. |
 | H11 | Brow ridge + hood | 6.0 | 5.5 | Ledge lip present (section a); hood mild. |
-| H12 | Snout-ridge complex | 5.5 | 5.0 | Clay ridge into the nostril; soft. |
+| H12 | Snout-ridge complex | 6.0 | 5.0 | Clay ridge into the nostril, longer after R5; soft. |
 | B1 | Drum massing | 5.0 | 5.0 | L:D 0.64 (S0-3). |
 | B2 | Stepped shield plate | 4.0 | 3.5 | Tab and notch soft; no ledge. |
 | B3 | Framed grilles ×3 | 1.5 | 1.5 | Not resolved at budget. |
@@ -189,13 +191,13 @@ Residual dark speckles remain on the head and tail where split seams did not ful
 | T4 | Lateral fin pair | 6.0 | 5.5 | Clay fins. |
 | T5 | Tail grille vents | 3.5 | 3.0 | Soft. |
 
-Category-1 medians: **MATCH 5.0 / QUALITY 5.0**. The head items alone have a median of about 6.0 / 5.25.
+Category-1 medians: **MATCH 5.0 / QUALITY 5.0**. The head items alone have a median of about 6.0 / 5.25 (H1 and H12 rose after R5).
 
 ### Categories 2–4
 
 | # | Category | MATCH | QUALITY |
 |---|---|---|---|
-| 2 | Silhouette | 6.0 | 5.5 |
+| 2 | Silhouette (head silhouette improved by R5) | 6.5 | 5.5 |
 | 3 | Massing and composition (pose per §1; neck bend kinks; short drums) | 6.0 | 5.5 |
 | 4 | Modelled detail | 3.5 | 3.0 |
 
@@ -211,5 +213,5 @@ blender -b <blend> -P source/sections.py -- <hunyuan-head.glb> <build-log.json> 
 ```
 
 - Clay inputs are the hash-verified attempt-1 copies (F10).
-- The `.blend` in this folder is `snake-v2-r2.blend`, SHA-256 `2964713b…afcb`. It holds the SRC meshes and the instanced nodes.
+- The `.blend` in this folder is `snake-v2-r2.blend`, SHA-256 `ac92c8f9…3084703`. It holds the SRC meshes and the instanced nodes.
 - Step-0 evidence is in `r2/step0/`.

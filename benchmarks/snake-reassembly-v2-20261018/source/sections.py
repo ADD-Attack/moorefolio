@@ -8,7 +8,11 @@ Mh=mathutils.Matrix.Scale(S,4)@mathutils.Matrix(((-1,0,0,0.19),(0,-1,0,0),(0,0,1
 build=bpy.data.objects["SRC_Head"]
 before=set(bpy.data.objects); bpy.ops.import_scene.gltf(filepath=GLB)
 raw=[o for o in bpy.data.objects if o not in before and o.type=="MESH"][0]
-raw.data.transform(raw.matrix_world); raw.matrix_world=mathutils.Matrix(); raw.data.transform(Mh)
+raw.data.transform(raw.matrix_world); raw.matrix_world=mathutils.Matrix()
+hd=L["scales"]["head"]
+if "snout_k" in hd:   # same R5 stretch as the build, so sections compare like with like
+    V=verts(raw); m=V[:,0]<hd["snout_x0"]; V[m,0]=hd["snout_x0"]+(V[m,0]-hd["snout_x0"])*hd["snout_k"]; raw.data.vertices.foreach_set("co",V.ravel())
+raw.data.transform(Mh)
 def cut(o,co,no):
     bm=bmesh.new(); bm.from_mesh(o.data)
     r=bmesh.ops.bisect_plane(bm,geom=bm.verts[:]+bm.edges[:]+bm.faces[:],plane_co=co,plane_no=no)
