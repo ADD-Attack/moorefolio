@@ -6,7 +6,14 @@ sys.path.append(os.path.dirname(__file__)); from lib import *
 A=sys.argv[sys.argv.index("--")+1:]; OBJ,REF,OUT,LM=A[0],A[1],A[2],json.loads(open(A[3]).read())
 o=bpy.data.objects[OBJ]
 for x in bpy.data.objects:
-    if x.type=="MESH" and x.name!=OBJ and not x.name.startswith(OBJ.split("_")[0]): x.hide_render=True
+    if x.type=="MESH": x.hide_render=(x.name!=OBJ)
+o.hide_render=False
+for n in [n for n in ("STAGE_catcher",) if n in bpy.data.objects]: bpy.data.objects[n].hide_render=True
+if len(A)>4 and A[4]=="headbuild":
+    # bring the head build back to clay coordinates (inverse of build_r2 Mh) so clay-space landmarks apply
+    import json as _j; L=_j.load(open(A[5])); S=L["scales"]["head"]["uniform_scale"]
+    Mh=mathutils.Matrix.Scale(S,4)@mathutils.Matrix(((-1,0,0,0.19),(0,-1,0,0),(0,0,1,-0.435),(0,0,0,1)))
+    me=o.data.copy(); me.transform(Mh.inverted()); o.data=me; o.matrix_world=mathutils.Matrix()
 sc=bpy.context.scene; ref=load_img(REF); H,W=ref.shape[:2]
 sc.render.resolution_x=W*2; sc.render.resolution_y=H*2; sc.render.film_transparent=True
 sc.render.engine="BLENDER_WORKBENCH"; sc.display.shading.light="STUDIO"; sc.display.shading.color_type="SINGLE"

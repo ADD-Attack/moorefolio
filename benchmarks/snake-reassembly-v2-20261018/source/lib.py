@@ -57,7 +57,7 @@ def edges(a, thr=0.12):
     gx[:,1:-1]=l[:,2:]-l[:,:-2]; gy[1:-1]=l[2:]-l[:-2]
     return np.hypot(gx,gy)>thr
 
-def clay_mat(name="clay", col=(0.55,0.55,0.53,1)):
+def clay_mat(name="clay", col=(0.22,0.22,0.21,1)):
     m=bpy.data.materials.get(name) or bpy.data.materials.new(name); m.use_nodes=True
     b=m.node_tree.nodes["Principled BSDF"]; b.inputs["Base Color"].default_value=col
     b.inputs["Roughness"].default_value=0.55; b.inputs["Metallic"].default_value=0.0

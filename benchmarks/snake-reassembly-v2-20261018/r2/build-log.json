@@ -1,0 +1,158 @@
+{
+ "refines": [
+  {
+   "id": "R1-brow-ledge",
+   "side": -1,
+   "verts": 564,
+   "max_out": 0.022,
+   "down": 0.006,
+   "region": "x=-0.667\u00b10.16, z=0.648\u00b10.045, outward-facing side verts"
+  },
+  {
+   "id": "R1-brow-ledge",
+   "side": 1,
+   "verts": 557,
+   "max_out": 0.022,
+   "down": 0.006,
+   "region": "x=-0.667\u00b10.16, z=0.648\u00b10.045, outward-facing side verts"
+  },
+  {
+   "id": "R2-forehead-hood",
+   "verts": 1022,
+   "max_normal_push": 0.012,
+   "region": "x=-0.85\u00b10.08, z=0.57\u00b10.05"
+  },
+  {
+   "id": "R3-snout-ridge-crests",
+   "verts": 1520,
+   "max_normal_push": 0.005
+  },
+  {
+   "id": "R4-mouth-serration-smooth",
+   "verts": 3979,
+   "passes": 2,
+   "axis": "z only, along-seam window 0.028, |dz|<0.014"
+  },
+  {
+   "id": "H6-lens-seat",
+   "side": -1,
+   "clay_ring_r": 0.1828813559322034,
+   "lens_R": 0.1828813559322034,
+   "normal": [
+    0.1452627182006836,
+    -0.987538754940033,
+    -0.060547374188899994
+   ]
+  },
+  {
+   "id": "H6-lens-seat",
+   "side": 1,
+   "clay_ring_r": 0.1828813559322034,
+   "lens_R": 0.1828813559322034,
+   "normal": [
+    0.10313880443572998,
+    0.9936084151268005,
+    -0.04587705433368683
+   ]
+  },
+  {
+   "id": "B10-neck-variant",
+   "outer_plate_scale": 1.07,
+   "forward_lap": 0.06
+  }
+ ],
+ "deviation": {
+  "head_build_vs_refined_master": {
+   "p50_pct": 0.09802759890754731,
+   "p95_pct": 0.32418605262026096,
+   "p99_pct": 0.4426505631851231,
+   "max_pct": 0.7301529366955174
+  },
+  "head_build_vs_raw_clay": {
+   "p50_pct": 0.1016442917017149,
+   "p95_pct": 0.34898945375354934,
+   "p99_pct": 0.5506646043902995,
+   "max_pct": 1.4554224102120554
+  },
+  "segment_build_vs_clay": {
+   "p50_pct": 0.8563397046707256,
+   "p95_pct": 11.75881857175007,
+   "p99_pct": 15.765941927693087,
+   "max_pct": 19.698328147249615
+  },
+  "tailtip_build_vs_clay": {
+   "p50_pct": 0.27602032433600737,
+   "p95_pct": 0.8008700449649686,
+   "p99_pct": 1.040922809593214,
+   "max_pct": 2.3982980704935675
+  }
+ },
+ "tris": {
+  "Head": 13304,
+  "SegmentHero": 1296,
+  "GlowInsert": 120,
+  "SegmentNeck": 1296,
+  "TailTip": 1446,
+  "TailTaper1": 560,
+  "TailTaper2": 480,
+  "GlowInsertT1": 84,
+  "tail_section_total": 2570
+ },
+ "scales": {
+  "head": {
+   "H_clay": 0.5900000000000001,
+   "uniform_scale": 2.2033898305084745,
+   "L_to_ventrear_clay": 0.768,
+   "LH_measured": 1.3016949152542372
+  },
+  "segment": {
+   "D_clay": 1.0352944426238526,
+   "plate_span_clay": 0.6660963207483291,
+   "LD_measured": 0.6433882896735861,
+   "uniform_scale": 0.9659087877122161,
+   "yc": -0.5408037565648556,
+   "zc": 0.04214452393352924,
+   "pitch": 0.777552604675293,
+   "ring_r": 0.3139504704709396
+  },
+  "tail": {
+   "len_clay": 0.6514982988759114,
+   "base_dia_clay": 0.36960916887828826,
+   "len_over_base_dia": 1.7626681200932242,
+   "uniform_scale": 1.4068915053653206
+  }
+ },
+ "head_master_tris": 144006,
+ "cleanup": {
+  "HEAD_master": {
+   "nonmanifold_edges_split": 9706,
+   "post_weld_verts_merged": 8377
+  },
+  "TAIL_master": {
+   "nonmanifold_edges_split": 1728,
+   "post_weld_verts_merged": 374
+  }
+ },
+ "segment_interior_faces_culled": 29612,
+ "drum_retopo": {
+  "SegmentHero": {
+   "nu": 36,
+   "nv": 18,
+   "ray_misses_filled": 0
+  },
+  "TailTaper1": {
+   "nu": 24,
+   "nv": 10,
+   "ray_misses_filled": 0
+  },
+  "TailTaper2": {
+   "nu": 24,
+   "nv": 10,
+   "ray_misses_filled": 0
+  }
+ },
+ "curve_scale": 0.7549054414323233,
+ "instanced_total_tris": 55522,
+ "n_nodes": 61,
+ "module_plus_insert": 1416
+}
