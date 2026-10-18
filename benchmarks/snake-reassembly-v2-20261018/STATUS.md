@@ -1,5 +1,11 @@
 # STATUS — snake-reassembly ATTEMPT 2
 
+## FIX-PASS DELIVERY P7 (2026-10-18 CDT) — pushed, NOT READY for acceptance
+- P7 = P6 + R23 fin height/thickness (0 tris). Budgets 13,966 / 1,423 / 2,922 / 56,732 — PASS.
+- Final judged clay captures `fix/captures/fix-p7-*` (Cycles 256/.01/OIDN 1920×1080, #C1C1BF, catcher, clay only), overlays `fix/overlays/p7-{head,seg,tail}`, sections `fix/sections/p7_*`, NOTE §A–D (refine log R6–R23, render-only scorecard, medians ≈5.0/5.0).
+- Remaining below gate: H4 nostril, H3 mouth, H9 frames, B3 grille, B10 neck kink. Seg overlay solve loose (41.8 px; landmarks predate S0-3).
+- No blockers. Blind panel re-gate is the next step.
+
 ## CHECKPOINT P6 — handover #5 (Opus low, 2026-10-18 ~16:30 CDT) — CONTINUING, no producer wait
 
 P5 (4549cf8) committed SOURCE changes only; it never rebuilt or rendered and STATUS was still the P4 text. P6 = first build + render of the P5 sources. No new geometry edits in P6.

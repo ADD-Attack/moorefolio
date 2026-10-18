@@ -1,3 +1,54 @@
+# NOTE — FIX PASS (P7, handover #5, 2026-10-18) — supersedes the R2 scorecard below
+
+Everything under "Round 2" further down is historical R2 evidence; the scorecard in THIS section is current.
+
+## A. Deliverables (P7 build, commit on branch)
+- Judged clay captures: `fix/captures/fix-p7-{full-body,head-closeup,seg-detail,tail-detail,tail_top-detail}.png` — Cycles GPU 256 / adaptive .01 / OIDN / 1920×1080, plain #C1C1BF, shadow catcher, key+rim+fill, ONE clay Principled material, no emission/glass/bloom (`fix-p7-render-settings.json`). Cameras/lights identical to P3–P6 previews.
+- Same-angle overlays (Workbench clay, landmark-solved, iteration evidence): `fix/overlays/p7-head_*` (resid 9.5 px), `p7-seg_*` (resid 41.8 px — landmarks predate the S0-3 drum stretch; solve is loose, treat as indicative), `p7-tail_*` (solved tail overlay, resid 14.0 px).
+- Section plots vs raw clay: `fix/sections/p7_{a_eye_station_x,b_midsnout_x,c_profile_y_nearside,d_plan_z_nostril}.png`.
+- Previews `fix/previews/fix-p6-*`, `fix-p7-head` = 32 spp ITERATION PREVIEWS only.
+
+## B. Budgets (P7)
+Head 13,966 / 14,000 · module 1,303 + insert 120 = 1,423 / 1,450 · tail 1,806+556+476+84 = 2,922 / 3,000 · assembly 56,732 (30k–60k). Technical PASS. No B-form was cut for budget in this pass.
+
+## C. Refine log R6+ (exact parameters in `fix/build-log.json`)
+R6 segment axial stretch (S0-3) · R7 F8 machined panels traced from projection · R8 head shell repair (voxel isosurface of R1–R5 master, collapse) · R9 fin separation · R10 cut-in H2 seams / H3 mouth / H4 nostril (.042) / H9 insets / H7 slats / H8 rods · R11 fin face inset · R12 tail axial stretch (S0-4, L/D 1.76→2.70) · R13 tail surface + vents · R14 neck pose · R15 recess depth + piston collars · R16 module notch/brackets/fasteners · R17 tail taper from decimated hero module · R18 head fasteners · R19 tail nozzle + upper slats · R20 neck plate lap .09 · R21 fin through-cut repair · R22 fin edge frames · **R23 (new, P7) fin height ×1.38 / thickness ×1.25 about each blade midplane, 0 tris.**
+Section plots c (profile) and a/b/d show the build line on the raw-clay line except at the cut-in recesses — R1–R5 forms preserved.
+
+## D. Self-scorecard — RENDER REVIEW ONLY (Decision 36). MATCH / QUALITY
+Reviewed: fix-p7 captures (all 5), p7 overlays (3), p7 sections (c viewed; a,b,d rendered, NOT individually viewed → their content UNREVIEWED), P6 previews.
+
+| Feature | M / Q | Render evidence |
+|---|---|---|
+| H1 skull mass / L:H | 6.5 / 6 | head overlay silhouette tracks, snout length OK |
+| H2 plate seams | 5 / 4.5 | seams visible as thin cut lines; reference seams wider/bevelled |
+| H3 mouth line / overbite | 4.5 / 4.5 | groove reads as a line, too shallow vs reference |
+| H4 nostril recess | 4 / 4 | small dark slot, weaker than reference ridged nostril |
+| H5 fins | 6 / 5.5 | after R23 taller, three separated blades; reference blades more swept/rectangular |
+| H6 eye seat | 6 / 6 | ring + seat read clearly in clay |
+| H7 vent box (vertical slats) | 6.5 / 6 | reads well |
+| H8 pistons | 5.5 / 5.5 | two rods + collars visible, still simple |
+| H9 recessed frames | 4.5 / 4.5 | insets faint in head capture |
+| H10/H11 collar, hood | 5 / 5 | collar bulky; hood present in profile |
+| B1–B2 drum + shield plates | 5.5 / 5.5 | machined plates, but missing reference's stepped notch outline at large scale |
+| B3 grilles | 4 / 4.5 | slat grids, not mesh (weave deferred to material per P5 ruling) |
+| B4/B5 pistons, brackets | 5 / 5 | visible in seg capture, undersized |
+| B6 lower plate | 5 / 5 | present, flat |
+| B7 fasteners | 6 / 5.5 | bolts clearly modeled on every plate (was panel 1.0) |
+| B8 glow-ring housing (clay) | 5.5 / 5.5 | housing reads as ring in clay |
+| B10 neck variant | 4 / 4 | neck still kinks abruptly into coil; joint gaps visible |
+| T1–T4 tail taper / tip | 5 / 4.5 | torpedo tip reads (S0-4 L/D 2.7); taper pieces faceted |
+| T5 tail vents/fins | 5 / 4.5 | slats present; fins soft |
+| Seam speckle | — | no black speckle visible in any P7 capture |
+| Silhouette (cat 2) | 6 / 5.5 | full-body coil + raised head match reference read |
+| Massing (cat 3) | 5.5 / 5.5 | neck/coil transition weak |
+| Modeled detail (cat 4) | 5 / 5 | detail present but simple at hero scale |
+
+Medians ≈ MATCH 5.0 / QUALITY 5.0 — **below 7.5. NOT READY; acceptance not claimed. Technical PASS ≠ acceptance PASS.**
+Lowest remaining: H4, B3, B10, H3, H9. Stall note (Decision 28): H3/H4/H9 have been depth-tuned three passes with little render gain at this tri count; next approach should be a different one (separate modeled nostril/mouth trim pieces with border bevels, budget reclaimed from collar H10), not further depth.
+
+---
+
 # NOTE — snake-reassembly ATTEMPT 2, Round 2 (coarse clay build) — Forge
 
 **Readers:** the owner and the QA Clay panel. All images below were viewed in-session before this checkpoint.

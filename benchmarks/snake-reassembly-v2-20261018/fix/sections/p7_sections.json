@@ -1,0 +1,18 @@
+{
+ "a_eye_station_x": {
+  "raw_segments": 622,
+  "build_segments": 297
+ },
+ "b_midsnout_x": {
+  "raw_segments": 492,
+  "build_segments": 189
+ },
+ "c_profile_y_nearside": {
+  "raw_segments": 1223,
+  "build_segments": 342
+ },
+ "d_plan_z_nostril": {
+  "raw_segments": 1332,
+  "build_segments": 439
+ }
+}
