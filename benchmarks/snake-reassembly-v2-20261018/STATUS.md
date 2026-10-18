@@ -12,7 +12,7 @@ Round 2 was released at about 09:29 CDT; the deadline is about 10:44 CDT. The ch
   - captures are Cycles 256 spp / adaptive 0.01 / OIDN / 1920×1080 on #C1C1BF with shadow-catcher;
   - same-angle overlays and section plots are delivered;
   - scripts are reproducible.
-- **Acceptance: NOT READY by my own scorecard.** Category-1 medians are 5.0 / 5.0, silhouette 6.0 / 5.5, massing 6.0 / 5.5, modelled detail 3.5 / 3.0. NOTE.md §7 has the details. The head's forms now survive as geometry; the body module does not hold its B-forms at budget.
+- **Acceptance: NOT READY by my own scorecard.** Category-1 medians are 5.0 / 5.0, silhouette 6.5 / 5.5, massing 6.0 / 5.5, modelled detail 3.5 / 3.0. NOTE.md §7 has the details. The head's forms now survive as geometry; the body module does not hold its B-forms at budget.
 
 ## Needs a producer ruling (details in NOTE.md §4 and §6)
 
