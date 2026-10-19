@@ -1,3 +1,6 @@
+## Material M1 WIP checkpoint
+Procedural shaders and UVs assigned to existing geometry; all eight source mesh fingerprints unchanged. Five Cycles 32-sample previews rendered and reviewed. Dark recesses and teal placement read, but plate highlights are too chrome-like and emissives over-bright. Corrections pending before map baking. No material-gate scores assigned yet. `source/bake_materials.py` is authored, UNRUN. Recover from `material/m1-procedural.blend` or `material/m1-staged.blend`.
+
 # Material phase — ACTIVE (owner order 2026-10-18)
 
 QA Clay assembled gate PASSED BY OWNER OVERRIDE at 20:45 CDT on P8d @17e59a9. P7 panel FAIL and P8 render-only scores remain historical calibration. Eye radial layering, skull plate volume and collar stacking remain open clay debts; they do not block materials and are NOT permission to rebuild geometry.
