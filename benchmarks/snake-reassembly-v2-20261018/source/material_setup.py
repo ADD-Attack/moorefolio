@@ -32,41 +32,44 @@ def output(nt,socket,name):n=node(nt,'NodeReroute',name);nt.links.new(socket,n.i
 def const(nt,val,name):n=node(nt,'ShaderNodeValue',name);n.outputs[0].default_value=val;return n.outputs[0]
 def material(name,base,rough=.44,metal=1.,kind='metal'):
  m=bpy.data.materials.new(name);m.use_nodes=True;nt=m.node_tree;nt.nodes.clear();p=node(nt,'ShaderNodeBsdfPrincipled','Surface');o=node(nt,'ShaderNodeOutputMaterial','Output');nt.links.new(p.outputs[0],o.inputs['Surface'])
- tc=node(nt,'ShaderNodeTexCoord','Coordinates');noise=node(nt,'ShaderNodeTexNoise','Patina');noise.inputs['Scale'].default_value=28;noise.inputs['Detail'].default_value=4;nt.links.new(tc.outputs['Object'],noise.inputs['Vector'])
- broad=node(nt,'ShaderNodeTexNoise','PlateSheen');broad.inputs['Scale'].default_value=4;nt.links.new(tc.outputs['Object'],broad.inputs['Vector'])
- color=ramp(nt,broad.outputs['Fac'],[(.18,tuple(c*.75 for c in base)),(.78,tuple(c*1.18 for c in base))],'MetalVariation')
- geo=node(nt,'ShaderNodeNewGeometry','Geometry');wear=ramp(nt,geo.outputs['Pointiness'],[(.49,(0,0,0)),(.555,(1,1,1))],'EdgeWear')
- # Broken-up worn edges, never a repeated comb pattern.
- wear=mathn(nt,'MULTIPLY',mathn(nt,'MULTIPLY',wear,noise.outputs['Fac']),.4);color=mix(nt,color,(.18,.17,.15),wear,'WornSteel')
- rust=ramp(nt,noise.outputs['Fac'],[(.68,(0,0,0)),(.79,(.30,.30,.30))],'RustMask');color=mix(nt,color,(.11,.055,.025),rust,'RestrainedOxide')
- # Keep per-plate sheen inside the spec band. Do not subtract a floor; that was the chrome.
- rr=mathn(nt,'ADD',mathn(nt,'MULTIPLY',mathn(nt,'SUBTRACT',broad.outputs['Fac'],.5),.08),rough)
- scale=node(nt,'ShaderNodeVectorMath','ScratchStretch');scale.operation='MULTIPLY';scale.inputs[1].default_value=(4,180,70);nt.links.new(tc.outputs['Object'],scale.inputs[0])
- scratch=node(nt,'ShaderNodeTexNoise','MicroScratches');scratch.inputs['Scale'].default_value=4;scratch.inputs['Detail'].default_value=2;nt.links.new(scale.outputs[0],scratch.inputs['Vector'])
- bump=node(nt,'ShaderNodeBump','MicroNormal');bump.inputs['Strength'].default_value=.18;bump.inputs['Distance'].default_value=.0012;nt.links.new(scratch.outputs['Fac'],bump.inputs['Height']);nt.links.new(bump.outputs['Normal'],p.inputs['Normal'])
+ tc=node(nt,'ShaderNodeTexCoord','Coordinates');noise=node(nt,'ShaderNodeTexNoise','Patina');noise.inputs['Scale'].default_value=9;noise.inputs['Detail'].default_value=6;nt.links.new(tc.outputs['Object'],noise.inputs['Vector'])
+ cells=node(nt,'ShaderNodeTexVoronoi','PlateCells');cells.feature='F1';cells.inputs['Scale'].default_value=2.4;cells.inputs['Randomness'].default_value=1;nt.links.new(tc.outputs['Object'],cells.inputs['Vector'])
+ sep=node(nt,'ShaderNodeSeparateColor','CellSplit');nt.links.new(cells.outputs['Color'],sep.inputs['Color'])
+ # Hard per-plate steps. Capture distance was washing out the old 0.75-1.18 noise.
+ color=ramp(nt,sep.outputs['Red'],[(.15,tuple(c*.62 for c in base)),(.38,tuple(c*.82 for c in base)),(.62,base),(.82,tuple(min(1,c*1.35) for c in base))],'PlateSteps')
+ color_node=nt.nodes['PlateSteps'];color_node.color_ramp.interpolation='CONSTANT'
+ seams=node(nt,'ShaderNodeTexVoronoi','PlateSeams');seams.feature='DISTANCE_TO_EDGE';seams.inputs['Scale'].default_value=2.4;nt.links.new(tc.outputs['Object'],seams.inputs['Vector'])
+ grime=mathn(nt,'LESS_THAN',seams.outputs['Distance'],.08);color=mix(nt,color,(.05,.045,.035),grime,'SeamDark')
+ geo=node(nt,'ShaderNodeNewGeometry','Geometry');wear=ramp(nt,geo.outputs['Pointiness'],[(.46,(0,0,0)),(.58,(1,1,1))],'EdgeWear')
+ wear=mathn(nt,'MULTIPLY',wear,.55);color=mix(nt,color,tuple(min(1,c*1.25) for c in base),wear,'EdgeBright')
+ rustn=node(nt,'ShaderNodeTexNoise','RustField');rustn.inputs['Scale'].default_value=3.2;rustn.inputs['Detail'].default_value=2;nt.links.new(tc.outputs['Object'],rustn.inputs['Vector'])
+ rust_amt=mathn(nt,'GREATER_THAN',rustn.outputs['Fac'],.67);color=mix(nt,color,(.55,.22,.07),rust_amt,'VisibleOxide')
+ rr=mathn(nt,'ADD',mathn(nt,'MULTIPLY',mathn(nt,'SUBTRACT',sep.outputs['Green'],.5),.10),rough)
+ rr=mathn(nt,'ADD',rr,mathn(nt,'MULTIPLY',rust_amt,.12))
+ pits=mathn(nt,'GREATER_THAN',noise.outputs['Fac'],.78);color=mix(nt,color,(.03,.025,.02),pits,'PitDark')
+ plate_rust=mathn(nt,'GREATER_THAN',sep.outputs['Red'],.84);color=mix(nt,color,(.48,.18,.06),plate_rust,'PlateOxide')
+ height=mathn(nt,'SUBTRACT',mathn(nt,'ADD',mathn(nt,'MULTIPLY',pits,1),mathn(nt,'MULTIPLY',noise.outputs['Fac'],.2)),mathn(nt,'MULTIPLY',grime,.4))
+ bump=node(nt,'ShaderNodeBump','MicroNormal');bump.inputs['Strength'].default_value=.85;bump.inputs['Distance'].default_value=.018;nt.links.new(height,bump.inputs['Height']);nt.links.new(bump.outputs['Normal'],p.inputs['Normal'])
  if kind=='grille':
   w1=node(nt,'ShaderNodeTexWave','WeaveA');w1.wave_type='BANDS';w1.bands_direction='DIAGONAL';w1.inputs['Scale'].default_value=100;nt.links.new(tc.outputs['Object'],w1.inputs['Vector']);nt.links.new(w1.outputs['Color'],bump.inputs['Height']);bump.inputs['Distance'].default_value=.0018
- if kind=='dark':color=mix(nt,color,base,const(nt,.75,'DarkLock'),'DarkSteel');rr=const(nt,rough,'DarkRoughness')
+ if kind=='dark':color=mix(nt,color,base,const(nt,.35,'DarkLock'),'DarkSteel')
  output(nt,color,'BAKE_COLOR');output(nt,rr,'BAKE_ROUGH');output(nt,const(nt,metal,'Metalness'),'BAKE_METAL')
  nt.links.new(color,p.inputs['Base Color']);nt.links.new(rr,p.inputs['Roughness']);p.inputs['Metallic'].default_value=metal
- if 'Specular IOR Level' in p.inputs:p.inputs['Specular IOR Level'].default_value=.50
+ if 'Specular IOR Level' in p.inputs:p.inputs['Specular IOR Level'].default_value=.42
  ao=node(nt,'ShaderNodeAmbientOcclusion','LocalAO');ao.inputs['Distance'].default_value=.16;ao.samples=16;ao.only_local=True;output(nt,ao.outputs['AO'],'BAKE_AO')
  output(nt,const(nt,0.,'NoEmission'),'BAKE_EMISSION');m['emission_strength']=0.;m.diffuse_color=(*base,1)
  return m
-steel=[material('Gunmetal_%02d'%i,tuple(c*f for c in (.145,.138,.122)),r) for i,(f,r) in enumerate([(.88,.46),(1,.42),(1.12,.38),(.74,.52)])]
-dark=material('DarkHousing',(.03,.032,.028),.52,1.,'dark');hardware=material('MachinedSteel',(.22,.21,.19),.40);grille=material('RecessedGrille',(.04,.042,.036),.55,1.,'grille');fin=material('FinInset',(.09,.095,.085),.48)
+steel=[material('Gunmetal_%02d'%i,rgb(h),r) for i,(h,r) in enumerate([('6E6758',.50),('8A8070',.56),('5C5648',.62),('7A6A52',.54)])]
+dark=material('DarkHousing',rgb('2A2824'),.62,1.,'dark');hardware=material('MachinedSteel',rgb('8C8474'),.48);grille=material('RecessedGrille',rgb('3A342C'),.64,1.,'grille');fin=material('FinInset',rgb('4A453C'),.56)
 bar=material('TealInsert',rgb('71CCBD'),.40,.08,'dark');p=bar.node_tree.nodes['Surface'];p.inputs['Emission Color'].default_value=(*rgb('71CCBD'),1);p.inputs['Emission Strength'].default_value=0.50;bar['emission_strength']=0.50
 nt=bar.node_tree;co=node(nt,'ShaderNodeRGB','InsertEmission');co.outputs[0].default_value=(*rgb('71CCBD'),1);nt.links.new(co.outputs[0],nt.nodes['BAKE_EMISSION'].inputs[0])
 materials=steel+[dark,hardware,grille,fin,bar]
-def eye_material(name,center,normal,R):
- m=material(name,(.07,.11,.08),.18,.25,'dark');nt=m.node_tree;p=nt.nodes['Surface'];tc=nt.nodes['Coordinates']
- sub=node(nt,'ShaderNodeVectorMath','EyeOffset');sub.operation='SUBTRACT';sub.inputs[1].default_value=center;nt.links.new(tc.outputs['Object'],sub.inputs[0])
- dot=node(nt,'ShaderNodeVectorMath','EyePlaneDepth');dot.operation='DOT_PRODUCT';dot.inputs[1].default_value=normal;nt.links.new(sub.outputs[0],dot.inputs[0])
- ns=node(nt,'ShaderNodeVectorMath','EyeNormalDepth');ns.operation='SCALE';ns.inputs[0].default_value=normal;nt.links.new(dot.outputs['Value'],ns.inputs['Scale'])
- proj=node(nt,'ShaderNodeVectorMath','EyeRadial');proj.operation='SUBTRACT';nt.links.new(sub.outputs[0],proj.inputs[0]);nt.links.new(ns.outputs[0],proj.inputs[1])
- length=node(nt,'ShaderNodeVectorMath','EyeRadius');length.operation='LENGTH';nt.links.new(proj.outputs[0],length.inputs[0]);rad=mathn(nt,'DIVIDE',length.outputs['Value'],R)
- color=ramp(nt,rad,[(0,rgb('F8FDFF')),(.08,rgb('F8FDFF')),(.20,rgb('C9FAF4')),(.36,rgb('60C4B0')),(.55,rgb('0C8B6C')),(.68,rgb('08624A')),(.73,rgb('1D342A')),(.80,rgb('454F44')),(.87,rgb('112016')),(1,rgb('49483F'))],'EyeRadialColor')
- mask=ramp(nt,rad,[(0,(1,1,1)),(.68,(1,1,1)),(.73,(0,0,0)),(1,(0,0,0))],'EyeLitDisc')
+def eye_material(name):
+ m=material(name,(.07,.11,.08),.22,.2,'dark');nt=m.node_tree;p=nt.nodes['Surface']
+ attr=node(nt,'ShaderNodeAttribute','EyeRadialAttr');attr.attribute_name='EyeRadial';rad=attr.outputs['Fac']
+ color=ramp(nt,rad,[(0,rgb('FFFFFF')),(.08,rgb('FFFFFF')),(.10,rgb('CFFFF3')),(.17,rgb('CFFFF3')),(.19,rgb('18A07A')),(.28,rgb('18A07A')),(.30,rgb('06382A')),(.40,rgb('06382A')),(1,rgb('141210'))],'EyeRadialColor')
+ mask=ramp(nt,rad,[(0,(1,1,1)),(.40,(1,1,1)),(.46,(0,0,0)),(1,(0,0,0))],'EyeLitDisc')
+ 
  em=mix(nt,(0,0,0),color,mask,'EyeEmission');nt.links.new(color,nt.nodes['BAKE_COLOR'].inputs[0]);nt.links.new(color,p.inputs['Base Color']);nt.links.new(em,nt.nodes['BAKE_EMISSION'].inputs[0]);nt.links.new(em,p.inputs['Emission Color']);p.inputs['Emission Strength'].default_value=1.05;p.inputs['Coat Weight'].default_value=.22;p.inputs['Coat Roughness'].default_value=.32;m['emission_strength']=1.05
  # Preserve optical smoothness: no corrosion/noise normal on the cover.
  for l in list(p.inputs['Normal'].links):nt.links.remove(l)
@@ -91,7 +94,13 @@ for ob in sources:
  if ob.name=='SRC_Head':
   for k,ids in comps.items():
    if len(ids)!=288:continue
-   V=np.array([me.vertices[i].co[:] for i in ids]);ct=V.mean(0);_,_,vh=np.linalg.svd(V-ct);n=vh[-1];n*=np.sign(n[1]*ct[1]);rad=np.linalg.norm((V-ct)-np.outer((V-ct)@n,n),axis=1);R=float(rad.max());m=eye_material('Optic_'+str(k),ct,n,R);me.materials.append(m);eye_ids[k]=len(me.materials)-1
+   V=np.array([me.vertices[i].co[:] for i in ids]);ct=V.mean(0);_,_,vh=np.linalg.svd(V-ct);n=vh[-1];n*=np.sign(n[1]*ct[1] or 1);rad=np.linalg.norm((V-ct)-np.outer((V-ct)@n,n),axis=1);R=float(rad.max()) or 1;m=eye_material('Optic_'+str(k));me.materials.append(m);eye_ids[k]=(len(me.materials)-1,ids,rad/R)
+ if ob.name=='SRC_Head' and eye_ids:
+  if 'EyeRadial' in me.color_attributes:me.color_attributes.remove(me.color_attributes['EyeRadial'])
+  attr=me.color_attributes.new('EyeRadial','FLOAT_COLOR','POINT')
+  for k,(slot,ids,frac) in eye_ids.items():
+   for vid,f in zip(ids,frac):attr.data[vid].color=(float(f),float(f),float(f),1)
+   eye_ids[k]=slot
  plate_ids={}
  if ob.name in ('SRC_SegmentHero','SRC_SegmentNeck'):
   sequence=[(80,1),(54,0),(60,2),(10,4),(34,6),(39,6),(34,6),(34,6),(12,2),(6,2),(12,0),(40,4),(160,4),(40,5),(12,4)]
@@ -140,10 +149,25 @@ for ob in sources:
   poly.material_index=mat
  # Only UV topology metadata changes; mesh positions/faces are frozen.
  ob.hide_viewport=False;ob.hide_set(False);bpy.ops.object.select_all(action='DESELECT');ob.select_set(True);bpy.context.view_layer.objects.active=ob
- bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(angle_limit=math.radians(66),island_margin=.012,area_weight=.2);bpy.ops.object.mode_set(mode='OBJECT');ob.hide_viewport=True
+ bpy.ops.object.mode_set(mode='EDIT');bpy.ops.mesh.select_all(action='SELECT');bpy.ops.uv.smart_project(angle_limit=math.radians(66),island_margin=.012,area_weight=.2);bpy.ops.object.mode_set(mode='OBJECT')
+ if ob.name=='SRC_Head':
+  uv=me.uv_layers.active.data;boxes=[(.02,.05),(.02,.55)]
+  slots=[i for i,m in enumerate(me.materials) if m and m.name.startswith('Optic_')]
+  eye_loops=set()
+  for (bx,by),slot in zip(boxes,slots):
+   loops=[li for poly in me.polygons if poly.material_index==slot for li in poly.loop_indices];eye_loops.update(loops)
+   if not loops:continue
+   us=[uv[li].uv for li in loops];minx=min(u.x for u in us);maxx=max(u.x for u in us);miny=min(u.y for u in us);maxy=max(u.y for u in us)
+   sx=max(maxx-minx,1e-6);sy=max(maxy-miny,1e-6)
+   for li in loops:
+    u=uv[li].uv;u.x=bx+(u.x-minx)/sx*.22;u.y=by+(u.y-miny)/sy*.22
+  for li,luv in enumerate(uv):
+   if li in eye_loops:continue
+   luv.uv.x=.28+luv.uv.x*.70;luv.uv.y=.02+luv.uv.y*.96
+ ob.hide_viewport=True
  assert fingerprint(me)==baseline[ob.name]['mesh_hash'],ob.name
  report[ob.name]={'hash_unchanged':True,'materials':{m.name:sum(p.material_index==i for p in me.polygons) for i,m in enumerate(me.materials)}}
 # Raw source meshes and their visible instances share data; no object transforms changed.
-Path('material/m1d-assignment.json').write_text(json.dumps(report,indent=2))
-bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'m1d-procedural.blend'))
+Path('material/m3-assignment.json').write_text(json.dumps(report,indent=2))
+bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'m3-procedural.blend'))
 print('MATERIAL_SETUP_COMPLETE',flush=True)

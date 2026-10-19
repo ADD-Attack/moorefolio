@@ -1,4 +1,12 @@
-## Material delivery — NOT READY (2026-10-19)
+## Material fix M3 — NOT READY (2026-10-19, after panel FAIL on 20b2545)
+
+M3 rebake is the candidate. The first bake had reused the M1d PNGs; those were deleted and baked again. Geometry fingerprints unchanged. Budgets PASS: head 13,968 / 14,000, module+insert 1,431 / 1,450, tail 2,970 / 3,000, assembly 57,006 / 57,600. GLB SHA256 `f704d979ac15e66f7a066c3ac8d855471010afd1745c12c3e1cc3ac0fedadbc6`.
+
+Judged captures: `material/captures/m3-{full-body,head-closeup,seg-detail,tail-detail,tail_top-detail}.png`. Scorecard: `material/NOTE.md`. Exercise 2 review shots were not found. The Exercise 3 copy of that texture set does not match these UVs and was not applied. R4-fresh head/full captures were viewed; that mesh was not transferred.
+
+Render-only call remains **NOT READY**. Texture/color/bump are above the panel floor and still under 7.5. Head-feature MATCH median 4.75. No self-approval.
+
+## Material delivery M2 — NOT READY, panel FAIL (2026-10-19)
 
 Candidate is baked M2 from the M1d shaders. Geometry fingerprints unchanged. Budgets PASS: head 13,968 / 14,000, module+insert 1,431 / 1,450, tail 2,970 / 3,000, assembly 57,006 / 57,600. GLB `material/snake-p8-material.glb` SHA256 `d4bccee2dfe6f75de80d17543d6d0c26853ef93f8d555b07bb03eed4ab8e50bc`.
 

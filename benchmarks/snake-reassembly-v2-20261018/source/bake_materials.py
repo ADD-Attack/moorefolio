@@ -42,7 +42,8 @@ for ob in sources:
  used=set(p.material_index for p in me.polygons);mats=[me.materials[i] for i in used];ims={}
  for channel in ['BaseColor','ORM','Normal','Emission']:
   path=TEX/(ob.name.removeprefix('SRC_')+'_'+channel+'.png')
-  if path.exists():im=bpy.data.images.load(str(path.resolve()),check_existing=True);print('REUSE',path,flush=True)
+  # Always rebake. Reusing an existing PNG shipped the stale M1d maps once.
+  if False and path.exists():im=bpy.data.images.load(str(path.resolve()),check_existing=True);print('REUSE',path,flush=True)
   else:
    im=bpy.data.images.new(path.stem,width=size,height=size,alpha=False);im.colorspace_settings.name='sRGB' if channel in ('BaseColor','Emission') else 'Non-Color'
    restore=[]
