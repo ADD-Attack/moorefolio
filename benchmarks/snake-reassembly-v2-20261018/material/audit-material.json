@@ -1,0 +1,107 @@
+{
+  "geometry_fingerprints_unchanged": true,
+  "instance_transforms_unchanged": true,
+  "counts": {
+    "head": 13968,
+    "module_insert": 1431,
+    "tail": 2970,
+    "assembly": 57006
+  },
+  "glb_node_counts_match": true,
+  "maps": [
+    {
+      "material": "PBR_Head",
+      "ao_and_mr_image": 2,
+      "normal": 1,
+      "emissive": [
+        1,
+        1,
+        1
+      ],
+      "extensions": {
+        "KHR_materials_emissive_strength": {
+          "emissiveStrength": 1.0499999523162842
+        }
+      }
+    },
+    {
+      "material": "PBR_SegmentNeck",
+      "ao_and_mr_image": 6,
+      "normal": 5,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "extensions": {}
+    },
+    {
+      "material": "PBR_GlowInsert",
+      "ao_and_mr_image": 10,
+      "normal": 9,
+      "emissive": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "extensions": {}
+    },
+    {
+      "material": "PBR_SegmentHero",
+      "ao_and_mr_image": 14,
+      "normal": 13,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "extensions": {}
+    },
+    {
+      "material": "PBR_TailTaper1",
+      "ao_and_mr_image": 18,
+      "normal": 17,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "extensions": {}
+    },
+    {
+      "material": "PBR_GlowInsertT1",
+      "ao_and_mr_image": 22,
+      "normal": 21,
+      "emissive": [
+        0.5,
+        0.5,
+        0.5
+      ],
+      "extensions": {}
+    },
+    {
+      "material": "PBR_TailTaper2",
+      "ao_and_mr_image": 26,
+      "normal": 25,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "extensions": {}
+    },
+    {
+      "material": "PBR_TailTip",
+      "ao_and_mr_image": 30,
+      "normal": 29,
+      "emissive": [
+        0,
+        0,
+        0
+      ],
+      "extensions": {}
+    }
+  ],
+  "glb_sha256": "d4bccee2dfe6f75de80d17543d6d0c26853ef93f8d555b07bb03eed4ab8e50bc",
+  "acceptance": "not inferred from technical checks"
+}
