@@ -1,0 +1,116 @@
+{
+  "SRC_GlowInsert": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 0,
+      "Gunmetal_01": 0,
+      "Gunmetal_02": 0,
+      "Gunmetal_03": 0,
+      "DarkHousing": 0,
+      "MachinedSteel": 0,
+      "RecessedGrille": 0,
+      "FinInset": 0,
+      "TealInsert": 60
+    }
+  },
+  "SRC_GlowInsertT1": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 0,
+      "Gunmetal_01": 0,
+      "Gunmetal_02": 0,
+      "Gunmetal_03": 0,
+      "DarkHousing": 0,
+      "MachinedSteel": 0,
+      "RecessedGrille": 0,
+      "FinInset": 0,
+      "TealInsert": 42
+    }
+  },
+  "SRC_Head": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 3126,
+      "Gunmetal_01": 7463,
+      "Gunmetal_02": 0,
+      "Gunmetal_03": 0,
+      "DarkHousing": 268,
+      "MachinedSteel": 438,
+      "RecessedGrille": 52,
+      "FinInset": 539,
+      "TealInsert": 0,
+      "Optic_6676": 264,
+      "Optic_6996": 264
+    }
+  },
+  "SRC_SegmentHero": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 44,
+      "Gunmetal_01": 74,
+      "Gunmetal_02": 51,
+      "Gunmetal_03": 0,
+      "DarkHousing": 256,
+      "MachinedSteel": 172,
+      "RecessedGrille": 70,
+      "FinInset": 0,
+      "TealInsert": 0
+    }
+  },
+  "SRC_SegmentNeck": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 44,
+      "Gunmetal_01": 66,
+      "Gunmetal_02": 51,
+      "Gunmetal_03": 0,
+      "DarkHousing": 247,
+      "MachinedSteel": 193,
+      "RecessedGrille": 66,
+      "FinInset": 0,
+      "TealInsert": 0
+    }
+  },
+  "SRC_TailTaper1": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 28,
+      "Gunmetal_01": 100,
+      "Gunmetal_02": 0,
+      "Gunmetal_03": 0,
+      "DarkHousing": 201,
+      "MachinedSteel": 156,
+      "RecessedGrille": 30,
+      "FinInset": 0,
+      "TealInsert": 0
+    }
+  },
+  "SRC_TailTaper2": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 28,
+      "Gunmetal_01": 79,
+      "Gunmetal_02": 0,
+      "Gunmetal_03": 0,
+      "DarkHousing": 152,
+      "MachinedSteel": 179,
+      "RecessedGrille": 37,
+      "FinInset": 0,
+      "TealInsert": 0
+    }
+  },
+  "SRC_TailTip": {
+    "hash_unchanged": true,
+    "materials": {
+      "Gunmetal_00": 729,
+      "Gunmetal_01": 881,
+      "Gunmetal_02": 0,
+      "Gunmetal_03": 0,
+      "DarkHousing": 0,
+      "MachinedSteel": 6,
+      "RecessedGrille": 206,
+      "FinInset": 0,
+      "TealInsert": 0
+    }
+  }
+}

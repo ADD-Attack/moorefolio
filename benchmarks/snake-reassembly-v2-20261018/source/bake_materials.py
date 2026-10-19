@@ -29,7 +29,7 @@ def canonical(ob,images):
   group=bpy.data.node_groups.new('glTF Material Output','ShaderNodeTree');group.interface.new_socket(name='Occlusion',in_out='INPUT',socket_type='NodeSocketFloat')
  g=nt.nodes.new('ShaderNodeGroup');g.node_tree=group;nt.links.new(sep.outputs['Red'],g.inputs['Occlusion'])
  normal=nt.nodes.new('ShaderNodeNormalMap');normal.uv_map=me.uv_layers.active.name;nt.links.new(nodes['Normal'].outputs['Color'],normal.inputs['Color']);nt.links.new(normal.outputs[0],p.inputs['Normal'])
- strength=3.0 if ob.name=='SRC_Head' else 2.8 if 'Glow' in ob.name else 0.
+ strength=1.8 if ob.name=='SRC_Head' else 1.0 if 'Glow' in ob.name else 0.
  nt.links.new(nodes['Emission'].outputs['Color'],p.inputs['Emission Color']);p.inputs['Emission Strength'].default_value=strength
  me.materials.clear();me.materials.append(m)
  for poly in me.polygons:poly.material_index=0
@@ -74,7 +74,7 @@ for ob in sources:
  (OUT/'bake-progress.json').write_text(json.dumps(progress,indent=2))
 for o in bpy.data.objects:
  if o.name in state:o.hide_render,o.hide_viewport=state[o.name]
-bpy.ops.object.select_all(action='DESELECT')
+for o in bpy.data.objects:o.select_set(False)
 for o in bpy.data.objects:
  if o.type=='MESH' and not o.hide_render:o.hide_viewport=False;o.hide_set(False);o.select_set(True)
 bpy.ops.wm.save_as_mainfile(filepath=str(OUT/'m2-mapped.blend'))

@@ -1,0 +1,5 @@
+config_version=5
+[application]
+config/name="P8 Material Import Check"
+[rendering]
+renderer/rendering_method="gl_compatibility"
