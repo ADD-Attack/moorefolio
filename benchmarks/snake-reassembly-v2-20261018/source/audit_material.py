@@ -1,4 +1,5 @@
-import bpy,json,hashlib,sys,struct,numpy as np
+import bpy,json,hashlib,sys,struct,os,numpy as np
+if "--" in sys.argv: os.chdir(sys.argv[sys.argv.index("--")+1])
 from pathlib import Path
 
 def snapshot(path):

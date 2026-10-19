@@ -1,0 +1,42 @@
+{
+  "SRC_GlowInsert": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "fa9b31752b5fbcd01549b634ddac405f795092ef5c567caef94f96198991b140"
+  },
+  "SRC_GlowInsertT1": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "a6a058981dbf9ecd529ca4db1c5fe2eb2a9879dc9f5c658981c1c7af4c3bd7f3"
+  },
+  "SRC_Head": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "afe7d7060dfb5579b1a9c6d9438d8eb06ce2669622b1a5469dddb2af864f24d5"
+  },
+  "SRC_SegmentHero": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "2fe45228e9128e1c820b1a99b59c6ee3e97fed6b762ffb06ac868a6e55ae3636"
+  },
+  "SRC_SegmentNeck": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "db1766d03c5cc3b2bf81ddc5427b2393ced3dc20a03f1e1dd631f81d30b8f5ec"
+  },
+  "SRC_TailTaper1": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "ea20a526573f84246265c0eae97a0adc19497cc059cbe1a98ae4c4ea4f2c28f3"
+  },
+  "SRC_TailTaper2": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "625295edb86b8d4f49ed0e1e34d5e494e9b65e15386d8747a0844aaabf57d1e2"
+  },
+  "SRC_TailTip": {
+    "geometry_unchanged": true,
+    "uv_unchanged": true,
+    "uv_hash": "df00eb3813c3986e49fc449b7150dcc167470fd40d2c8277800ca62628e6fe9a"
+  }
+}
