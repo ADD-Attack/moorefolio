@@ -50,9 +50,13 @@
   .piece.b{color:#171310;text-shadow:0 0 2px rgba(255,255,255,.35),0 2px 3px rgba(0,0,0,.4)}
   .sq.sel{box-shadow:inset 0 0 0 4px var(--sel)}
   .sq.lastmove{box-shadow:inset 0 0 0 100px rgba(242,193,78,.28)}
-  .sq.dest::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:var(--hint)}
+  .sq.dest::after{content:"";position:absolute;width:16px;height:16px;border-radius:50%;background:var(--hint);pointer-events:none}
   .sq.dest.capture::after{width:52px;height:52px;border-radius:50%;background:transparent;
-    border:5px solid var(--hint)}
+    border:5px solid var(--hint);pointer-events:none}
+  .sq:hover{filter:brightness(1.07)}
+  .sq.droptarget{box-shadow:inset 0 0 0 4px rgba(242,193,78,.95)}
+  .piece{touch-action:none;cursor:grab;position:relative}
+  .piece.dragging{cursor:grabbing;filter:drop-shadow(0 10px 10px rgba(0,0,0,.45));z-index:6}
   .sq.incheck{box-shadow:inset 0 0 0 100px rgba(210,59,46,.45)}
   .controls{display:flex;gap:10px}
   button{font-family:inherit;font-size:15px;padding:8px 16px;border-radius:8px;cursor:pointer;
@@ -98,6 +102,7 @@
     <div class="controls">
       <button id="resetBtn">Reset Game</button>
       <button id="flipBtn" class="ghost">Flip Board</button>
+      <button id="soundBtn" class="ghost">Sound: On</button>
     </div>
   </div>
 
@@ -135,6 +140,7 @@ function reset(){
   castling={K:true,Q:true,k:true,q:true};
   epSquare=-1; halfmove=0; fullmove=1; history=[]; capturedBy={w:[],b:[]};
   gameOver=false; flipped=false; selected=-1; legalCache=[];
+  lastMoveSq=null; pendingAnim=null; drag=null;
   render();
 }
 const fileOf=i=>i%8, rankOf=i=>Math.floor(i/8); // rank 0 = rank8
@@ -275,6 +281,8 @@ for(let vis=0;vis<64;vis++){
   boardEl.appendChild(d); squares.push(d);
 }
 function onSquareClick(i){
+  if(Date.now()<suppressClickUntil) return;
+  ensureAudio();
   if(gameOver) return;
   if(selected>=0 && legalCache.some(m=>m.to===i)){ tryMove(selected,i); return; }
   if(board[i] && board[i].c===turn){ select(i); } else { select(-1); }
@@ -313,6 +321,13 @@ function doMove(m, promoChoice){
   if(board[m.to]) captured=board[m.to];
   if(m.epCapture) captured=board[(rankOf(m.from))*8+fileOf(m.to)];
   if(captured) capturedBy[turn].push(captured.t);
+  lastMoveSq={from:m.from,to:m.to};
+  pendingAnim=[{from:m.from,to:m.to}];
+  if(m.castle){
+    const home = turn==='w'?60:4;
+    if(m.to===home+2) pendingAnim.push({from:home+3,to:home+1});
+    if(m.to===home-2) pendingAnim.push({from:home-4,to:home-1});
+  }
   applyTo(board,m,promoChoice);
   // castling rights
   if(moving.t==='k'){ if(turn==='w'){castling.K=castling.Q=false;} else {castling.k=castling.q=false;} }
@@ -331,9 +346,13 @@ function doMove(m, promoChoice){
   history.push(san);
   select(-1);
   render(inCheck);
+  playThock(!!captured);
+  if(gameOver) setTimeout(()=>playThock(true),160);
 }
+let lastMoveSq=null, pendingAnim=null, lastInCheck=false;
 function render(inCheck){
-  const lastFrom = history.length? null : null;
+  lastInCheck=!!inCheck;
+  const pieceEls={};
   for(let vis=0;vis<64;vis++){
     const i = flipped ? 63-vis : vis;
     const d=squares[vis], p=board[i];
@@ -341,15 +360,33 @@ function render(inCheck){
     if(vis%8===7){ const c=document.createElement('span'); c.className='coord file'; c.textContent=8-rankOf(i); d.appendChild(c); }
     if(vis>=56){ const c=document.createElement('span'); c.className='coord rank'; c.textContent='abcdefgh'[fileOf(i)]; d.appendChild(c); }
     d.classList.toggle('sel', i===selected);
+    d.classList.toggle('lastmove', !!lastMoveSq && (i===lastMoveSq.from || i===lastMoveSq.to));
     d.classList.toggle('dest', legalCache.some(m=>m.to===i));
     d.classList.toggle('capture', legalCache.some(m=>m.to===i) && (!!board[i]||legalCache.some(m=>m.to===i&&m.epCapture)));
     d.classList.toggle('incheck', !!inCheck && !!p && p.t==='k' && p.c===turn);
     if(p){
       const s=document.createElement('span');
-      s.className='piece '+p.c; s.textContent=GLYPH[p.t]; s.draggable=true;
-      s.style.pointerEvents='auto'; s.style.cursor='grab';
-      s.addEventListener('dragstart',e=>{ e.dataTransfer.setData('text/plain',i); select(i); render(inCheck); });
+      s.className='piece '+p.c; s.textContent=GLYPH[p.t];
+      s.style.pointerEvents='auto';
+      s.addEventListener('pointerdown',e=>startDrag(e,i));
       d.appendChild(s);
+      pieceEls[i]=s;
+    }
+  }
+  if(pendingAnim){
+    const anims=pendingAnim; pendingAnim=null;
+    const sqSize=squares[0].offsetWidth||62;
+    for(const a of anims){
+      const el=pieceEls[a.to]; if(!el) continue;
+      const vf=visFileOf(a.from), vr=visRankOf(a.from), tf=visFileOf(a.to), tr=visRankOf(a.to);
+      const dx=(vf-tf)*sqSize, dy=(vr-tr)*sqSize;
+      if(!dx && !dy) continue;
+      el.style.transition='none';
+      el.style.transform='translate('+dx+'px,'+dy+'px)';
+      el.style.zIndex='5';
+      const start=()=>{ el.style.transition='transform 180ms cubic-bezier(.25,.8,.3,1)';
+        el.style.transform=''; setTimeout(()=>{ el.style.transition=''; el.style.zIndex=''; },220); };
+      if(window.requestAnimationFrame) requestAnimationFrame(()=>requestAnimationFrame(start)); else start();
     }
   }
   // captured
@@ -373,8 +410,77 @@ function render(inCheck){
   }
 }
 function glyphFor(t,c){ return '<span style="color:'+(c==='w'?'#fafafa':'#171310')+';text-shadow:0 0 2px '+(c==='w'?'#000':'rgba(255,255,255,.4)')+'">'+GLYPH[t]+'</span>'; }
+// ---------- Smoothness: pointer drag, glide, sound (v1.1) ----------
+const visOf = i => flipped ? 63-i : i;
+const visFileOf = i => visOf(i)%8;
+const visRankOf = i => Math.floor(visOf(i)/8);
+let drag=null, suppressClickUntil=0;
+function startDrag(e, i){
+  ensureAudio();
+  if(gameOver || !board[i] || board[i].c!==turn) return;
+  if(selected!==i){ select(i); render(lastInCheck); }
+  const el=squares[visOf(i)].querySelector('.piece');
+  drag={from:i, el:el, startX:e.clientX, startY:e.clientY, active:false};
+}
+window.addEventListener('pointermove',e=>{
+  if(!drag || !drag.el) return;
+  const dx=e.clientX-drag.startX, dy=e.clientY-drag.startY;
+  if(!drag.active && Math.hypot(dx,dy)<6) return;
+  drag.active=true;
+  drag.el.classList.add('dragging');
+  drag.el.style.transform='translate('+dx+'px,'+dy+'px) scale(1.07)';
+  const rect=boardEl.getBoundingClientRect(), cell=rect.width/8;
+  const vf=Math.floor((e.clientX-rect.left)/cell), vr=Math.floor((e.clientY-rect.top)/cell);
+  squares.forEach((s,vis)=>s.classList.toggle('droptarget', vis===vr*8+vf));
+});
+window.addEventListener('pointerup',e=>{
+  if(!drag) return;
+  const d=drag; drag=null;
+  squares.forEach(s=>s.classList.remove('droptarget'));
+  if(!d.active) return;
+  suppressClickUntil=Date.now()+300;
+  const rect=boardEl.getBoundingClientRect(), cell=rect.width/8;
+  const vf=Math.floor((e.clientX-rect.left)/cell), vr=Math.floor((e.clientY-rect.top)/cell);
+  let moved=false;
+  if(vf>=0&&vf<8&&vr>=0&&vr<8){
+    const to=boardIdxOfVis(vr*8+vf);
+    if(to!==d.from && legalMoves(board,d.from,castling,epSquare).some(m=>m.to===to)){ tryMove(d.from,to); moved=true; }
+  }
+  if(!moved && d.el){
+    d.el.style.transition='transform 150ms ease';
+    d.el.style.transform='';
+    setTimeout(()=>{ if(d.el){ d.el.style.transition=''; d.el.classList.remove('dragging'); } },170);
+  }
+});
+let audioCtx=null, soundOn=true;
+function ensureAudio(){
+  try{
+    if(!audioCtx && window.AudioContext) audioCtx=new window.AudioContext();
+    if(audioCtx && audioCtx.state==='suspended') audioCtx.resume();
+  }catch(_){ }
+}
+function playThock(capture){
+  if(!soundOn || !audioCtx) return;
+  try{
+    const dur=0.09, buf=audioCtx.createBuffer(1, audioCtx.sampleRate*dur, audioCtx.sampleRate);
+    const data=buf.getChannelData(0);
+    for(let n=0;n<data.length;n++) data[n]=(Math.random()*2-1)*(1-n/data.length);
+    const src=audioCtx.createBufferSource(); src.buffer=buf;
+    const filter=audioCtx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.value=capture?800:1300;
+    const gain=audioCtx.createGain();
+    gain.gain.setValueAtTime(capture?0.5:0.32, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+dur);
+    src.connect(filter); filter.connect(gain); gain.connect(audioCtx.destination);
+    src.start();
+  }catch(_){ }
+}
 document.getElementById('resetBtn').addEventListener('click',reset);
 document.getElementById('flipBtn').addEventListener('click',()=>{ flipped=!flipped; render(); });
+document.getElementById('soundBtn').addEventListener('click',function(){
+  soundOn=!soundOn;
+  this.textContent = soundOn ? 'Sound: On' : 'Sound: Off';
+  if(soundOn) ensureAudio();
+});
 reset();
 </script>
 </body>
