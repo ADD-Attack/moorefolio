@@ -29,7 +29,7 @@ def canonical(ob,images):
   group=bpy.data.node_groups.new('glTF Material Output','ShaderNodeTree');group.interface.new_socket(name='Occlusion',in_out='INPUT',socket_type='NodeSocketFloat')
  g=nt.nodes.new('ShaderNodeGroup');g.node_tree=group;nt.links.new(sep.outputs['Red'],g.inputs['Occlusion'])
  normal=nt.nodes.new('ShaderNodeNormalMap');normal.uv_map=me.uv_layers.active.name;nt.links.new(nodes['Normal'].outputs['Color'],normal.inputs['Color']);nt.links.new(normal.outputs[0],p.inputs['Normal'])
- strength=1.8 if ob.name=='SRC_Head' else 1.0 if 'Glow' in ob.name else 0.
+ strength=1.05 if ob.name=='SRC_Head' else 0.50 if 'Glow' in ob.name else 0.
  nt.links.new(nodes['Emission'].outputs['Color'],p.inputs['Emission Color']);p.inputs['Emission Strength'].default_value=strength
  me.materials.clear();me.materials.append(m)
  for poly in me.polygons:poly.material_index=0
