@@ -174,3 +174,11 @@ Medians: MATCH 5.5 / QUALITY 5.5 — below the 7.5 gate. Technical: PASS (bake c
 ## Panel of record and disposition (2026-10-20)
 
 Panel on M5d @dc998d0, 30 judges: overall MATCH 5.0 / QUALITY 5.5. Features-1 5.0/5.0, Features-2 5.5/5.5, Silhouette 5.0/5.5, Massing 5.5/5.5, Modeled detail 5.0/5.5, Lighting 4.5/5.5, Color 5.0/5.5, Materials 4.0/5.5, Bump 4.0/4.5, Texture 4.0/5.0. Owner override 11:43 CDT passed the material gate ("It passes to me which supercedes any other disposition"); per Decision 41 this does not close the ticket by itself. Self-card over-scored Materials and Texture MATCH. Carried debts: head form (H2, H10–H12), collar stacking, neck flats, tile-segmented joint inserts, sparse massing, tail-tip value, olive cast, texture/bump fidelity.
+
+## M5e owner tweak — lighter and shinier (2026-10-20)
+
+Owner direction: "just lighten it up just a bit … a little bit shinier and less black." Shader-only from M5d (`source/material_m5e.py`): plate value multiply raised .68/.69/.70 → .93/.94/.95; plate roughness lowered by .04 (floor .15). Nothing else changed (no geometry/UV/feature/joint/weathering change; asserted in `m5e-shader-audit.json`). An intermediate try (.80 value, −.07 roughness) read almost unchanged and was not delivered.
+
+Fresh bake `textures-m5e/` (32 maps). The first bake hit a transient Windows Cycles tile-buffer error on the head ORM, which rendered the head black. The three affected head maps were deleted and rebaked, and their sizes now match M5d (`bake-m5e-head.log`). `m5e-mapped.blend`; GLB `snake-p8-material-m5e.glb` SHA256 `8f8bcd80165f28fcac39c7e11ddf2599638b8619bc8bdcbed3cef3be6327dbda`.
+
+Captures `captures/m5e-{full-body,head-closeup,seg-detail,tail-detail,tail_top-detail}.png`: Cycles GPU 256 / adaptive .01 / OIDN / 1920×1080, frozen cameras/lights/catcher; `m5e-render-settings.json` equals the M5/M5d settings exactly. All five opened and checked in-session.

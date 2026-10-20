@@ -1,0 +1,626 @@
+BAKE_OBJECT SRC_Head
+BAKE_START SRC_Head BaseColor 4096
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)
+Read blend: "\\wsl.localhost\OpenClawGateway\home\openclaw\.openclaw\workspace-studio-3d\tickets\snake-reassembly-v2-20261018\repo\benchmarks\snake-reassembly-v2-20261018\material\m5e-procedural.blend"
+Fra:1 Mem:1090.44M (Peak 1090.44M) | Time:116:30:37.27 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_Head
+Fra:1 Mem:1091.86M (Peak 1093.84M) | Time:116:30:37.29 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:1091.85M (Peak 1093.84M) | Time:116:30:37.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_Head_EdgeMask.png
+Fra:1 Mem:1091.85M (Peak 1093.84M) | Time:116:30:37.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_SegmentHero_EdgeMask.png
+Fra:1 Mem:1091.85M (Peak 1093.84M) | Time:116:30:37.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_02_SRC_Head" (2) for object "SRC_Head"
+Info: No active image found in material "M4_Gunmetal_03_SRC_Head" (3) for object "SRC_Head"
+Info: No active image found in material "M4_TealInsert_SRC_Head" (8) for object "SRC_Head"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\Head_BaseColor.png
+BAKE_START SRC_Head ORM 4096
+Fra:1 Mem:1090.41M (Peak 3262.92M) | Time:116:30:45.81 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_Head
+Fra:1 Mem:1091.82M (Peak 3262.92M) | Time:116:30:45.83 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:1091.82M (Peak 3262.92M) | Time:116:30:45.83 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_Head_EdgeMask.png
+Fra:1 Mem:1091.82M (Peak 3262.92M) | Time:116:30:45.83 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:1091.82M (Peak 3262.92M) | Time:116:30:45.83 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+E1020 17:30:49.561404 25468 tile.cpp:463] Error opening tile file: Could not open "C:\Users\Moore\AppData\Local\Temp\blender_a16692\cycles-tile-buffer-9504-2345360813264-1-0.exr" (No such file or directory)
+Error writing tile to file
+
+Refer to the Cycles GPU rendering documentation for possible solutions:
+https://docs.blender.org/manual/en/latest/render/cycles/gpu_rendering.html
+
+Info: No active image found in material "M4_Gunmetal_02_SRC_Head" (2) for object "SRC_Head"
+Info: No active image found in material "M4_Gunmetal_03_SRC_Head" (3) for object "SRC_Head"
+Info: No active image found in material "M4_TealInsert_SRC_Head" (8) for object "SRC_Head"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\Head_ORM.png
+BAKE_START SRC_Head Normal 4096
+Fra:1 Mem:1090.69M (Peak 3262.92M) | Time:116:30:50.33 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_Head
+Fra:1 Mem:1092.11M (Peak 3262.92M) | Time:116:30:50.34 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:1092.11M (Peak 3262.92M) | Time:116:30:50.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_Head_EdgeMask.png
+Fra:1 Mem:1092.11M (Peak 3262.92M) | Time:116:30:50.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_SegmentHero_EdgeMask.png
+Fra:1 Mem:1092.11M (Peak 3262.92M) | Time:116:30:50.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+E1020 17:30:53.945803 10812 tile.cpp:463] Error opening tile file: Could not open "C:\Users\Moore\AppData\Local\Temp\blender_a16692\cycles-tile-buffer-9504-2343571852560-2-0.exr" (No such file or directory)
+Error writing tile to file
+
+Refer to the Cycles GPU rendering documentation for possible solutions:
+https://docs.blender.org/manual/en/latest/render/cycles/gpu_rendering.html
+
+Info: No active image found in material "M4_Gunmetal_02_SRC_Head" (2) for object "SRC_Head"
+Info: No active image found in material "M4_Gunmetal_03_SRC_Head" (3) for object "SRC_Head"
+Info: No active image found in material "M4_TealInsert_SRC_Head" (8) for object "SRC_Head"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\Head_Normal.png
+BAKE_START SRC_Head Emission 4096
+Fra:1 Mem:1090.00M (Peak 3262.92M) | Time:116:30:54.32 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_Head
+Fra:1 Mem:1091.42M (Peak 3262.92M) | Time:116:30:54.34 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:1091.42M (Peak 3262.92M) | Time:116:30:54.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_Head_EdgeMask.png
+Fra:1 Mem:1091.42M (Peak 3262.92M) | Time:116:30:54.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper2_EdgeMask.png
+Fra:1 Mem:1091.42M (Peak 3262.92M) | Time:116:30:54.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_SegmentNeck_EdgeMask.png
+Fra:1 Mem:1155.42M (Peak 3262.92M) | Time:116:30:54.34 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTip_EdgeMask.png
+E1020 17:30:57.602751 30544 tile.cpp:463] Error opening tile file: Could not open "C:\Users\Moore\AppData\Local\Temp\blender_a16692\cycles-tile-buffer-9504-2343493520656-3-0.exr" (No such file or directory)
+Error writing tile to file
+
+Refer to the Cycles GPU rendering documentation for possible solutions:
+https://docs.blender.org/manual/en/latest/render/cycles/gpu_rendering.html
+
+Info: No active image found in material "M4_Gunmetal_02_SRC_Head" (2) for object "SRC_Head"
+Info: No active image found in material "M4_Gunmetal_03_SRC_Head" (3) for object "SRC_Head"
+Info: No active image found in material "M4_TealInsert_SRC_Head" (8) for object "SRC_Head"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\Head_Emission.png
+BAKE_OBJECT SRC_SegmentHero
+BAKE_START SRC_SegmentHero BaseColor 2048
+Fra:1 Mem:404.00M (Peak 3262.92M) | Time:116:30:58.24 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentHero
+Fra:1 Mem:404.17M (Peak 3262.92M) | Time:116:30:58.24 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:404.17M (Peak 3262.92M) | Time:116:30:58.24 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:404.17M (Peak 3262.92M) | Time:116:30:58.24 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:404.17M (Peak 3262.92M) | Time:116:30:58.24 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentHero" (3) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_FinInset_SRC_SegmentHero" (7) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentHero" (8) for object "SRC_SegmentHero"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentHero_BaseColor.png
+BAKE_START SRC_SegmentHero ORM 2048
+Fra:1 Mem:403.95M (Peak 3262.92M) | Time:116:31:01.39 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentHero
+Fra:1 Mem:404.12M (Peak 3262.92M) | Time:116:31:01.39 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:404.11M (Peak 3262.92M) | Time:116:31:01.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:404.11M (Peak 3262.92M) | Time:116:31:01.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:404.11M (Peak 3262.92M) | Time:116:31:01.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Fra:1 Mem:404.11M (Peak 3262.92M) | Time:116:31:01.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_ORM
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentHero" (3) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_FinInset_SRC_SegmentHero" (7) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentHero" (8) for object "SRC_SegmentHero"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentHero_ORM.png
+BAKE_START SRC_SegmentHero Normal 2048
+Fra:1 Mem:404.26M (Peak 3262.92M) | Time:116:31:04.69 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentHero
+Fra:1 Mem:404.42M (Peak 3262.92M) | Time:116:31:04.69 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:404.42M (Peak 3262.92M) | Time:116:31:04.69 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:404.42M (Peak 3262.92M) | Time:116:31:04.69 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentHero" (3) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_FinInset_SRC_SegmentHero" (7) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentHero" (8) for object "SRC_SegmentHero"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentHero_Normal.png
+BAKE_START SRC_SegmentHero Emission 2048
+Fra:1 Mem:403.58M (Peak 3262.92M) | Time:116:31:08.02 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentHero
+Fra:1 Mem:403.74M (Peak 3262.92M) | Time:116:31:08.02 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:403.74M (Peak 3262.92M) | Time:116:31:08.02 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:403.74M (Peak 3262.92M) | Time:116:31:08.02 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Emission
+Fra:1 Mem:403.74M (Peak 3262.92M) | Time:116:31:08.02 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentHero" (3) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_FinInset_SRC_SegmentHero" (7) for object "SRC_SegmentHero"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentHero" (8) for object "SRC_SegmentHero"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentHero_Emission.png
+BAKE_OBJECT SRC_SegmentNeck
+BAKE_START SRC_SegmentNeck BaseColor 2048
+Fra:1 Mem:393.69M (Peak 3262.92M) | Time:116:31:10.46 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentNeck
+Fra:1 Mem:393.86M (Peak 3262.92M) | Time:116:31:10.46 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:393.85M (Peak 3262.92M) | Time:116:31:10.46 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:393.85M (Peak 3262.92M) | Time:116:31:10.46 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:393.85M (Peak 3262.92M) | Time:116:31:10.46 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentNeck" (3) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_FinInset_SRC_SegmentNeck" (7) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentNeck" (8) for object "SRC_SegmentNeck"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentNeck_BaseColor.png
+BAKE_START SRC_SegmentNeck ORM 2048
+Fra:1 Mem:393.64M (Peak 3262.92M) | Time:116:31:13.39 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentNeck
+Fra:1 Mem:393.80M (Peak 3262.92M) | Time:116:31:13.39 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:393.80M (Peak 3262.92M) | Time:116:31:13.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:393.80M (Peak 3262.92M) | Time:116:31:13.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:393.80M (Peak 3262.92M) | Time:116:31:13.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentNeck" (3) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_FinInset_SRC_SegmentNeck" (7) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentNeck" (8) for object "SRC_SegmentNeck"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentNeck_ORM.png
+BAKE_START SRC_SegmentNeck Normal 2048
+Fra:1 Mem:393.94M (Peak 3262.92M) | Time:116:31:16.45 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentNeck
+Fra:1 Mem:394.11M (Peak 3262.92M) | Time:116:31:16.46 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:394.11M (Peak 3262.92M) | Time:116:31:16.46 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:394.11M (Peak 3262.92M) | Time:116:31:16.46 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_ORM
+Fra:1 Mem:394.11M (Peak 3262.92M) | Time:116:31:16.46 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentNeck" (3) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_FinInset_SRC_SegmentNeck" (7) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentNeck" (8) for object "SRC_SegmentNeck"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentNeck_Normal.png
+BAKE_START SRC_SegmentNeck Emission 2048
+Fra:1 Mem:393.27M (Peak 3262.92M) | Time:116:31:19.89 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_SegmentNeck
+Fra:1 Mem:393.43M (Peak 3262.92M) | Time:116:31:19.89 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:393.43M (Peak 3262.92M) | Time:116:31:19.89 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:393.43M (Peak 3262.92M) | Time:116:31:19.89 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:393.43M (Peak 3262.92M) | Time:116:31:19.89 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTip_EdgeMask.png
+Fra:1 Mem:393.43M (Peak 3262.92M) | Time:116:31:19.89 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Info: No active image found in material "M4_Gunmetal_03_SRC_SegmentNeck" (3) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_FinInset_SRC_SegmentNeck" (7) for object "SRC_SegmentNeck"
+Info: No active image found in material "M4_TealInsert_SRC_SegmentNeck" (8) for object "SRC_SegmentNeck"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\SegmentNeck_Emission.png
+BAKE_OBJECT SRC_TailTaper1
+BAKE_START SRC_TailTaper1 BaseColor 2048
+Fra:1 Mem:383.55M (Peak 3262.92M) | Time:116:31:22.36 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper1
+Fra:1 Mem:383.64M (Peak 3262.92M) | Time:116:31:22.36 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:383.63M (Peak 3262.92M) | Time:116:31:22.36 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:383.63M (Peak 3262.92M) | Time:116:31:22.36 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper1" (2) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper1" (3) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper1" (7) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper1" (8) for object "SRC_TailTaper1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper1_BaseColor.png
+BAKE_START SRC_TailTaper1 ORM 2048
+Fra:1 Mem:383.52M (Peak 3262.92M) | Time:116:31:25.35 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper1
+Fra:1 Mem:383.61M (Peak 3262.92M) | Time:116:31:25.36 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:383.61M (Peak 3262.92M) | Time:116:31:25.36 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:383.61M (Peak 3262.92M) | Time:116:31:25.36 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTaper1_EdgeMask.png
+Fra:1 Mem:383.61M (Peak 3262.92M) | Time:116:31:25.36 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper1" (2) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper1" (3) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper1" (7) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper1" (8) for object "SRC_TailTaper1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper1_ORM.png
+BAKE_START SRC_TailTaper1 Normal 2048
+Fra:1 Mem:383.76M (Peak 3262.92M) | Time:116:31:28.39 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper1
+Fra:1 Mem:383.85M (Peak 3262.92M) | Time:116:31:28.39 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:383.85M (Peak 3262.92M) | Time:116:31:28.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:383.85M (Peak 3262.92M) | Time:116:31:28.39 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper1" (2) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper1" (3) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper1" (7) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper1" (8) for object "SRC_TailTaper1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper1_Normal.png
+BAKE_START SRC_TailTaper1 Emission 2048
+Fra:1 Mem:383.23M (Peak 3262.92M) | Time:116:31:31.67 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper1
+Fra:1 Mem:383.32M (Peak 3262.92M) | Time:116:31:31.68 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:383.31M (Peak 3262.92M) | Time:116:31:31.68 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:383.31M (Peak 3262.92M) | Time:116:31:31.68 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper1" (2) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper1" (3) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper1" (7) for object "SRC_TailTaper1"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper1" (8) for object "SRC_TailTaper1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper1_Emission.png
+BAKE_OBJECT SRC_TailTaper2
+BAKE_START SRC_TailTaper2 BaseColor 2048
+Fra:1 Mem:373.12M (Peak 3262.92M) | Time:116:31:34.06 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper2
+Fra:1 Mem:373.20M (Peak 3262.92M) | Time:116:31:34.07 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:373.19M (Peak 3262.92M) | Time:116:31:34.07 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:373.19M (Peak 3262.92M) | Time:116:31:34.07 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_Emission
+Fra:1 Mem:373.19M (Peak 3262.92M) | Time:116:31:34.07 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:821.23M (Peak 3262.92M) | Time:116:31:34.09 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading SRC_TailTaper2_EdgeMask.png
+Fra:1 Mem:853.24M (Peak 3262.92M) | Time:116:31:34.12 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:853.23M (Peak 3262.92M) | Time:116:31:34.13 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper2" (2) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper2" (3) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper2" (7) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper2" (8) for object "SRC_TailTaper2"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper2_BaseColor.png
+BAKE_START SRC_TailTaper2 ORM 2048
+Fra:1 Mem:373.09M (Peak 3262.92M) | Time:116:31:36.94 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper2
+Fra:1 Mem:373.17M (Peak 3262.92M) | Time:116:31:36.94 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:373.17M (Peak 3262.92M) | Time:116:31:36.94 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:373.17M (Peak 3262.92M) | Time:116:31:36.94 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:677.19M (Peak 3262.92M) | Time:116:31:36.95 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading SRC_TailTaper2_EdgeMask.png
+Fra:1 Mem:869.22M (Peak 3262.92M) | Time:116:31:37.00 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:853.21M (Peak 3262.92M) | Time:116:31:37.01 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper2" (2) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper2" (3) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper2" (7) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper2" (8) for object "SRC_TailTaper2"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper2_ORM.png
+BAKE_START SRC_TailTaper2 Normal 2048
+Fra:1 Mem:373.33M (Peak 3262.92M) | Time:116:31:40.01 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper2
+Fra:1 Mem:373.41M (Peak 3262.92M) | Time:116:31:40.01 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:373.41M (Peak 3262.92M) | Time:116:31:40.01 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:373.41M (Peak 3262.92M) | Time:116:31:40.01 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:373.41M (Peak 3262.92M) | Time:116:31:40.01 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:725.43M (Peak 3262.92M) | Time:116:31:40.02 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading SRC_TailTaper2_EdgeMask.png
+Fra:1 Mem:837.44M (Peak 3262.92M) | Time:116:31:40.07 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:869.46M (Peak 3262.92M) | Time:116:31:40.08 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper2" (2) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper2" (3) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper2" (7) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper2" (8) for object "SRC_TailTaper2"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper2_Normal.png
+BAKE_START SRC_TailTaper2 Emission 2048
+Fra:1 Mem:372.80M (Peak 3262.92M) | Time:116:31:43.32 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTaper2
+Fra:1 Mem:372.88M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:372.87M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper2_Emission
+Fra:1 Mem:372.87M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_BaseColor
+Fra:1 Mem:388.87M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_ORM
+Fra:1 Mem:388.87M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTip_EdgeMask.png
+Fra:1 Mem:388.87M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:388.87M (Peak 3262.92M) | Time:116:31:43.33 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:820.91M (Peak 3262.92M) | Time:116:31:43.36 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading SRC_TailTaper2_EdgeMask.png
+Fra:1 Mem:836.91M (Peak 3262.92M) | Time:116:31:43.39 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:852.91M (Peak 3262.92M) | Time:116:31:43.40 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTaper2" (2) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTaper2" (3) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_FinInset_SRC_TailTaper2" (7) for object "SRC_TailTaper2"
+Info: No active image found in material "M4_TealInsert_SRC_TailTaper2" (8) for object "SRC_TailTaper2"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTaper2_Emission.png
+BAKE_OBJECT SRC_TailTip
+BAKE_START SRC_TailTip BaseColor 2048
+Fra:1 Mem:363.04M (Peak 3262.92M) | Time:116:31:45.77 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTip
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper2_Emission
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Emission
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_Normal
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_BaseColor
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_Normal
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTip_EdgeMask.png
+Fra:1 Mem:363.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:379.23M (Peak 3262.92M) | Time:116:31:45.78 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:795.26M (Peak 3262.92M) | Time:116:31:45.80 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:859.28M (Peak 3262.92M) | Time:116:31:45.85 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:859.27M (Peak 3262.92M) | Time:116:31:45.86 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:875.27M (Peak 3262.92M) | Time:116:31:45.87 | Mem:64.00M, Peak:64.00M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:891.27M (Peak 3262.92M) | Time:116:31:45.89 | Mem:80.00M, Peak:80.00M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:891.26M (Peak 3262.92M) | Time:116:31:45.91 | Mem:96.00M, Peak:96.00M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTip" (2) for object "SRC_TailTip"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTip" (3) for object "SRC_TailTip"
+Info: No active image found in material "M4_DarkHousing_SRC_TailTip" (4) for object "SRC_TailTip"
+Info: No active image found in material "M4_FinInset_SRC_TailTip" (7) for object "SRC_TailTip"
+Info: No active image found in material "M4_TealInsert_SRC_TailTip" (8) for object "SRC_TailTip"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTip_BaseColor.png
+BAKE_START SRC_TailTip ORM 2048
+Fra:1 Mem:362.98M (Peak 3262.92M) | Time:116:31:48.99 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTip
+Fra:1 Mem:363.17M (Peak 3262.92M) | Time:116:31:48.99 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:363.17M (Peak 3262.92M) | Time:116:31:48.99 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:363.17M (Peak 3262.92M) | Time:116:31:48.99 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:363.17M (Peak 3262.92M) | Time:116:31:48.99 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:747.19M (Peak 3262.92M) | Time:116:31:49.00 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:843.22M (Peak 3262.92M) | Time:116:31:49.06 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:859.22M (Peak 3262.92M) | Time:116:31:49.06 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:875.21M (Peak 3262.92M) | Time:116:31:49.07 | Mem:64.00M, Peak:64.00M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:875.20M (Peak 3262.92M) | Time:116:31:49.07 | Mem:80.00M, Peak:80.00M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:891.20M (Peak 3262.92M) | Time:116:31:49.09 | Mem:96.00M, Peak:96.00M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTip" (2) for object "SRC_TailTip"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTip" (3) for object "SRC_TailTip"
+Info: No active image found in material "M4_DarkHousing_SRC_TailTip" (4) for object "SRC_TailTip"
+Info: No active image found in material "M4_FinInset_SRC_TailTip" (7) for object "SRC_TailTip"
+Info: No active image found in material "M4_TealInsert_SRC_TailTip" (8) for object "SRC_TailTip"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTip_ORM.png
+BAKE_START SRC_TailTip Normal 2048
+Fra:1 Mem:363.16M (Peak 3262.92M) | Time:116:31:52.04 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTip
+Fra:1 Mem:363.34M (Peak 3262.92M) | Time:116:31:52.05 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:363.34M (Peak 3262.92M) | Time:116:31:52.05 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:363.34M (Peak 3262.92M) | Time:116:31:52.05 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:363.34M (Peak 3262.92M) | Time:116:31:52.05 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:747.37M (Peak 3262.92M) | Time:116:31:52.05 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:827.38M (Peak 3262.92M) | Time:116:31:52.11 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:843.37M (Peak 3262.92M) | Time:116:31:52.12 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:859.38M (Peak 3262.92M) | Time:116:31:52.13 | Mem:64.00M, Peak:64.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:875.39M (Peak 3262.92M) | Time:116:31:52.14 | Mem:80.00M, Peak:80.00M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:907.38M (Peak 3262.92M) | Time:116:31:52.17 | Mem:96.00M, Peak:96.00M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTip" (2) for object "SRC_TailTip"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTip" (3) for object "SRC_TailTip"
+Info: No active image found in material "M4_DarkHousing_SRC_TailTip" (4) for object "SRC_TailTip"
+Info: No active image found in material "M4_FinInset_SRC_TailTip" (7) for object "SRC_TailTip"
+Info: No active image found in material "M4_TealInsert_SRC_TailTip" (8) for object "SRC_TailTip"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTip_Normal.png
+BAKE_START SRC_TailTip Emission 2048
+Fra:1 Mem:362.73M (Peak 3262.92M) | Time:116:31:55.28 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_TailTip
+Fra:1 Mem:362.92M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Emission
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_ORM
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_BaseColor
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_ORM
+Fra:1 Mem:362.91M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_Normal
+Fra:1 Mem:490.92M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_Emission
+Fra:1 Mem:490.92M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SRC_TailTip_EdgeMask.png
+Fra:1 Mem:490.92M (Peak 3262.92M) | Time:116:31:55.29 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:570.92M (Peak 3262.92M) | Time:116:31:55.30 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:746.94M (Peak 3262.92M) | Time:116:31:55.31 | Mem:16.00M, Peak:16.00M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:858.96M (Peak 3262.92M) | Time:116:31:55.38 | Mem:32.00M, Peak:32.00M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:858.95M (Peak 3262.92M) | Time:116:31:55.39 | Mem:48.00M, Peak:48.00M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:858.94M (Peak 3262.92M) | Time:116:31:55.40 | Mem:64.00M, Peak:64.00M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:874.94M (Peak 3262.92M) | Time:116:31:55.41 | Mem:80.00M, Peak:80.00M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:890.95M (Peak 3262.92M) | Time:116:31:55.44 | Mem:96.00M, Peak:96.00M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_02_SRC_TailTip" (2) for object "SRC_TailTip"
+Info: No active image found in material "M4_Gunmetal_03_SRC_TailTip" (3) for object "SRC_TailTip"
+Info: No active image found in material "M4_DarkHousing_SRC_TailTip" (4) for object "SRC_TailTip"
+Info: No active image found in material "M4_FinInset_SRC_TailTip" (7) for object "SRC_TailTip"
+Info: No active image found in material "M4_TealInsert_SRC_TailTip" (8) for object "SRC_TailTip"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\TailTip_Emission.png
+BAKE_OBJECT SRC_GlowInsert
+BAKE_START SRC_GlowInsert BaseColor 256
+Fra:1 Mem:131.77M (Peak 3262.92M) | Time:116:31:57.68 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsert
+Fra:1 Mem:131.79M (Peak 3262.92M) | Time:116:31:57.68 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:131.78M (Peak 3262.92M) | Time:116:31:57.68 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:131.78M (Peak 3262.92M) | Time:116:31:57.68 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:196.05M (Peak 3262.92M) | Time:116:31:57.68 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:596.08M (Peak 3262.92M) | Time:116:31:57.75 | Mem:16.25M, Peak:16.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:612.07M (Peak 3262.92M) | Time:116:31:57.76 | Mem:32.25M, Peak:32.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:628.07M (Peak 3262.92M) | Time:116:31:57.77 | Mem:48.25M, Peak:48.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:628.06M (Peak 3262.92M) | Time:116:31:57.79 | Mem:64.25M, Peak:64.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:644.06M (Peak 3262.92M) | Time:116:31:57.79 | Mem:80.25M, Peak:80.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:660.07M (Peak 3262.92M) | Time:116:31:57.81 | Mem:96.25M, Peak:96.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:788.11M (Peak 3262.92M) | Time:116:31:57.90 | Mem:128.25M, Peak:128.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:772.11M (Peak 3262.92M) | Time:116:31:57.91 | Mem:128.25M, Peak:128.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsert"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsert_BaseColor.png
+BAKE_START SRC_GlowInsert ORM 256
+Fra:1 Mem:131.78M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsert
+Fra:1 Mem:131.80M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:131.79M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:131.79M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_Normal
+Fra:1 Mem:131.79M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:131.79M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:132.06M (Peak 3262.92M) | Time:116:31:58.70 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:596.08M (Peak 3262.92M) | Time:116:31:58.77 | Mem:16.25M, Peak:16.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:596.08M (Peak 3262.92M) | Time:116:31:58.77 | Mem:32.25M, Peak:32.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:612.09M (Peak 3262.92M) | Time:116:31:58.80 | Mem:48.25M, Peak:48.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:628.07M (Peak 3262.92M) | Time:116:31:58.82 | Mem:64.25M, Peak:64.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:644.09M (Peak 3262.92M) | Time:116:31:58.84 | Mem:80.25M, Peak:80.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:660.11M (Peak 3262.92M) | Time:116:31:58.85 | Mem:96.25M, Peak:96.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:724.10M (Peak 3262.92M) | Time:116:31:58.88 | Mem:112.25M, Peak:112.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:692.07M (Peak 3262.92M) | Time:116:31:58.89 | Mem:128.25M, Peak:128.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsert"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsert_ORM.png
+BAKE_START SRC_GlowInsert Normal 256
+Fra:1 Mem:131.86M (Peak 3262.92M) | Time:116:31:59.72 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsert
+Fra:1 Mem:131.88M (Peak 3262.92M) | Time:116:31:59.72 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:131.87M (Peak 3262.92M) | Time:116:31:59.72 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:131.87M (Peak 3262.92M) | Time:116:31:59.72 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_BaseColor
+Fra:1 Mem:131.87M (Peak 3262.92M) | Time:116:31:59.72 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:132.14M (Peak 3262.92M) | Time:116:31:59.72 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:612.18M (Peak 3262.92M) | Time:116:31:59.79 | Mem:16.25M, Peak:16.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:628.18M (Peak 3262.92M) | Time:116:31:59.81 | Mem:32.25M, Peak:32.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:612.15M (Peak 3262.92M) | Time:116:31:59.83 | Mem:48.25M, Peak:48.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:628.15M (Peak 3262.92M) | Time:116:31:59.83 | Mem:64.25M, Peak:64.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:628.15M (Peak 3262.92M) | Time:116:31:59.84 | Mem:80.25M, Peak:80.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:644.16M (Peak 3262.92M) | Time:116:31:59.85 | Mem:96.25M, Peak:96.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:692.17M (Peak 3262.92M) | Time:116:31:59.91 | Mem:128.25M, Peak:128.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:708.17M (Peak 3262.92M) | Time:116:31:59.93 | Mem:128.25M, Peak:128.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsert"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsert_Normal.png
+BAKE_START SRC_GlowInsert Emission 256
+Fra:1 Mem:131.78M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsert
+Fra:1 Mem:131.80M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:131.80M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:131.80M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_Normal
+Fra:1 Mem:131.80M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:131.80M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:132.06M (Peak 3262.92M) | Time:116:32:00.91 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:612.10M (Peak 3262.92M) | Time:116:32:00.99 | Mem:16.25M, Peak:16.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:644.12M (Peak 3262.92M) | Time:116:32:01.00 | Mem:32.25M, Peak:32.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:628.09M (Peak 3262.92M) | Time:116:32:01.01 | Mem:48.25M, Peak:48.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:628.08M (Peak 3262.92M) | Time:116:32:01.03 | Mem:80.25M, Peak:80.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:628.08M (Peak 3262.92M) | Time:116:32:01.04 | Mem:96.25M, Peak:96.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:660.10M (Peak 3262.92M) | Time:116:32:01.05 | Mem:96.25M, Peak:96.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:788.11M (Peak 3262.92M) | Time:116:32:01.08 | Mem:112.25M, Peak:112.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:772.10M (Peak 3262.92M) | Time:116:32:01.09 | Mem:128.25M, Peak:128.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsert"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsert"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsert_Emission.png
+BAKE_OBJECT SRC_GlowInsertT1
+BAKE_START SRC_GlowInsertT1 BaseColor 256
+Fra:1 Mem:132.14M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsertT1
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:132.15M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:132.15M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading GlowInsert_Emission
+Fra:1 Mem:132.15M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_ORM
+Fra:1 Mem:132.42M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTaper2_Emission
+Fra:1 Mem:437.18M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.50M, Peak:0.50M | Scene | Updating Images | Loading SegmentNeck_Emission
+Fra:1 Mem:453.19M (Peak 3262.92M) | Time:116:32:02.14 | Mem:0.75M, Peak:0.75M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:501.43M (Peak 3262.92M) | Time:116:32:02.15 | Mem:1.00M, Peak:1.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:549.44M (Peak 3262.92M) | Time:116:32:02.15 | Mem:1.25M, Peak:1.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:581.43M (Peak 3262.92M) | Time:116:32:02.24 | Mem:17.25M, Peak:17.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:597.44M (Peak 3262.92M) | Time:116:32:02.26 | Mem:33.25M, Peak:33.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:613.44M (Peak 3262.92M) | Time:116:32:02.28 | Mem:49.25M, Peak:49.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:645.49M (Peak 3262.92M) | Time:116:32:02.30 | Mem:65.25M, Peak:65.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:725.49M (Peak 3262.92M) | Time:116:32:02.31 | Mem:81.25M, Peak:81.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:773.48M (Peak 3262.92M) | Time:116:32:02.32 | Mem:97.25M, Peak:97.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:789.49M (Peak 3262.92M) | Time:116:32:02.34 | Mem:113.25M, Peak:113.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:773.47M (Peak 3262.92M) | Time:116:32:02.37 | Mem:129.25M, Peak:129.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsertT1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsertT1_BaseColor.png
+BAKE_START SRC_GlowInsertT1 ORM 256
+Fra:1 Mem:132.15M (Peak 3262.92M) | Time:116:32:03.20 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsertT1
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:03.20 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:03.20 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:03.20 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_Normal
+Fra:1 Mem:132.42M (Peak 3262.92M) | Time:116:32:03.20 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTaper2_Emission
+Fra:1 Mem:405.70M (Peak 3262.92M) | Time:116:32:03.21 | Mem:0.50M, Peak:0.50M | Scene | Updating Images | Loading SegmentNeck_Emission
+Fra:1 Mem:421.44M (Peak 3262.92M) | Time:116:32:03.21 | Mem:0.75M, Peak:0.75M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:501.44M (Peak 3262.92M) | Time:116:32:03.21 | Mem:1.00M, Peak:1.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:533.44M (Peak 3262.92M) | Time:116:32:03.21 | Mem:1.25M, Peak:1.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:613.46M (Peak 3262.92M) | Time:116:32:03.26 | Mem:17.25M, Peak:17.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:597.44M (Peak 3262.92M) | Time:116:32:03.28 | Mem:33.25M, Peak:33.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:629.46M (Peak 3262.92M) | Time:116:32:03.30 | Mem:49.25M, Peak:49.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:629.44M (Peak 3262.92M) | Time:116:32:03.33 | Mem:65.25M, Peak:65.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:677.47M (Peak 3262.92M) | Time:116:32:03.35 | Mem:81.25M, Peak:81.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:693.48M (Peak 3262.92M) | Time:116:32:03.42 | Mem:97.25M, Peak:97.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:709.49M (Peak 3262.92M) | Time:116:32:03.43 | Mem:113.25M, Peak:113.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:725.48M (Peak 3262.92M) | Time:116:32:03.44 | Mem:129.25M, Peak:129.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsertT1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsertT1_ORM.png
+BAKE_START SRC_GlowInsertT1 Normal 256
+Fra:1 Mem:132.23M (Peak 3262.92M) | Time:116:32:04.20 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsertT1
+Fra:1 Mem:132.24M (Peak 3262.92M) | Time:116:32:04.20 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:132.24M (Peak 3262.92M) | Time:116:32:04.20 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_BaseColor
+Fra:1 Mem:132.24M (Peak 3262.92M) | Time:116:32:04.20 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_BaseColor
+Fra:1 Mem:132.24M (Peak 3262.92M) | Time:116:32:04.20 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentNeck_Normal
+Fra:1 Mem:132.50M (Peak 3262.92M) | Time:116:32:04.20 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading TailTaper2_Emission
+Fra:1 Mem:405.27M (Peak 3262.92M) | Time:116:32:04.21 | Mem:0.50M, Peak:0.50M | Scene | Updating Images | Loading SegmentNeck_Emission
+Fra:1 Mem:421.52M (Peak 3262.92M) | Time:116:32:04.21 | Mem:0.75M, Peak:0.75M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:421.52M (Peak 3262.92M) | Time:116:32:04.21 | Mem:1.00M, Peak:1.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:533.52M (Peak 3262.92M) | Time:116:32:04.21 | Mem:1.25M, Peak:1.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:613.54M (Peak 3262.92M) | Time:116:32:04.25 | Mem:17.25M, Peak:17.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:629.55M (Peak 3262.92M) | Time:116:32:04.28 | Mem:33.25M, Peak:33.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:645.54M (Peak 3262.92M) | Time:116:32:04.29 | Mem:49.25M, Peak:49.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:629.53M (Peak 3262.92M) | Time:116:32:04.34 | Mem:65.25M, Peak:65.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:645.55M (Peak 3262.92M) | Time:116:32:04.37 | Mem:97.25M, Peak:97.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:661.56M (Peak 3262.92M) | Time:116:32:04.37 | Mem:97.25M, Peak:97.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:757.55M (Peak 3262.92M) | Time:116:32:04.39 | Mem:113.25M, Peak:113.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:789.56M (Peak 3262.92M) | Time:116:32:04.40 | Mem:129.25M, Peak:129.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsertT1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsertT1_Normal.png
+BAKE_START SRC_GlowInsertT1 Emission 256
+Fra:1 Mem:132.15M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Synchronizing object | SRC_GlowInsertT1
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Initializing
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading GlowInsertT1_Emission
+Fra:1 Mem:132.16M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_ORM
+Fra:1 Mem:132.41M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Normal
+Fra:1 Mem:132.41M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading Head_Emission
+Fra:1 Mem:132.41M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_BaseColor
+Fra:1 Mem:132.41M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_ORM
+Fra:1 Mem:132.41M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.00M, Peak:0.00M | Scene | Updating Images | Loading SegmentHero_Normal
+Fra:1 Mem:132.42M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading GlowInsert_BaseColor
+Fra:1 Mem:132.42M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading GlowInsert_Normal
+Fra:1 Mem:132.42M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading GlowInsert_Emission
+Fra:1 Mem:132.42M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading SegmentNeck_BaseColor
+Fra:1 Mem:132.43M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading SegmentNeck_ORM
+Fra:1 Mem:132.43M (Peak 3262.92M) | Time:116:32:05.31 | Mem:0.25M, Peak:0.25M | Scene | Updating Images | Loading SegmentNeck_Normal
+Fra:1 Mem:517.45M (Peak 3262.92M) | Time:116:32:05.32 | Mem:0.75M, Peak:0.75M | Scene | Updating Images | Loading SegmentNeck_Emission
+Fra:1 Mem:517.45M (Peak 3262.92M) | Time:116:32:05.32 | Mem:1.00M, Peak:1.00M | Scene | Updating Images | Loading TailTip_BaseColor
+Fra:1 Mem:517.45M (Peak 3262.92M) | Time:116:32:05.32 | Mem:1.00M, Peak:1.00M | Scene | Updating Images | Loading TailTip_ORM
+Fra:1 Mem:533.44M (Peak 3262.92M) | Time:116:32:05.32 | Mem:1.25M, Peak:1.25M | Scene | Updating Images | Loading TailTip_Normal
+Fra:1 Mem:613.46M (Peak 3262.92M) | Time:116:32:05.39 | Mem:17.25M, Peak:17.25M | Scene | Updating Images | Loading TailTaper2_Normal
+Fra:1 Mem:629.47M (Peak 3262.92M) | Time:116:32:05.40 | Mem:33.25M, Peak:33.25M | Scene | Updating Images | Loading TailTip_Emission
+Fra:1 Mem:613.44M (Peak 3262.92M) | Time:116:32:05.41 | Mem:49.25M, Peak:49.25M | Scene | Updating Images | Loading TailTaper1_BaseColor
+Fra:1 Mem:629.45M (Peak 3262.92M) | Time:116:32:05.43 | Mem:81.25M, Peak:81.25M | Scene | Updating Images | Loading TailTaper1_ORM
+Fra:1 Mem:645.45M (Peak 3262.92M) | Time:116:32:05.44 | Mem:81.25M, Peak:81.25M | Scene | Updating Images | Loading TailTaper1_Normal
+Fra:1 Mem:661.45M (Peak 3262.92M) | Time:116:32:05.46 | Mem:97.25M, Peak:97.25M | Scene | Updating Images | Loading TailTaper1_Emission
+Fra:1 Mem:805.50M (Peak 3262.92M) | Time:116:32:05.53 | Mem:113.25M, Peak:113.25M | Scene | Updating Images | Loading TailTaper2_BaseColor
+Fra:1 Mem:789.50M (Peak 3262.92M) | Time:116:32:05.55 | Mem:129.25M, Peak:129.25M | Scene | Updating Images | Loading TailTaper2_ORM
+Info: No active image found in material "M4_Gunmetal_00" (0) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_01" (1) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_02" (2) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_Gunmetal_03" (3) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_DarkHousing" (4) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_MachinedSteel" (5) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_RecessedGrille" (6) for object "SRC_GlowInsertT1"
+Info: No active image found in material "M4_FinInset" (7) for object "SRC_GlowInsertT1"
+Info: Baking map saved to internal image, save it externally or pack it
+BAKE_DONE material\textures-m5e\GlowInsertT1_Emission.png
+Info: Saved as "m5e-mapped.blend"
+INFO Draco mesh compression is available, use library at C:\Users\Moore\Blender\blender-4.5.14-windows-x64\4.5\scripts\addons_core\io_scene_gltf2\extern_draco.dll
+17:32:09 | INFO: Starting glTF 2.0 export
+17:32:09 | INFO: Extracting primitive: Head
+17:32:09 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:09 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:09 | INFO: Primitives created: 1
+17:32:09 | INFO: Extracting primitive: SegmentHero.001
+17:32:09 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:09 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:09 | INFO: Primitives created: 1
+17:32:09 | INFO: Extracting primitive: GlowInsert
+17:32:09 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:09 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:09 | INFO: Primitives created: 1
+17:32:09 | INFO: Extracting primitive: SegmentHero
+17:32:09 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:10 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:10 | INFO: Primitives created: 1
+17:32:10 | INFO: Extracting primitive: TailTaper1
+17:32:10 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:10 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:10 | INFO: Primitives created: 1
+17:32:10 | INFO: Extracting primitive: GlowInsertT1
+17:32:10 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:10 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:10 | INFO: Primitives created: 1
+17:32:10 | INFO: Extracting primitive: SegmentHero.003
+17:32:10 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:10 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:10 | INFO: Primitives created: 1
+17:32:10 | INFO: Extracting primitive: TailTip
+17:32:10 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+17:32:10 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+17:32:10 | INFO: Primitives created: 1
+17:32:13 | INFO: Finished glTF 2.0 export in 4.123280048370361 s
+
+MAPS_AND_EXPORT_COMPLETE
+
+Blender quit
