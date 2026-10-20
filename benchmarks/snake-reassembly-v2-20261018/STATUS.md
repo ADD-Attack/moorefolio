@@ -26,3 +26,4 @@ Hard budgets remain 14,000 / 1,450 / 3,000 / 57,600. No vertex-position, topolog
 
 Deadline for this delivery was 2026-10-19 17:00 CDT.
 - 2026-10-20 M5d: gunmetal value, recess grime, thin joint line; captures `material/captures/m5d-*`; self-check medians 5.5/5.5 → NOT READY (frozen-geometry blockers). See material/NOTE.md.
+- 2026-10-20 Material gate PASSED BY OWNER OVERRIDE on M5d @dc998d0 (panel 5.0/5.5). Debts carried; see material/NOTE.md.

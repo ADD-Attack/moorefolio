@@ -170,3 +170,7 @@ Judged captures `captures/m5d-{full-body,head-closeup,seg-detail,tail-detail,tai
 | Overall | 5.5 | 5.5 | Clear improvement over M5c in value and joint read; not reference fidelity. |
 
 Medians: MATCH 5.5 / QUALITY 5.5 — below the 7.5 gate. Technical: PASS (bake complete, export complete, staging identical, geometry/UV unchanged). Acceptance: **NOT READY.** Not submitting READY. Remaining blockers are frozen-geometry (head form, collar, neck flats, tile-segmented joint inserts, sparse massing); material passes cannot close them. Recommend a geometry-phase reopen (head and joint-ring rebuild from formed mesh) before another panel.
+
+## Panel of record and disposition (2026-10-20)
+
+Panel on M5d @dc998d0, 30 judges: overall MATCH 5.0 / QUALITY 5.5. Features-1 5.0/5.0, Features-2 5.5/5.5, Silhouette 5.0/5.5, Massing 5.5/5.5, Modeled detail 5.0/5.5, Lighting 4.5/5.5, Color 5.0/5.5, Materials 4.0/5.5, Bump 4.0/4.5, Texture 4.0/5.0. Owner override 11:43 CDT passed the material gate ("It passes to me which supercedes any other disposition"); per Decision 41 this does not close the ticket by itself. Self-card over-scored Materials and Texture MATCH. Carried debts: head form (H2, H10–H12), collar stacking, neck flats, tile-segmented joint inserts, sparse massing, tail-tip value, olive cast, texture/bump fidelity.
