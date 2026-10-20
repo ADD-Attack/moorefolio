@@ -25,3 +25,4 @@ M1 (`d8ae029`) assigned procedural shaders. Plate highlights were too chrome-lik
 Hard budgets remain 14,000 / 1,450 / 3,000 / 57,600. No vertex-position, topology or instance-transform changes were made in this phase.
 
 Deadline for this delivery was 2026-10-19 17:00 CDT.
+- 2026-10-20 M5d: gunmetal value, recess grime, thin joint line; captures `material/captures/m5d-*`; self-check medians 5.5/5.5 → NOT READY (frozen-geometry blockers). See material/NOTE.md.

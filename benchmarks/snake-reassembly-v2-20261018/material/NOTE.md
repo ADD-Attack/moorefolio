@@ -147,3 +147,26 @@ These numbers were missing from the head NOTE. Recovered from the owner brief in
 | Lighting | 4.8 / 5.7 | 4.5 / 5.5 |
 
 No new online research this finish run: recovered M5 research/technique record is in M5-WORKLOG.md; M4 sources above remain historical, not claimed re-read.
+
+## M5d plate-response pass and final self-check — 2026-10-20
+
+Shader-only pass from M5c (`source/material_m5d.py`; geometry/UV fingerprints asserted unchanged, `m5d-shader-audit.json`). Changes: global value drop (multiply .68/.69/.70) plus darker component tones toward the reference gunmetal; cavity-driven dark recess grime broken by noise; small recess-only oxide; joint insert = dark collar with a single thin centred emissive line. Diagnostic iterations `previews/m5d-dx-*` (first try .52 was too dark/olive) and `m5d2-dx-*`. Fresh bake to `textures-m5d/` (32 maps, `bake-m5d.log`), `m5d-mapped.blend`, GLB `snake-p8-material-m5d.glb` SHA256 `840b6d66…3afe`. M4/M5 maps untouched.
+
+Judged captures `captures/m5d-{full-body,head-closeup,seg-detail,tail-detail,tail_top-detail}.png`: Cycles GPU 256 / adaptive .01 / OIDN / 1920×1080, frozen M5 cameras, lights and catcher; `m5d-render-settings.json` equals `m5-render-settings.json` exactly. All five opened and compared against REFERENCE.png in-session.
+
+### Render-only scorecard (MATCH / QUALITY)
+
+| Category | M | Q | Evidence from renders |
+|---|---|---|---|
+| 1. Per-feature shape | 4.5 | 5 | Head soft and lumpy, crest fins thin frames, collar crumpled; segments readable. Frozen geometry. |
+| 2. Silhouette | 5 | 5.5 | Coil pose and neck rise read; head and broad neck flats diverge from the reference. |
+| 3. Massing/composition | 5 | 5 | Reference is dense, chunky plate stacks; ours sparser, flatter. |
+| 4. Modeled detail | 5 | 5.5 | Bolts, grilles, pistons present; far less layered hardware than the reference. |
+| 5. Color | 7 | 6.5 | Value now gunmetal, close to reference; slightly olive cast; tail tip remains silver vs uniform reference. |
+| 6. Bump/normal | 5 | 5 | Little micro surface read; head shading shows lumpy mesh rather than plate faces. |
+| 7. Texture maps | 6 | 6 | Edge wear and recess grime present, restrained; reference scratches/rust richer. |
+| 8. Materials | 6.5 | 6.5 | Satin dark metal plausible; plates uniform in response. |
+| 9. Lighting/effects | 6.5 | 6.5 | Eye glow good; joint light now a thin line but breaks at modeled tile gaps (dashed), unlike the continuous reference arcs. |
+| Overall | 5.5 | 5.5 | Clear improvement over M5c in value and joint read; not reference fidelity. |
+
+Medians: MATCH 5.5 / QUALITY 5.5 — below the 7.5 gate. Technical: PASS (bake complete, export complete, staging identical, geometry/UV unchanged). Acceptance: **NOT READY.** Not submitting READY. Remaining blockers are frozen-geometry (head form, collar, neck flats, tile-segmented joint inserts, sparse massing); material passes cannot close them. Recommend a geometry-phase reopen (head and joint-ring rebuild from formed mesh) before another panel.
