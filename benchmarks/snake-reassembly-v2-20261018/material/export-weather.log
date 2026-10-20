@@ -1,0 +1,10 @@
+WEATHER_EDGE_SOURCE SRC_Head 3827 2160
+WEATHER_EDGE_SOURCE SRC_SegmentHero 1154 133
+WEATHER_EDGE_SOURCE SRC_SegmentNeck 1152 131
+WEATHER_EDGE_SOURCE SRC_TailTaper1 733 53
+WEATHER_EDGE_SOURCE SRC_TailTaper2 679 43
+WEATHER_EDGE_SOURCE SRC_TailTip 537 226
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)
+Read blend: "\\wsl.localhost\OpenClawGateway\home\openclaw\.openclaw\workspace-studio-3d\tickets\snake-reassembly-v2-20261018\repo\benchmarks\snake-reassembly-v2-20261018\material\m4-procedural.blend"
+
+Blender quit

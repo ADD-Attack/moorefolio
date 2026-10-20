@@ -30,7 +30,7 @@ def canonical(ob,images):
   group=bpy.data.node_groups.new('glTF Material Output','ShaderNodeTree');group.interface.new_socket(name='Occlusion',in_out='INPUT',socket_type='NodeSocketFloat')
  g=nt.nodes.new('ShaderNodeGroup');g.node_tree=group;nt.links.new(sep.outputs['Red'],g.inputs['Occlusion'])
  normal=nt.nodes.new('ShaderNodeNormalMap');normal.uv_map=me.uv_layers.active.name;nt.links.new(nodes['Normal'].outputs['Color'],normal.inputs['Color']);nt.links.new(normal.outputs[0],p.inputs['Normal'])
- strength=3.0 if ob.name=='SRC_Head' else 1.2 if 'Glow' in ob.name else 0.
+ strength=1.8 if ob.name=='SRC_Head' else 1.2 if 'Glow' in ob.name else 0.
  nt.links.new(nodes['Emission'].outputs['Color'],p.inputs['Emission Color']);p.inputs['Emission Strength'].default_value=strength
  me.materials.clear();me.materials.append(m)
  for poly in me.polygons:poly.material_index=0
@@ -39,7 +39,7 @@ def canonical(ob,images):
 for ob in sources:
  print('BAKE_OBJECT',ob.name,flush=True);me=ob.data;assert fingerprint(me)==baseline[ob.name]['mesh_hash']
  bpy.ops.object.select_all(action='DESELECT');ob.hide_render=False;ob.hide_viewport=False;ob.hide_set(False);ob.select_set(True);bpy.context.view_layer.objects.active=ob
- size=2048 if ob.name=='SRC_Head' else 256 if 'Glow' in ob.name else 1024
+ size=4096 if ob.name=='SRC_Head' else 256 if 'Glow' in ob.name else 2048
  used=set(p.material_index for p in me.polygons);mats=[me.materials[i] for i in used];ims={}
  for channel in ['BaseColor','ORM','Normal','Emission']:
   path=TEX/(ob.name.removeprefix('SRC_')+'_'+channel+'.png')
@@ -79,6 +79,6 @@ for o in bpy.data.objects:
 for o in bpy.data.objects:o.select_set(False)
 for o in bpy.data.objects:
  if o.type=='MESH' and not o.hide_render:o.hide_viewport=False;o.hide_set(False);o.select_set(True)
-bpy.ops.wm.save_as_mainfile(filepath=str((OUT/'m2-mapped.blend').resolve()))
+bpy.ops.wm.save_as_mainfile(filepath=str((OUT/'m4-mapped.blend').resolve()))
 bpy.ops.export_scene.gltf(filepath=str((OUT/'snake-p8-material.glb').resolve()),export_format='GLB',use_selection=True,export_apply=False,export_materials='EXPORT',export_image_format='AUTO',export_yup=True)
 print('MAPS_AND_EXPORT_COMPLETE',flush=True)

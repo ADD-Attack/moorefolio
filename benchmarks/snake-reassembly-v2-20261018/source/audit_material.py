@@ -10,7 +10,7 @@ def snapshot(path):
   meshes[ob.name]=hashlib.sha256(v.tobytes()+repr(f).encode()).hexdigest()
   if not ob.hide_render:nodes[ob.name]={'tris':len(me.loop_triangles),'matrix':np.array(ob.matrix_world).tolist()}
  return meshes,nodes
-base,base_nodes=snapshot('fix/snake-v2-r2-fix.blend');cur,nodes=snapshot('material/m2-mapped.blend')
+base,base_nodes=snapshot('fix/snake-v2-r2-fix.blend');cur,nodes=snapshot('material/m4-mapped.blend')
 assert base==cur,'P8 mesh fingerprint drift';assert base_nodes==nodes,'instance or count drift'
 counts={'head':nodes['Head_node']['tris'],'module_insert':nodes['Segment_07']['tris']+nodes['Glow_07']['tris'],'tail':sum(v['tris'] for k,v in nodes.items() if k.startswith(('Tail','Glow_T'))),'assembly':sum(v['tris'] for v in nodes.values())}
 assert counts['head']<=14000 and counts['module_insert']<=1450 and counts['tail']<=3000 and counts['assembly']<=57600

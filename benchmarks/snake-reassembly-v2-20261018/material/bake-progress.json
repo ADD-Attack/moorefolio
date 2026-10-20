@@ -1,6 +1,6 @@
 {
   "SRC_Head": {
-    "size": 2048,
+    "size": 4096,
     "maps": {
       "BaseColor": "Head_BaseColor.png",
       "ORM": "Head_ORM.png",
@@ -10,7 +10,7 @@
     "mesh_hash_unchanged": true
   },
   "SRC_SegmentHero": {
-    "size": 1024,
+    "size": 2048,
     "maps": {
       "BaseColor": "SegmentHero_BaseColor.png",
       "ORM": "SegmentHero_ORM.png",
@@ -20,7 +20,7 @@
     "mesh_hash_unchanged": true
   },
   "SRC_SegmentNeck": {
-    "size": 1024,
+    "size": 2048,
     "maps": {
       "BaseColor": "SegmentNeck_BaseColor.png",
       "ORM": "SegmentNeck_ORM.png",
@@ -30,7 +30,7 @@
     "mesh_hash_unchanged": true
   },
   "SRC_TailTaper1": {
-    "size": 1024,
+    "size": 2048,
     "maps": {
       "BaseColor": "TailTaper1_BaseColor.png",
       "ORM": "TailTaper1_ORM.png",
@@ -40,7 +40,7 @@
     "mesh_hash_unchanged": true
   },
   "SRC_TailTaper2": {
-    "size": 1024,
+    "size": 2048,
     "maps": {
       "BaseColor": "TailTaper2_BaseColor.png",
       "ORM": "TailTaper2_ORM.png",
@@ -50,7 +50,7 @@
     "mesh_hash_unchanged": true
   },
   "SRC_TailTip": {
-    "size": 1024,
+    "size": 2048,
     "maps": {
       "BaseColor": "TailTip_BaseColor.png",
       "ORM": "TailTip_ORM.png",

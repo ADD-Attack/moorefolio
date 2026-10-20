@@ -1,0 +1,6 @@
+SRC_Head {'size': 4096, 'convex_edges': 3827, 'concave_edges': 2160, 'covered_texels': 2263081, 'seconds': 28.73}
+SRC_SegmentHero {'size': 2048, 'convex_edges': 1154, 'concave_edges': 133, 'covered_texels': 1670824, 'seconds': 16.19}
+SRC_SegmentNeck {'size': 2048, 'convex_edges': 1152, 'concave_edges': 131, 'covered_texels': 1604226, 'seconds': 11.79}
+SRC_TailTaper1 {'size': 2048, 'convex_edges': 733, 'concave_edges': 53, 'covered_texels': 1737074, 'seconds': 8.78}
+SRC_TailTaper2 {'size': 2048, 'convex_edges': 679, 'concave_edges': 43, 'covered_texels': 1842623, 'seconds': 7.89}
+SRC_TailTip {'size': 2048, 'convex_edges': 537, 'concave_edges': 226, 'covered_texels': 1875924, 'seconds': 8.56}
