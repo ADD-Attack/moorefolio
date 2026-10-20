@@ -1,0 +1,37 @@
+{
+  "geometry_and_uv_exactly_unchanged": true,
+  "fingerprints": {
+    "SRC_GlowInsert": [
+      "8fc87636e1ea0638eb31b9ecb4514d232e11798e3572463609003c192c608ae5",
+      "fa9b31752b5fbcd01549b634ddac405f795092ef5c567caef94f96198991b140"
+    ],
+    "SRC_GlowInsertT1": [
+      "a0176b207a095c86ababfe88df1b8a85d8807f0396daa9e61ff6b092c4729663",
+      "a6a058981dbf9ecd529ca4db1c5fe2eb2a9879dc9f5c658981c1c7af4c3bd7f3"
+    ],
+    "SRC_Head": [
+      "5f534614bbaac45ec34aa01755f2e17b77e8d248caa9d31144f4c7234f3f60d0",
+      "361898f27eb4f7adc644c537e15fa2ed8d9eb12a7ac14dd351ea56567210a878"
+    ],
+    "SRC_SegmentHero": [
+      "4d2cf7b3c4bb5f438801855541570dc6846109a4219d7fb109d17d177fbb7e97",
+      "2fe45228e9128e1c820b1a99b59c6ee3e97fed6b762ffb06ac868a6e55ae3636"
+    ],
+    "SRC_SegmentNeck": [
+      "194d978e8b2d002d5e987718b332a90445fa5bfb34a6be31ffa07d913dfd1d33",
+      "db1766d03c5cc3b2bf81ddc5427b2393ced3dc20a03f1e1dd631f81d30b8f5ec"
+    ],
+    "SRC_TailTaper1": [
+      "7aaad67e9b520f7e6a0fc1d38955674d9478d69f3ff177d57b94c98b8ddb86c4",
+      "ea20a526573f84246265c0eae97a0adc19497cc059cbe1a98ae4c4ea4f2c28f3"
+    ],
+    "SRC_TailTaper2": [
+      "d4fd32cc5f0f6549b4c9d9a7225ab3b71165fec904c6b8267669a6f63def05b8",
+      "625295edb86b8d4f49ed0e1e34d5e494e9b65e15386d8747a0844aaabf57d1e2"
+    ],
+    "SRC_TailTip": [
+      "b9b52c60268e2b78d3a4ac790a24332c8424bac1652eabdff874dc2af3f1120e",
+      "df00eb3813c3986e49fc449b7150dcc167470fd40d2c8277800ca62628e6fe9a"
+    ]
+  }
+}
