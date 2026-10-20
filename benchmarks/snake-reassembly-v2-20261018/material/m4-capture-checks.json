@@ -1,0 +1,97 @@
+{
+  "full-body": {
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "48a3759d0ef8c0ca9ca03bec462cf54c00a9c78b15a3cb96a031c789895fd08d",
+    "background_patch_median": [
+      193,
+      193,
+      191
+    ],
+    "background_patch_xywh": [
+      0,
+      0,
+      50,
+      50
+    ],
+    "within_one_level_of_stage": true
+  },
+  "head-closeup": {
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "8502b0227cd11bbad6dc725f09b9517119a1833e08d4d78a6425f9a50b8db076",
+    "background_patch_median": [
+      193,
+      193,
+      191
+    ],
+    "background_patch_xywh": [
+      0,
+      0,
+      50,
+      50
+    ],
+    "within_one_level_of_stage": true
+  },
+  "seg-detail": {
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "5e659887f464d2e8dd7cf91733e329416139d3429d862beebc35db6b02cc19a6",
+    "background_patch_median": [
+      193,
+      193,
+      191
+    ],
+    "background_patch_xywh": [
+      0,
+      0,
+      50,
+      50
+    ],
+    "within_one_level_of_stage": true
+  },
+  "tail-detail": {
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "358e1f37606bad357e8f8e72f18d7f2812a84df528104359330a03e73db2cd3e",
+    "background_patch_median": [
+      192,
+      192,
+      190
+    ],
+    "background_patch_xywh": [
+      0,
+      0,
+      50,
+      50
+    ],
+    "within_one_level_of_stage": true
+  },
+  "tail_top-detail": {
+    "size": [
+      1920,
+      1080
+    ],
+    "sha256": "02e9156ccbf6f5709eb9aaeae9ce57ca1cc05bd60455e69f7512670362f9d911",
+    "background_patch_median": [
+      153,
+      153,
+      151
+    ],
+    "background_patch_xywh": [
+      900,
+      260,
+      50,
+      50
+    ],
+    "within_one_level_of_stage": false
+  }
+}
