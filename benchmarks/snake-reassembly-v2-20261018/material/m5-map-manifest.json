@@ -1,0 +1,226 @@
+{
+  "GlowInsertT1_BaseColor.png": {
+    "sha256": "ed3c507a3d4578c0e494f11bcef341b67e38e0e51155f0ae2e3b58a6d3ad1a46",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsertT1_Emission.png": {
+    "sha256": "8a09a113633b56efc5d928b1f8d02f1ee6ae10f75a8b0faea960b1d92efcc341",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsertT1_Normal.png": {
+    "sha256": "3941fdfb12dc4651e5a45fbc4457e16c047284d9b301a10aece52013fdbe7957",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsertT1_ORM.png": {
+    "sha256": "183258748146a41999e2139ce12c25fbf102c696e30532552d254b3d45f22b79",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsert_BaseColor.png": {
+    "sha256": "85cf3ee4832787a33cb2f578c7d4f7ddb587be7439e1f69f759fdf35a49d68c3",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsert_Emission.png": {
+    "sha256": "b057e64df4685162ed68410619dd57c2c00d4fc61ab517d2645ac6d0fec426cd",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsert_Normal.png": {
+    "sha256": "44eeb128cd1a6c83b61156efb6cc98199450d8e022e92cb25472103591e8280c",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "GlowInsert_ORM.png": {
+    "sha256": "8af7fa5a4fb16e6de6e39b65a4414e66b454d865dd0a5c7db5e56e8dad236dc3",
+    "dimensions": [
+      256,
+      256
+    ]
+  },
+  "Head_BaseColor.png": {
+    "sha256": "f3d1dacd669f09868a5b1c31a01c857ed135bcdc25a152d66f8a3c3938367f61",
+    "dimensions": [
+      4096,
+      4096
+    ]
+  },
+  "Head_Emission.png": {
+    "sha256": "11b5bc56c74ca3508aac263240abbed0cafdbc1132a55dd415cf038778f58c2c",
+    "dimensions": [
+      4096,
+      4096
+    ]
+  },
+  "Head_Normal.png": {
+    "sha256": "51d59111f1cfb6c0769ed4e01c0c04b569f044955124b9f217a54274fa36b3ea",
+    "dimensions": [
+      4096,
+      4096
+    ]
+  },
+  "Head_ORM.png": {
+    "sha256": "946902eeb2d128dbcf92d2bbd93dc42dd471160bf3d6c3fc8155751d64db4ff2",
+    "dimensions": [
+      4096,
+      4096
+    ]
+  },
+  "SegmentHero_BaseColor.png": {
+    "sha256": "f3a04599db4c89b5fa7f3aeed8f49723a74e981b0b056e67532c6096856693d2",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentHero_Emission.png": {
+    "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentHero_Normal.png": {
+    "sha256": "31a23d0f30867290ceda2653a5e87920fd180df2d5c78c80300898ab7f1e6b12",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentHero_ORM.png": {
+    "sha256": "3fc8e7d5c2414ae0fbba342259cc833d5c7b32908779e67b3b6cbf6bb56c4975",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentNeck_BaseColor.png": {
+    "sha256": "81ce0c4d29470c28a791b1e77dc3ea6a5d9b266ffdd6186d5ea737bcfdab32e3",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentNeck_Emission.png": {
+    "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentNeck_Normal.png": {
+    "sha256": "b74721d0c211a874ae66eb13e3f7c3d15c189f3145e51e8a0c60ee41b7963a0e",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "SegmentNeck_ORM.png": {
+    "sha256": "f3755e19a39a1e464a17d20c5540fc503d718e50b99c9e9afaacf68623ca9def",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper1_BaseColor.png": {
+    "sha256": "2761d34ba1652832cc1e8afddd2a8e0e6b17a1089f8e5440c33d6e8d440c8d0c",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper1_Emission.png": {
+    "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper1_Normal.png": {
+    "sha256": "5bc7a6368b3e8b91b3858c7585f2eb66ac1256d73f432d8a99fb9ba6a9ab997d",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper1_ORM.png": {
+    "sha256": "669fe322a37ce9f352a10f134b8ebfd1f7b85af0a86b456174c912f69655787e",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper2_BaseColor.png": {
+    "sha256": "463751b807d40780950182168774e01eb1f668385b38db702e6431379d6d363d",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper2_Emission.png": {
+    "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper2_Normal.png": {
+    "sha256": "2b3bcd40e59775f1752d8ff84244e18749391703bcb44292093e1e2f9efc06d2",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTaper2_ORM.png": {
+    "sha256": "0161a962019e619e34026a427f08cbd0ca091268f1473ffa02fac6e6f7423aef",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTip_BaseColor.png": {
+    "sha256": "4738b8944227a35070c7ff1852ee0abb460c0b0647e64ce3c84b3b2237e5d3a3",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTip_Emission.png": {
+    "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTip_Normal.png": {
+    "sha256": "f95b77880242791fd0511c6d10e16d9a4ebc2474a11266bc3d368c044b8e903d",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  },
+  "TailTip_ORM.png": {
+    "sha256": "d8b9631c0eb8f1f7da9dc0d18ce7e2ce6967a56c4939f158ea99408849f685db",
+    "dimensions": [
+      2048,
+      2048
+    ]
+  }
+}

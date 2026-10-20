@@ -123,3 +123,27 @@ This is the M4 delivery for the **first panel review**, not a panel PASS. No pan
 `m4-verification.json` and `verify-m4-finish.log` record **M4_ACTIVE_STAGE_UV_AO_PASS** from reopening both saved Blender stages: exact active-stage equality, Cycles GPU/256/OIDN, frozen camera records, AO graph connectivity and unchanged non-optical UVs. Blender exited successfully, with a tiny shutdown memory-allocation warning after the PASS.
 
 PNG background sampling: full/head/segment are [193,193,191], tail is [192,192,190]. Tail-top's upper-left contains geometry, so the checker now records an explicit unobstructed patch at (900,260), which is [153,153,151] **under the broad contact-shadow field**, not a clean backdrop match. Thus four clear corners match the stage within one level; the tail-top image does not establish a clean background-color match. This is a staging limitation, not PNG corruption, and is retained under the owner's missing/corrupt-only rerender instruction. Saved compositor background and paired staging equality still pass. No image pixels were edited.
+
+
+## M5 recovery and completion run — 2026-10-20
+
+Inventory FIRST: branch head `dd68548`; no tracked modifications. Thirty untracked M5b/M5c scripts, blends, diagnostics and logs were recovered, reviewed, and committed as `ddc130d` before proceeding. That checkpoint was pushed. No old Blender job survived. M5c is the retained material candidate: M5b global brushing rejected; M5c confines hairlines to physical-edge neighborhoods and differentiates real-part alloy tones. This run freshly bakes the recovered M5c shaders into a separate `textures-m5/` directory; M4 remains recoverable. Geometry, normals, UVs and transforms are not edited. Owner authorizes MEDIUM for this run under Decision 40.
+
+Vision confirmed by personally opening REFERENCE.png, M4 full-body, and all four M5c detail diagnostics. Reference has restrained directional wear at edges and fasteners, local warm/cool plate shifts, dark recessed grime—not broad copper patches or camouflage. M5c improves variation and clears tail pattern spill, but the jagged collar, soft head plate volumes, broad exposed neck flats, and stray tail bar are visible frozen-geometry limitations. Material work cannot close those form debts.
+
+### Recovered blind-panel history (not new scores)
+
+These numbers were missing from the head NOTE. Recovered from the owner brief in session `snake-reassembly-v2-matastra-20261019`, message `da21540c-39c7-4252-876c-9a81e7beb900`. Both panels had 33 judges; gate 7.5. Values are medians MATCH / QUALITY.
+
+| Category | M1d | M3 |
+|---|---|---|
+| Overall | 5.0 / 5.5 | 5.0 / 5.0 |
+| Head | 3.55 / 3.90 | 2.75 / 3.25 |
+| Body + tail | 6.00 / 5.20 | 6.00 / 5.00 |
+| Color | 3.5 / 4.5 | 3.0 / 3.5 |
+| Bump | 2.5 / 3.0 | 2.0 / 2.5 |
+| Texture | 2.0 / 2.5 | 2.5 / 3.0 |
+| Materials | 3.5 / 4.5 | 3.0 / 3.6 |
+| Lighting | 4.8 / 5.7 | 4.5 / 5.5 |
+
+No new online research this finish run: recovered M5 research/technique record is in M5-WORKLOG.md; M4 sources above remain historical, not claimed re-read.

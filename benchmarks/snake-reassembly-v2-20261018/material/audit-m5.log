@@ -1,0 +1,6 @@
+MATERIAL_TECHNICAL_PASS {'head': 13968, 'module_insert': 1431, 'tail': 2970, 'assembly': 57006}
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)
+Read blend: "\\wsl.localhost\OpenClawGateway\home\openclaw\.openclaw\workspace-studio-3d\tickets\snake-reassembly-v2-20261018\repo\benchmarks\snake-reassembly-v2-20261018\fix\snake-v2-r2-fix.blend"
+Read blend: "\\wsl.localhost\OpenClawGateway\home\openclaw\.openclaw\workspace-studio-3d\tickets\snake-reassembly-v2-20261018\repo\benchmarks\snake-reassembly-v2-20261018\material\m5-mapped.blend"
+
+Blender quit

@@ -1,0 +1,82 @@
+{
+  "SRC_Head": {
+    "size": 4096,
+    "maps": {
+      "BaseColor": "Head_BaseColor.png",
+      "ORM": "Head_ORM.png",
+      "Normal": "Head_Normal.png",
+      "Emission": "Head_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_SegmentHero": {
+    "size": 2048,
+    "maps": {
+      "BaseColor": "SegmentHero_BaseColor.png",
+      "ORM": "SegmentHero_ORM.png",
+      "Normal": "SegmentHero_Normal.png",
+      "Emission": "SegmentHero_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_SegmentNeck": {
+    "size": 2048,
+    "maps": {
+      "BaseColor": "SegmentNeck_BaseColor.png",
+      "ORM": "SegmentNeck_ORM.png",
+      "Normal": "SegmentNeck_Normal.png",
+      "Emission": "SegmentNeck_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_TailTaper1": {
+    "size": 2048,
+    "maps": {
+      "BaseColor": "TailTaper1_BaseColor.png",
+      "ORM": "TailTaper1_ORM.png",
+      "Normal": "TailTaper1_Normal.png",
+      "Emission": "TailTaper1_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_TailTaper2": {
+    "size": 2048,
+    "maps": {
+      "BaseColor": "TailTaper2_BaseColor.png",
+      "ORM": "TailTaper2_ORM.png",
+      "Normal": "TailTaper2_Normal.png",
+      "Emission": "TailTaper2_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_TailTip": {
+    "size": 2048,
+    "maps": {
+      "BaseColor": "TailTip_BaseColor.png",
+      "ORM": "TailTip_ORM.png",
+      "Normal": "TailTip_Normal.png",
+      "Emission": "TailTip_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_GlowInsert": {
+    "size": 256,
+    "maps": {
+      "BaseColor": "GlowInsert_BaseColor.png",
+      "ORM": "GlowInsert_ORM.png",
+      "Normal": "GlowInsert_Normal.png",
+      "Emission": "GlowInsert_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  },
+  "SRC_GlowInsertT1": {
+    "size": 256,
+    "maps": {
+      "BaseColor": "GlowInsertT1_BaseColor.png",
+      "ORM": "GlowInsertT1_ORM.png",
+      "Normal": "GlowInsertT1_Normal.png",
+      "Emission": "GlowInsertT1_Emission.png"
+    },
+    "mesh_hash_unchanged": true
+  }
+}

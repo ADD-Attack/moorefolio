@@ -1,0 +1,626 @@
+{
+  "active_staging_identical": true,
+  "baseline": {
+    "engine": "CYCLES",
+    "device": "GPU",
+    "samples": 256,
+    "adaptive": true,
+    "threshold": 0.009999999776482582,
+    "denoise": true,
+    "denoiser": "OPENIMAGEDENOISE",
+    "resolution": [
+      1920,
+      1080,
+      100
+    ],
+    "film_transparent": true,
+    "view": [
+      "Standard",
+      "None",
+      0.0,
+      1.0
+    ],
+    "world": [
+      [
+        0.533276379108429,
+        0.533276379108429,
+        0.520995557308197,
+        1.0
+      ],
+      0.25
+    ],
+    "camera": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.1060149669647217
+        ],
+        [
+          0.0,
+          0.9841833710670471,
+          -0.17715275287628174,
+          -4.067104339599609
+        ],
+        [
+          0.0,
+          0.17715275287628174,
+          0.9841833710670471,
+          5.444101333618164
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "lens": 35.0,
+      "sensor_width": 36.0,
+      "clip": [
+        0.10000000149011612,
+        1000.0
+      ],
+      "dof": false
+    },
+    "lights": [
+      {
+        "name": "STAGE_fill",
+        "matrix": [
+          [
+            0.7682212591171265,
+            -0.12074404209852219,
+            0.6286946535110474,
+            10.634461402893066
+          ],
+          [
+            0.6401844024658203,
+            0.14489291608333588,
+            -0.7544335722923279,
+            -12.591033935546875
+          ],
+          [
+            -3.664931469415933e-08,
+            0.9820523858070374,
+            0.18860827386379242,
+            4.981712341308594
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "type": "AREA",
+        "energy": 700.0,
+        "size": 10.0,
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "STAGE_key",
+        "matrix": [
+          [
+            0.7432941198348999,
+            0.4452899396419525,
+            -0.49923014640808105,
+            -8.365538597106934
+          ],
+          [
+            -0.6689647436141968,
+            0.494766503572464,
+            -0.5547001361846924,
+            -10.591033935546875
+          ],
+          [
+            -5.159408544841426e-08,
+            0.7462727427482605,
+            0.6656402945518494,
+            13.981712341308594
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "type": "AREA",
+        "energy": 2600.0,
+        "size": 8.0,
+        "color": [
+          1.0,
+          0.9800000190734863,
+          0.949999988079071
+        ]
+      },
+      {
+        "name": "STAGE_rim",
+        "matrix": [
+          [
+            -0.8320503234863281,
+            -0.24220867455005646,
+            0.4990262985229492,
+            8.634461402893066
+          ],
+          [
+            0.5547001957893372,
+            -0.36331313848495483,
+            0.7485394477844238,
+            11.408966064453125
+          ],
+          [
+            6.472130564816325e-08,
+            0.899632453918457,
+            0.43664801120758057,
+            8.981712341308594
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "type": "AREA",
+        "energy": 2200.0,
+        "size": 6.0,
+        "color": [
+          0.949999988079071,
+          0.9700000286102295,
+          1.0
+        ]
+      }
+    ],
+    "catcher": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.6344616413116455
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.5910340547561646
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.15921778976917267
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dimensions": [
+        70.06243133544922,
+        70.06243133544922,
+        0.0
+      ],
+      "is_shadow_catcher": true
+    },
+    "compositor": {
+      "background": [
+        0.533276379108429,
+        0.533276379108429,
+        0.520995557308197,
+        1.0
+      ],
+      "glare_type": "FOG_GLOW",
+      "quality": "HIGH",
+      "sockets": {
+        "Threshold": 1.0,
+        "Strength": 0.25,
+        "Size": 0.125
+      },
+      "links": [
+        [
+          "CompositorNodeAlphaOver",
+          "Image",
+          "CompositorNodeGlare",
+          "Image"
+        ],
+        [
+          "CompositorNodeGlare",
+          "Image",
+          "CompositorNodeComposite",
+          "Image"
+        ],
+        [
+          "CompositorNodeRGB",
+          "RGBA",
+          "CompositorNodeAlphaOver",
+          "Image"
+        ],
+        [
+          "CompositorNodeRLayers",
+          "Image",
+          "CompositorNodeAlphaOver",
+          "Image"
+        ]
+      ]
+    }
+  },
+  "m5": {
+    "engine": "CYCLES",
+    "device": "GPU",
+    "samples": 256,
+    "adaptive": true,
+    "threshold": 0.009999999776482582,
+    "denoise": true,
+    "denoiser": "OPENIMAGEDENOISE",
+    "resolution": [
+      1920,
+      1080,
+      100
+    ],
+    "film_transparent": true,
+    "view": [
+      "Standard",
+      "None",
+      0.0,
+      1.0
+    ],
+    "world": [
+      [
+        0.533276379108429,
+        0.533276379108429,
+        0.520995557308197,
+        1.0
+      ],
+      0.25
+    ],
+    "camera": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          1.1060149669647217
+        ],
+        [
+          0.0,
+          0.9841833710670471,
+          -0.17715275287628174,
+          -4.067104339599609
+        ],
+        [
+          0.0,
+          0.17715275287628174,
+          0.9841833710670471,
+          5.444101333618164
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "lens": 35.0,
+      "sensor_width": 36.0,
+      "clip": [
+        0.10000000149011612,
+        1000.0
+      ],
+      "dof": false
+    },
+    "lights": [
+      {
+        "name": "STAGE_fill",
+        "matrix": [
+          [
+            0.7682212591171265,
+            -0.12074404209852219,
+            0.6286946535110474,
+            10.634461402893066
+          ],
+          [
+            0.6401844024658203,
+            0.14489291608333588,
+            -0.7544335722923279,
+            -12.591033935546875
+          ],
+          [
+            -3.664931469415933e-08,
+            0.9820523858070374,
+            0.18860827386379242,
+            4.981712341308594
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "type": "AREA",
+        "energy": 700.0,
+        "size": 10.0,
+        "color": [
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      {
+        "name": "STAGE_key",
+        "matrix": [
+          [
+            0.7432941198348999,
+            0.4452899396419525,
+            -0.49923014640808105,
+            -8.365538597106934
+          ],
+          [
+            -0.6689647436141968,
+            0.494766503572464,
+            -0.5547001361846924,
+            -10.591033935546875
+          ],
+          [
+            -5.159408544841426e-08,
+            0.7462727427482605,
+            0.6656402945518494,
+            13.981712341308594
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "type": "AREA",
+        "energy": 2600.0,
+        "size": 8.0,
+        "color": [
+          1.0,
+          0.9800000190734863,
+          0.949999988079071
+        ]
+      },
+      {
+        "name": "STAGE_rim",
+        "matrix": [
+          [
+            -0.8320503234863281,
+            -0.24220867455005646,
+            0.4990262985229492,
+            8.634461402893066
+          ],
+          [
+            0.5547001957893372,
+            -0.36331313848495483,
+            0.7485394477844238,
+            11.408966064453125
+          ],
+          [
+            6.472130564816325e-08,
+            0.899632453918457,
+            0.43664801120758057,
+            8.981712341308594
+          ],
+          [
+            0.0,
+            0.0,
+            0.0,
+            1.0
+          ]
+        ],
+        "type": "AREA",
+        "energy": 2200.0,
+        "size": 6.0,
+        "color": [
+          0.949999988079071,
+          0.9700000286102295,
+          1.0
+        ]
+      }
+    ],
+    "catcher": {
+      "matrix": [
+        [
+          1.0,
+          0.0,
+          0.0,
+          0.6344616413116455
+        ],
+        [
+          0.0,
+          1.0,
+          0.0,
+          -0.5910340547561646
+        ],
+        [
+          0.0,
+          0.0,
+          1.0,
+          -0.15921778976917267
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          1.0
+        ]
+      ],
+      "dimensions": [
+        70.06243133544922,
+        70.06243133544922,
+        0.0
+      ],
+      "is_shadow_catcher": true
+    },
+    "compositor": {
+      "background": [
+        0.533276379108429,
+        0.533276379108429,
+        0.520995557308197,
+        1.0
+      ],
+      "glare_type": "FOG_GLOW",
+      "quality": "HIGH",
+      "sockets": {
+        "Threshold": 1.0,
+        "Strength": 0.25,
+        "Size": 0.125
+      },
+      "links": [
+        [
+          "CompositorNodeAlphaOver",
+          "Image",
+          "CompositorNodeGlare",
+          "Image"
+        ],
+        [
+          "CompositorNodeGlare",
+          "Image",
+          "CompositorNodeComposite",
+          "Image"
+        ],
+        [
+          "CompositorNodeRGB",
+          "RGBA",
+          "CompositorNodeAlphaOver",
+          "Image"
+        ],
+        [
+          "CompositorNodeRLayers",
+          "Image",
+          "CompositorNodeAlphaOver",
+          "Image"
+        ]
+      ]
+    }
+  },
+  "review_material_checks": [
+    {
+      "material": "PBR_SegmentHero",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "f3a04599db4c89b5fa7f3aeed8f49723a74e981b0b056e67532c6096856693d2",
+        "ORM": "3fc8e7d5c2414ae0fbba342259cc833d5c7b32908779e67b3b6cbf6bb56c4975",
+        "Normal": "31a23d0f30867290ceda2653a5e87920fd180df2d5c78c80300898ab7f1e6b12",
+        "Emission": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+      }
+    },
+    {
+      "material": "PBR_GlowInsert",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "85cf3ee4832787a33cb2f578c7d4f7ddb587be7439e1f69f759fdf35a49d68c3",
+        "ORM": "8af7fa5a4fb16e6de6e39b65a4414e66b454d865dd0a5c7db5e56e8dad236dc3",
+        "Normal": "44eeb128cd1a6c83b61156efb6cc98199450d8e022e92cb25472103591e8280c",
+        "Emission": "b057e64df4685162ed68410619dd57c2c00d4fc61ab517d2645ac6d0fec426cd"
+      }
+    },
+    {
+      "material": "PBR_SegmentNeck",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "81ce0c4d29470c28a791b1e77dc3ea6a5d9b266ffdd6186d5ea737bcfdab32e3",
+        "ORM": "f3755e19a39a1e464a17d20c5540fc503d718e50b99c9e9afaacf68623ca9def",
+        "Normal": "b74721d0c211a874ae66eb13e3f7c3d15c189f3145e51e8a0c60ee41b7963a0e",
+        "Emission": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+      }
+    },
+    {
+      "material": "PBR_GlowInsertT1",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "ed3c507a3d4578c0e494f11bcef341b67e38e0e51155f0ae2e3b58a6d3ad1a46",
+        "ORM": "183258748146a41999e2139ce12c25fbf102c696e30532552d254b3d45f22b79",
+        "Normal": "3941fdfb12dc4651e5a45fbc4457e16c047284d9b301a10aece52013fdbe7957",
+        "Emission": "8a09a113633b56efc5d928b1f8d02f1ee6ae10f75a8b0faea960b1d92efcc341"
+      }
+    },
+    {
+      "material": "PBR_TailTaper2",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "463751b807d40780950182168774e01eb1f668385b38db702e6431379d6d363d",
+        "ORM": "0161a962019e619e34026a427f08cbd0ca091268f1473ffa02fac6e6f7423aef",
+        "Normal": "2b3bcd40e59775f1752d8ff84244e18749391703bcb44292093e1e2f9efc06d2",
+        "Emission": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+      }
+    },
+    {
+      "material": "PBR_TailTip",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "4738b8944227a35070c7ff1852ee0abb460c0b0647e64ce3c84b3b2237e5d3a3",
+        "ORM": "d8b9631c0eb8f1f7da9dc0d18ce7e2ce6967a56c4939f158ea99408849f685db",
+        "Normal": "f95b77880242791fd0511c6d10e16d9a4ebc2474a11266bc3d368c044b8e903d",
+        "Emission": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+      }
+    },
+    {
+      "material": "PBR_TailTaper1",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "2761d34ba1652832cc1e8afddd2a8e0e6b17a1089f8e5440c33d6e8d440c8d0c",
+        "ORM": "669fe322a37ce9f352a10f134b8ebfd1f7b85af0a86b456174c912f69655787e",
+        "Normal": "5bc7a6368b3e8b91b3858c7585f2eb66ac1256d73f432d8a99fb9ba6a9ab997d",
+        "Emission": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+      }
+    },
+    {
+      "material": "PBR_Head",
+      "ao_applied": true,
+      "packed_images": {
+        "BaseColor": "f3d1dacd669f09868a5b1c31a01c857ed135bcdc25a152d66f8a3c3938367f61",
+        "ORM": "946902eeb2d128dbcf92d2bbd93dc42dd471160bf3d6c3fc8155751d64db4ff2",
+        "Normal": "51d59111f1cfb6c0769ed4e01c0c04b569f044955124b9f217a54274fa36b3ea",
+        "Emission": "11b5bc56c74ca3508aac263240abbed0cafdbc1132a55dd415cf038778f58c2c"
+      }
+    }
+  ],
+  "uv_checks": {
+    "SRC_GlowInsert": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_GlowInsertT1": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_Head": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_SegmentHero": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_SegmentNeck": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_TailTaper1": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_TailTaper2": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    },
+    "SRC_TailTip": {
+      "all_non_optic_uv_exactly_unchanged": true,
+      "all_uv_unchanged": true
+    }
+  },
+  "frozen_camera_records_identical": true
+}
