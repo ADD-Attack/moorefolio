@@ -141,16 +141,16 @@ footer{padding:28px 0 36px;color:var(--muted);font-size:.86rem;display:flex;just
       <p>Forty agents A*-pathfind across an obstacle grid and repath the instant they arrive. The readout counts paths computed per second — CPU thinking, not just pixels.</p>
     </div>
   </div>
-  <p class="bench-note">New model builds land as new slots in the in-engine navigator — same container, different author. Eight benchmarks live today: the two house tests above plus the six Galaga bake-off builds documented below.</p>
+  <p class="bench-note">New model builds land as new slots in the in-engine navigator — same container, different author. Eight benchmarks live today: the two house tests above plus the six swarm-shooter bake-off builds documented below.</p>
 
   <section class="bench-docs" id="how-it-works">
     <p class="hero-kicker">Research notes</p>
     <h2>How this benchmark works</h2>
-    <p>Each Galaga build below was produced in a <strong>fresh one-shot session</strong> — one per model per run, with no prior conversation context. The session receives only the prompt, a fixed interface contract (Godot 4.7.2, a fully self-contained scene, 1152×648), and, in Run 2, its own previous code. Effort settings were held constant across both runs: Luna at max, Sol at low, Opus 5.5 at low. Integration — navigator registration, the web export, publishing — is done by the producer and is not part of the measured build time. Wall time runs from session created (spec sent) to completion; token counts are the gateway's session usage figures.</p>
+    <p>Each swarm-shooter build below was produced in a <strong>fresh one-shot session</strong> — one per model per run, with no prior conversation context. The session receives only the prompt, a fixed interface contract (Godot 4.7.2, a fully self-contained scene, 1152×648), and, in Run 2, its own previous code. Effort settings were held constant across both runs: Luna at max, Sol at low, Opus 5.5 at low. Integration — navigator registration, the web export, publishing — is done by the producer and is not part of the measured build time. Wall time runs from session created (spec sent) to completion; token counts are the gateway's session usage figures.</p>
 
     <h3>The prompts, verbatim</h3>
     <p class="prompt-label"><span class="mono">Run 1 — every model, identical</span></p>
-    <blockquote>&ldquo;Build a 3D Galaga demo in Godot 4.7: a player ship at the bottom of the screen that shoots, with effects, controlled with the arrow keys, and a few enemies. Just a demo.&rdquo;</blockquote>
+    <blockquote>&ldquo;Build a 3D swarm-shooter demo in Godot 4.7: a player ship at the bottom of the screen that shoots, with effects, controlled with the arrow keys, and a few enemies. Just a demo.&rdquo;</blockquote>
     <p class="prompt-label"><span class="mono">Run 2 — each model reviewed its own Run 1 code</span></p>
     <blockquote>&ldquo;Review your code. Polish it, add visual features or improve visual features, and check for bugs.&rdquo;</blockquote>
 
