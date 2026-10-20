@@ -1,0 +1,75 @@
+BAKE_OBJECT SRC_Head
+REUSE material\textures\Head_BaseColor.png
+REUSE material\textures\Head_ORM.png
+REUSE material\textures\Head_Normal.png
+REUSE material\textures\Head_Emission.png
+BAKE_OBJECT SRC_SegmentHero
+REUSE material\textures\SegmentHero_BaseColor.png
+REUSE material\textures\SegmentHero_ORM.png
+REUSE material\textures\SegmentHero_Normal.png
+REUSE material\textures\SegmentHero_Emission.png
+BAKE_OBJECT SRC_SegmentNeck
+REUSE material\textures\SegmentNeck_BaseColor.png
+REUSE material\textures\SegmentNeck_ORM.png
+REUSE material\textures\SegmentNeck_Normal.png
+REUSE material\textures\SegmentNeck_Emission.png
+BAKE_OBJECT SRC_TailTaper1
+REUSE material\textures\TailTaper1_BaseColor.png
+REUSE material\textures\TailTaper1_ORM.png
+REUSE material\textures\TailTaper1_Normal.png
+REUSE material\textures\TailTaper1_Emission.png
+BAKE_OBJECT SRC_TailTaper2
+REUSE material\textures\TailTaper2_BaseColor.png
+REUSE material\textures\TailTaper2_ORM.png
+REUSE material\textures\TailTaper2_Normal.png
+REUSE material\textures\TailTaper2_Emission.png
+BAKE_OBJECT SRC_TailTip
+REUSE material\textures\TailTip_BaseColor.png
+REUSE material\textures\TailTip_ORM.png
+REUSE material\textures\TailTip_Normal.png
+REUSE material\textures\TailTip_Emission.png
+BAKE_OBJECT SRC_GlowInsert
+REUSE material\textures\GlowInsert_BaseColor.png
+REUSE material\textures\GlowInsert_ORM.png
+REUSE material\textures\GlowInsert_Normal.png
+REUSE material\textures\GlowInsert_Emission.png
+BAKE_OBJECT SRC_GlowInsertT1
+REUSE material\textures\GlowInsertT1_BaseColor.png
+REUSE material\textures\GlowInsertT1_ORM.png
+REUSE material\textures\GlowInsertT1_Normal.png
+REUSE material\textures\GlowInsertT1_Emission.png
+Info: Saved as "m2-mapped.blend"
+INFO Draco mesh compression is available, use library at C:\Users\Moore\Blender\blender-4.5.14-windows-x64\4.5\scripts\addons_core\io_scene_gltf2\extern_draco.dll
+13:28:50 | INFO: Starting glTF 2.0 export
+13:28:50 | INFO: Extracting primitive: Head
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | WARNING: The active Vertex Color will not be exported, as it is not used in the node tree of the material
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: SegmentHero.001
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: GlowInsert
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: SegmentHero
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: TailTaper1
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: GlowInsertT1
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: SegmentHero.003
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:50 | INFO: Extracting primitive: TailTip
+13:28:50 | WARNING: More than one shader node tex image used for a texture. The resulting glTF sampler will behave like the first shader node tex image.
+13:28:50 | INFO: Primitives created: 1
+13:28:52 | INFO: Finished glTF 2.0 export in 1.8474173545837402 s
+
+MAPS_AND_EXPORT_COMPLETE
+Blender 4.5.14 LTS (hash 62c1db4208e8 built 2026-09-15 01:33:49)
+Read blend: "\\wsl.localhost\OpenClawGateway\home\openclaw\.openclaw\workspace-studio-3d\tickets\snake-reassembly-v2-20261018\repo\benchmarks\snake-reassembly-v2-20261018\material\m3-procedural.blend"
+
+Blender quit

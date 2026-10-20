@@ -1,0 +1,262 @@
+{
+  "fresh_bake_count": 32,
+  "no_reused_maps": true,
+  "maps": {
+    "GlowInsertT1_BaseColor.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 61986,
+      "sha256": "f9e345c55bb4aa9da921c2c0a47ef73ddf79352e4af28c70271f1257cfa76914"
+    },
+    "GlowInsertT1_Emission.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 61986,
+      "sha256": "f9e345c55bb4aa9da921c2c0a47ef73ddf79352e4af28c70271f1257cfa76914"
+    },
+    "GlowInsertT1_Normal.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 80354,
+      "sha256": "3941fdfb12dc4651e5a45fbc4457e16c047284d9b301a10aece52013fdbe7957"
+    },
+    "GlowInsertT1_ORM.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 18021,
+      "sha256": "183258748146a41999e2139ce12c25fbf102c696e30532552d254b3d45f22b79"
+    },
+    "GlowInsert_BaseColor.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 63771,
+      "sha256": "a593068628eb294c601214ec0349ff464c661d20eebf8fde6b07729343788735"
+    },
+    "GlowInsert_Emission.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 63823,
+      "sha256": "a4ed0d0f16a87c7c1cc002addebb6fa19aaf4c35446b71956f9bece2a216a845"
+    },
+    "GlowInsert_Normal.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 78290,
+      "sha256": "44eeb128cd1a6c83b61156efb6cc98199450d8e022e92cb25472103591e8280c"
+    },
+    "GlowInsert_ORM.png": {
+      "size": [
+        256,
+        256
+      ],
+      "bytes": 21475,
+      "sha256": "8af7fa5a4fb16e6de6e39b65a4414e66b454d865dd0a5c7db5e56e8dad236dc3"
+    },
+    "Head_BaseColor.png": {
+      "size": [
+        4096,
+        4096
+      ],
+      "bytes": 4281174,
+      "sha256": "cc13148c00db6eecf107ea5b7d7b3cdab35ec46a3061979c4de22c9124cc10e6"
+    },
+    "Head_Emission.png": {
+      "size": [
+        4096,
+        4096
+      ],
+      "bytes": 432606,
+      "sha256": "55e9b6bc62d4b5756b48362e0d23e18e3dbfec0dd8fda3384252acebbdb292f4"
+    },
+    "Head_Normal.png": {
+      "size": [
+        4096,
+        4096
+      ],
+      "bytes": 2891676,
+      "sha256": "faf920d48dc8a4a9c9502b06de794383c54180258ca302526b08c6eea73a0985"
+    },
+    "Head_ORM.png": {
+      "size": [
+        4096,
+        4096
+      ],
+      "bytes": 4702668,
+      "sha256": "853b1b22d6ca58adee8c9711ea89b629b5f935310cdc3b3516395d12a93e20e6"
+    },
+    "SegmentHero_BaseColor.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 1874572,
+      "sha256": "ab0458681adfa6c2cc297be990d3b36ef62e2701fc2508c765dfadab31265784"
+    },
+    "SegmentHero_Emission.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 55162,
+      "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+    },
+    "SegmentHero_Normal.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2052335,
+      "sha256": "65152e141ef6450425ab66ef96917f1b69fefce927a2f9b7c7ea92a7f9f72f0c"
+    },
+    "SegmentHero_ORM.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2798413,
+      "sha256": "b10a662759403fbd618ea88510da91bc545158af122a23b0aaf16e36471ac46e"
+    },
+    "SegmentNeck_BaseColor.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2038659,
+      "sha256": "cdcab99e54464394ed8f638c9d16363e04e0af8f1709a4c635d770ebf9d4c4fa"
+    },
+    "SegmentNeck_Emission.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 55162,
+      "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+    },
+    "SegmentNeck_Normal.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2183652,
+      "sha256": "5c85025c77853ab46f83171813b4b351bbca125232ec6e5e49389c67451c6b1c"
+    },
+    "SegmentNeck_ORM.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2818825,
+      "sha256": "dedb3037debda5a1b66976426c8b2e18e3ecdc3c970b71d31ff4ee5e7f90f1a0"
+    },
+    "TailTaper1_BaseColor.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 1794021,
+      "sha256": "dc68b5494549c0a38dc16f4cfc9b82a5241daf9566533c4efa38dfd0bab028f5"
+    },
+    "TailTaper1_Emission.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 55162,
+      "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+    },
+    "TailTaper1_Normal.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 1983332,
+      "sha256": "515364d7c03666467625f9a2c6422c55e77d8fb0ac6de71149a09f705b4e92eb"
+    },
+    "TailTaper1_ORM.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2829945,
+      "sha256": "71ee636364643e9843e1d15ea67a0f94af242b26124a406162885bb32e44c980"
+    },
+    "TailTaper2_BaseColor.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 1878177,
+      "sha256": "ab2b9f5dcfa61118261a664f135de48696f63e0da3ae287957999f0d461ec390"
+    },
+    "TailTaper2_Emission.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 55162,
+      "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+    },
+    "TailTaper2_Normal.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2120251,
+      "sha256": "a6c384be87d0db3df6e3e6b74670fb3ac57940984a47a09d83f3187ee4190e2f"
+    },
+    "TailTaper2_ORM.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2865329,
+      "sha256": "39aff907735c9114478a866e3e9f3ccf848178c4fd762fc6ee38410d27808a93"
+    },
+    "TailTip_BaseColor.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2394000,
+      "sha256": "798eeb529515c74cbacd338eba40e384f46b84c525dfc4031b4e3dfb6c92f30e"
+    },
+    "TailTip_Emission.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 55162,
+      "sha256": "863100354a621fb533ccdff403d08fa6b46cb599eedeaf0b5e04a24dc67f7d25"
+    },
+    "TailTip_Normal.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 3273673,
+      "sha256": "09215f3e22e7dc8d207a1bbfaaf2a0e3c82b827d35b8072dcb83a05a5d63ee48"
+    },
+    "TailTip_ORM.png": {
+      "size": [
+        2048,
+        2048
+      ],
+      "bytes": 2397028,
+      "sha256": "97297fd6921c4dc64073ffcedc0b29d09ba1b7640408aef32f3c092284c824ce"
+    }
+  }
+}

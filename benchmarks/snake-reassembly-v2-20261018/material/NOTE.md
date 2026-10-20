@@ -41,3 +41,9 @@ Reference clear background sampled at three regions: median #C2C3C0, close to th
 ## Recovery at 21:04 CDT
 
 The agent turn was interrupted around 18:30 by Astra auth-profile unavailability; no Blender failure is present in the recovered logs. The 4096/2048 bake completed and all six geometry-distance masks finished rasterizing after the last message. The masks are not yet incorporated in that baked blend. Recovery checkpoint preserves these outputs and the pending source changes before further building. Revised delivery estimate on resumption: 45–60 minutes.
+
+### Final approach correction
+
+The interrupted Voronoi-edge hairline experiment (M4e) was **rejected visually** because connected lines still looked like cracks, even in color alone. Final M4 uses disconnected anisotropic noise marks instead. The Stack Exchange scratch-removal approach informed the experiment, but its cell-edge pattern is not in the final material.
+
+Geometry-fitted edge masks rasterize the unchanged UV triangles and measure distance to actual boundary/convex and concave edges (28° normal threshold). R controls broken edge wear; G augments recessed grime. They do not alter normals, vertices, topology, or instance transforms. Shader bump remains shallow pitting, separate from edge masks. The final bake is 4096 head, 2048 body/tail, 256 glow inserts, with packed ORM and emission maps.

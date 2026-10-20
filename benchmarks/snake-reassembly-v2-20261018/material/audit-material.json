@@ -20,7 +20,7 @@
       ],
       "extensions": {
         "KHR_materials_emissive_strength": {
-          "emissiveStrength": 3
+          "emissiveStrength": 1.7999999523162842
         }
       }
     },
@@ -110,6 +110,6 @@
       "extensions": {}
     }
   ],
-  "glb_sha256": "2c67ab41e635838ab392af9ac275c383fe6a39455ff8aaacdfb85aed10a00c1f",
+  "glb_sha256": "d2a74ef1f2451a9e249373429c58a53358ae9a27c1c79457ea17606dfca0914b",
   "acceptance": "not inferred from technical checks"
 }
