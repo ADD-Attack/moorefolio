@@ -1,5 +1,5 @@
 extends Node3D
-## 3D Galaga demo. Arrow keys move, Space fires. Fully self-contained.
+## 3D Swarm demo. Arrow keys move, Space fires. Fully self-contained.
 ## r2: respawn shield, hit flashes, score popups, flapping enemies, engine trail,
 ## neon grid floor, parallax twinkling starfield, high score, safer restart.
 

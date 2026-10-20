@@ -111,7 +111,7 @@ func _build_hud() -> void:
 	root.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	layer.add_child(root)
 	var title := Label.new()
-	title.text = "GALAGA  /  3D DEMO"
+	title.text = "SWARM  /  3D DEMO"
 	title.position = Vector2(24, 18)
 	title.add_theme_font_size_override("font_size", 22)
 	title.modulate = Color("8edaff")

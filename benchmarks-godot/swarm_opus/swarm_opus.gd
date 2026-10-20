@@ -1,5 +1,5 @@
 extends Node3D
-## 3D Galaga demo. Arrow keys move, Space fires. Fully self-contained.
+## 3D Swarm demo. Arrow keys move, Space fires. Fully self-contained.
 
 const FIELD_W := 9.0
 const FIELD_TOP := 11.0

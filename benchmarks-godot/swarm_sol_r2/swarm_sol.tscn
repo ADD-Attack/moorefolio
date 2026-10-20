@@ -1,7 +1,7 @@
 [gd_scene load_steps=2 format=3]
 
-[ext_resource type="Script" path="res://galaga_sol_r2/galaga_sol.gd" id="1"]
+[ext_resource type="Script" path="res://swarm_sol_r2/swarm_sol.gd" id="1"]
 
-[node name="GalagaSol" type="Node3D"]
+[node name="SwarmSol" type="Node3D"]
 editor_description = "Run 2: procedural starfield, animated craft, impact rings and wave HUD. Arrows/WASD move; Space fires. Self-contained fullscreen 1152x648; GL Compatibility supported."
 script = ExtResource("1")
