@@ -132,6 +132,28 @@ function coachLine(text, opts) {
   b.appendChild(p); b.scrollTop = b.scrollHeight;
   if ((opts && opts.speak) || clean.startsWith("Coach:")) speak(clean.replace(/^Coach: /, ""));
 }
+// ---------- operator diagnostics (Ticket 005) ----------
+// Errors ONLY: normal play writes nothing here. A DIAG line means a
+// connection step actually failed, in a terse code an operator can
+// read off a screenshot — no kid-facing explanation, ever. Entries
+// are timestamped and mirrored into the session record
+// (sessionRecord.diag), following the alertLog pattern.
+const DIAG_CAP = 300;
+let diagEntries = [];
+function diag(line) {
+  const entry = { t: new Date().toISOString(), line };
+  diagEntries.push(entry);
+  if (diagEntries.length > DIAG_CAP) diagEntries.splice(0, diagEntries.length - DIAG_CAP);
+  if (sessionRecord) {
+    const arr = sessionRecord.diag || (sessionRecord.diag = []);
+    arr.push(entry);
+    if (arr.length > DIAG_CAP) arr.splice(0, arr.length - DIAG_CAP);
+  }
+  const b = $("coachBody"); if (!b) return;
+  const p = document.createElement("p"); p.className = "cline diag";
+  p.textContent = line;
+  b.appendChild(p); b.scrollTop = b.scrollHeight;
+}
 function setCoachState(text) {
   setTicker(text);
   const b = $("coachBody"); if (!b) return;
@@ -191,12 +213,14 @@ function loadStoredToken() {
 }
 async function requestSession(password, gid) {
   let r;
+  const t0 = Date.now();
   try {
     r = await fetch(RELAY_URL + "/v1/session", {
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ branch: BRANCH, password, game_id: gid }),
     });
-  } catch (e) { const err = new Error("relay unreachable"); err.offline = true; throw err; }
+  } catch (e) { diag("DIAG AUTH FAIL neterr"); const err = new Error("relay unreachable"); err.offline = true; throw err; }
+  if (!r.ok) diag("DIAG AUTH " + r.status + " " + (Date.now() - t0) + "ms");
   if (r.status === 401) { const err = new Error("wrong password"); err.status = 401; throw err; }
   if (!r.ok) { const err = new Error("relay HTTP " + r.status); err.status = r.status; throw err; }
   const data = await r.json();
@@ -247,6 +271,7 @@ async function relayTurn(packet, _note) {
   // _note (reprompt reason) is a test-responder seam only; the /v1/turn
   // contract body is fixed, so a reprompt simply re-sends the packet.
   if (!sessionToken) { handleRegate(); const e = new Error("no session token"); e.regate = true; throw e; }
+  const t0 = Date.now();
   for (let attempt = 0; attempt < 2; attempt++) {
     let r;
     try {
@@ -255,17 +280,19 @@ async function relayTurn(packet, _note) {
         headers: { "Content-Type": "application/json", "Authorization": "Bearer " + sessionToken },
         body: JSON.stringify(packet),
       }, 70000);
-    } catch (e) { const err = new Error("relay unreachable"); err.offline = true; throw err; }
-    if (r.status === 401) { handleRegate(); const e = new Error("session rejected"); e.regate = true; throw e; }
+    } catch (e) { diag("DIAG TURN FAIL neterr"); const err = new Error("relay unreachable"); err.offline = true; throw err; }
+    if (r.status === 401) { diag("DIAG TURN 401 " + (Date.now() - t0) + "ms"); handleRegate(); const e = new Error("session rejected"); e.regate = true; throw e; }
     if (r.status === 429 && attempt === 0) { // too fast / caps: one spaced retry
       await new Promise((res) => setTimeout(res, 400));
       continue;
     }
     if (!r.ok) { // 429 exhausted, 503 kill switch/coach down, 504 timeout, 400 packet fault
+      diag("DIAG TURN " + r.status + " " + (Date.now() - t0) + "ms");
       const err = new Error("relay HTTP " + r.status); err.offline = true; err.status = r.status; throw err;
     }
     return await r.json();
   }
+  diag("DIAG TURN FAIL retry");
   const err = new Error("relay retries exhausted"); err.offline = true; throw err;
 }
 async function relayReview(body) {
@@ -288,10 +315,13 @@ function prepareConnection() {
   if (responder) return Promise.resolve(); // injected test responder replaces the relay
   if (offlineEntry) { enterOfflineMode("chosen at the gate"); return Promise.resolve(); }
   return (async () => {
+    let healthFailed = false;
     try {
+      const t0 = Date.now();
       const r = await fetchWithTimeout(RELAY_URL + "/v1/health", { method: "GET" }, 10000);
-      if (!r.ok) throw new Error("health HTTP " + r.status);
-    } catch (e) { enterOfflineMode("the relay health check failed"); return; }
+      if (!r.ok) { diag("DIAG HEALTH " + r.status + " " + (Date.now() - t0) + "ms"); healthFailed = true; }
+    } catch (e) { diag("DIAG HEALTH FAIL neterr"); healthFailed = true; }
+    if (healthFailed) { enterOfflineMode("the relay health check failed"); return; }
     if (gatePassword) {
       try { await requestSession(gatePassword, gameId); }
       catch (e) {
@@ -326,7 +356,7 @@ function startGame(kind) {
   // token came from storage and no password is in memory to re-bind.
   gameId = (!gatePassword && storedGameId) ? storedGameId : newGameId();
   sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode, gameId,
-                    targetStart: targetElo, alerts: [], flagged: false, moves: [], offline: false };
+                    targetStart: targetElo, alerts: [], diag: [], flagged: false, moves: [], offline: false };
   $("reviewPanel").style.display = "none";
   $("alertBody").textContent = "No alerts.";
   coachLine("New game! You are White — your move. Good luck, champion!");
@@ -732,6 +762,7 @@ function initVoicePicker() {
   const ss = synth(); // voices often arrive async — repopulate when they land
   if (ss && ss.addEventListener) ss.addEventListener("voiceschanged", refreshVoicePicker);
 }
+let ttsDiagDone = false;
 function speak(text) {
   try {
     if (dossier.muted) return;
@@ -744,6 +775,10 @@ function speak(text) {
     u = U ? new U(String(text)) : { text: String(text) };
     u.rate = 0.92; u.pitch = 1.05;
     const v = pickVoice();
+    if (!ttsDiagDone) { // once per page load: flag a device with no voice at all
+      ttsDiagDone = true;
+      if (!v) diag("DIAG TTS V=" + voiceList().length + " name=NONE");
+    }
     if (v) { try { u.voice = v; if (v.lang) u.lang = v.lang; } catch (_) {} }
     ss.speak(u);
   } catch (_) {}
@@ -862,18 +897,22 @@ async function sendPickup(sqIdxNum) {
   try {
     if (connectionPromise) { const p = connectionPromise; connectionPromise = null; try { await p; } catch (_) {} }
     if (!sessionToken) return;
-    const r = await fetch(RELAY_URL + "/v1/pickup", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + sessionToken },
-      body: JSON.stringify({ game_id: gameId, fen, piece: piece.t.toUpperCase(), square, targets }),
-    });
-    if (!r.ok) return;
-    const resp = await r.json();
+    let resp;
+    const t0 = Date.now();
+    try {
+      const r = await fetch(RELAY_URL + "/v1/pickup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + sessionToken },
+        body: JSON.stringify({ game_id: gameId, fen, piece: piece.t.toUpperCase(), square, targets }),
+      });
+      if (!r.ok) { diag("DIAG PICKUP " + r.status + " " + (Date.now() - t0) + "ms"); return; }
+      resp = await r.json();
+    } catch (_) { diag("DIAG PICKUP FAIL neterr"); return; }
     if (resp && resp.speak === true && resp.line) {
       coachLine("Coach: " + resp.line); // coachLine speaks Coach: lines
       if (resp.annotations) drawAnnotations(resp.annotations);
     }
-  } catch (_) { /* speak false / any error -> no UI change */ }
+  } catch (_) { /* response handling error -> no UI change */ }
 }
 function pickupSelectionTick() {
   let sel = -1, pc = null;
@@ -927,7 +966,7 @@ function startLesson(id) {
   setPageFromState(st, [], { w: [], b: [] });
   lastPlySeen = 0;
   gameId = "lesson-" + id + "-" + Date.now().toString(36);
-  sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode: "lesson", gameId, alerts: [], moves: [], offline: false };
+  sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode: "lesson", gameId, alerts: [], diag: [], moves: [], offline: false };
   const km = $("kidsMenu"); if (km) km.style.display = "none";
   updateGameInfo();
   coachLine(les.title + " — " + les.goalText);
@@ -1091,7 +1130,7 @@ function init(opts) {
     }
   }
   sf.start(SF_URL).then(() => setCoachState("Coach is ready. Start a new game when you are."))
-    .catch(() => setCoachState("The analysis engine did not load — games need it for move candidates."));
+    .catch(() => { diag("DIAG SF FAIL"); setCoachState("The analysis engine did not load — games need it for move candidates."); });
   setInterval(poll, 300);
 }
 return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, undoMove, showMenu,
@@ -1099,6 +1138,7 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, 
   getDossier: () => dossier, getScoreLog: () => scoreLog, getSession: () => sessionRecord,
   getTarget: () => targetElo, setScoreLog: (s) => { scoreLog = s; },
   getOffline: () => offlineMode, getGameId: () => gameId, hasToken: () => !!sessionToken,
+  getDiag: () => diagEntries.map((e) => e.line),
   getLesson: () => currentLesson, isLessonActive: () => lessonActive, levelFor,
   gentleCandidates, awardPoints, LESSONS, stateFromFen,
   finishGame, replayState } };
