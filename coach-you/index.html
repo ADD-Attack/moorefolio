@@ -77,6 +77,8 @@
   #reviewBody{font-size:14px;word-break:normal}
   #reviewBody li{margin-bottom:6px}
   .coachstate{font-style:italic;color:#5c4c36}
+  #dossierBody{white-space:pre-line}
+  #modeLine{font-size:14px;font-style:italic;color:#5c4c36;min-height:18px}
   #gate{position:fixed;inset:0;background:var(--paper);z-index:40;display:flex;align-items:center;justify-content:center}
   #gate .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;text-align:center;max-width:340px}
   #gate input{font-size:16px;padding:8px;width:100%;margin:10px 0;border:1px solid var(--line);border-radius:6px}
@@ -118,6 +120,7 @@
       <button id="flipBtn" class="ghost">Flip Board</button>
       <button id="soundBtn" class="ghost">Sound: On</button>
     </div>
+    <div id="modeLine"></div>
   </div>
 
   <div class="side">
@@ -506,12 +509,13 @@ reset();
 </script>
 <div id="gate"><div class="card">
   <h3 style="margin:0;color:var(--rust)">♞ Chess Coach — private beta</h3>
-  <p style="font-size:14px">This branch is unlisted and password-gated while testing.<br>(Soft gate, testing phase only.)</p>
+  <p style="font-size:14px">This branch is unlisted; the password is checked by the coach relay.</p>
   <input id="gateInput" type="password" placeholder="Password" autocomplete="off">
   <div id="gateMsg" style="font-size:13px;color:#8a2f23;min-height:16px"></div>
   <button id="gateBtn">Enter</button>
+  <br><button id="gateOfflineBtn" class="ghost" style="display:none;margin-top:10px">Play offline (Stockfish only)</button>
 </div></div>
-<script>window.COACH_BRANCH="you";window.COACH_GATE="brick-beta";</script>
+<script>window.COACH_CONFIG={branch:"you",relayUrl:"https://abraham-1.tail629694.ts.net"};</script>
 <script src="coach-core.js"></script>
 <script src="sf-adapter.js"></script>
 <script src="coach.js"></script>

@@ -1,18 +1,40 @@
-// coach.js — Chess Coach page controller (Ticket 004 beta).
+// coach.js — Chess Coach page controller (Ticket 004, relay-gate build).
 // Hooks the v1.1 board page by polling its move history (the single
-// source of truth) and driving coach turns through the relay.
-// The coach (LLM via relay) picks its own moves from a Stockfish-
-// pruned candidate list; this file validates every move (failsafe),
-// scores silently, calibrates, reviews, and remembers (dossier).
+// source of truth) and driving coach turns through the hardened relay
+// gate (/v1/session, /v1/turn, /v1/review — see BEN-ACCESS-ASTRA.md).
+// The page holds NO password material: the branch password the player
+// types at the gate is checked server-side by the relay, which returns
+// a short-lived bearer token kept in sessionStorage.
+// Amendment A1 fallbacks: if the coach/relay is down (health check
+// fails, network error, 503/504, exhausted retries) the game switches
+// to a visibly labeled Stockfish-only mode for the rest of the game;
+// after a failed reprompt the recovery move is Stockfish's top
+// candidate (the packet's fallback), not an in-band engine move.
 "use strict";
 const CoachUI = (() => {
 const C = CoachCore;
-const BRANCH = (typeof window !== "undefined" && window.COACH_BRANCH) || "you";
-const GATE_WORD = (typeof window !== "undefined" && window.COACH_GATE) || "brick-beta";
-const RELAY_URL = (typeof window !== "undefined" && window.COACH_RELAY) || "http://127.0.0.1:18901";
+// ---------- per-branch config ----------
+const COACH_CONFIG = (() => {
+  const cfg = { branch: "you", relayUrl: "https://abraham-1.tail629694.ts.net" };
+  if (typeof window !== "undefined" && window.COACH_CONFIG) Object.assign(cfg, window.COACH_CONFIG);
+  if (typeof window !== "undefined" && window.COACH_BRANCH && !window.COACH_CONFIG) cfg.branch = window.COACH_BRANCH;
+  try { // ?relay= override for local testing (stored nowhere)
+    const loc = (typeof window !== "undefined" && window.location) ||
+                (typeof location !== "undefined" ? location : null);
+    if (loc && loc.search) {
+      const r = new URLSearchParams(loc.search).get("relay");
+      if (r) cfg.relayUrl = r;
+    }
+  } catch (_) {}
+  cfg.relayUrl = String(cfg.relayUrl || "").replace(/\/+$/, "");
+  return cfg;
+})();
+const BRANCH = COACH_CONFIG.branch;
+const RELAY_URL = COACH_CONFIG.relayUrl;
 const SF_URL = (typeof window !== "undefined" && window.COACH_SF_URL) || "stockfish/stockfish-19-lite-single.js";
 const PRUNE_DEPTH = 10, SCORE_DEPTH = 10;
 const PLAYER = "w", COACH = "b";
+const TOKEN_KEY = "chessCoachToken." + BRANCH;
 
 let sf = SF;                 // injectable for tests
 let responder = null;        // injectable for tests; default = relay fetch
@@ -21,10 +43,20 @@ let mode = null;             // 'practice' | 'rated'
 let targetElo = 800, gameStartElo = dossier.elo;
 let lastPlySeen = 0, coachBusy = false, paused = false, gameActive = false;
 let scoreLog = [], evalTrail = [], lastEval = null, stepMarks = 0;
-let sessionRecord = null, currentCandidates = [], currentLines = [];
+let sessionRecord = null, currentCandidates = [], currentLines = [], currentFallback = null;
 let hintDetail = null;
+// relay-gate state
+let sessionToken = null, storedGameId = null;
+let gatePassword = null;     // memory only, never stored — lets a fresh
+                             // game_id get its own session token per game
+let gameId = null, offlineMode = false, offlineEntry = false, regated = false;
+let connectionPromise = null;
 
 function $(id) { return document.getElementById(id); }
+function newGameId() {
+  return Date.now().toString(36) + "-" + Math.random().toString(36).slice(2, 10) +
+         Math.random().toString(36).slice(2, 6);
+}
 function loadDossier() {
   try {
     const raw = localStorage.getItem("chessCoachDossier." + BRANCH);
@@ -34,16 +66,13 @@ function loadDossier() {
            mistake_patterns: [], weak_phases: [], focus_lesson: "", focus_class: "", lastResult: "" };
 }
 function saveDossier() { try { localStorage.setItem("chessCoachDossier." + BRANCH, JSON.stringify(dossier)); } catch (_) {} }
-function dossierSummary() {
-  return { elo: dossier.elo, games: dossier.games, openings: dossier.openings,
-           mistake_patterns: dossier.mistake_patterns, weak_phases: dossier.weak_phases,
-           focus_lesson: dossier.focus_lesson };
-}
 function replayState() { return C.stateFromSans(history.slice()); }
-function coachLine(html) {
+// All coach text reaches the DOM through textContent only — never innerHTML.
+function coachLine(text) {
   const b = $("coachBody"); if (!b) return;
   const stateEl = $("coachState"); if (stateEl) stateEl.remove();
-  const p = document.createElement("p"); p.className = "cline"; p.innerHTML = html;
+  const p = document.createElement("p"); p.className = "cline";
+  p.textContent = String(text).replace(/<[^>]*>/g, "");
   b.appendChild(p); b.scrollTop = b.scrollHeight;
 }
 function setCoachState(text) {
@@ -51,6 +80,10 @@ function setCoachState(text) {
   let s = $("coachState");
   if (!s) { s = document.createElement("span"); s.id = "coachState"; s.className = "coachstate"; b.appendChild(s); }
   s.textContent = text;
+}
+function setModeLabel() {
+  const ml = $("modeLine"); if (!ml) return;
+  ml.textContent = offlineMode ? "Coach offline — playing Stockfish at your level" : "";
 }
 function alertLog(kind, detail) {
   const entry = { t: new Date().toISOString(), kind, detail, ply: history.length, branch: BRANCH };
@@ -68,44 +101,177 @@ function alertLog(kind, detail) {
 }
 function renderDossier() {
   const b = $("dossierBody"); if (!b) return;
-  b.innerHTML =
-    "Elo: <b>" + dossier.elo + "</b>" + (dossier.calibrated ? "" : " (provisional — play a practice game)") + "<br>" +
-    "Games vs coach: " + dossier.games + "<br>" +
-    (dossier.lastResult ? "Last game: " + dossier.lastResult + "<br>" : "") +
-    (dossier.focus_lesson ? "Focus lesson: " + dossier.focus_lesson + "<br>" : "") +
-    (dossier.mistake_patterns.length ? "Patterns seen: " + dossier.mistake_patterns.join(", ") : "");
+  const lines = [
+    "Elo: " + dossier.elo + (dossier.calibrated ? "" : " (provisional — play a practice game)"),
+    "Games vs coach: " + dossier.games,
+  ];
+  if (dossier.lastResult) lines.push("Last game: " + dossier.lastResult);
+  if (dossier.focus_lesson) lines.push("Focus lesson: " + dossier.focus_lesson);
+  if (dossier.mistake_patterns.length) lines.push("Patterns seen: " + dossier.mistake_patterns.join(", "));
+  b.textContent = lines.join("\n");
 }
-// ---------- relay ----------
-async function relayResponder(packet, note) {
-  const body = { ...packet, ...(note ? { note } : {}) };
-  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
-  const timer = ctl ? setTimeout(() => ctl.abort(), 150000) : null;
+// ---------- relay gate: session ----------
+function expIsFuture(exp) {
+  if (exp === null || exp === undefined) return true;
+  const n = Number(exp); if (!isFinite(n)) return true;
+  const ms = n > 1e12 ? n : n * 1000; // accept seconds or ms epochs
+  return ms > Date.now();
+}
+function storeToken(token, exp, gid) {
+  sessionToken = token; storedGameId = gid || null;
+  try { sessionStorage.setItem(TOKEN_KEY, JSON.stringify({ token, exp, game_id: gid })); } catch (_) {}
+}
+function loadStoredToken() {
   try {
-    const r = await fetch(RELAY_URL + "/coach/move", {
+    const raw = sessionStorage.getItem(TOKEN_KEY);
+    if (!raw) return false;
+    const d = JSON.parse(raw);
+    if (d && d.token && expIsFuture(d.exp)) { sessionToken = d.token; storedGameId = d.game_id || null; return true; }
+  } catch (_) {}
+  return false;
+}
+async function requestSession(password, gid) {
+  let r;
+  try {
+    r = await fetch(RELAY_URL + "/v1/session", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body), signal: ctl ? ctl.signal : undefined,
+      body: JSON.stringify({ branch: BRANCH, password, game_id: gid }),
     });
-    if (!r.ok) throw new Error("relay HTTP " + r.status);
+  } catch (e) { const err = new Error("relay unreachable"); err.offline = true; throw err; }
+  if (r.status === 401) { const err = new Error("wrong password"); err.status = 401; throw err; }
+  if (!r.ok) { const err = new Error("relay HTTP " + r.status); err.status = r.status; throw err; }
+  const data = await r.json();
+  storeToken(data.token, data.exp, gid);
+  return data;
+}
+function handleRegate() {
+  regated = true; sessionToken = null;
+  try { sessionStorage.removeItem(TOKEN_KEY); } catch (_) {}
+  const gate = $("gate"); if (gate) gate.style.display = "";
+  const gm = $("gateMsg"); if (gm) gm.textContent = "Your session expired — enter the password again.";
+  setCoachState("Session expired — re-enter the password to continue.");
+}
+// Gate submit: password is checked by the relay, never by this page.
+async function tryGate() {
+  const input = $("gateInput"), gm = $("gateMsg");
+  const pw = input ? input.value : "";
+  if (gm) gm.textContent = "Checking…";
+  const gid = newGameId();
+  try {
+    await requestSession(pw, gid);
+  } catch (e) {
+    if (e && e.status === 401) { if (gm) gm.textContent = "Wrong password — try again."; return false; }
+    if (gm) gm.textContent = "Can't reach the coach relay right now.";
+    const ob = $("gateOfflineBtn"); if (ob) ob.style.display = "";
+    return false;
+  }
+  gatePassword = pw; gameId = gid; regated = false;
+  const gate = $("gate"); if (gate) gate.style.display = "none";
+  if (gm) gm.textContent = "";
+  if (gameActive && !gameOver && turn === COACH) coachTurn();
+  return true;
+}
+function enterOfflineFromGate() {
+  offlineEntry = true;
+  const gate = $("gate"); if (gate) gate.style.display = "none";
+  const ml = $("modeLine"); if (ml) ml.textContent = "Coach offline — playing Stockfish at your level";
+  coachLine("Coach offline — playing Stockfish at your level. Start a game whenever you're ready.");
+}
+// ---------- relay: turn / review ----------
+async function fetchWithTimeout(url, opts, ms) {
+  const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timer = ctl ? setTimeout(() => ctl.abort(), ms) : null;
+  try { return await fetch(url, { ...opts, signal: ctl ? ctl.signal : undefined }); }
+  finally { if (timer) clearTimeout(timer); }
+}
+async function relayTurn(packet, _note) {
+  // _note (reprompt reason) is a test-responder seam only; the /v1/turn
+  // contract body is fixed, so a reprompt simply re-sends the packet.
+  if (!sessionToken) { handleRegate(); const e = new Error("no session token"); e.regate = true; throw e; }
+  for (let attempt = 0; attempt < 2; attempt++) {
+    let r;
+    try {
+      r = await fetchWithTimeout(RELAY_URL + "/v1/turn", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + sessionToken },
+        body: JSON.stringify(packet),
+      }, 70000);
+    } catch (e) { const err = new Error("relay unreachable"); err.offline = true; throw err; }
+    if (r.status === 401) { handleRegate(); const e = new Error("session rejected"); e.regate = true; throw e; }
+    if (r.status === 429 && attempt === 0) { // too fast / caps: one spaced retry
+      await new Promise((res) => setTimeout(res, 400));
+      continue;
+    }
+    if (!r.ok) { // 429 exhausted, 503 kill switch/coach down, 504 timeout, 400 packet fault
+      const err = new Error("relay HTTP " + r.status); err.offline = true; err.status = r.status; throw err;
+    }
     return await r.json();
-  } finally { if (timer) clearTimeout(timer); }
+  }
+  const err = new Error("relay retries exhausted"); err.offline = true; throw err;
+}
+async function relayReview(body) {
+  let r;
+  try {
+    r = await fetchWithTimeout(RELAY_URL + "/v1/review", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + sessionToken },
+      body: JSON.stringify(body),
+    }, 70000);
+  } catch (e) { const err = new Error("relay unreachable"); err.offline = true; throw err; }
+  if (r.status === 401) { handleRegate(); const e = new Error("session rejected"); e.regate = true; throw e; }
+  if (!r.ok) { const err = new Error("relay HTTP " + r.status); err.status = r.status; throw err; }
+  return await r.json();
+}
+// Per-game connection setup: health check first (A1: a failed health
+// check means this game is Stockfish-only), then a session token bound
+// to this game's fresh game_id when the password is in memory.
+function prepareConnection() {
+  if (responder) return Promise.resolve(); // injected test responder replaces the relay
+  if (offlineEntry) { enterOfflineMode("chosen at the gate"); return Promise.resolve(); }
+  return (async () => {
+    try {
+      const r = await fetchWithTimeout(RELAY_URL + "/v1/health", { method: "GET" }, 10000);
+      if (!r.ok) throw new Error("health HTTP " + r.status);
+    } catch (e) { enterOfflineMode("the relay health check failed"); return; }
+    if (gatePassword) {
+      try { await requestSession(gatePassword, gameId); }
+      catch (e) {
+        if (e && e.status === 401) handleRegate();
+        else enterOfflineMode("the relay session could not be opened");
+      }
+    }
+  })();
+}
+function enterOfflineMode(why) {
+  if (offlineMode) return;
+  offlineMode = true;
+  if (sessionRecord) sessionRecord.offline = true;
+  setModeLabel();
+  coachLine("Coach offline — playing Stockfish at your level (" + why + "). No more coach calls this game.");
 }
 // ---------- game flow ----------
 function startGame(kind) {
   reset(); // base page reset
   scoreLog = []; evalTrail = []; lastEval = null; stepMarks = 0;
   lastPlySeen = 0; paused = false; gameActive = true; coachBusy = false;
+  offlineMode = false; currentFallback = null;
   mode = kind;
   gameStartElo = dossier.elo;
   targetElo = kind === "practice" ? 800 : dossier.elo + 50;
-  sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode,
-                    targetStart: targetElo, alerts: [], flagged: false, moves: [] };
+  // Fresh game_id per game; reuse the gate session's id only when the
+  // token came from storage and no password is in memory to re-bind.
+  gameId = (!gatePassword && storedGameId) ? storedGameId : newGameId();
+  sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode, gameId,
+                    targetStart: targetElo, alerts: [], flagged: false, moves: [], offline: false };
   $("reviewPanel").style.display = "none";
   $("alertBody").textContent = "No alerts.";
   coachLine(kind === "practice"
-    ? "<b>Practice game.</b> I'll adjust my strength as we play to find your level. Good luck!"
-    : "<b>New game.</b> I'm playing at about " + targetElo + " for this one. Your move.");
+    ? "Practice game. I'll adjust my strength as we play to find your level. Good luck!"
+    : "New game. I'm playing at about " + targetElo + " for this one. Your move.");
   setCoachState("");
   renderDossier();
+  setModeLabel();
+  connectionPromise = prepareConnection();
   scorePosition(); // baseline eval of startpos
 }
 async function scorePosition() {
@@ -135,7 +301,7 @@ async function maybeCalibrate() {
   const next = C.calibrationStep(targetElo, avg);
   if (next !== targetElo) {
     targetElo = next;
-    coachLine("<i>Calibration: I'm adjusting my target to " + targetElo + " based on how this game is going.</i>");
+    coachLine("Calibration: I'm adjusting my target to " + targetElo + " based on how this game is going.");
   }
 }
 function pauseGame(why) {
@@ -148,25 +314,70 @@ function pauseGame(why) {
   btn.addEventListener("click", () => { paused = false; setCoachState("Coach is thinking…"); coachTurn(); });
   b.appendChild(btn);
 }
+// Stockfish's top candidate, captured from the ranked lines BEFORE
+// pruneCandidates shuffles the packet list: the first ranked line that
+// survived pruning. Page and relay agree on this as the fallback move.
+function computeTopCandidate() {
+  for (const l of currentLines) {
+    const c = currentCandidates.find((x) => x.uci === l.uci);
+    if (c) return { san: c.san, uci: c.uci };
+  }
+  return currentCandidates.length ? { san: currentCandidates[0].san, uci: currentCandidates[0].uci } : null;
+}
+async function offlineCoachMove(st) {
+  const fen = C.fenFromState(st);
+  let m = null;
+  try { // in-page Stockfish at the game's target Elo (adapter UCI_Elo/skill)
+    if (sf && sf.bestmoveAtElo) {
+      const uci = await sf.bestmoveAtElo(fen, targetElo, 12);
+      if (uci) m = C.parseUci(st, uci);
+    }
+  } catch (_) {}
+  if (!m && currentFallback) m = C.parseSan(st, currentFallback.san) || C.parseUci(st, currentFallback.uci);
+  if (!m && currentCandidates.length) {
+    const c0 = currentCandidates[0];
+    m = C.parseSan(st, c0.san) || C.parseUci(st, c0.uci);
+  }
+  if (m) {
+    applyCoachMove(m);
+    sessionRecord.moves.push({ ply: history.length, san: C.sanWithSuffix(st, m, m.promoChoice || null), via: "stockfish-offline" });
+    return;
+  }
+  pauseGame("no offline move available.");
+}
 async function coachTurn() {
-  if (coachBusy || paused || !gameActive || gameOver) return;
+  if (coachBusy || paused || !gameActive || gameOver || regated) return;
   coachBusy = true;
   setCoachState("Coach is thinking…");
   try {
+    if (connectionPromise) { const p = connectionPromise; connectionPromise = null; try { await p; } catch (_) {} }
+    if (regated) return;
     const st = replayState();
     const fen = C.fenFromState(st);
     const { lines } = await sf.analyze(fen, 10, PRUNE_DEPTH);
     currentLines = lines || [];
     currentCandidates = C.pruneCandidates(st, currentLines, targetElo);
     if (!currentCandidates.length) { pauseGame("no candidate moves available."); return; }
-    const packet = { fen, san_history: history.slice(), candidates: currentCandidates,
-                     target_elo: targetElo, dossier: dossierSummary(), branch: BRANCH };
+    currentFallback = computeTopCandidate();
+    if (offlineMode) { await offlineCoachMove(st); return; }
+    const packet = { game_id: gameId, fen, moves: history.slice(),
+                     candidates: currentCandidates.map((c) => ({ san: c.san, uci: c.uci })),
+                     fallback: currentFallback ? { san: currentFallback.san, uci: currentFallback.uci } : null,
+                     target_elo: targetElo };
     if ("cp" in (packet.candidates[0] || {}) || "score" in (packet.candidates[0] || {}))
       throw new Error("packet leak: scores present in candidates");
-    const resp = await (responder || relayResponder)(packet);
+    const resp = await (responder || relayTurn)(packet);
     await handleCoachResponse(resp, packet, false);
   } catch (e) {
-    pauseGame("the coach could not be reached (" + (e.message || e) + "). Your game is saved.");
+    if (e && e.regate) { /* gate is showing again; the game waits for re-entry */ }
+    else if (!offlineMode) {
+      // A1 coach-down fallback: switch this game to Stockfish-only.
+      enterOfflineMode("the coach could not be reached (" + (e.message || e) + ")");
+      try { await offlineCoachMove(replayState()); }
+      catch (_) { pauseGame("the coach and the offline engine are both unavailable."); }
+    } else {
+      pauseGame("the offline engine could not move (" + (e.message || e) + ").");
+    }
   } finally { coachBusy = false; }
 }
 async function handleCoachResponse(resp, packet, isReprompt) {
@@ -174,28 +385,28 @@ async function handleCoachResponse(resp, packet, isReprompt) {
   const raw = resp && resp.move;
   const v = C.validateCoachMove(st, raw, currentCandidates);
   if (v.ok) {
-    if (resp.coach_line) coachLine("<b>Coach:</b> " + escapeHtml(resp.coach_line));
+    if (resp.coach_line) coachLine("Coach: " + resp.coach_line);
     applyCoachMove(v.move);
     sessionRecord.moves.push({ ply: history.length, san: v.san, via: isReprompt ? "reprompt" : "coach" });
     return;
   }
   alertLog("FAILSAFE " + v.reason, "coach tried '" + raw + "' at " + packet.fen);
   if (!isReprompt) {
-    coachLine("<i>The coach suggested a move that isn't available here — asking again.</i>");
-    try {
-      const resp2 = await (responder || relayResponder)(packet,
-        "Your previous move '" + raw + "' was rejected: " + v.reason + ". Pick exactly one move from the candidate list.");
-      await handleCoachResponse(resp2, packet, true);
-    } catch (e) { pauseGame("the coach could not be reached on the retry."); }
+    coachLine("The coach suggested a move that isn't available here — asking again.");
+    const resp2 = await (responder || relayTurn)(packet,
+      "Your previous move '" + raw + "' was rejected: " + v.reason + ". Pick exactly one move from the candidate list.");
+    await handleCoachResponse(resp2, packet, true);
     return;
   }
-  const fb = C.fallbackCandidate(currentCandidates, currentLines);
+  // A1: after a failed reprompt, play the packet's fallback move —
+  // Stockfish's top candidate — the same move the relay falls back to.
+  const fb = packet.fallback || currentFallback || C.fallbackCandidate(currentCandidates, currentLines);
   sessionRecord.flagged = true;
   // No third alert here: the two attempts already alerted above, and
   // the fallback is recorded in sessionRecord.moves (via:"fallback")
   // plus the flag. One alert per illegal attempt is the counting
   // rule calibration relies on.
-  coachLine("<i>Coach stumbled, recovered — a move was played for the coach inside its strength band.</i>");
+  coachLine("Coach stumbled, recovered — Stockfish's top candidate was played for the coach.");
   if (fb) {
     const m2 = C.parseSan(st, fb.san) || C.parseUci(st, fb.uci);
     if (m2) { applyCoachMove(m2); sessionRecord.moves.push({ ply: history.length, san: fb.san, via: "fallback" }); }
@@ -206,7 +417,6 @@ function applyCoachMove(coreMove) {
   if (!pageMoves.length) { alertLog("FAILSAFE internal", "validated move not found in page engine"); return; }
   doMove(pageMoves[0], coreMove.promoChoice || null);
 }
-function escapeHtml(s) { const d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
 // ---------- hints ----------
 async function checkLessonHint() {
   hintDetail = null;
@@ -218,16 +428,45 @@ async function checkLessonHint() {
   }
 }
 async function onHint() {
-  if (hintDetail) { coachLine("<b>Hint:</b> " + escapeHtml(hintDetail)); return; }
+  if (hintDetail) { coachLine("Hint: " + hintDetail); return; }
   try {
     const st = replayState();
     const { bestmove } = await sf.analyze(C.fenFromState(st), 1, 12);
     const m = bestmove && C.parseUci(st, bestmove);
-    coachLine(m ? "<b>Hint:</b> the strongest idea here is " + C.sanWithSuffix(st, m, m.promoChoice || null) + "."
-                : "<b>Hint:</b> nothing forcing — develop a piece toward the center.");
-  } catch (_) { coachLine("<b>Hint:</b> the scorer is unavailable right now."); }
+    coachLine(m ? "Hint: the strongest idea here is " + C.sanWithSuffix(st, m, m.promoChoice || null) + "."
+                : "Hint: nothing forcing — develop a piece toward the center.");
+  } catch (_) { coachLine("Hint: the scorer is unavailable right now."); }
 }
 // ---------- game end / review ----------
+function renderReview(review, opts) {
+  const rp = $("reviewPanel"), rb = $("reviewBody");
+  if (!rp || !rb) return;
+  rp.style.display = "";
+  rb.innerHTML = "";
+  const addP = (text) => { const p = document.createElement("p"); p.textContent = text; rb.appendChild(p); return p; };
+  addP(opts.resultText + " Your Elo: " + review.eloBefore + " → " + review.eloAfter +
+       (opts.mode === "practice" ? " (calibrated estimate)" : "") +
+       " Average centipawn loss — you: " + (review.avgCpl.w ?? "—") + ", coach: " + (review.avgCpl.b ?? "—"));
+  if (opts.onlineReview && opts.onlineReview.review_text) {
+    addP(opts.onlineReview.review_text);
+    if (opts.onlineReview.focus_lesson)
+      addP("Focus lesson for next time: " + opts.onlineReview.focus_lesson);
+  } else {
+    if (review.moments.length) {
+      addP("Key moments");
+      const ul = document.createElement("ul");
+      for (const mm of review.moments) {
+        const li = document.createElement("li");
+        li.textContent = mm.san + " (" + (mm.mover === "w" ? "you" : "coach") + ", " + mm.reasonClass + ") — " + mm.lesson;
+        ul.appendChild(li);
+      }
+      rb.appendChild(ul);
+    } else addP("No big swings that game — a tight one.");
+    if (review.focusLesson) addP("Focus lesson for next time: " + review.focusLesson);
+  }
+  if (offlineMode) addP("Offline review — computed on this page (the coach was offline).");
+  else if (opts.reviewNote) addP(opts.reviewNote);
+}
 async function finishGame() {
   gameActive = false;
   await scorePosition();
@@ -245,36 +484,44 @@ async function finishGame() {
     const before = C.stateFromSans(history.slice(0, i));
     plies.push({ san: history[i], mover: i % 2 === 0 ? "w" : "b", stateBefore: before, move: C.parseSan(before, history[i]) });
   }
-  let eloAfter = dossier.elo;
+  let eloAfter = dossier.elo, onlineReview = null, reviewNote = "";
   if (mode === "practice") {
     eloAfter = targetElo; // the resting calibration target is the estimate (spec s.5)
     dossier.calibrated = true;
+  } else if (mode === "rated" && !offlineMode && sessionToken && !responder) {
+    // Online review: the relay's dossier is authoritative for elo/focus.
+    const prelim = C.buildReview(scoreLog, plies, PLAYER, resultText, gameStartElo, gameStartElo);
+    const body = { game_id: gameId,
+                   result: score === 1 ? "1-0" : score === 0 ? "0-1" : "1/2-1/2",
+                   moves: history.slice(),
+                   key_moments: prelim.moments.map((mm) => ({ ply: mm.ply, san: mm.san,
+                     swing_cp: mm.swingCp, reason_class: mm.reasonClass })),
+                   elo_before: gameStartElo };
+    try { onlineReview = await relayReview(body); }
+    catch (e) { if (e && e.regate) { /* re-gate shown; local review still renders below */ } onlineReview = null; }
+    if (onlineReview) eloAfter = onlineReview.elo_after;
+    else { eloAfter = C.eloUpdate(dossier.elo, targetElo, score); reviewNote = "Relay review unavailable — this review was computed on this page."; }
   } else if (mode === "rated") {
     eloAfter = C.eloUpdate(dossier.elo, targetElo, score);
   }
-  const review = C.buildReview(scoreLog, plies, PLAYER, resultText, dossier.elo, eloAfter);
+  const review = C.buildReview(scoreLog, plies, PLAYER, resultText, gameStartElo, eloAfter);
+  if (onlineReview) { review.eloBefore = onlineReview.elo_before; review.eloAfter = onlineReview.elo_after; }
   dossier.elo = eloAfter; dossier.games++; dossier.lastResult = resultText;
   dossier.eloHistory.push(eloAfter);
   const firstTwo = history.filter((_, i) => i % 2 === 0).slice(0, 2).join(" ");
   if (firstTwo) dossier.openings[firstTwo] = (dossier.openings[firstTwo] || 0) + 1;
   if (review.focusClass && !dossier.mistake_patterns.includes(review.focusClass))
     dossier.mistake_patterns.push(review.focusClass);
-  if (review.focusLesson) { dossier.focus_lesson = review.focusLesson; dossier.focus_class = review.focusClass; }
+  if (onlineReview && onlineReview.focus_lesson) {
+    dossier.focus_lesson = onlineReview.focus_lesson;
+    if (review.focusClass) dossier.focus_class = review.focusClass;
+  } else if (review.focusLesson) { dossier.focus_lesson = review.focusLesson; dossier.focus_class = review.focusClass; }
   saveDossier(); renderDossier();
   try { localStorage.removeItem("chessCoachPaused." + BRANCH); } catch (_) {}
-  const rp = $("reviewPanel"), rb = $("reviewBody");
-  rp.style.display = "";
-  let html = "<p><b>" + resultText + "</b><br>Your Elo: " + review.eloBefore + " → <b>" + review.eloAfter + "</b>" +
-             (mode === "practice" ? " (calibrated estimate)" : "") + "<br>" +
-             "Average centipawn loss — you: " + (review.avgCpl.w ?? "—") + ", coach: " + (review.avgCpl.b ?? "—") + "</p>";
-  if (review.moments.length) {
-    html += "<p><b>Key moments</b></p><ul>" + review.moments.map((mm) =>
-      "<li><b>" + mm.san + "</b> (" + (mm.mover === "w" ? "you" : "coach") + ", " + mm.reasonClass + ") — " + mm.lesson + "</li>").join("") + "</ul>";
-  } else html += "<p>No big swings that game — a tight one.</p>";
-  if (review.focusLesson) html += "<p><b>Focus lesson for next time:</b> " + review.focusLesson + "</p>";
-  rb.innerHTML = html;
-  coachLine("<b>Game over.</b> " + resultText + " Your review session is below the board.");
-  if (sessionRecord) { sessionRecord.review = review; sessionRecord.finishedAt = new Date().toISOString();
+  renderReview(review, { resultText, mode, onlineReview, reviewNote });
+  coachLine("Game over. " + resultText + " Your review session is below the board.");
+  if (sessionRecord) { sessionRecord.review = review; sessionRecord.onlineReview = !!onlineReview;
+    sessionRecord.finishedAt = new Date().toISOString();
     try { localStorage.setItem("chessCoachLastSession." + BRANCH, JSON.stringify(sessionRecord)); } catch (_) {} }
 }
 // ---------- wiring ----------
@@ -301,26 +548,20 @@ function init(opts) {
     const hb = $("hintBtn"); if (hb) hb.addEventListener("click", onHint);
     const gate = $("gate");
     if (gate) {
-      let open = false;
-      try { open = sessionStorage.getItem("chessCoachGate." + BRANCH) === "1"; } catch (_) {}
-      if (open) gate.style.display = "none";
-      const tryGate = () => {
-        if ($("gateInput").value === GATE_WORD) {
-          gate.style.display = "none";
-          try { sessionStorage.setItem("chessCoachGate." + BRANCH, "1"); } catch (_) {}
-        } else $("gateMsg").textContent = "That's not it — ask Christopher.";
-      };
-      $("gateBtn").addEventListener("click", tryGate);
-      $("gateInput").addEventListener("keydown", (e) => { if (e.key === "Enter") tryGate(); });
+      if (loadStoredToken()) gate.style.display = "none";
+      const gb = $("gateBtn"); if (gb) gb.addEventListener("click", () => { tryGate(); });
+      const gi = $("gateInput"); if (gi) gi.addEventListener("keydown", (e) => { if (e.key === "Enter") tryGate(); });
+      const ob = $("gateOfflineBtn"); if (ob) ob.addEventListener("click", () => enterOfflineFromGate());
     }
   }
   sf.start(SF_URL).then(() => setCoachState("Coach is ready. Start a new game when you are."))
-    .catch(() => setCoachState("The analysis engine did not load — the coach is paused (games need it for move candidates)."));
+    .catch(() => setCoachState("The analysis engine did not load — games need it for move candidates."));
   setInterval(poll, 300);
 }
-return { init, startGame, coachTurn, handleCoachResponse, _test: {
+return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   getDossier: () => dossier, getScoreLog: () => scoreLog, getSession: () => sessionRecord,
   getTarget: () => targetElo, setScoreLog: (s) => { scoreLog = s; },
+  getOffline: () => offlineMode, getGameId: () => gameId, hasToken: () => !!sessionToken,
   finishGame, replayState } };
 })();
 if (typeof window !== "undefined" && !window.__coachManualInit)
