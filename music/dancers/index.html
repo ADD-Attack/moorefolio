@@ -67,6 +67,24 @@
 </div>
 <audio id="audio" preload="auto"></audio>
 <script>
+  // ---- container song selector (producer patch 2026-10-21) ----
+  (function () {
+    var s = new URLSearchParams(location.search).get('song');
+    if (!s) return;
+    s = s.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!s || s === 'demo') return;
+    window.__songTitle = s.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    var of = window.fetch.bind(window);
+    window.fetch = function (u, o) {
+      if (typeof u === 'string') {
+        u = u.split('../assets/demo.mp3').join('../assets/' + s + '.mp3')
+             .split('../assets/demo.viz.json').join('../assets/' + s + '.viz.json')
+             .split('../assets/demo.dance.json').join('../assets/' + s + '.dance.json');
+      }
+      return of(u, o);
+    };
+  })();
+
 (function () {
   'use strict';
 
@@ -807,7 +825,7 @@
     fetch('../assets/demo.mp3').then(function (r) { if (!r.ok) throw new Error('no demo'); return r.blob(); })
       .then(function (b) {
         if (trackLoaded) return;                      // user already picked something
-        setTrack(URL.createObjectURL(b), 'Mountain King v1 (demo)', true);
+        setTrack(URL.createObjectURL(b), (window.__songTitle || 'Mountain King v1 (demo)'), true);
         fetch('../assets/demo.dance.json').then(function (r) { if (!r.ok) throw new Error('no dance guide'); return r.json(); })
           .then(function (j) { if (trackIsDemo) loadDance(j); }).catch(function () {});
         return fetch('../assets/demo.viz.json').then(function (r) { if (!r.ok) throw new Error('no sidecar'); return r.json(); })

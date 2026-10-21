@@ -83,6 +83,24 @@
 <div id="drop">drop audio or .viz.json</div>
 
 <script>
+  // ---- container song selector (producer patch 2026-10-21) ----
+  (function () {
+    var s = new URLSearchParams(location.search).get('song');
+    if (!s) return;
+    s = s.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!s || s === 'demo') return;
+    window.__songTitle = s.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    var of = window.fetch.bind(window);
+    window.fetch = function (u, o) {
+      if (typeof u === 'string') {
+        u = u.split('../assets/demo.mp3').join('../assets/' + s + '.mp3')
+             .split('../assets/demo.viz.json').join('../assets/' + s + '.viz.json')
+             .split('../assets/demo.dance.json').join('../assets/' + s + '.dance.json');
+      }
+      return of(u, o);
+    };
+  })();
+
 (function () {
   'use strict';
 
@@ -267,7 +285,7 @@
       return r.blob();
     }).then(function (b) {
       if (hasAudio) return; // the user already picked something
-      setAudio(URL.createObjectURL(b), 'Mountain King v1 (demo)');
+      setAudio(URL.createObjectURL(b), (window.__songTitle || 'Mountain King v1 (demo)'));
       return fetch('../assets/demo.viz.json').then(function (r) {
         if (!r.ok) throw new Error('no sidecar');
         return r.json();
