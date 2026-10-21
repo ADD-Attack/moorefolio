@@ -1,0 +1,580 @@
+<!--
+  Prototype: Trippy Flow
+  Influence dials: trippy 5 / beautiful 3 / technical 0 / dancing 1 / colorful 4 / intense 2
+  Mapping: spectral centroid drifts the hue; low energy swells the metaballs; mid energy deepens the
+  fluid domain-warp; high energy adds fine shimmer; each kick (FFT low-band flux, or sidecar `kick`
+  times in SCORE mode) launches a ripple that bends the fluid instead of a flash; snares give the
+  kaleidoscope a twist; melody pitch (sidecar) sets the radius of the mirrored melody bead;
+  sections (sidecar) change the mirror count and warp depth.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Trippy Flow · Music Visualizer Prototype</title>
+<style>
+  :root { --fg: rgba(255,255,255,.88); --dim: rgba(255,255,255,.55); --glass: rgba(10,8,20,.42); }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: #07050d; color: var(--fg);
+    font: 14px/1.35 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow: hidden; }
+  #stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .chrome { position: fixed; left: 0; right: 0; z-index: 2; padding: 12px 16px;
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap; pointer-events: none; }
+  .chrome > * { pointer-events: auto; }
+  #top { top: 0; justify-content: space-between; }
+  #title { font-weight: 600; letter-spacing: .14em; text-transform: uppercase; font-size: 12px;
+    text-shadow: 0 1px 8px rgba(0,0,0,.6); }
+  #track { color: var(--dim); font-size: 12px; letter-spacing: .02em; max-width: 60vw;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #badge { font: 600 10px/1 ui-monospace, Menlo, Consolas, monospace; letter-spacing: .16em;
+    padding: 5px 8px; border-radius: 999px; border: 1px solid rgba(255,255,255,.35); color: var(--fg);
+    background: var(--glass); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  #badge.score { border-color: #ffd36e; color: #ffd36e; }
+  #bar { bottom: 0; padding-bottom: max(12px, env(safe-area-inset-bottom));
+    background: linear-gradient(to top, rgba(5,3,10,.7), rgba(5,3,10,0)); }
+  button, .pick { appearance: none; border: 1px solid rgba(255,255,255,.28); background: var(--glass);
+    color: var(--fg); border-radius: 999px; padding: 7px 12px; font: inherit; font-size: 12px;
+    cursor: pointer; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); white-space: nowrap; }
+  button:hover, .pick:hover { border-color: rgba(255,255,255,.6); }
+  button:disabled { opacity: .4; cursor: default; }
+  #play { width: 40px; height: 40px; padding: 0; display: grid; place-items: center; font-size: 15px; }
+  .pick input { display: none; }
+  #seek { flex: 1 1 160px; min-width: 0; accent-color: #d9a6ff; }
+  #time { font: 12px ui-monospace, Menlo, Consolas, monospace; color: var(--dim); min-width: 84px; text-align: right; }
+  .row { display: flex; align-items: center; gap: 10px; flex: 1 1 260px; min-width: 0; }
+  .picks { display: flex; gap: 8px; flex-wrap: wrap; }
+  #drop { position: fixed; inset: 10px; z-index: 5; border: 2px dashed rgba(255,255,255,.5); border-radius: 18px;
+    display: none; place-items: center; font-size: 16px; letter-spacing: .1em; background: rgba(0,0,0,.35); }
+  #drop.on { display: grid; }
+  #hint { position: fixed; left: 50%; top: 50%; transform: translate(-50%,-50%); z-index: 1; text-align: center;
+    color: var(--dim); font-size: 13px; letter-spacing: .08em; pointer-events: none; transition: opacity .8s;
+    text-shadow: 0 1px 10px rgba(0,0,0,.8); padding: 0 24px; }
+  #hint.gone { opacity: 0; }
+  @media (max-width: 480px) {
+    .chrome { padding: 10px 12px; gap: 8px; }
+    #track { max-width: 46vw; }
+    .row { flex-basis: 100%; }
+  }
+</style>
+</head>
+<body>
+<canvas id="stage" aria-label="Music visualizer"></canvas>
+
+<div id="top" class="chrome">
+  <div><div id="title">Trippy Flow</div><div id="track">No track loaded</div></div>
+  <span id="badge" title="FFT: analysed from audio · SCORE: driven by .viz.json sidecar">FFT</span>
+</div>
+
+<div id="hint">drop a song anywhere · or choose one below</div>
+
+<div id="bar" class="chrome">
+  <div class="row">
+    <button id="play" aria-label="Play" disabled>▶</button>
+    <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" disabled>
+    <span id="time">0:00 / 0:00</span>
+  </div>
+  <div class="picks">
+    <label class="pick">Audio…<input id="fileAudio" type="file" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a"></label>
+    <label class="pick" title="Optional score sidecar (.viz.json)">Sidecar…<input id="fileViz" type="file" accept=".json,application/json"></label>
+  </div>
+</div>
+
+<div id="drop">drop audio or .viz.json</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ---------- DOM ----------
+  var $ = function (id) { return document.getElementById(id); };
+  var canvas = $('stage'), playBtn = $('play'), seek = $('seek'), timeEl = $('time');
+  var trackEl = $('track'), badge = $('badge'), hint = $('hint'), drop = $('drop');
+
+  // ---------- Audio ----------
+  var audio = new Audio();
+  audio.preload = 'auto';
+  var actx = null, analyser = null, srcNode = null, freq = null, prevFreq = null;
+  var binHz = 0, lowR = [0, 0], midR = [0, 0], highR = [0, 0], allR = [0, 0];
+  var currentURL = null, hasAudio = false, seeking = false;
+
+  function ensureContext() {
+    if (actx) { if (actx.state === 'suspended') actx.resume(); return; }
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    actx = new AC();
+    analyser = actx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.5;
+    srcNode = actx.createMediaElementSource(audio);
+    srcNode.connect(analyser);
+    analyser.connect(actx.destination);
+    freq = new Uint8Array(analyser.frequencyBinCount);
+    prevFreq = new Uint8Array(analyser.frequencyBinCount);
+    binHz = actx.sampleRate / analyser.fftSize;
+    function range(lo, hi) {
+      return [Math.max(1, Math.ceil(lo / binHz)), Math.min(analyser.frequencyBinCount - 1, Math.floor(hi / binHz))];
+    }
+    lowR = range(20, 140); midR = range(140, 2000); highR = range(2000, 12000); allR = range(20, 12000);
+  }
+
+  function setAudio(url, name) {
+    if (currentURL && currentURL.indexOf('blob:') === 0) URL.revokeObjectURL(currentURL);
+    currentURL = url;
+    audio.src = url;
+    audio.load();
+    hasAudio = true;
+    trackEl.textContent = name;
+    playBtn.disabled = false; seek.disabled = false;
+    hint.classList.add('gone');
+    resetCursors();
+    updatePlayBtn();
+  }
+
+  function loadAudioFile(file) {
+    if (sidecarFrom === 'demo') setSidecar(null, null);
+    setAudio(URL.createObjectURL(file), file.name.replace(/\.[^.]+$/, ''));
+  }
+
+  function togglePlay() {
+    if (!hasAudio) return;
+    ensureContext();
+    if (audio.paused) { var p = audio.play(); if (p && p.catch) p.catch(function () {}); }
+    else audio.pause();
+  }
+  function updatePlayBtn() {
+    playBtn.textContent = audio.paused ? '▶' : '❚❚';
+    playBtn.setAttribute('aria-label', audio.paused ? 'Play' : 'Pause');
+  }
+  audio.addEventListener('play', updatePlayBtn);
+  audio.addEventListener('pause', updatePlayBtn);
+  audio.addEventListener('ended', updatePlayBtn);
+  audio.addEventListener('seeked', resetCursors);
+  audio.addEventListener('loadedmetadata', updateTime);
+  playBtn.addEventListener('click', togglePlay);
+
+  function fmt(s) {
+    if (!isFinite(s) || s < 0) s = 0;
+    var m = Math.floor(s / 60), r = Math.floor(s % 60);
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+  function updateTime() {
+    var d = audio.duration;
+    timeEl.textContent = fmt(audio.currentTime) + ' / ' + fmt(d);
+    if (!seeking && isFinite(d) && d > 0) seek.value = String(Math.round(audio.currentTime / d * 1000));
+  }
+  seek.addEventListener('input', function () {
+    seeking = true;
+    var d = audio.duration;
+    if (isFinite(d)) timeEl.textContent = fmt(seek.value / 1000 * d) + ' / ' + fmt(d);
+  });
+  seek.addEventListener('change', function () {
+    var d = audio.duration;
+    if (isFinite(d) && d > 0) audio.currentTime = seek.value / 1000 * d;
+    seeking = false;
+    resetCursors();
+  });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' || e.key === ' ') {
+      e.preventDefault();
+      togglePlay();
+    }
+  });
+
+  // ---------- Sidecar (SCORE mode) ----------
+  var score = null, sidecarFrom = null;
+  var cur = { kick: 0, snare: 0, melody: 0, section: 0 };
+  var melMin = 48, melMax = 84;
+
+  function nums(a) {
+    return Array.isArray(a) ? a.filter(function (x) { return typeof x === 'number' && isFinite(x); }).sort(function (a, b) { return a - b; }) : [];
+  }
+  function parseSidecar(j) {
+    if (!j || typeof j !== 'object') return null;
+    var s = {
+      kick: nums(j.kick), snare: nums(j.snare),
+      melody: (Array.isArray(j.melody) ? j.melody : []).filter(function (n) {
+        return n && isFinite(n.t) && isFinite(n.midi);
+      }).map(function (n) { return { t: +n.t, midi: +n.midi, dur: isFinite(n.dur) ? Math.max(0.05, +n.dur) : 0.25 }; })
+        .sort(function (a, b) { return a.t - b.t; }),
+      sections: (Array.isArray(j.sections) ? j.sections : []).filter(function (x) { return x && isFinite(x.t); })
+        .map(function (x) { return { t: +x.t, name: String(x.name || ''), energy: isFinite(x.energy) ? +x.energy : 0.5 }; })
+        .sort(function (a, b) { return a.t - b.t; })
+    };
+    if (!s.kick.length && !s.snare.length && !s.melody.length && !s.sections.length) return null;
+    return s;
+  }
+  function setSidecar(s, from) {
+    score = s; sidecarFrom = s ? from : null;
+    badge.textContent = s ? 'SCORE' : 'FFT';
+    badge.classList.toggle('score', !!s);
+    if (s && s.melody.length) {
+      melMin = Infinity; melMax = -Infinity;
+      s.melody.forEach(function (n) { melMin = Math.min(melMin, n.midi); melMax = Math.max(melMax, n.midi); });
+      if (melMax - melMin < 12) { var c = (melMax + melMin) / 2; melMin = c - 6; melMax = c + 6; }
+    }
+    resetCursors();
+  }
+  function loadSidecarFile(file) {
+    var r = new FileReader();
+    r.onload = function () {
+      try { var s = parseSidecar(JSON.parse(r.result)); if (s) setSidecar(s, 'user'); else alert('That sidecar has no kick/snare/melody/sections data.'); }
+      catch (e) { alert('Could not read sidecar JSON: ' + e.message); }
+    };
+    r.readAsText(file);
+  }
+  function firstAtOrAfter(arr, t, key) {
+    var lo = 0, hi = arr.length;
+    while (lo < hi) { var m = (lo + hi) >> 1; var v = key ? arr[m][key] : arr[m]; if (v < t) lo = m + 1; else hi = m; }
+    return lo;
+  }
+  var lastAudioT = 0;
+  function resetCursors() {
+    var t = audio.currentTime || 0;
+    lastAudioT = t;
+    if (!score) return;
+    cur.kick = firstAtOrAfter(score.kick, t);
+    cur.snare = firstAtOrAfter(score.snare, t);
+    cur.melody = firstAtOrAfter(score.melody, t, 't');
+    cur.section = Math.max(0, firstAtOrAfter(score.sections, t + 1e-6, 't') - 1);
+    melEnv = 0;
+    if (score.sections.length) applySection(cur.section, false);
+  }
+
+  $('fileAudio').addEventListener('change', function (e) { var f = e.target.files[0]; if (f) loadAudioFile(f); e.target.value = ''; });
+  $('fileViz').addEventListener('change', function (e) { var f = e.target.files[0]; if (f) loadSidecarFile(f); e.target.value = ''; });
+
+  // Drag and drop anywhere
+  var dragDepth = 0;
+  window.addEventListener('dragenter', function (e) { e.preventDefault(); dragDepth++; drop.classList.add('on'); });
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('dragleave', function () { if (--dragDepth <= 0) { dragDepth = 0; drop.classList.remove('on'); } });
+  window.addEventListener('drop', function (e) {
+    e.preventDefault(); dragDepth = 0; drop.classList.remove('on');
+    var files = e.dataTransfer && e.dataTransfer.files; if (!files) return;
+    for (var i = 0; i < files.length; i++) {
+      var f = files[i];
+      if (/\.json$/i.test(f.name) || f.type === 'application/json') loadSidecarFile(f);
+      else if (/^audio\//.test(f.type) || /\.(mp3|wav|ogg|oga|flac|m4a|aac|opus|webm)$/i.test(f.name)) loadAudioFile(f);
+    }
+  });
+
+  // Demo autoload (silently falls back to the picker on file:// or 404)
+  try {
+    fetch('../assets/demo.mp3').then(function (r) {
+      if (!r.ok) throw new Error('no demo');
+      return r.blob();
+    }).then(function (b) {
+      if (hasAudio) return; // the user already picked something
+      setAudio(URL.createObjectURL(b), 'Mountain King v1 (demo)');
+      return fetch('../assets/demo.viz.json').then(function (r) {
+        if (!r.ok) throw new Error('no sidecar');
+        return r.json();
+      }).then(function (j) {
+        var s = parseSidecar(j);
+        if (s && !score) setSidecar(s, 'demo');
+      });
+    }).catch(function () {});
+  } catch (e) { /* fetch unavailable: picker path */ }
+
+  // ---------- Motion preferences ----------
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var calm = !!(mq && mq.matches);
+  if (mq) {
+    var onMq = function () { calm = mq.matches; };
+    if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq);
+  }
+
+  // ---------- Visual state ----------
+  var bands = { low: 0, mid: 0, high: 0 };       // smoothed 0..1
+  var hue = 0.72, hueTarget = 0.72;              // 0..1
+  var energy = 0.4, energyTarget = 0.4;          // long-term loudness / section energy
+  var ripples = [];                              // {x,y,t0,s}
+  var glow = 0, lastGlowAt = -10;                // gentle lift on kick, rate-limited
+  var rot = 0, rotVel = 0;                       // kaleidoscope rotation
+  var segs = 6, segChoices = [6, 8, 5, 7, 9, 6];
+  var segIdx = 0, kicksSinceSeg = 0;
+  var melPos = 0.4, melEnv = 0, melOff = 0, melHue = 0;
+  var fluxHist = [], lastKickAt = -10;
+  var flowT = 0, clock = 0, lastIdleRipple = 0;
+
+  function addRipple(strength, now) {
+    var a = Math.random() * Math.PI * 2, r = Math.random() * 0.22;
+    ripples.push({ x: Math.cos(a) * r, y: Math.sin(a) * r, t0: now, s: strength });
+    if (ripples.length > 8) ripples.shift();
+  }
+  function onKick(strength, now) {
+    addRipple(calm ? 0.35 * strength : strength, now);
+    // brightness lift is gentle and capped at <= 2.5 lifts/second (well under the 3/s strobe limit)
+    if (!calm && now - lastGlowAt >= 0.4) { glow = Math.min(1, glow + 0.6 * strength); lastGlowAt = now; }
+    if (!score || !score.sections.length) {
+      if (++kicksSinceSeg >= 32) { kicksSinceSeg = 0; segIdx = (segIdx + 1) % segChoices.length; segs = segChoices[segIdx]; }
+    }
+  }
+  function onSnare() { if (!calm) rotVel += (Math.random() < 0.5 ? -1 : 1) * 0.35; }
+  function onNote(n) {
+    melPos = Math.max(0, Math.min(1, (n.midi - melMin) / Math.max(1, melMax - melMin)));
+    melEnv = 1; melOff = n.t + n.dur; melHue = ((n.midi % 12) / 12);
+  }
+  function applySection(i, withRipple) {
+    var s = score.sections[i]; if (!s) return;
+    segs = segChoices[i % segChoices.length];
+    energyTarget = Math.max(0, Math.min(1, s.energy));
+    if (withRipple) addRipple(0.8, clock);
+  }
+
+  // ---------- Analysis ----------
+  function avg(r) {
+    var s = 0; for (var i = r[0]; i <= r[1]; i++) s += freq[i];
+    return r[1] >= r[0] ? s / ((r[1] - r[0] + 1) * 255) : 0;
+  }
+  function smooth(cur, target, dt) {
+    var k = target > cur ? 1 - Math.exp(-dt * 28) : 1 - Math.exp(-dt * 3.5);
+    return cur + (target - cur) * k;
+  }
+
+  function analyse(dt, now) {
+    var playing = hasAudio && !audio.paused && analyser;
+    var low, mid, high;
+    if (playing) {
+      analyser.getByteFrequencyData(freq);
+      low = avg(lowR); mid = avg(midR); high = avg(highR);
+      // Spectral centroid -> hue target (log scale, ~100 Hz .. 8 kHz)
+      var num = 0, den = 0;
+      for (var i = allR[0]; i <= allR[1]; i++) { num += freq[i] * i * binHz; den += freq[i]; }
+      if (den > 0) {
+        var c = num / den;
+        var cn = Math.max(0, Math.min(1, Math.log(c / 100) / Math.log(80)));
+        hueTarget = 0.62 + cn * 0.75; // violet -> magenta -> amber -> green as the sound brightens
+      }
+      // Low-band spectral flux kick detector (FFT mode only)
+      var flux = 0;
+      for (var j = lowR[0]; j <= lowR[1]; j++) { var d = freq[j] - prevFreq[j]; if (d > 0) flux += d; }
+      flux /= (lowR[1] - lowR[0] + 1) * 255;
+      fluxHist.push(flux); if (fluxHist.length > 43) fluxHist.shift();
+      var m = 0; for (var k = 0; k < fluxHist.length; k++) m += fluxHist[k]; m /= fluxHist.length;
+      var v = 0; for (k = 0; k < fluxHist.length; k++) v += (fluxHist[k] - m) * (fluxHist[k] - m); v = Math.sqrt(v / fluxHist.length);
+      var thr = m + 1.5 * v + 0.015;
+      var at = audio.currentTime;
+      if (at < lastKickAt) lastKickAt = -10; // seek backwards
+      if (!(score && score.kick.length) && fluxHist.length > 10 && flux > thr && low > 0.25 && at - lastKickAt >= 0.25) {
+        lastKickAt = at;
+        onKick(Math.min(1, 0.55 + (flux - thr) * 8), now);
+      }
+      prevFreq.set(freq);
+      if (!score || !score.sections.length) energyTarget = Math.min(1, (low * 0.5 + mid * 0.8 + high * 0.6));
+    } else {
+      // Gentle synthetic pulse: a slow 0.5 Hz heartbeat so the idle stage breathes on its own.
+      var ph = (now * 0.5) % 1;
+      low = 0.18 + 0.32 * Math.exp(-ph * 6);
+      mid = 0.22 + 0.08 * Math.sin(now * 0.37);
+      high = 0.1 + 0.06 * Math.sin(now * 0.71 + 1);
+      hueTarget = 0.72 + 0.18 * Math.sin(now * 0.045);
+      if (now - lastIdleRipple >= 2) { lastIdleRipple = now; addRipple(calm ? 0.25 : 0.5, now); }
+      if (!score || !score.sections.length || !hasAudio) energyTarget = 0.35;
+    }
+    bands.low = smooth(bands.low, low, dt);
+    bands.mid = smooth(bands.mid, mid, dt);
+    bands.high = smooth(bands.high, high, dt);
+    // hue moves slowly (it is a drift, not a flicker); shortest way round the wheel
+    var dh = hueTarget - hue; dh -= Math.round(dh);
+    hue += dh * (1 - Math.exp(-dt * 0.8));
+    energy += (energyTarget - energy) * (1 - Math.exp(-dt * 0.7));
+  }
+
+  function scoreEvents(now) {
+    if (!score || !hasAudio) return;
+    var t = audio.currentTime, la = t + 0.05;
+    if (t < lastAudioT - 0.1 || t > lastAudioT + 0.75) resetCursors(); // jump not caught by 'seeked'
+    lastAudioT = t;
+    if (audio.paused) return;
+    while (cur.kick < score.kick.length && score.kick[cur.kick] <= la) { onKick(0.9, now); cur.kick++; }
+    while (cur.snare < score.snare.length && score.snare[cur.snare] <= la) { onSnare(); cur.snare++; }
+    while (cur.melody < score.melody.length && score.melody[cur.melody].t <= la) { onNote(score.melody[cur.melody]); cur.melody++; }
+    while (cur.section + 1 < score.sections.length && score.sections[cur.section + 1].t <= la) { cur.section++; applySection(cur.section, true); }
+  }
+
+  // ---------- WebGL ----------
+  var gl = null, prog = null, U = {}, use2D = false, ctx2d = null;
+  var VS = 'attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}';
+  var FS = [
+    'precision highp float;',
+    'uniform vec2 uRes;uniform float uTime;uniform vec3 uBands;uniform float uHue;uniform float uSeg;',
+    'uniform float uRot;uniform vec4 uRip[8];uniform vec3 uMel;uniform float uEnergy;uniform float uGlow;uniform float uMelHue;',
+    'vec3 hsv(vec3 c){vec3 p=abs(fract(c.xxx+vec3(0.,2./3.,1./3.))*6.-3.);return c.z*mix(vec3(1.),clamp(p-1.,0.,1.),c.y);}',
+    'float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}',
+    'float noise(vec2 p){vec2 i=floor(p),f=fract(p);vec2 u=f*f*(3.-2.*f);',
+    ' return mix(mix(hash(i),hash(i+vec2(1.,0.)),u.x),mix(hash(i+vec2(0.,1.)),hash(i+vec2(1.,1.)),u.x),u.y);}',
+    'float fbm(vec2 p){float v=0.,a=.5;mat2 m=mat2(1.6,1.2,-1.2,1.6);for(int i=0;i<5;i++){v+=a*noise(p);p=m*p;a*=.5;}return v;}',
+    'void main(){',
+    ' vec2 uv=(gl_FragCoord.xy-.5*uRes)/min(uRes.x,uRes.y);',
+    ' float rl=0.;',
+    ' for(int i=0;i<8;i++){vec4 r=uRip[i];if(r.w<=0.)continue;',
+    '  vec2 d=uv-r.xy;float L=length(d)+1e-4;float x=L-r.z*.75;',
+    '  float env=exp(-r.z*1.3)*r.w;float w=sin(x*30.)*exp(-x*x*22.);',
+    '  uv+=(d/L)*w*env*.04;rl+=w*env;}',
+    ' float rr=length(uv);float a=atan(uv.y,uv.x)+uRot;',
+    ' float sg=6.2831853/uSeg;a=mod(a,sg);a=abs(a-.5*sg);',
+    ' vec2 k=vec2(cos(a),sin(a))*rr;',
+    ' float t=uTime;float warp=1.2+uBands.y*2.4+uEnergy*1.2;',
+    ' vec2 q=vec2(fbm(k*2.2+vec2(0.,t*.15)),fbm(k*2.2+vec2(5.2,-t*.12)));',
+    ' vec2 s=vec2(fbm(k*2.+q*warp+vec2(1.7,9.2)+t*.10),fbm(k*2.+q*warp+vec2(8.3,2.8)-t*.08));',
+    ' float f=fbm(k*2.4+s*2.2-vec2(t*.05,0.));',
+    ' float field=0.;',
+    ' for(int i=0;i<5;i++){float fi=float(i);',
+    '  vec2 c=vec2(cos(t*.31+fi*1.7),sin(t*.23+fi*2.3))*(.22+.16*sin(t*.11+fi*1.3));',
+    '  float rad=.055+.07*uBands.x+.015*sin(t*.9+fi);vec2 dc=k+(s-.5)*.12-c;',
+    '  field+=rad*rad/(dot(dc,dc)+1e-4);}',
+    ' vec2 mc=vec2(cos(.25*sg),sin(.25*sg))*(.08+.62*uMel.x);vec2 dm=k-mc;',
+    ' field+=uMel.y*.0045/(dot(dm,dm)+1e-4);',
+    ' float h=uHue+f*.45+s.x*.25+rr*.12;',
+    ' vec3 col=hsv(vec3(h,.78,.08+.9*f*f*(.7+.6*uEnergy)));',
+    ' col+=hsv(vec3(h+.33,.65,1.))*pow(q.y,4.)*.35;',
+    ' float inside=smoothstep(.85,1.25,field);',
+    ' float rim=exp(-abs(field-1.)*6.);',
+    ' vec3 blob=hsv(vec3(h+.5+uMelHue*uMel.y*.25,.55,.9+.25*uBands.x));',
+    ' col=mix(col,blob*(.55+.45*f),inside*.85);',
+    ' col+=hsv(vec3(h+.15,.4,1.))*rim*.55;',
+    ' float sp=noise(k*90.+t*3.);col+=vec3(1.)*smoothstep(.93,1.,sp)*uBands.z*.7*(1.-inside);',
+    ' col+=hsv(vec3(h+.1,.5,1.))*rl*.12;',
+    ' col*=1.+uGlow*.14;',
+    ' col*=1.-smoothstep(.55,1.15,rr)*.65;',
+    ' col=1.-exp(-col*1.25);',
+    ' gl_FragColor=vec4(pow(col,vec3(.92)),1.);',
+    '}'
+  ].join('\n');
+
+  function compile(type, src) {
+    var sh = gl.createShader(type); gl.shaderSource(sh, src); gl.compileShader(sh);
+    if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(sh));
+    return sh;
+  }
+  function initGL() {
+    try {
+      gl = canvas.getContext('webgl', { antialias: false, premultipliedAlpha: false }) || canvas.getContext('experimental-webgl');
+      if (!gl) throw new Error('no webgl');
+      prog = gl.createProgram();
+      gl.attachShader(prog, compile(gl.VERTEX_SHADER, VS));
+      gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, FS));
+      gl.linkProgram(prog);
+      if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(prog));
+      gl.useProgram(prog);
+      var buf = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+      gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+      var loc = gl.getAttribLocation(prog, 'p');
+      gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+      ['uRes', 'uTime', 'uBands', 'uHue', 'uSeg', 'uRot', 'uMel', 'uEnergy', 'uGlow', 'uMelHue'].forEach(function (n) { U[n] = gl.getUniformLocation(prog, n); });
+      U.uRip = gl.getUniformLocation(prog, 'uRip[0]') || gl.getUniformLocation(prog, 'uRip');
+    } catch (e) {
+      if (gl) { var fresh = canvas.cloneNode(false); canvas.parentNode.replaceChild(fresh, canvas); canvas = fresh; }
+      gl = null; use2D = true;
+      ctx2d = canvas.getContext('2d');
+    }
+  }
+
+  // ---------- Sizing (devicePixelRatio, adaptive render scale) ----------
+  var scale = Math.min(window.devicePixelRatio || 1, 2), maxScale = scale, frameAvg = 16;
+  function resize() {
+    maxScale = Math.min(window.devicePixelRatio || 1, 2);
+    scale = Math.min(scale, maxScale);
+    var w = Math.max(1, Math.round(canvas.clientWidth * scale)), h = Math.max(1, Math.round(canvas.clientHeight * scale));
+    if (canvas.width !== w || canvas.height !== h) { canvas.width = w; canvas.height = h; }
+  }
+  window.addEventListener('resize', resize);
+
+  // ---------- 2D fallback (no WebGL) ----------
+  function draw2D() {
+    var w = canvas.width, h = canvas.height, c = ctx2d, m = Math.min(w, h);
+    c.globalCompositeOperation = 'source-over';
+    c.fillStyle = 'rgba(7,5,13,0.18)'; c.fillRect(0, 0, w, h);
+    c.globalCompositeOperation = 'lighter';
+    c.save(); c.translate(w / 2, h / 2); c.rotate(rot);
+    for (var sgi = 0; sgi < segs; sgi++) {
+      c.rotate(Math.PI * 2 / segs);
+      for (var i = 0; i < 5; i++) {
+        var x = Math.cos(flowT * 0.31 + i * 1.7) * m * 0.25, y = Math.sin(flowT * 0.23 + i * 2.3) * m * 0.12;
+        var r = m * (0.05 + 0.07 * bands.low);
+        var g = c.createRadialGradient(x, y, 0, x, y, r * 2);
+        g.addColorStop(0, 'hsla(' + ((hue + i * 0.07) * 360 % 360) + ',80%,60%,0.35)');
+        g.addColorStop(1, 'hsla(' + ((hue + 0.3) * 360 % 360) + ',80%,40%,0)');
+        c.fillStyle = g; c.beginPath(); c.arc(x, y, r * 2, 0, Math.PI * 2); c.fill();
+      }
+    }
+    c.restore();
+    ripples.forEach(function (rp) {
+      var age = clock - rp.t0; c.strokeStyle = 'hsla(' + (hue * 360 % 360) + ',70%,70%,' + (0.4 * rp.s * Math.exp(-age * 1.3)) + ')';
+      c.lineWidth = 2 * scale; c.beginPath(); c.arc(w / 2 + rp.x * m, h / 2 - rp.y * m, age * 0.75 * m, 0, Math.PI * 2); c.stroke();
+    });
+  }
+
+  // ---------- Loop ----------
+  var ripArr = new Float32Array(32), last = performance.now();
+  function frame(ms) {
+    var dt = Math.min(0.1, Math.max(0.001, (ms - last) / 1000)); last = ms;
+    clock += dt;
+    var now = clock;
+
+    analyse(dt, now);
+    scoreEvents(now);
+
+    // melody envelope: in SCORE mode notes drive it; in FFT mode the mid band + centroid stand in
+    if (score && score.melody.length && hasAudio) {
+      var at = audio.currentTime;
+      if (at > melOff) melEnv *= Math.exp(-dt * 2.5);
+    } else {
+      melEnv += ((0.25 + bands.mid * 0.6) - melEnv) * (1 - Math.exp(-dt * 2));
+      melPos += ((((hue - 0.62) % 1 + 1) % 1) - melPos) * (1 - Math.exp(-dt * 1.5));
+      melHue = 0;
+    }
+
+    var speed = calm ? 0.3 : 1;
+    flowT += dt * speed * (0.55 + bands.mid * 0.6 + energy * 0.35 + bands.low * 0.25);
+    rotVel *= Math.exp(-dt * 1.6);
+    rot += dt * ((calm ? 0.01 : 0.04) + rotVel);
+    glow *= Math.exp(-dt * 4);
+
+    // expire ripples
+    while (ripples.length && clock - ripples[0].t0 > 3.5) ripples.shift();
+
+    resize();
+    if (gl) {
+      gl.viewport(0, 0, canvas.width, canvas.height);
+      gl.uniform2f(U.uRes, canvas.width, canvas.height);
+      gl.uniform1f(U.uTime, flowT);
+      gl.uniform3f(U.uBands, bands.low, bands.mid, bands.high);
+      gl.uniform1f(U.uHue, hue);
+      gl.uniform1f(U.uSeg, segs);
+      gl.uniform1f(U.uRot, rot);
+      gl.uniform3f(U.uMel, melPos, Math.min(1, melEnv), 0);
+      gl.uniform1f(U.uEnergy, energy);
+      gl.uniform1f(U.uGlow, glow);
+      gl.uniform1f(U.uMelHue, melHue);
+      ripArr.fill(0);
+      for (var i = 0; i < ripples.length && i < 8; i++) {
+        var r = ripples[i];
+        ripArr[i * 4] = r.x; ripArr[i * 4 + 1] = r.y; ripArr[i * 4 + 2] = (clock - r.t0) * (calm ? 0.6 : 1); ripArr[i * 4 + 3] = r.s;
+      }
+      gl.uniform4fv(U.uRip, ripArr);
+      gl.drawArrays(gl.TRIANGLES, 0, 3);
+    } else if (ctx2d) {
+      draw2D();
+    }
+
+    if (hasAudio) updateTime();
+
+    // adaptive resolution: keep ~60 fps on weak GPUs
+    frameAvg = frameAvg * 0.95 + (dt * 1000) * 0.05;
+    if (frameAvg > 24 && scale > 0.5) { scale = Math.max(0.5, scale * 0.85); frameAvg = 16; }
+    else if (frameAvg < 15 && scale < maxScale) { scale = Math.min(maxScale, scale * 1.05); frameAvg = 16; }
+
+    requestAnimationFrame(frame);
+  }
+
+  initGL();
+  resize();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

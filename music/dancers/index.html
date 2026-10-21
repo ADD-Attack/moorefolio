@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<!--
+  Prototype: DANCERS — a troupe of seven geometric characters on a lit dance floor.
+  Influence dials: trippy 1 / beautiful 2 / technical 0 / dancing 5 / colorful 4 / intense 3
+  Mapping: kick -> anticipation crouch, then stretch+hop (alternating groups, rippling out from the lead)
+           and a rate-limited floor-tile colour change; snare/hat onsets -> full-body spins;
+           mid energy -> arm sway + light beams; melody pitch -> the lead dancer's arm height + note sparks;
+           sections (or detected energy shifts / every 16 beats) -> formation changes; overall energy -> how many jump.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dancers — music visualizer prototype</title>
+<style>
+  :root { --fg:#ece6f5; --dim:#9a90ad; --acc:#ff5fa2; --bg:#0b0812; }
+  * { box-sizing:border-box; }
+  html, body { margin:0; height:100%; background:var(--bg); color:var(--fg);
+    font:14px/1.3 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; overflow:hidden; }
+  body { display:flex; flex-direction:column; height:100vh; height:100dvh; }
+  header { display:flex; align-items:center; gap:10px; padding:10px 14px; min-width:0; }
+  header h1 { margin:0; font-size:15px; font-weight:600; letter-spacing:.14em; text-transform:uppercase; }
+  #badge { font-size:11px; font-weight:700; letter-spacing:.12em; padding:2px 7px; border-radius:999px;
+    border:1px solid #5d5270; color:var(--dim); }
+  #badge.score { border-color:var(--acc); color:var(--acc); }
+  #track { color:var(--dim); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; flex:1; text-align:right; }
+  #stage { position:relative; flex:1; min-height:0; }
+  #stage canvas { position:absolute; inset:0; width:100%; height:100%; display:block; }
+  #hint { position:absolute; left:0; right:0; top:14px; text-align:center; color:var(--dim);
+    font-size:13px; letter-spacing:.04em; pointer-events:none; transition:opacity .6s; }
+  #dance { position:absolute; left:0; right:0; bottom:12px; text-align:center; color:var(--fg);
+    font-size:13px; font-style:italic; letter-spacing:.03em; pointer-events:none; opacity:0; transition:opacity .9s; text-shadow:0 1px 8px rgba(0,0,0,.8); }
+  #drop { position:absolute; inset:10px; border:2px dashed var(--acc); border-radius:14px; display:none;
+    align-items:center; justify-content:center; font-size:18px; color:var(--acc); background:rgba(11,8,18,.7);
+    pointer-events:none; }
+  body.dragging #drop { display:flex; }
+  .controls { display:flex; flex-wrap:wrap; align-items:center; gap:8px 12px; padding:10px 14px 12px; }
+  #play { width:40px; height:40px; border-radius:50%; border:none; background:var(--acc); color:#140a14;
+    font-size:16px; cursor:pointer; flex:none; }
+  #play:disabled { background:#3a3247; color:#776c88; cursor:default; }
+  #seek { flex:1 1 160px; min-width:120px; accent-color:var(--acc); }
+  #time { font-variant-numeric:tabular-nums; color:var(--dim); font-size:12px; flex:none; }
+  .file { flex:none; font-size:12px; color:var(--dim); border:1px solid #3a3247; border-radius:8px; padding:6px 10px;
+    cursor:pointer; white-space:nowrap; }
+  .file:hover { color:var(--fg); border-color:#6a5d80; }
+  .file input { display:none; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Dancers</h1>
+  <span id="badge">FFT</span>
+  <span id="track">No track loaded</span>
+</header>
+<main id="stage">
+  <canvas id="cv"></canvas>
+  <div id="hint">Drop a song anywhere · or choose a file below</div>
+  <div id="dance"></div>
+  <div id="drop">Drop audio (and/or a .viz.json) to dance</div>
+</main>
+<div class="controls">
+  <button id="play" disabled aria-label="Play">&#9654;</button>
+  <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek" disabled>
+  <span id="time">0:00 / 0:00</span>
+  <label class="file">Audio file<input id="fileAudio" type="file" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a"></label>
+  <label class="file">Score .viz.json<input id="fileViz" type="file" accept=".json,application/json"></label>
+</div>
+<audio id="audio" preload="auto"></audio>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- DOM ----------
+  var $ = function (id) { return document.getElementById(id); };
+  var cv = $('cv'), cx = cv.getContext('2d'), stage = $('stage');
+  var audio = $('audio'), playBtn = $('play'), seek = $('seek'), timeEl = $('time');
+  var badge = $('badge'), trackEl = $('track'), hint = $('hint');
+
+  var W = 300, H = 300, DPR = 1;
+  function resize() {
+    var r = stage.getBoundingClientRect();
+    DPR = Math.min(window.devicePixelRatio || 1, 2.5);
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+    cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+  }
+  if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
+  window.addEventListener('resize', resize);
+  resize();
+
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var calm = !!(mq && mq.matches);
+  if (mq) { var onMq = function () { calm = mq.matches; }; if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq); }
+
+  // ---------- helpers ----------
+  function clamp(v, a, b) { return v < a ? a : v > b ? b : v; }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function perf() { return performance.now() / 1000; }
+  function fmt(s) { if (!isFinite(s) || s < 0) s = 0; var m = Math.floor(s / 60), r = Math.floor(s % 60); return m + ':' + (r < 10 ? '0' : '') + r; }
+  function smooth(cur, target, dt, tAtt, tDec) {
+    var tau = target > cur ? tAtt : tDec; return cur + (target - cur) * (1 - Math.exp(-dt / tau));
+  }
+  function lowerBound(arr, t, key) { // first index with value >= t
+    var lo = 0, hi = arr.length;
+    while (lo < hi) { var mid = (lo + hi) >> 1; var v = key ? arr[mid][key] : arr[mid]; if (v < t) lo = mid + 1; else hi = mid; }
+    return lo;
+  }
+
+  // ---------- audio graph ----------
+  var actx = null, analyser = null, freq = null, prevFreq = null, binHz = 0;
+  var bands = { low: [0, 0], mid: [0, 0], high: [0, 0] };
+  function ensureCtx() {
+    if (actx) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    actx = new AC();
+    var src = actx.createMediaElementSource(audio);
+    analyser = actx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.5;
+    src.connect(analyser); analyser.connect(actx.destination);
+    freq = new Uint8Array(analyser.frequencyBinCount);
+    prevFreq = new Uint8Array(analyser.frequencyBinCount);
+    binHz = actx.sampleRate / analyser.fftSize;
+    function rng(f0, f1) { return [Math.max(1, Math.round(f0 / binHz)), Math.min(freq.length - 1, Math.round(f1 / binHz))]; }
+    bands.low = rng(20, 140); bands.mid = rng(140, 2000); bands.high = rng(2000, 12000);
+  }
+
+  // ---------- state ----------
+  var trackLoaded = false, trackIsDemo = false, curUrl = null;
+  var score = null, scoreFromDemo = false;     // sidecar
+  var cur = { kick: 0, snare: 0, melody: 0, section: -1 };
+  var E = { low: 0, mid: 0, high: 0, all: 0, slow: 0, slower: 0, centroid: 0.5 };
+  var peak = { low: 0.2, mid: 0.2, high: 0.2 };
+  var fluxHist = { low: [], high: [], mid: [] };
+  var lastOnset = { low: -9, high: -9, mid: -9 };
+  var beatTimes = [], beatPeriod = 0.6, lastBeatAt = -9, beatCount = 0;   // in "clock" seconds
+  var lastFlashPerf = -9, flash = 0, tileParity = 0, lastTileSwap = -9;
+  var formation = 0, lastFormationChange = -99, beatsSinceForm = 0, sectionEnergy = -1;
+  var groove = 0;          // continuously advancing beat phase (beats)
+  var hueBase = 300;
+  // ---------- dance guide (producer amendment 2026-10-21, per Downbeat contract) ----------
+  // Optional intent layer: <song>.dance.json — [{t, until, stage, feeling, dance, energy, palette, support}]
+  // stage drives formation handoffs + the caption; palette drives hueBase; support stays dimmer by design.
+  var dance = null, danceIdx = -1, danceHueTarget = null;
+  var danceEl = $('dance');
+  function paletteHue(name) {
+    var s = String(name || '').toLowerCase();
+    var known = { 'candlelight': 38, 'deep cave violet': 268, 'moss green': 130, 'ember orange': 24, 'blood rust': 8, 'molten gold': 45, 'white-hot': 48 };
+    if (known[s] !== undefined) return known[s];
+    if (/violet|purple/.test(s)) return 270; if (/green/.test(s)) return 130;
+    if (/gold|amber|candle/.test(s)) return 43; if (/rust|red|blood/.test(s)) return 8;
+    if (/blue/.test(s)) return 212; if (/teal/.test(s)) return 175; if (/pink|magenta/.test(s)) return 325;
+    if (/orange|ember/.test(s)) return 26; if (/white|silver/.test(s)) return 46;
+    var h = 0; for (var i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) % 360; return h;
+  }
+  function loadDance(arr) {
+    if (!Array.isArray(arr)) return false;
+    var ms = arr.filter(function (m) { return m && isFinite(m.t) && m.stage; });
+    if (!ms.length) return false;
+    dance = ms; danceIdx = -1; return true;
+  }
+  function runDance(t) {
+    var idx = -1;
+    for (var i = 0; i < dance.length; i++) { if (t >= dance[i].t && (dance[i].until == null || t < dance[i].until)) { idx = i; break; } }
+    if (idx === danceIdx) return;
+    danceIdx = idx;
+    if (idx < 0) { danceEl.style.opacity = 0; danceHueTarget = null; return; }
+    var m = dance[idx];
+    danceHueTarget = paletteHue(m.palette);
+    if (isFinite(m.energy)) sectionEnergy = m.energy;
+    nextFormation();  // handoff: the troupe re-forms around the new lead (crossfade via formation easing)
+    danceEl.style.opacity = 0;
+    setTimeout(function () {
+      danceEl.textContent = 'On stage: ' + m.stage + (m.feeling ? ' — ' + m.feeling : '') + (m.dance ? ' · ' + m.dance : '');
+      danceEl.style.opacity = 1;
+    }, 450);
+  }
+  var queue = [];          // scheduled events {at (perf s), fn}
+  var particles = [];
+  var idle = { t: 0, next: 0, n: 0 };
+  var clockMode = 'idle';  // 'idle' | 'music'
+  var snareCount = 0;
+
+  function schedule(at, fn) { queue.push({ at: at, fn: fn }); }
+
+  // ---------- formations (x 0..1 across, d 0..1 back->front) ----------
+  var N = 7, LEAD = 3;
+  var FORMS = [
+    function (i) { return { x: 0.12 + 0.76 * i / 6, d: 0.55 }; },                                              // line
+    function (i) { var k = i - 3; return { x: 0.5 + k * 0.125, d: 0.95 - Math.abs(k) * 0.23 }; },               // vee
+    function (i) { var a = Math.PI * (0.12 + 0.76 * i / 6); return { x: 0.5 - Math.cos(a) * 0.38, d: 0.2 + Math.sin(a) * 0.65 }; }, // arc
+    function (i) { return i < 4 ? { x: 0.2 + 0.2 * i, d: 0.22 } : { x: 0.3 + 0.2 * (i - 4), d: 0.85 }; },        // two rows
+    function (i, g) { if (i === LEAD) return { x: 0.5, d: 0.6 }; var j = i > LEAD ? i - 1 : i; var a = g * 0.35 + j / 6 * Math.PI * 2; return { x: 0.5 + Math.cos(a) * 0.33, d: 0.55 + Math.sin(a) * 0.4 }; }, // ring around lead
+    function (i) { return { x: 0.12 + 0.76 * i / 6, d: i % 2 ? 0.28 : 0.86 }; },                                // zigzag
+    function (i) { if (i === LEAD) return { x: 0.5, d: 0.98 }; var a = i / 7 * Math.PI * 2 + 0.4; return { x: 0.5 + Math.cos(a) * 0.2, d: 0.42 + Math.sin(a) * 0.26 }; } // huddle
+  ];
+  function nextFormation() {
+    var f; do { f = Math.floor(Math.random() * FORMS.length); } while (f === formation);
+    setFormation(f);
+  }
+  function setFormation(f) {
+    formation = f; lastFormationChange = perf(); beatsSinceForm = 0;
+    // everyone does a little travelling hop into the new spot
+    for (var i = 0; i < N; i++) dancers[i].hopSoon = true;
+  }
+
+  // ---------- dancers ----------
+  var SHAPES = ['tri', 'square', 'hex', 'star', 'diamond', 'circle', 'pent'];
+  var HUES = [335, 18, 48, 285, 170, 205, 110];
+  function Dancer(i) {
+    var p = FORMS[0](i, 0);
+    this.i = i; this.shape = SHAPES[i]; this.hue = HUES[i];
+    this.x = p.x; this.vx = 0; this.d = p.d; this.vd = 0;
+    this.q = 0; this.qv = 0;               // squash (+) / stretch (-)
+    this.jy = 0; this.jv = 0;              // hop height in body units
+    this.ang = 0; this.angv = 0; this.angT = 0; this.spinDir = i % 2 ? 1 : -1;
+    this.arm = [0.4, 0.4]; this.armv = [0, 0];
+    this.hx = 0; this.hy = 0; this.hvx = 0; this.hvy = 0;  // head follow-through offset
+    this.lean = 0; this.prevVx = 0;
+    this.noteArm = 0; this.noteUntil = 0; this.noteHue = 0;
+    this.hopSoon = false; this.size = i === LEAD ? 1.12 : 1;
+  }
+  var dancers = []; for (var di = 0; di < N; di++) dancers.push(new Dancer(di));
+
+  function stagger(i) { return Math.abs(i - LEAD) * 0.035; }
+
+  Dancer.prototype.kick = function (s, jump) {
+    var amp = calm ? 0.35 : 1;
+    if (jump && this.jy <= 0.001) {
+      this.qv -= 9 * s * amp;                         // release the crouch into a stretch
+      this.jv = (3.4 + 1.4 * s) * amp * (0.7 + 0.3 * intensity());
+      this.jy = 0.0001;
+    } else {
+      this.qv += 6.5 * s * amp;                        // down-beat bob
+    }
+    this.armv[0] += 5 * s * amp; this.armv[1] += 5 * s * amp;
+    if (!calm && jump && Math.random() < 0.6) burst(this, 3, s);
+  };
+  Dancer.prototype.spin = function () {
+    if (calm) { this.armv[0] -= 3; this.armv[1] += 3; return; }
+    if (Math.abs(this.ang - this.angT) < 0.6) { this.angT += Math.PI * 2 * this.spinDir; this.spinDir = -this.spinDir; }
+  };
+
+  function intensity() {
+    var e = E.slow;
+    if (score && sectionEnergy >= 0) e = 0.5 * e + 0.5 * sectionEnergy;
+    if (clockMode === 'idle') e = 0.35;
+    return clamp(e, 0, 1);
+  }
+
+  // ---------- beat bookkeeping ----------
+  function registerBeat(t) {
+    if (t - lastBeatAt > 0.2) {
+      var dt = t - lastBeatAt;
+      if (dt > 0.27 && dt < 1.5) { beatTimes.push(dt); if (beatTimes.length > 9) beatTimes.shift(); }
+      var s = beatTimes.slice().sort(function (a, b) { return a - b; });
+      if (s.length >= 3) beatPeriod = s[s.length >> 1];
+    }
+    lastBeatAt = t;
+  }
+
+  function fireKick(strength, lead) {   // lead = seconds until the hit actually lands
+    lead = Math.max(0, lead || 0);
+    var now = perf();
+    beatCount++; beatsSinceForm++;
+    var parity = beatCount % 2, inten = intensity();
+    for (var i = 0; i < N; i++) {
+      (function (dn, i) {
+        var jump = ((i + parity) % 2 === 0) || inten > 0.78 || dn.hopSoon;
+        dn.hopSoon = false;
+        schedule(now + lead + stagger(i), function () { dn.kick(strength, jump); });
+      })(dancers[i], i);
+    }
+    schedule(now + lead, function () {
+      var p = perf(), minGap = calm ? 0.75 : 0.34;   // never more than ~3 flashes / s
+      if (p - lastFlashPerf >= minGap) {
+        lastFlashPerf = p; flash = calm ? 0.25 : clamp(0.55 + 0.45 * strength, 0, 1);
+        tileParity ^= 1; lastTileSwap = p;
+      }
+    });
+    if (clockMode !== 'idle' && !(score && score.sections.length) && beatsSinceForm >= 16 && now - lastFormationChange > 6) nextFormation();
+  }
+
+  function fireSnare(lead) {
+    var now = perf(); snareCount++;
+    for (var i = 0; i < N; i++) {
+      if ((i + snareCount) % 2 === 0 || i === LEAD && snareCount % 4 === 0) {
+        (function (dn, i) { schedule(now + Math.max(0, lead) + stagger(i) * 0.6, function () { dn.spin(); }); })(dancers[i], i);
+      }
+    }
+  }
+
+  function fireNote(midi, dur, lead) {
+    var lead_ = dancers[LEAD];
+    schedule(perf() + Math.max(0, lead), function () {
+      var pn = clamp((midi - 48) / 36, 0, 1);
+      lead_.noteArm = 0.35 + pn * 2.6;
+      lead_.noteUntil = perf() + Math.max(0.18, Math.min(dur || 0.25, 2));
+      lead_.noteHue = ((midi % 12) * 30 + 300) % 360;
+      lead_.armv[0] += 3; lead_.armv[1] += 3;
+      noteSpark(lead_, lead_.noteHue, pn);
+    });
+  }
+
+  // ---------- particles ----------
+  var dpos = []; // cached screen geometry per dancer (feet, hands)
+  function burst(dn, n, s) {
+    var g = dpos[dn.i]; if (!g || particles.length > 260) return;
+    for (var k = 0; k < n; k++) {
+      particles.push({ x: g.fx + (Math.random() - 0.5) * g.u * 0.5, y: g.fy, vx: (Math.random() - 0.5) * g.u * 3,
+        vy: -g.u * (1.5 + Math.random() * 2.5 * s), g: g.u * 6, life: 0.9, max: 0.9,
+        hue: (dn.hue + Math.random() * 60 - 30 + 360) % 360, r: g.u * (0.04 + Math.random() * 0.04), kind: 'c' });
+    }
+  }
+  function noteSpark(dn, hue, pn) {
+    var g = dpos[dn.i]; if (!g || particles.length > 300) return;
+    for (var k = 0; k < 2; k++) {
+      var h = g.hands[k];
+      particles.push({ x: h[0], y: h[1], vx: (k ? 1 : -1) * g.u * 0.4, vy: -g.u * (0.8 + pn * 1.2), g: -g.u * 0.2,
+        life: calm ? 1.6 : 1.4, max: calm ? 1.6 : 1.4, hue: hue, r: g.u * (0.06 + pn * 0.05), kind: 'n' });
+    }
+  }
+
+  // ---------- analysis ----------
+  function bandAvg(b) { var s = 0; for (var k = b[0]; k <= b[1]; k++) s += freq[k]; return s / ((b[1] - b[0] + 1) * 255); }
+  function bandFlux(b) { var s = 0; for (var k = b[0]; k <= b[1]; k++) { var d = freq[k] - prevFreq[k]; if (d > 0) s += d; } return s / ((b[1] - b[0] + 1) * 255); }
+  function onset(name, f, mult, minAbs, cool, t) {
+    var h = fluxHist[name]; h.push(f); if (h.length > 50) h.shift();
+    if (h.length < 12) return false;
+    var m = 0, v = 0, k; for (k = 0; k < h.length; k++) m += h[k]; m /= h.length;
+    for (k = 0; k < h.length; k++) v += (h[k] - m) * (h[k] - m); v = Math.sqrt(v / h.length);
+    if (f > m + mult * v && f > minAbs && t - lastOnset[name] >= cool) { lastOnset[name] = t; return true; }
+    return false;
+  }
+  function resetFlux() { fluxHist.low = []; fluxHist.high = []; fluxHist.mid = []; lastOnset.low = lastOnset.high = lastOnset.mid = -9; if (prevFreq && freq) prevFreq.set(freq); }
+
+  function analyze(dt, t) {
+    analyser.getByteFrequencyData(freq);
+    var raw = { low: bandAvg(bands.low), mid: bandAvg(bands.mid), high: bandAvg(bands.high) };
+    var fl = bandFlux(bands.low), fh = bandFlux(bands.high), fm = bandFlux(bands.mid);
+    // spectral centroid of mid+high (0..1, log-ish)
+    var num = 0, den = 0;
+    for (var k = bands.mid[0]; k <= bands.high[1]; k++) { num += freq[k] * k; den += freq[k]; }
+    var cen = den > 0 ? clamp(Math.log(num / den / bands.mid[0]) / Math.log(bands.high[1] / bands.mid[0]), 0, 1) : 0.5;
+    prevFreq.set(freq);
+    ['low', 'mid', 'high'].forEach(function (b) {
+      peak[b] = Math.max(raw[b], peak[b] * Math.exp(-dt / 6), 0.05);
+      E[b] = smooth(E[b], clamp(raw[b] / peak[b], 0, 1), dt, 0.02, 0.18);
+    });
+    E.centroid = smooth(E.centroid, cen, dt, 0.15, 0.4);
+
+    var kickOn = onset('low', fl, 1.5, 0.012, 0.25, t);
+    var hatOn = onset('high', fh, 1.8, 0.01, 0.18, t);
+    var midOn = onset('mid', fm, 1.8, 0.01, 0.2, t);
+    var useScoreKick = score && score.kick.length;
+    var useScoreSnare = score && score.snare.length;
+    var useScoreMel = score && score.melody.length;
+    if (kickOn && !useScoreKick) { registerBeat(t); fireKick(clamp(0.5 + fl * 8, 0.5, 1), 0); }
+    if (hatOn && !useScoreSnare) fireSnare(0);
+    if (midOn && !useScoreMel && !calm) {
+      var ld = dancers[LEAD];
+      ld.noteArm = 0.4 + E.centroid * 2.4; ld.noteUntil = perf() + 0.25; ld.noteHue = (200 + E.centroid * 200) % 360;
+      noteSpark(ld, ld.noteHue, E.centroid);
+    }
+  }
+
+  // ---------- score (sidecar) ----------
+  function numArr(a) { return Array.isArray(a) ? a.filter(function (x) { return typeof x === 'number' && isFinite(x); }).sort(function (a, b) { return a - b; }) : []; }
+  function loadScore(obj, fromDemo) {
+    if (!obj || typeof obj !== 'object') return false;
+    var s = {
+      kick: numArr(obj.kick), snare: numArr(obj.snare),
+      melody: (Array.isArray(obj.melody) ? obj.melody : []).filter(function (n) { return n && isFinite(n.t) && isFinite(n.midi); })
+        .map(function (n) { return { t: +n.t, midi: +n.midi, dur: isFinite(n.dur) ? +n.dur : 0.25 }; }).sort(function (a, b) { return a.t - b.t; }),
+      sections: (Array.isArray(obj.sections) ? obj.sections : []).filter(function (x) { return x && isFinite(x.t); })
+        .map(function (x) { return { t: +x.t, name: String(x.name || ''), energy: isFinite(x.energy) ? clamp(+x.energy, 0, 1) : -1 }; }).sort(function (a, b) { return a.t - b.t; })
+    };
+    if (!s.kick.length && !s.snare.length && !s.melody.length && !s.sections.length) return false;
+    score = s; scoreFromDemo = !!fromDemo;
+    badge.textContent = 'SCORE'; badge.className = 'score';
+    resetCursors();
+    return true;
+  }
+  function clearScore() { score = null; sectionEnergy = -1; badge.textContent = 'FFT'; badge.className = ''; }
+  function resetCursors() {
+    var t = audio.currentTime || 0;
+    queue.length = 0;
+    if (score) {
+      cur.kick = lowerBound(score.kick, t); cur.snare = lowerBound(score.snare, t);
+      cur.melody = lowerBound(score.melody, t, 't'); cur.section = -2; // force section re-eval
+    }
+    resetFlux();
+    lastBeatAt = -9; beatTimes.length = 0;
+  }
+  function runScore(t) {
+    var LA = 0.05, k;
+    var sk = score.kick, ss = score.snare, sm = score.melody, sc = score.sections;
+    while (cur.kick < sk.length && sk[cur.kick] <= t + LA) {
+      k = sk[cur.kick++];
+      if (k >= t - 0.1) { registerBeat(k); fireKick(1, k - t); }
+    }
+    while (cur.snare < ss.length && ss[cur.snare] <= t + LA) { k = ss[cur.snare++]; if (k >= t - 0.1) fireSnare(k - t); }
+    while (cur.melody < sm.length && sm[cur.melody].t <= t + LA) { var n = sm[cur.melody++]; if (n.t >= t - 0.1) fireNote(n.midi, n.dur, n.t - t); }
+    if (sc.length) {
+      var si = lowerBound(sc, t + 1e-6, 't') - 1;
+      if (si !== cur.section) {
+        var first = cur.section === -2;
+        cur.section = si;
+        if (si >= 0) {
+          sectionEnergy = sc[si].energy;
+          if (first) setFormation(si % FORMS.length); else setFormation((formation + 1 + (si % 3)) % FORMS.length);
+          hueBase = (300 + si * 47) % 360;
+        }
+      }
+    }
+  }
+  function nextScoreKick(t) {
+    var sk = score.kick, i = Math.max(0, cur.kick - 2);
+    for (; i < sk.length; i++) if (sk[i] > t) return sk[i];
+    return Infinity;
+  }
+
+  // ---------- idle synthetic pulse ----------
+  function runIdle(dt) {
+    idle.t += dt;
+    var period = 0.62;
+    while (idle.t >= idle.next) {
+      registerBeat(idle.next);
+      fireKick(0.55, idle.next - idle.t + 0);
+      if (idle.n % 4 === 3) fireSnare(period * 0.5);
+      idle.n++; idle.next += period;
+      if (idle.n % 16 === 0) nextFormation();
+    }
+    var ph = (idle.t % period) / period;
+    E.low = smooth(E.low, 0.25 + 0.25 * Math.exp(-ph * 5), dt, 0.03, 0.2);
+    E.mid = smooth(E.mid, 0.3 + 0.12 * Math.sin(idle.t * 0.9), dt, 0.1, 0.3);
+    E.high = smooth(E.high, 0.15 + 0.08 * Math.sin(idle.t * 1.7), dt, 0.1, 0.3);
+    E.centroid = 0.5 + 0.2 * Math.sin(idle.t * 0.3);
+  }
+
+  // ---------- simulation ----------
+  var lastFrame = perf();
+  function update() {
+    var now = perf(), dt = clamp(now - lastFrame, 0, 0.05); lastFrame = now;
+    var playing = trackLoaded && actx && !audio.paused && !audio.ended;
+    var t;
+    if (playing) {
+      if (clockMode !== 'music') { clockMode = 'music'; resetCursors(); }
+      t = audio.currentTime;
+      analyze(dt, t);
+      if (score) runScore(t);
+      if (dance) runDance(t);
+    } else {
+      if (clockMode !== 'idle') { clockMode = 'idle'; queue.length = 0; lastBeatAt = -9; beatTimes.length = 0; idle.t = 0; idle.next = 0.3; }
+      t = idle.t;
+      runIdle(dt);
+    }
+    E.all = (E.low + E.mid + E.high) / 3;
+    E.slow = smooth(E.slow, E.all, dt, 1.2, 1.2);
+    E.slower = smooth(E.slower, E.all, dt, 8, 8);
+    // energy-shift section detection (FFT mode only)
+    if (playing && !(score && score.sections.length) && now - lastFormationChange > 6 && E.slower > 0.05) {
+      var ratio = E.slow / E.slower;
+      if (ratio > 1.45 || ratio < 0.6) { nextFormation(); E.slower = E.slow; hueBase = (hueBase + 70) % 360; }
+    }
+
+    // scheduled events
+    if (queue.length) {
+      var keep = [];
+      for (var qi = 0; qi < queue.length; qi++) { if (queue[qi].at <= now) queue[qi].fn(); else keep.push(queue[qi]); }
+      queue = keep;
+    }
+
+    // next beat (for anticipation), in clock seconds
+    var nextBeat = Infinity;
+    if (playing && score && score.kick.length) nextBeat = nextScoreKick(t);
+    else if (beatTimes.length >= 3 || clockMode === 'idle') { if (t - lastBeatAt < beatPeriod * 1.6) nextBeat = lastBeatAt + beatPeriod; }
+    if (clockMode === 'idle') nextBeat = idle.next;
+
+    var inten = intensity();
+    groove += dt / Math.max(0.3, beatPeriod);
+    flash *= Math.exp(-dt / (calm ? 0.5 : 0.22));
+    hueBase += dt * (calm ? 1 : 3 + 6 * E.high);
+    if (danceHueTarget !== null) {  // palette steering: shortest-path lerp toward the moment's hue
+      var dh = ((danceHueTarget - hueBase) % 360 + 540) % 360 - 180;
+      hueBase = (hueBase + dh * Math.min(1, dt * 0.8) + 360) % 360;
+    }
+    var amp = calm ? 0.4 : 1;
+    var formT = groove * (calm ? 0.3 : 1);
+
+    for (var i = 0; i < N; i++) {
+      var dn = dancers[i];
+      var tgt = FORMS[formation](i, formT);
+      var k = calm ? 14 : 34, c = calm ? 8 : 8.5;
+      var ax = -k * (dn.x - tgt.x) - c * dn.vx; dn.vx += ax * dt; dn.x += dn.vx * dt;
+      var ad = -k * (dn.d - tgt.d) - c * dn.vd; dn.vd += ad * dt; dn.d += dn.vd * dt;
+      // lean opposite to acceleration (follow-through), plus groove sway
+      var sway = Math.sin(groove * Math.PI + i * 0.5) * (0.06 + 0.22 * E.mid) * amp;
+      dn.lean = smooth(dn.lean, clamp(-ax * 0.06, -0.45, 0.45) * amp + sway, dt, 0.05, 0.12);
+      // head lags the body
+      dn.hvx += (-160 * dn.hx - 11 * dn.hvx - ax * 0.9) * dt; dn.hx += dn.hvx * dt;
+      dn.hvy += (-160 * dn.hy - 11 * dn.hvy) * dt; dn.hy += dn.hvy * dt;
+      // anticipation: crouch into the coming beat
+      var crouch = 0;
+      var tt = nextBeat - t - 0 + stagger(i);
+      var A = Math.min(0.24, beatPeriod * 0.45);
+      if (tt > 0 && tt < A) { var u = 1 - tt / A; crouch = u * u * (0.18 + 0.2 * inten) * amp; }
+      var qT = crouch;
+      dn.qv += (-190 * (dn.q - qT) - 9 * dn.qv) * dt; dn.q += dn.qv * dt;
+      dn.q = clamp(dn.q, -0.5, 0.65);
+      // hop
+      if (dn.jy > 0) {
+        dn.jv -= 26 * dt; dn.jy += dn.jv * dt;
+        if (dn.jy <= 0) { dn.jy = 0; dn.qv += Math.min(8, -dn.jv * 1.7) * amp; dn.hvy += dn.jv * 0.6; dn.jv = 0; }
+      }
+      // spin (spring to target; overshoot reads as follow-through)
+      dn.angv += (-55 * (dn.ang - dn.angT) - 9 * dn.angv) * dt; dn.ang += dn.angv * dt;
+      if (Math.abs(dn.ang - dn.angT) < 0.01 && Math.abs(dn.angT) > 6.3) { var wrap = Math.round(dn.angT / (Math.PI * 2)) * Math.PI * 2; dn.angT -= wrap; dn.ang -= wrap; }
+      // arms
+      for (var s = 0; s < 2; s++) {
+        var base = 0.3 + E.mid * 1.5 * amp + Math.sin(groove * Math.PI + i + s * Math.PI) * (0.15 + 0.35 * E.mid) * amp + E.high * 0.4 * amp;
+        if (i === LEAD && now < dn.noteUntil) base = dn.noteArm + (s ? 0.12 : -0.12);
+        var aT = clamp(base, 0.1, 3.0);
+        dn.armv[s] += (-70 * (dn.arm[s] - aT) - 8 * dn.armv[s]) * dt; dn.arm[s] += dn.armv[s] * dt;
+        dn.arm[s] = clamp(dn.arm[s], -0.2, 3.2);
+      }
+    }
+
+    // particles
+    var alive = [];
+    for (var pi = 0; pi < particles.length; pi++) {
+      var p = particles[pi]; p.life -= dt; if (p.life <= 0) continue;
+      p.vy += p.g * dt; p.x += p.vx * dt; p.y += p.vy * dt; p.vx *= Math.exp(-dt * 1.5); alive.push(p);
+    }
+    particles = alive;
+
+    // UI hint
+    hint.style.opacity = trackLoaded && playing ? 0 : 1;
+    if (!trackLoaded) hint.textContent = 'Drop a song anywhere · or choose a file below';
+    else if (!playing) hint.textContent = 'Press play (or space) — the troupe is warming up';
+  }
+
+  // ---------- rendering ----------
+  function floorY(d) { var hz = H * 0.46; return hz + (H - hz) * (0.2 + 0.72 * d); }
+  function screenX(x, d) { return W / 2 + (x - 0.5) * W * (0.7 + 0.25 * d); }
+  function unit() { return Math.min(W / 8.2, H / 3.4); }
+
+  function shapePath(type, w, h) {
+    var cxp = 0, cyp = -h / 2, r = Math.min(w, h) / 2, k, a;
+    cx.beginPath();
+    switch (type) {
+      case 'circle': cx.ellipse(cxp, cyp, w / 2, h / 2, 0, 0, Math.PI * 2); break;
+      case 'square': if (cx.roundRect) cx.roundRect(-w / 2, -h, w, h, r * 0.25); else cx.rect(-w / 2, -h, w, h); break;
+      case 'tri': cx.moveTo(0, -h); cx.lineTo(w / 2, 0); cx.lineTo(-w / 2, 0); cx.closePath(); break;
+      case 'diamond': cx.moveTo(0, -h); cx.lineTo(w / 2, -h / 2); cx.lineTo(0, 0); cx.lineTo(-w / 2, -h / 2); cx.closePath(); break;
+      case 'hex': case 'pent':
+        var n = type === 'hex' ? 6 : 5;
+        for (k = 0; k < n; k++) { a = -Math.PI / 2 + k * Math.PI * 2 / n; var px = Math.cos(a) * w / 2, py = cyp + Math.sin(a) * h / 2; if (k) cx.lineTo(px, py); else cx.moveTo(px, py); }
+        cx.closePath(); break;
+      case 'star':
+        for (k = 0; k < 10; k++) { a = -Math.PI / 2 + k * Math.PI / 5; var rr = k % 2 ? 0.45 : 1; var sx = Math.cos(a) * w / 2 * rr, sy = cyp + Math.sin(a) * h / 2 * rr; if (k) cx.lineTo(sx, sy); else cx.moveTo(sx, sy); }
+        cx.closePath(); break;
+    }
+  }
+
+  function rot(px, py, a) { var c = Math.cos(a), s = Math.sin(a); return [px * c - py * s, px * s + py * c]; }
+
+  function drawBackground() {
+    var hz = H * 0.46;
+    var g = cx.createLinearGradient(0, 0, 0, hz);
+    g.addColorStop(0, 'hsl(' + (hueBase % 360) + ',45%,' + (5 + E.slow * 6) + '%)');
+    g.addColorStop(1, 'hsl(' + ((hueBase + 40) % 360) + ',55%,' + (10 + E.slow * 8 + flash * 4) + '%)');
+    cx.fillStyle = g; cx.fillRect(0, 0, W, hz + 1);
+    cx.fillStyle = '#07050c'; cx.fillRect(0, hz, W, H - hz);
+
+    // swinging light beams (mid energy)
+    cx.save(); cx.globalCompositeOperation = 'lighter';
+    for (var b = 0; b < 4; b++) {
+      var ox = W * (0.14 + b * 0.24), sw = Math.sin(groove * Math.PI * 0.5 + b * 1.3) * (calm ? 0.12 : 0.35);
+      var len = H * 1.1, spread = 0.11 + E.mid * 0.06;
+      var hue = (hueBase + b * 70) % 360;
+      var lg = cx.createLinearGradient(ox, 0, ox + Math.sin(sw) * len, Math.cos(sw) * len);
+      var al = 0.05 + E.mid * 0.13 + flash * 0.05;
+      lg.addColorStop(0, 'hsla(' + hue + ',90%,65%,' + al + ')'); lg.addColorStop(1, 'hsla(' + hue + ',90%,60%,0)');
+      cx.fillStyle = lg; cx.beginPath(); cx.moveTo(ox, -5);
+      cx.lineTo(ox + Math.sin(sw - spread) * len, Math.cos(sw - spread) * len);
+      cx.lineTo(ox + Math.sin(sw + spread) * len, Math.cos(sw + spread) * len); cx.closePath(); cx.fill();
+    }
+    cx.restore();
+
+    // dance floor tiles
+    var cols = 9, rows = 6;
+    function fy(p) { return floorY(-0.25 + p * 1.4); }
+    function hw(y) { var pp = (y - hz) / (H - hz); return W * lerp(0.36, 0.78, clamp(pp, 0, 1.2)); }
+    for (var r = 0; r < rows; r++) {
+      var y0 = fy(r / rows), y1 = fy((r + 1) / rows);
+      if (y0 > H) break;
+      var w0 = hw(y0), w1 = hw(y1);
+      for (var c = 0; c < cols; c++) {
+        var lit = (r + c + tileParity) % 2 === 0;
+        var hue2 = (hueBase + c * 28 + r * 17) % 360;
+        var L = 7 + E.low * 9 + (lit ? 10 + flash * (calm ? 6 : 22) : 0);
+        var a0 = -1 + 2 * c / cols, a1 = -1 + 2 * (c + 1) / cols;
+        cx.fillStyle = 'hsl(' + hue2 + ',70%,' + L + '%)';
+        cx.beginPath();
+        cx.moveTo(W / 2 + a0 * w0 + 1, y0 + 1); cx.lineTo(W / 2 + a1 * w0 - 1, y0 + 1);
+        cx.lineTo(W / 2 + a1 * w1 - 1, y1 - 1); cx.lineTo(W / 2 + a0 * w1 + 1, y1 - 1); cx.closePath(); cx.fill();
+      }
+    }
+    // horizon glow
+    var hg = cx.createLinearGradient(0, hz - 30, 0, hz + 40);
+    hg.addColorStop(0, 'rgba(0,0,0,0)'); hg.addColorStop(0.5, 'hsla(' + ((hueBase + 40) % 360) + ',80%,60%,' + (0.08 + E.low * 0.1) + ')'); hg.addColorStop(1, 'rgba(0,0,0,0)');
+    cx.fillStyle = hg; cx.fillRect(0, hz - 30, W, 70);
+  }
+
+  function drawDancer(dn) {
+    var U = unit() * (0.55 + 0.6 * dn.d) * dn.size;
+    var fx = screenX(dn.x, dn.d), fy = floorY(dn.d);
+    var q = dn.q, sxq = 1 + 0.55 * q, syq = 1 - q;
+    var spin = Math.cos(dn.ang); var back = spin < 0; var sp = Math.abs(spin) < 0.12 ? (spin < 0 ? -0.12 : 0.12) : spin;
+    var hue = dn.hue, lit = 55 + E.all * 10 + flash * 8 - (back ? 14 : 0);
+
+    // spotlight pool
+    var pr = U * (0.9 + E.low * 0.4);
+    cx.save(); cx.globalCompositeOperation = 'lighter';
+    var sg = cx.createRadialGradient(fx, fy, 0, fx, fy, pr);
+    sg.addColorStop(0, 'hsla(' + hue + ',90%,60%,' + (0.18 + E.low * 0.2 + flash * 0.25) + ')'); sg.addColorStop(1, 'hsla(' + hue + ',90%,60%,0)');
+    cx.fillStyle = sg; cx.beginPath(); cx.ellipse(fx, fy, pr, pr * 0.3, 0, 0, Math.PI * 2); cx.fill();
+    cx.restore();
+    // shadow shrinks while airborne
+    cx.fillStyle = 'rgba(0,0,0,0.45)';
+    cx.beginPath(); cx.ellipse(fx, fy, U * 0.42 / (1 + dn.jy), U * 0.1 / (1 + dn.jy), 0, 0, Math.PI * 2); cx.fill();
+
+    var legLen = U * 0.5 * (1 - q * 0.55);
+    var feetY = fy - dn.jy * U;
+    var hipX = fx, hipY = feetY - legLen;
+    var footSpread = U * (0.2 + Math.max(0, q) * 0.12) * Math.abs(sp);
+    var tuck = Math.min(1, dn.jy * 3);
+    cx.lineCap = 'round'; cx.lineJoin = 'round';
+    cx.strokeStyle = 'hsl(' + hue + ',55%,' + (lit - 22) + '%)';
+    cx.lineWidth = Math.max(1.5, U * 0.085);
+    for (var s = -1; s <= 1; s += 2) {
+      var footX = fx + s * footSpread * (1 - tuck * 0.4), footY = feetY - tuck * U * 0.08;
+      var kneeX = lerp(hipX + s * U * 0.08, footX, 0.5) + s * U * (Math.max(0, q) * 0.25 + tuck * 0.12) * Math.abs(sp);
+      var kneeY = lerp(hipY, footY, 0.5) - tuck * U * 0.05;
+      cx.beginPath(); cx.moveTo(hipX + s * U * 0.08 * Math.abs(sp), hipY); cx.quadraticCurveTo(kneeX, kneeY, footX, footY); cx.stroke();
+    }
+
+    var bw = U * 0.62, bh = U * 0.72;
+    var tilt = dn.lean;
+    // body
+    cx.save();
+    cx.translate(hipX, hipY + U * 0.04);
+    cx.rotate(tilt);
+    cx.scale(sxq * sp, syq);
+    var bg = cx.createLinearGradient(0, -bh, 0, 0);
+    bg.addColorStop(0, 'hsl(' + hue + ',90%,' + (lit + 12) + '%)'); bg.addColorStop(1, 'hsl(' + ((hue + 30) % 360) + ',85%,' + (lit - 12) + '%)');
+    shapePath(dn.shape, bw, bh);
+    cx.fillStyle = bg; cx.fill();
+    cx.lineWidth = Math.max(1, U * 0.03) / Math.max(0.3, Math.abs(sxq * sp));
+    cx.strokeStyle = 'hsla(' + hue + ',100%,85%,' + (0.35 + flash * 0.4) + ')'; cx.stroke();
+    cx.restore();
+
+    // arms from shoulders (in rotated frame)
+    var shY = -bh * 0.78 * syq, shX = bw * 0.36 * sxq * Math.abs(sp);
+    var hands = [];
+    cx.strokeStyle = 'hsl(' + hue + ',70%,' + (lit + 5) + '%)';
+    cx.lineWidth = Math.max(1.5, U * 0.075);
+    for (var a = 0; a < 2; a++) {
+      var sd = a ? 1 : -1;
+      var sh = rot(sd * shX, shY, tilt);
+      var sx0 = hipX + sh[0], sy0 = hipY + U * 0.04 + sh[1];
+      var ang = dn.arm[a];                     // 0 = hanging, PI = straight up
+      var dir = tilt + sd * ang;               // measured from straight down
+      var l1 = U * 0.32, l2 = U * 0.3;
+      var ex = sx0 + Math.sin(dir) * l1, ey = sy0 + Math.cos(dir) * l1;
+      var bend = sd * (0.5 + 0.4 * Math.sin(groove * Math.PI + dn.i));
+      var hx = ex + Math.sin(dir + bend) * l2, hy = ey + Math.cos(dir + bend) * l2;
+      cx.beginPath(); cx.moveTo(sx0, sy0); cx.lineTo(ex, ey); cx.lineTo(hx, hy); cx.stroke();
+      hands.push([hx, hy]);
+      if (dn.i === LEAD) {
+        var glow = perf() < dn.noteUntil ? 1 : 0.35;
+        cx.fillStyle = 'hsla(' + (dn.noteHue || hue) + ',100%,75%,' + glow + ')';
+        cx.beginPath(); cx.arc(hx, hy, U * 0.07, 0, Math.PI * 2); cx.fill();
+      }
+    }
+
+    // head with follow-through lag
+    var hr = U * 0.17;
+    var neck = rot(0, -bh * syq - hr * 0.9, tilt);
+    var hxp = hipX + neck[0] + dn.hx * U * 1.2, hyp = hipY + U * 0.04 + neck[1] + dn.hy * U * 0.5;
+    cx.fillStyle = 'hsl(' + ((hue + 20) % 360) + ',80%,' + (lit + 18) + '%)';
+    cx.beginPath(); cx.ellipse(hxp, hyp, hr * Math.max(0.35, Math.abs(sp)) * (1 + q * 0.15), hr * (1 - q * 0.12), tilt, 0, Math.PI * 2); cx.fill();
+    if (!back) {
+      var look = clamp(dn.vx * 3, -1, 1) * hr * 0.3 * sp;
+      cx.fillStyle = '#140a18';
+      var ey2 = hyp - hr * 0.05 - (dn.jy > 0.05 ? hr * 0.08 : 0);
+      for (var e = -1; e <= 1; e += 2) { cx.beginPath(); cx.arc(hxp + look + e * hr * 0.38 * sp, ey2, Math.max(0.8, hr * 0.12), 0, Math.PI * 2); cx.fill(); }
+    }
+
+    dpos[dn.i] = { fx: fx, fy: fy, u: U, hands: hands };
+  }
+
+  function drawParticles() {
+    cx.save(); cx.globalCompositeOperation = 'lighter';
+    for (var i = 0; i < particles.length; i++) {
+      var p = particles[i], a = clamp(p.life / p.max, 0, 1);
+      cx.fillStyle = 'hsla(' + p.hue + ',100%,' + (p.kind === 'n' ? 72 : 62) + '%,' + a + ')';
+      cx.beginPath();
+      if (p.kind === 'n') { cx.arc(p.x, p.y, p.r * (0.6 + 0.4 * a), 0, Math.PI * 2); }
+      else { cx.rect(p.x - p.r, p.y - p.r, p.r * 2, p.r * 2); }
+      cx.fill();
+    }
+    cx.restore();
+  }
+
+  function draw() {
+    cx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    drawBackground();
+    var order = dancers.slice().sort(function (a, b) { return a.d - b.d; });
+    for (var i = 0; i < order.length; i++) drawDancer(order[i]);
+    drawParticles();
+    // vignette
+    var vg = cx.createRadialGradient(W / 2, H * 0.6, Math.min(W, H) * 0.3, W / 2, H * 0.6, Math.max(W, H) * 0.8);
+    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+    cx.fillStyle = vg; cx.fillRect(0, 0, W, H);
+  }
+
+  function frame() {
+    try { update(); draw(); } catch (err) { if (window.console) console.error(err); }
+    if (!seeking && trackLoaded && isFinite(audio.duration) && audio.duration > 0) {
+      seek.value = Math.round(audio.currentTime / audio.duration * 1000);
+    }
+    timeEl.textContent = fmt(audio.currentTime) + ' / ' + fmt(trackLoaded ? audio.duration : 0);
+    requestAnimationFrame(frame);
+  }
+
+  // ---------- transport ----------
+  var seeking = false;
+  function setPlayIcon() { var p = !audio.paused; playBtn.innerHTML = p ? '&#10074;&#10074;' : '&#9654;'; playBtn.setAttribute('aria-label', p ? 'Pause' : 'Play'); }
+  function toggle() {
+    if (!trackLoaded) return;
+    ensureCtx();
+    if (actx && actx.state === 'suspended') actx.resume();
+    if (audio.paused) { var pr = audio.play(); if (pr && pr.catch) pr.catch(function () {}); } else audio.pause();
+  }
+  playBtn.addEventListener('click', function () { toggle(); playBtn.blur(); });
+  audio.addEventListener('play', setPlayIcon);
+  audio.addEventListener('pause', setPlayIcon);
+  audio.addEventListener('ended', setPlayIcon);
+  audio.addEventListener('seeking', function () { resetCursors(); });
+  audio.addEventListener('seeked', function () { resetCursors(); });
+  seek.addEventListener('input', function () {
+    seeking = true;
+    if (isFinite(audio.duration)) audio.currentTime = seek.value / 1000 * audio.duration;
+  });
+  seek.addEventListener('change', function () { seeking = false; seek.blur(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.code === 'Space' || e.key === ' ') { e.preventDefault(); if (!e.repeat) toggle(); }
+  }, true);
+  document.addEventListener('keyup', function (e) { if (e.code === 'Space' || e.key === ' ') e.preventDefault(); }, true);
+
+  function setTrack(url, name, isDemo) {
+    if (curUrl && curUrl !== url) { try { URL.revokeObjectURL(curUrl); } catch (e) {} }
+    curUrl = url;
+    audio.pause();
+    audio.src = url; audio.load();
+    trackLoaded = true; trackIsDemo = isDemo;
+    trackEl.textContent = name;
+    playBtn.disabled = false; seek.disabled = false; seek.value = 0;
+    if (!isDemo && score && scoreFromDemo) clearScore();   // demo score does not describe a user track
+    if (!isDemo) { dance = null; danceIdx = -1; danceHueTarget = null; danceEl.style.opacity = 0; }  // demo dance guide does not describe a user track
+    resetCursors(); setPlayIcon();
+  }
+  function loadAudioFile(f) { setTrack(URL.createObjectURL(f), f.name, false); }
+  function loadVizFile(f) {
+    var rd = new FileReader();
+    rd.onload = function () { try { if (!loadScore(JSON.parse(rd.result), false)) alert('That .viz.json had no kick/snare/melody/sections data.'); } catch (e) { alert('Could not read that .viz.json: ' + e.message); } };
+    rd.readAsText(f);
+  }
+  function isViz(f) { return /\.json$/i.test(f.name) || f.type === 'application/json'; }
+  function isAudio(f) { return /^audio\//.test(f.type) || /\.(mp3|wav|ogg|oga|flac|m4a|aac|opus|webm)$/i.test(f.name); }
+
+  $('fileAudio').addEventListener('change', function () { if (this.files[0]) loadAudioFile(this.files[0]); this.value = ''; });
+  $('fileViz').addEventListener('change', function () { if (this.files[0]) loadVizFile(this.files[0]); this.value = ''; });
+
+  var dragDepth = 0;
+  window.addEventListener('dragenter', function (e) { e.preventDefault(); dragDepth++; document.body.classList.add('dragging'); });
+  window.addEventListener('dragleave', function () { dragDepth = Math.max(0, dragDepth - 1); if (!dragDepth) document.body.classList.remove('dragging'); });
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('drop', function (e) {
+    e.preventDefault(); dragDepth = 0; document.body.classList.remove('dragging');
+    var fs = e.dataTransfer && e.dataTransfer.files ? Array.prototype.slice.call(e.dataTransfer.files) : [];
+    var a = null, v = null;
+    fs.forEach(function (f) {
+      if (/dance/i.test(f.name) && isViz(f)) { var rd2 = new FileReader(); rd2.onload = function () { try { loadDance(JSON.parse(rd2.result)); } catch (e) {} }; rd2.readAsText(f); }
+      else if (isViz(f)) v = v || f; else if (isAudio(f)) a = a || f;
+    });
+    if (a) loadAudioFile(a);
+    if (v) loadVizFile(v);   // after audio, so a dropped pair keeps its score
+  });
+
+  // ---------- demo auto-load (silent fallback to picker) ----------
+  function tryDemo() {
+    if (!window.fetch) return;
+    fetch('../assets/demo.mp3').then(function (r) { if (!r.ok) throw new Error('no demo'); return r.blob(); })
+      .then(function (b) {
+        if (trackLoaded) return;                      // user already picked something
+        setTrack(URL.createObjectURL(b), 'Mountain King v1 (demo)', true);
+        fetch('../assets/demo.dance.json').then(function (r) { if (!r.ok) throw new Error('no dance guide'); return r.json(); })
+          .then(function (j) { if (trackIsDemo) loadDance(j); }).catch(function () {});
+        return fetch('../assets/demo.viz.json').then(function (r) { if (!r.ok) throw new Error('no sidecar'); return r.json(); })
+          .then(function (j) { if (trackIsDemo && !score) loadScore(j, true); });
+      })
+      .catch(function () { /* file:// or missing asset: picker path stays available */ });
+  }
+
+  tryDemo();
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

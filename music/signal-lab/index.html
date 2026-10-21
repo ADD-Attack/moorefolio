@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<!--
+  Prototype: SIGNAL LAB (brief 3, slug signal-lab) — the instrument panel.
+  Influence dials: trippy 0 / beautiful 2 / technical 5 / dancing 0 / colorful 1 / intense 1
+  Mapping: AnalyserNode FFT (2048) -> log spectrum + band shading; time domain -> triggered oscilloscope;
+           20–140 / 140–2000 / 2000–12000 Hz band power -> three dB meters + MID/HIGH lamps;
+           low-band spectral flux onsets (FFT) or sidecar kick times (SCORE) -> LOW lamp (the Pi homage, gated <=3 flashes/s);
+           kick intervals -> BPM readout; sidecar melody -> pitch roll (FFT: interpolated peak-bin pitch estimate);
+           sidecar sections -> section readout + tape lane.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Signal Lab — music visualizer prototype</title>
+<style>
+  :root{
+    --bg:#090b0e; --panel:#0d1014; --line:#1d232b; --dim:#6b7684; --text:#c9d1da; --bright:#eef3f7;
+    --low:#ff6a3d; --mid:#e9c46a; --high:#7cc4ff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--text);font-family:var(--mono)}
+  body{display:flex;flex-direction:column;min-height:100vh;overflow-x:hidden}
+  header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    padding:10px 14px 6px;border-bottom:1px solid var(--line)}
+  .brand{display:flex;align-items:baseline;gap:10px;min-width:0}
+  .brand h1{margin:0;font-size:14px;letter-spacing:.28em;font-weight:600;color:var(--bright)}
+  .brand span{font-size:10px;letter-spacing:.14em;color:var(--dim);text-transform:uppercase}
+  .hdr-r{display:flex;align-items:center;gap:8px}
+  .badge{font-size:11px;letter-spacing:.2em;padding:3px 8px 3px 10px;border:1px solid var(--dim);color:var(--text);border-radius:2px}
+  .badge.score{border-color:var(--mid);color:var(--mid)}
+  .tbtn{font:inherit;font-size:10px;letter-spacing:.16em;background:none;color:var(--dim);border:1px solid var(--line);
+    padding:4px 8px;border-radius:2px;cursor:pointer;text-transform:uppercase}
+  .tbtn[aria-pressed="true"]{color:var(--bright);border-color:var(--dim)}
+  .stage{position:relative;flex:1 1 auto;min-height:480px;width:100%}
+  .stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  .transport{border-top:1px solid var(--line);padding:8px 14px 10px;display:flex;flex-direction:column;gap:6px}
+  .row{display:flex;align-items:center;gap:10px;min-width:0;flex-wrap:wrap}
+  .row.main{flex-wrap:nowrap}
+  #play{width:34px;height:34px;flex:0 0 34px;border-radius:50%;border:1px solid var(--dim);background:var(--panel);color:var(--bright);
+    cursor:pointer;display:grid;place-items:center;padding:0}
+  #play:disabled{opacity:.35;cursor:default}
+  #play svg{width:14px;height:14px;fill:currentColor}
+  .time{font-size:12px;color:var(--text);font-variant-numeric:tabular-nums;flex:0 0 auto}
+  #seek{flex:1 1 auto;min-width:0;accent-color:#9fb3c4;height:18px}
+  #track{font-size:12px;color:var(--bright);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;flex:1 1 160px;min-width:0}
+  .btn{position:relative;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:var(--text);border:1px solid var(--line);
+    padding:5px 9px;border-radius:2px;cursor:pointer;white-space:nowrap}
+  .btn:hover,.tbtn:hover{border-color:var(--dim)}
+  .btn input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+  .btn:focus-within{outline:1px solid var(--high)}
+  .hint{font-size:10px;color:var(--dim);letter-spacing:.08em}
+  #msg{font-size:10px;color:var(--mid);letter-spacing:.06em}
+  .drop{position:fixed;inset:0;display:none;place-items:center;background:rgba(9,11,14,.86);z-index:5;
+    border:1px dashed var(--dim);font-size:13px;letter-spacing:.3em;color:var(--bright)}
+  .drop.on{display:grid}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand"><h1>SIGNAL&nbsp;LAB</h1><span>prototype 03 · instrument panel</span></div>
+  <div class="hdr-r">
+    <button class="tbtn" id="calm" aria-pressed="false" title="Calm mode: soft lamps, no flashes">Calm</button>
+    <span class="badge" id="badge" title="Analysis mode">FFT</span>
+  </div>
+</header>
+<div class="stage" id="stage"><canvas id="cv" aria-label="Spectrum, oscilloscope, band meters and three lamps"></canvas></div>
+<div class="transport">
+  <div class="row main">
+    <button id="play" disabled aria-label="Play"><svg viewBox="0 0 14 14" id="icon"><path d="M3 1.5v11l9.5-5.5z"/></svg></button>
+    <span class="time" id="tcur">0:00.0</span>
+    <input id="seek" type="range" min="0" max="1000" step="1" value="0" disabled aria-label="Seek">
+    <span class="time" id="tdur">0:00.0</span>
+  </div>
+  <div class="row">
+    <span id="track">No audio loaded — synthetic test signal running</span>
+    <label class="btn">Audio file<input type="file" id="fAudio" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac"></label>
+    <label class="btn">Sidecar .viz.json<input type="file" id="fViz" accept=".json,application/json"></label>
+    <span class="hint">or drop files anywhere · space = play/pause</span>
+    <span id="msg" role="status"></span>
+  </div>
+</div>
+<div class="drop" id="drop">DROP AUDIO OR .VIZ.JSON</div>
+
+<script>
+(function(){
+'use strict';
+// ---------- constants ----------
+var FFT = 2048, NB = FFT / 2;
+var BANDS = [
+  {key:'low',  name:'LOW',  lo:20,   hi:140,   col:'#ff6a3d'},
+  {key:'mid',  name:'MID',  lo:140,  hi:2000,  col:'#e9c46a'},
+  {key:'high', name:'HIGH', lo:2000, hi:12000, col:'#7cc4ff'}
+];
+var DB_FLOOR = -85, DB_CEIL = -20;          // meter scale (band power, dB re full-scale bin)
+var SPEC_MIN = -105, SPEC_MAX = -15;       // spectrum plot scale
+var FMIN = 20, FMAX = 20000;
+var KICK_COOLDOWN = 0.25;                  // detector cooldown (spec >= 250 ms)
+var FLASH_GAP = 1 / 3 + 0.005;             // lamp flash gate: never more than 3 full flashes / s
+var LOOKAHEAD = 0.05;
+var TAPE_PAST = 6, TAPE_FUTURE = 1.5;
+var COL = {bg:'#090b0e', panel:'#0d1014', line:'#1d232b', grid:'#151a20', dim:'#6b7684', text:'#c9d1da', bright:'#eef3f7'};
+var NOTE = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+
+// ---------- DOM ----------
+var $ = function(id){ return document.getElementById(id); };
+var cv = $('cv'), g = cv.getContext('2d'), stage = $('stage');
+var playBtn = $('play'), seek = $('seek'), tcur = $('tcur'), tdur = $('tdur'), trackEl = $('track'), msgEl = $('msg');
+var badge = $('badge'), calmBtn = $('calm'), dropEl = $('drop');
+
+// ---------- state ----------
+var audio = new Audio(); audio.preload = 'auto';
+var ac = null, analyser = null, srcNode = null;
+var fdLive = new Float32Array(NB), tdLive = new Float32Array(FFT);
+var fdSyn = new Float32Array(NB), tdSyn = new Float32Array(FFT);
+var S = {
+  hasTrack:false, isDemo:false, started:false, url:null, name:'',
+  sidecar:null, sidecarAuto:false, sidecarName:'',
+  calm:false, seeking:false, source:'synth'
+};
+var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+setCalm(!!(mq && mq.matches));
+if (mq) { var onMq = function(){ setCalm(mq.matches); }; if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq); }
+
+// analysis state
+var A = {
+  sr:48000, binHz:48000/FFT, ranges:null,
+  e:[0,0,0], raw:[0,0,0], db:[-120,-120,-120], peak:[0,0,0], peakT:[0,0,0],
+  prevLow:new Float32Array(16), flux:0, thr:0, fluxHist:[],
+  lastKick:-1e9, lastClock:0, clock:0,
+  centroid:0, pitch:null, pk:-120, rms:-120,
+  disp:new Float32Array(NB).fill(-140), hold:new Float32Array(NB).fill(-140), holdT:new Float32Array(NB)
+};
+var hist = [];          // {t, e:[3], flux, thr, midi, ps}
+var kicksFFT = [];      // detector onsets (audio/synth clock)
+var kicksScore = [];    // sidecar kicks actually fired
+var bpmTimes = [];
+var lamp = {low:0, lastFlash:-1e9, count:0, mid:0, high:0};
+var cur = {k:0, s:0}, pending = [];
+var synT = 0, frames = 0, fps = 60, fpsT = 0;
+
+// ---------- helpers ----------
+function clamp(v,a,b){ return v < a ? a : v > b ? b : v; }
+function fmt(t){ if (!isFinite(t) || t < 0) t = 0; var m = Math.floor(t/60), s = t - m*60; return m + ':' + (s < 10 ? '0' : '') + s.toFixed(1); }
+function midiName(m){ var r = Math.round(m); return NOTE[((r%12)+12)%12] + (Math.floor(r/12) - 1); }
+function lowerBound(a, v){ var lo = 0, hi = a.length; while (lo < hi){ var md = (lo+hi) >> 1; if (a[md] < v) lo = md+1; else hi = md; } return lo; }
+function say(t){ msgEl.textContent = t || ''; if (t) { clearTimeout(say._t); say._t = setTimeout(function(){ msgEl.textContent=''; }, 6000); } }
+function setCalm(on){ S.calm = !!on; calmBtn.setAttribute('aria-pressed', on ? 'true' : 'false'); }
+
+function computeRanges(sr){
+  A.sr = sr; A.binHz = sr / FFT;
+  A.ranges = BANDS.map(function(b){
+    var lo = Math.max(1, Math.ceil(b.lo / A.binHz)), hi = Math.min(NB - 1, Math.ceil(b.hi / A.binHz) - 1);
+    return [lo, Math.max(lo, hi)];
+  });
+  A.prevLow = new Float32Array(A.ranges[0][1] - A.ranges[0][0] + 1);
+}
+computeRanges(48000);
+
+// ---------- audio graph ----------
+function ensureCtx(){
+  if (ac) return true;
+  var AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) { say('Web Audio not supported in this browser'); return false; }
+  ac = new AC();
+  analyser = ac.createAnalyser();
+  analyser.fftSize = FFT;
+  analyser.smoothingTimeConstant = 0.2;   // light; display smoothing is done per-bin in JS
+  analyser.minDecibels = -120; analyser.maxDecibels = -10;
+  srcNode = ac.createMediaElementSource(audio);
+  srcNode.connect(analyser); analyser.connect(ac.destination);
+  computeRanges(ac.sampleRate);
+  return true;
+}
+
+function loadAudio(blob, name, isDemo){
+  if (S.url) URL.revokeObjectURL(S.url);
+  S.url = URL.createObjectURL(blob);
+  audio.src = S.url;
+  S.hasTrack = true; S.isDemo = !!isDemo; S.started = false; S.name = name;
+  if (!isDemo && S.sidecarAuto) { S.sidecar = null; S.sidecarAuto = false; }   // demo sidecar never scores a user track
+  trackEl.textContent = name;
+  playBtn.disabled = false; seek.disabled = false; seek.value = 0;
+  tcur.textContent = fmt(0); tdur.textContent = '…';
+  resetEvents(0);
+  updateBadge();
+}
+
+audio.addEventListener('loadedmetadata', function(){ tdur.textContent = fmt(audio.duration); });
+audio.addEventListener('error', function(){ if (S.hasTrack) say('Could not decode that audio file'); });
+audio.addEventListener('play', function(){ setIcon(true); });
+audio.addEventListener('pause', function(){ setIcon(false); });
+audio.addEventListener('ended', function(){ setIcon(false); });
+audio.addEventListener('seeked', function(){ resetEvents(audio.currentTime); });
+
+function setIcon(playing){
+  $('icon').innerHTML = playing ? '<path d="M3 1.5h3v11H3zM8 1.5h3v11H8z"/>' : '<path d="M3 1.5v11l9.5-5.5z"/>';
+  playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+}
+
+function toggle(){
+  if (!S.hasTrack) { say('Load or drop an audio file first'); return; }
+  if (!ensureCtx()) return;
+  if (ac.state === 'suspended') ac.resume();
+  if (audio.paused) {
+    var p = audio.play();
+    S.started = true;
+    if (p && p.catch) p.catch(function(e){ say('Playback blocked: ' + e.message); });
+  } else audio.pause();
+}
+
+// ---------- sidecar ----------
+function normSidecar(j){
+  if (!j || typeof j !== 'object') throw new Error('not a JSON object');
+  var nums = function(a){ return Array.isArray(a) ? a.map(Number).filter(isFinite).sort(function(x,y){return x-y;}) : []; };
+  var mel = Array.isArray(j.melody) ? j.melody.filter(function(n){ return n && isFinite(+n.t) && isFinite(+n.midi); })
+    .map(function(n){ return {t:+n.t, midi:+n.midi, dur:Math.max(0.02, +n.dur || 0.1)}; })
+    .sort(function(a,b){ return a.t - b.t; }) : [];
+  var sec = Array.isArray(j.sections) ? j.sections.filter(function(s){ return s && isFinite(+s.t); })
+    .map(function(s){ return {t:+s.t, name:String(s.name || '—'), energy:isFinite(+s.energy) ? +s.energy : null}; })
+    .sort(function(a,b){ return a.t - b.t; }) : [];
+  var sc = {kick:nums(j.kick), snare:nums(j.snare), melody:mel, sections:sec};
+  if (!sc.kick.length && !sc.snare.length && !mel.length && !sec.length) throw new Error('no kick/snare/melody/sections');
+  sc.melT = mel.map(function(n){ return n.t; });
+  sc.secT = sec.map(function(s){ return s.t; });
+  sc.maxDur = mel.reduce(function(m,n){ return Math.max(m, n.dur); }, 0);
+  var lo = 127, hi = 0; mel.forEach(function(n){ lo = Math.min(lo, n.midi); hi = Math.max(hi, n.midi); });
+  sc.mLo = mel.length ? Math.floor(lo) - 2 : 48; sc.mHi = mel.length ? Math.ceil(hi) + 2 : 84;
+  if (sc.mHi - sc.mLo < 12) { var c = (sc.mHi + sc.mLo) / 2; sc.mLo = Math.floor(c - 6); sc.mHi = Math.ceil(c + 6); }
+  return sc;
+}
+function setSidecar(j, auto, name){
+  S.sidecar = normSidecar(j); S.sidecarAuto = !!auto; S.sidecarName = name || '';
+  resetEvents(S.hasTrack ? audio.currentTime : 0);
+  updateBadge();
+}
+function updateBadge(){
+  var on = !!S.sidecar;
+  badge.textContent = on ? 'SCORE' : 'FFT';
+  badge.className = 'badge' + (on ? ' score' : '');
+}
+function resetEvents(t){
+  pending = []; kicksFFT = []; kicksScore = []; bpmTimes = []; hist = [];
+  A.lastKick = -1e9; A.fluxHist = [];
+  if (S.sidecar) { cur.k = lowerBound(S.sidecar.kick, t); cur.s = lowerBound(S.sidecar.snare, t); }
+}
+
+// ---------- loading: demo, pickers, drop ----------
+function readFile(f){
+  if (!f) return;
+  var isJson = /\.json$/i.test(f.name) || f.type === 'application/json';
+  if (isJson) {
+    f.text().then(function(txt){
+      try { setSidecar(JSON.parse(txt), false, f.name); say('Sidecar loaded: ' + f.name); }
+      catch(e){ say('Sidecar rejected: ' + e.message); }
+    });
+  } else if (/^audio\//.test(f.type) || /\.(mp3|wav|ogg|oga|flac|m4a|aac|opus|webm)$/i.test(f.name)) {
+    loadAudio(f, f.name.replace(/\.[^.]+$/, ''), false);
+  } else say('Unsupported file: ' + f.name);
+}
+$('fAudio').addEventListener('change', function(e){ readFile(e.target.files[0]); e.target.value = ''; });
+$('fViz').addEventListener('change', function(e){ readFile(e.target.files[0]); e.target.value = ''; });
+var dragDepth = 0;
+window.addEventListener('dragenter', function(e){ e.preventDefault(); dragDepth++; dropEl.classList.add('on'); });
+window.addEventListener('dragover', function(e){ e.preventDefault(); });
+window.addEventListener('dragleave', function(e){ e.preventDefault(); if (--dragDepth <= 0) { dragDepth = 0; dropEl.classList.remove('on'); } });
+window.addEventListener('drop', function(e){
+  e.preventDefault(); dragDepth = 0; dropEl.classList.remove('on');
+  var fs = e.dataTransfer && e.dataTransfer.files; if (!fs) return;
+  // audio first, so a dropped pair keeps its user sidecar
+  var arr = Array.prototype.slice.call(fs).sort(function(a,b){ return (/\.json$/i.test(a.name) ? 1 : 0) - (/\.json$/i.test(b.name) ? 1 : 0); });
+  arr.forEach(readFile);
+});
+
+(function tryDemo(){
+  if (!window.fetch) return;
+  fetch('../assets/demo.mp3').then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
+    if (S.hasTrack || !b || !b.size) return;
+    loadAudio(b, 'Mountain King v1 (demo)', true);
+    return fetch('../assets/demo.viz.json').then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
+      if (j && S.isDemo && !S.sidecar) { try { setSidecar(j, true, 'demo.viz.json'); } catch(e){} }
+    }).catch(function(){});
+  }).catch(function(){ /* file:// or missing asset: picker path stays */ });
+})();
+
+// ---------- transport ----------
+playBtn.addEventListener('click', function(){ toggle(); playBtn.blur(); });
+calmBtn.addEventListener('click', function(){ setCalm(!S.calm); calmBtn.blur(); });
+seek.addEventListener('input', function(){
+  S.seeking = true;
+  if (isFinite(audio.duration)) { var t = seek.value / 1000 * audio.duration; tcur.textContent = fmt(t); }
+});
+seek.addEventListener('change', function(){
+  if (isFinite(audio.duration)) audio.currentTime = seek.value / 1000 * audio.duration;
+  S.seeking = false; resetEvents(audio.currentTime); seek.blur();
+});
+document.addEventListener('keydown', function(e){
+  if (e.code === 'Space' || e.key === ' ') {
+    var tg = e.target; if (tg && (tg.tagName === 'TEXTAREA' || (tg.tagName === 'INPUT' && tg.type === 'text'))) return;
+    e.preventDefault(); if (!e.repeat) toggle();
+  }
+});
+document.addEventListener('keyup', function(e){ if (e.code === 'Space' || e.key === ' ') e.preventDefault(); });
+
+// ---------- synthetic idle signal: 72 BPM pulse + slow pentatonic line ----------
+var SYN_BPM = 72, SYN_SCALE = [57,60,62,64,67,69,72,69,67,64];
+function synthFrame(t, sr){
+  var period = 60 / SYN_BPM, ph = (t % period) / period, env = Math.exp(-ph * 7);
+  var hph = ((t + period/2) % (period/2)) / (period/2), henv = Math.exp(-hph * 10) * 0.6;
+  var note = SYN_SCALE[Math.floor(t / period / 2) % SYN_SCALE.length], f0 = 440 * Math.pow(2, (note - 69) / 12);
+  var bh = sr / FFT, i, f, p, h, d;
+  for (i = 0; i < NB; i++) {
+    f = Math.max(i * bh, 10);
+    var base = f > 250 ? -60 - 7.5 * Math.log2(f / 250) : -60 - 5 * Math.log2(250 / f);
+    p = Math.pow(10, base / 10);
+    if (f < 180) { var kb = -34 + 30 * env - Math.pow((f - 62) / 40, 2) * 6; p += Math.pow(10, kb / 10); }
+    for (h = 1; h <= 4; h++) { d = (f - h * f0) / (bh * 1.1); if (d > -6 && d < 6) p += Math.pow(10, (-30 - 8 * (h - 1)) / 10) * Math.exp(-d * d); }
+    if (f > 5000) p += Math.pow(10, (-78 + 18 * henv) / 10);
+    fdSyn[i] = 10 * Math.log10(p) + (Math.random() - 0.5) * 2.5;
+  }
+  for (i = 0; i < FFT; i++) {
+    var ts = t + i / sr, ke = Math.exp(-(((ts % period) / period)) * 7);
+    tdSyn[i] = 0.16 * Math.sin(6.2832 * f0 * ts) + 0.06 * Math.sin(6.2832 * 2 * f0 * ts + 0.5) +
+               0.04 * Math.sin(6.2832 * 3 * f0 * ts + 1.1) + 0.3 * ke * Math.sin(6.2832 * 58 * ts) + (Math.random() - 0.5) * 0.01;
+  }
+}
+
+// ---------- analysis ----------
+function analyze(fd, td, t, dt, live){
+  var i, k, r, bh = A.binHz;
+  for (i = 0; i < NB; i++) if (!(fd[i] > -140)) fd[i] = -140;
+  // band power -> dB -> normalized, attack fast / decay slower
+  var aA = 1 - Math.exp(-dt / 0.018), aD = 1 - Math.exp(-dt / 0.22);
+  for (k = 0; k < 3; k++) {
+    r = A.ranges[k]; var pw = 0;
+    for (i = r[0]; i <= r[1]; i++) pw += Math.pow(10, fd[i] / 10);
+    var db = 10 * Math.log10(pw / (r[1] - r[0] + 1) + 1e-14);
+    A.db[k] = db;
+    var e = clamp((db - DB_FLOOR) / (DB_CEIL - DB_FLOOR), 0, 1);
+    A.raw[k] = e;
+    A.e[k] += (e - A.e[k]) * (e > A.e[k] ? aA : aD);
+    if (A.e[k] >= A.peak[k]) { A.peak[k] = A.e[k]; A.peakT[k] = t; }
+    else if (Math.abs(t - A.peakT[k]) > 0.9) A.peak[k] = Math.max(A.e[k], A.peak[k] - dt * 0.4);
+  }
+  // low-band spectral flux (linear magnitude, positive differences)
+  r = A.ranges[0]; var flux = 0;
+  for (i = r[0]; i <= r[1]; i++) {
+    var m = Math.pow(10, fd[i] / 20), j = i - r[0];
+    var dm = m - A.prevLow[j]; if (dm > 0) flux += dm; A.prevLow[j] = m;
+  }
+  A.flux = flux;
+  A.fluxHist.push(flux); if (A.fluxHist.length > 60) A.fluxHist.shift();
+  var mean = 0, sd = 0, n = A.fluxHist.length;
+  for (i = 0; i < n; i++) mean += A.fluxHist[i]; mean /= n;
+  for (i = 0; i < n; i++) sd += (A.fluxHist[i] - mean) * (A.fluxHist[i] - mean); sd = Math.sqrt(sd / n);
+  A.thr = mean + 1.6 * sd + 0.0005;
+  if (live && n > 8 && flux > A.thr && A.raw[0] > 0.3 && t - A.lastKick >= KICK_COOLDOWN) {
+    A.lastKick = t;
+    kicksFFT.push(t);
+    var scoreDrives = S.sidecar && S.sidecar.kick.length && S.source === 'track';
+    if (!scoreDrives) { fireKick(t); bpmTimes.push(t); if (bpmTimes.length > 24) bpmTimes.shift(); }
+  }
+  // spectral centroid 20..12k, interpolated peak pitch 140..2000
+  var num = 0, den = 0, hiB = A.ranges[2][1];
+  for (i = 1; i <= hiB; i++) { var pp = Math.pow(10, fd[i] / 10); num += pp * i * bh; den += pp; }
+  A.centroid = den > 0 ? num / den : 0;
+  r = A.ranges[1]; var best = r[0];
+  for (i = r[0]; i <= r[1]; i++) if (fd[i] > fd[best]) best = i;
+  A.pk = fd[best];
+  if (fd[best] > -72 && best > 0 && best < NB - 1) {
+    var a = fd[best - 1], b = fd[best], c = fd[best + 1], den2 = a - 2 * b + c;
+    var off = den2 !== 0 ? clamp(0.5 * (a - c) / den2, -0.5, 0.5) : 0;
+    var hz = (best + off) * bh;
+    A.pitch = {hz:hz, midi:69 + 12 * Math.log2(hz / 440), db:b};
+  } else A.pitch = null;
+  // time-domain RMS
+  var s2 = 0, pkv = 0; for (i = 0; i < FFT; i++) { s2 += td[i] * td[i]; pkv = Math.max(pkv, Math.abs(td[i])); }
+  A.rms = 20 * Math.log10(Math.sqrt(s2 / FFT) + 1e-9); A.peakDb = 20 * Math.log10(pkv + 1e-9);
+  // spectrum display smoothing + peak hold
+  var fall = dt * 70, hfall = dt * 18;
+  for (i = 0; i < NB; i++) {
+    var v = fd[i];
+    A.disp[i] = v > A.disp[i] ? v : Math.max(v, A.disp[i] - fall);
+    if (v >= A.hold[i]) { A.hold[i] = v; A.holdT[i] = 0; }
+    else { A.holdT[i] += dt; if (A.holdT[i] > 1) A.hold[i] = Math.max(v, A.hold[i] - hfall); }
+  }
+  hist.push({t:t, e:[A.e[0], A.e[1], A.e[2]], flux:flux, thr:A.thr, midi:A.pitch ? A.pitch.midi : null, ps:A.pitch ? A.pitch.db : -120});
+  while (hist.length && hist[0].t < t - TAPE_PAST - 0.5) hist.shift();
+}
+
+function fireKick(t){
+  var now = performance.now() / 1000;
+  var gap = S.calm ? 1.0 : FLASH_GAP;
+  if (now - lamp.lastFlash >= gap) { lamp.lastFlash = now; lamp.flashPending = true; }
+  lamp.count++;
+}
+
+function scoreStep(t, dt){
+  var sc = S.sidecar; if (!sc) return;
+  var ahead = t + LOOKAHEAD;
+  while (cur.k < sc.kick.length && sc.kick[cur.k] <= ahead) { var kt = sc.kick[cur.k++]; if (kt >= t - 0.15) pending.push({t:kt, type:'k'}); }
+  while (cur.s < sc.snare.length && sc.snare[cur.s] <= ahead) { var st = sc.snare[cur.s++]; if (st >= t - 0.15) pending.push({t:st, type:'s'}); }
+  // fire when the playhead reaches the event (half-frame tolerance)
+  for (var i = pending.length - 1; i >= 0; i--) {
+    var ev = pending[i];
+    if (t + dt * 0.5 >= ev.t) {
+      if (ev.type === 'k') { fireKick(ev.t); kicksScore.push(ev.t); bpmTimes.push(ev.t); if (bpmTimes.length > 24) bpmTimes.shift(); }
+      pending.splice(i, 1);
+    }
+  }
+  while (kicksScore.length && kicksScore[0] < t - 12) kicksScore.shift();
+}
+
+function estimateBPM(){
+  var ts = bpmTimes, iv = [], i;
+  if (S.sidecar && S.sidecar.kick.length && S.source === 'track') {   // score: use sidecar kicks around the playhead
+    var sk = S.sidecar.kick, t = audio.currentTime, a = lowerBound(sk, t - 8), b = lowerBound(sk, t + 2);
+    ts = sk.slice(a, b);
+  }
+  for (i = 1; i < ts.length; i++) { var d = ts[i] - ts[i - 1]; if (d >= 0.25 && d <= 2) iv.push(d); }
+  if (iv.length < 3) return null;
+  var sorted = iv.slice().sort(function(x,y){return x-y;}), med = sorted[sorted.length >> 1];
+  var good = iv.filter(function(d){ var q = d / med, rq = Math.round(q); return rq >= 1 && Math.abs(q - rq) < 0.08 * rq; });
+  var mean = good.length ? good.reduce(function(s,d){ var rq = Math.round(d / med); return s + d / rq; }, 0) / good.length : med;
+  var bpm = 60 / mean;
+  while (bpm < 70) bpm *= 2; while (bpm >= 180) bpm /= 2;
+  return {bpm:bpm, conf:good.length / iv.length, n:iv.length + 1};
+}
+
+function agreement(t){
+  if (!kicksScore.length) return null;
+  var hit = 0, n = 0, j = 0;
+  for (var i = 0; i < kicksScore.length; i++) {
+    var k = kicksScore[i]; if (k > t - 0.12 || k < t - 10) continue;
+    n++;
+    for (j = 0; j < kicksFFT.length; j++) if (Math.abs(kicksFFT[j] - k) <= 0.07) { hit++; break; }
+  }
+  while (kicksFFT.length && kicksFFT[0] < t - 12) kicksFFT.shift();
+  return n ? {pct:hit / n, n:n} : null;
+}
+
+function currentSection(t){
+  var sc = S.sidecar; if (!sc || !sc.sections.length) return null;
+  var i = lowerBound(sc.secT, t + 1e-6) - 1; if (i < 0) return {s:null, next:sc.sections[0], i:-1};
+  return {s:sc.sections[i], next:sc.sections[i + 1] || null, i:i};
+}
+
+// ---------- layout ----------
+var P = 10, G = 8, NARROW = 760;
+var NH = {lamps:150, read:232, spec:210, scope:160, meters:200, tape:240};
+function layout(W, H){
+  if (W >= NARROW) {
+    var lw = Math.round((W - 2*P - G) * 0.64), rw = W - 2*P - G - lw, x1 = P, x2 = P + lw + G;
+    var ih = H - 2*P - 2*G;
+    var s = Math.round(ih * 0.40), o = Math.round(ih * 0.26), tp = ih - s - o;
+    var la = Math.round(ih * 0.30), me = Math.round(ih * 0.33), re = ih - la - me;
+    return {spec:[x1,P,lw,s], scope:[x1,P+s+G,lw,o], tape:[x1,P+s+o+2*G,lw,tp],
+            lamps:[x2,P,rw,la], meters:[x2,P+la+G,rw,me], read:[x2,P+la+me+2*G,rw,re]};
+  }
+  var w = W - 2*P, y = P, out = {};
+  ['lamps','read','spec','scope','meters','tape'].forEach(function(k){ out[k] = [P, y, w, NH[k]]; y += NH[k] + G; });
+  return out;
+}
+function narrowHeight(){ var h = 2*P - G; for (var k in NH) h += NH[k] + G; return h; }
+
+var W = 0, H = 0, DPR = 1, L = null;
+function resize(){
+  var w = stage.clientWidth;
+  if (w < NARROW) { var nh = narrowHeight() + 'px'; if (stage.style.height !== nh) { stage.style.height = nh; stage.style.flex = 'none'; } }
+  else if (stage.style.height) { stage.style.height = ''; stage.style.flex = ''; }
+  DPR = Math.min(window.devicePixelRatio || 1, 3);
+  W = stage.clientWidth; H = stage.clientHeight;
+  cv.width = Math.round(W * DPR); cv.height = Math.round(H * DPR);
+  L = layout(W, H);
+}
+if (window.ResizeObserver) new ResizeObserver(resize).observe(stage); else window.addEventListener('resize', resize);
+resize();
+
+// ---------- drawing primitives ----------
+function font(px, w){ g.font = (w || 400) + ' ' + px + 'px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace'; }
+function fitText(s, maxW){
+  if (g.measureText(s).width <= maxW) return s;
+  while (s.length > 1 && g.measureText(s + '…').width > maxW) s = s.slice(0, -1);
+  return s + '…';
+}
+function panel(r, title, right){
+  var x = r[0], y = r[1], w = r[2], h = r[3];
+  g.fillStyle = COL.panel; g.fillRect(x, y, w, h);
+  g.strokeStyle = COL.line; g.lineWidth = 1; g.strokeRect(x + 0.5, y + 0.5, w - 1, h - 1);
+  // corner ticks
+  g.strokeStyle = '#2c3540'; g.beginPath();
+  g.moveTo(x + 0.5, y + 8); g.lineTo(x + 0.5, y + 0.5); g.lineTo(x + 8, y + 0.5);
+  g.moveTo(x + w - 8, y + h - 0.5); g.lineTo(x + w - 0.5, y + h - 0.5); g.lineTo(x + w - 0.5, y + h - 8); g.stroke();
+  font(9, 600); g.fillStyle = COL.dim; g.textBaseline = 'top'; g.textAlign = 'left';
+  g.fillText(title, x + 9, y + 7);
+  if (right) { g.textAlign = 'right'; g.fillText(fitText(right, w - g.measureText(title).width - 30), x + w - 9, y + 7); g.textAlign = 'left'; }
+  return [x + 9, y + 22, w - 18, h - 30];
+}
+function rgba(hex, a){ var n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; }
+
+// ---------- panels ----------
+function fx(f, x, w){ return x + w * Math.log(f / FMIN) / Math.log(FMAX / FMIN); }
+function xf(px, w){ return FMIN * Math.pow(FMAX / FMIN, px / w); }
+function sampleSpec(arr, b0, b1){
+  if (b1 - b0 < 1) { var bc = (b0 + b1) / 2, i0 = Math.floor(bc), fr = bc - i0; i0 = clamp(i0, 0, NB - 2); return arr[i0] * (1 - fr) + arr[i0 + 1] * fr; }
+  var m = -200, a = Math.max(0, Math.floor(b0)), b = Math.min(NB - 1, Math.ceil(b1));
+  for (var i = a; i <= b; i++) if (arr[i] > m) m = arr[i];
+  return m;
+}
+function drawSpectrum(r){
+  var inr = panel(r, 'SPECTRUM', 'FFT ' + FFT + ' · Δf ' + A.binHz.toFixed(2) + ' Hz · log f · dB');
+  var lm = 30, bm = 14, x = inr[0] + lm, y = inr[1] + 12, w = inr[2] - lm, h = inr[3] - bm - 12;
+  if (w < 40 || h < 30) return;
+  var yd = function(db){ return y + h * (1 - clamp((db - SPEC_MIN) / (SPEC_MAX - SPEC_MIN), 0, 1)); };
+  // band regions
+  BANDS.forEach(function(b, k){
+    var x0 = fx(b.lo, x, w), x1 = fx(b.hi, x, w);
+    g.fillStyle = rgba(b.col, 0.045); g.fillRect(x0, y, x1 - x0, h);
+    font(9, 600); g.fillStyle = rgba(b.col, 0.85); g.textBaseline = 'bottom';
+    var lbl = b.name + ' ' + (b.lo >= 1000 ? b.lo / 1000 + 'k' : b.lo) + '–' + (b.hi >= 1000 ? b.hi / 1000 + 'k' : b.hi);
+    if (x1 - x0 > g.measureText(lbl).width + 4) g.fillText(lbl, x0 + 3, y - 1); else g.fillText(b.name, x0 + 2, y - 1);
+    // band level marker
+    var yy = yd(A.db[k]);
+    g.strokeStyle = rgba(b.col, 0.9); g.lineWidth = 1.5; g.beginPath(); g.moveTo(x0 + 1, yy); g.lineTo(x1 - 1, yy); g.stroke();
+  });
+  // grid
+  g.lineWidth = 1; g.strokeStyle = COL.grid; g.beginPath();
+  for (var db = -100; db <= -20; db += 20) { var gy = Math.round(yd(db)) + 0.5; g.moveTo(x, gy); g.lineTo(x + w, gy); }
+  [50,100,200,500,1000,2000,5000,10000].forEach(function(f){ var gx = Math.round(fx(f, x, w)) + 0.5; g.moveTo(gx, y); g.lineTo(gx, y + h); });
+  g.stroke();
+  font(9); g.fillStyle = COL.dim; g.textAlign = 'right'; g.textBaseline = 'middle';
+  for (db = -100; db <= -20; db += 20) g.fillText(db, x - 5, yd(db));
+  g.textAlign = 'center'; g.textBaseline = 'top';
+  [20,50,100,200,500,1000,2000,5000,10000,20000].forEach(function(f){
+    if (w < 300 && (f === 50 || f === 200 || f === 500 || f === 5000)) return;
+    g.fillText(f >= 1000 ? f / 1000 + 'k' : f, clamp(fx(f, x, w), x + 8, x + w - 10), y + h + 3);
+  });
+  g.textAlign = 'left';
+  // boundary lines
+  g.setLineDash([3, 3]); g.strokeStyle = '#3a4450'; g.beginPath();
+  [140, 2000, 12000].forEach(function(f){ var bx = Math.round(fx(f, x, w)) + 0.5; g.moveTo(bx, y); g.lineTo(bx, y + h); });
+  g.stroke(); g.setLineDash([]);
+  // trace
+  var step = 2, bh = A.binHz, px, pts = [], hp = [];
+  for (px = 0; px <= w; px += step) {
+    var b0 = xf(px, w) / bh, b1 = xf(px + step, w) / bh;
+    pts.push(yd(sampleSpec(A.disp, b0, b1))); hp.push(yd(sampleSpec(A.hold, b0, b1)));
+  }
+  var grad = g.createLinearGradient(0, y, 0, y + h);
+  grad.addColorStop(0, 'rgba(207,227,240,0.22)'); grad.addColorStop(1, 'rgba(207,227,240,0.0)');
+  g.beginPath(); g.moveTo(x, y + h);
+  for (px = 0; px < pts.length; px++) g.lineTo(x + px * step, pts[px]);
+  g.lineTo(x + w, y + h); g.closePath(); g.fillStyle = grad; g.fill();
+  g.beginPath(); for (px = 0; px < pts.length; px++) { if (px) g.lineTo(x + px * step, pts[px]); else g.moveTo(x, pts[0]); }
+  g.strokeStyle = '#cfe3f0'; g.lineWidth = 1.2; g.stroke();
+  g.beginPath(); for (px = 0; px < hp.length; px++) { if (px) g.lineTo(x + px * step, hp[px]); else g.moveTo(x, hp[0]); }
+  g.strokeStyle = 'rgba(207,227,240,0.28)'; g.lineWidth = 1; g.stroke();
+  // pitch cursor
+  if (A.pitch) {
+    var pxp = fx(A.pitch.hz, x, w);
+    g.strokeStyle = 'rgba(233,196,106,0.55)'; g.beginPath(); g.moveTo(pxp + 0.5, yd(A.pitch.db) - 4); g.lineTo(pxp + 0.5, yd(A.pitch.db) - 14); g.stroke();
+  }
+  if (S.source === 'synth') {
+    font(10, 600); g.fillStyle = 'rgba(201,209,218,0.55)'; g.textAlign = 'right'; g.textBaseline = 'top';
+    g.fillText(S.hasTrack ? 'READY · PRESS PLAY  (showing test signal)' : 'TEST SIGNAL · LOAD OR DROP AUDIO', x + w - 4, y + 4);
+    g.textAlign = 'left';
+  }
+}
+
+function drawScope(r, td){
+  var sr = A.sr, span = Math.min(1024, FFT - 512);
+  var inr = panel(r, 'OSCILLOSCOPE', span + ' smp · ' + (span / sr * 100).toFixed(2) + ' ms/div · trig ↑0');
+  var x = inr[0], y = inr[1], w = inr[2], h = inr[3];
+  if (w < 40 || h < 20) return;
+  g.strokeStyle = COL.grid; g.lineWidth = 1; g.beginPath();
+  for (var i = 1; i < 10; i++) { var gx = Math.round(x + w * i / 10) + 0.5; g.moveTo(gx, y); g.lineTo(gx, y + h); }
+  for (i = 1; i < 6; i++) { var gy = Math.round(y + h * i / 6) + 0.5; g.moveTo(x, gy); g.lineTo(x + w, gy); }
+  g.stroke();
+  g.strokeStyle = '#26303a'; g.beginPath(); g.moveTo(x, Math.round(y + h / 2) + 0.5); g.lineTo(x + w, Math.round(y + h / 2) + 0.5); g.stroke();
+  // rising zero-crossing trigger (with hysteresis) in the first 512 samples
+  var trig = 0;
+  for (i = 1; i < 512; i++) if (td[i - 1] < -0.002 && td[i] >= 0) { trig = i; break; }
+  var mid = y + h / 2, amp = h / 2 * 0.92, n = Math.min(span, Math.max(64, Math.floor(w * 2)));
+  g.beginPath();
+  for (i = 0; i < n; i++) {
+    var v = td[trig + Math.floor(i * span / n)], px = x + w * i / (n - 1), py = mid - clamp(v, -1, 1) * amp;
+    if (i) g.lineTo(px, py); else g.moveTo(px, py);
+  }
+  g.strokeStyle = '#9fe0c8'; g.lineWidth = 1.3; g.stroke();
+  g.fillStyle = '#9fe0c8'; g.beginPath(); g.moveTo(x, mid - 4); g.lineTo(x + 5, mid); g.lineTo(x, mid + 4); g.fill();
+  font(9); g.fillStyle = COL.dim; g.textBaseline = 'bottom'; g.textAlign = 'right';
+  g.fillText('peak ' + Math.max(-99, A.peakDb).toFixed(1) + ' dBFS  rms ' + Math.max(-99, A.rms).toFixed(1) + ' dBFS', x + w, y + h);
+  g.textAlign = 'left';
+}
+
+function drawLamps(r, dt){
+  var inr = panel(r, 'LAMPS', 'after the Pi · low fires on kick');
+  var x = inr[0], y = inr[1], w = inr[2], h = inr[3];
+  var labelH = 26, rad = Math.max(8, Math.min(w / 3 * 0.32, (h - labelH) * 0.42));
+  var cyy = y + (h - labelH) / 2 + 2;
+  var vals = [lamp.low, lamp.mid, lamp.high];
+  var subs = ['KICK · ' + lamp.count, 'MID ' + Math.round(A.e[1] * 100) + '%', 'HIGH ' + Math.round(A.e[2] * 100) + '%'];
+  for (var k = 0; k < 3; k++) {
+    var cx = x + w * (k + 0.5) / 3, v = clamp(vals[k], 0, 1), col = BANDS[k].col;
+    // bezel
+    g.beginPath(); g.arc(cx, cyy, rad + 4, 0, 6.2832); g.fillStyle = '#12161b'; g.fill();
+    g.strokeStyle = '#2a333d'; g.lineWidth = 1; g.stroke();
+    // glow
+    if (v > 0.02) {
+      g.save(); g.shadowColor = rgba(col, 0.9 * v); g.shadowBlur = (S.calm ? 10 : 26) * v;
+      g.beginPath(); g.arc(cx, cyy, rad, 0, 6.2832); g.fillStyle = rgba(col, 0.25 + 0.75 * v); g.fill(); g.restore();
+    }
+    // lens
+    var lg = g.createRadialGradient(cx - rad * 0.3, cyy - rad * 0.35, rad * 0.1, cx, cyy, rad);
+    lg.addColorStop(0, rgba(col, 0.10 + 0.9 * v)); lg.addColorStop(1, rgba(col, 0.05 + 0.55 * v));
+    g.beginPath(); g.arc(cx, cyy, rad, 0, 6.2832); g.fillStyle = v > 0.02 ? lg : '#171c22'; g.fill();
+    g.strokeStyle = rgba(col, 0.25 + 0.5 * v); g.stroke();
+    // specular
+    g.beginPath(); g.arc(cx - rad * 0.32, cyy - rad * 0.36, rad * 0.22, 0, 6.2832); g.fillStyle = 'rgba(255,255,255,' + (0.05 + 0.18 * v) + ')'; g.fill();
+    font(9, 600); g.textAlign = 'center'; g.textBaseline = 'top';
+    g.fillStyle = rgba(col, 0.9); g.fillText(BANDS[k].name, cx, y + h - labelH + 2);
+    g.fillStyle = COL.dim; font(9); g.fillText(subs[k], cx, y + h - labelH + 14);
+  }
+  g.textAlign = 'left';
+}
+
+function updateLamps(dt){
+  if (lamp.flashPending) { lamp.flashPending = false; lamp.low = S.calm ? Math.max(lamp.low, 0.55) : 1; }
+  lamp.low *= Math.exp(-dt / (S.calm ? 0.45 : 0.13));
+  // mid/high are continuous level lamps (no hard flash), slew-limited
+  var tgtM = clamp((A.e[1] - 0.15) / 0.75, 0, 1), tgtH = clamp((A.e[2] - 0.1) / 0.75, 0, 1);
+  var slew = dt / (S.calm ? 0.6 : 0.22);
+  lamp.mid += clamp(tgtM - lamp.mid, -slew, slew);
+  lamp.high += clamp(tgtH - lamp.high, -slew, slew);
+}
+
+function drawMeters(r){
+  var inr = panel(r, 'BAND METERS', 'band power · dB');
+  var x = inr[0], y = inr[1] + 4, w = inr[2], h = inr[3] - 30;
+  if (h < 30) return;
+  var scaleW = 26, colW = (w - scaleW) / 3, barW = Math.min(28, colW * 0.42);
+  var yv = function(e){ return y + h * (1 - e); };
+  font(9); g.fillStyle = COL.dim; g.textAlign = 'right'; g.textBaseline = 'middle';
+  for (var db = -80; db <= -20; db += 10) {
+    var e = (db - DB_FLOOR) / (DB_CEIL - DB_FLOOR), ty = yv(e);
+    g.fillText(db, x + scaleW - 6, ty);
+    g.fillStyle = COL.grid; g.fillRect(x + scaleW, Math.round(ty), w - scaleW, 1); g.fillStyle = COL.dim;
+  }
+  var segs = Math.max(12, Math.floor(h / 6)), sh = h / segs;
+  for (var k = 0; k < 3; k++) {
+    var cx = x + scaleW + colW * (k + 0.5), bx = cx - barW / 2, col = BANDS[k].col, lit = Math.round(A.e[k] * segs);
+    for (var s = 0; s < segs; s++) {
+      var sy = y + h - (s + 1) * sh;
+      g.fillStyle = s < lit ? rgba(col, 0.35 + 0.65 * (s / segs)) : '#151a20';
+      g.fillRect(bx, sy + 1, barW, Math.max(1, sh - 2));
+    }
+    // raw (unsmoothed) tick and peak hold
+    g.fillStyle = rgba(col, 0.55); g.fillRect(bx + barW + 3, yv(A.raw[k]) - 1, 4, 2);
+    g.fillStyle = COL.bright; g.fillRect(bx - 2, Math.round(yv(A.peak[k])) - 1, barW + 4, 2);
+    font(11, 600); g.textAlign = 'center'; g.textBaseline = 'top'; g.fillStyle = COL.bright;
+    g.fillText(Math.max(-99, A.db[k]).toFixed(1), cx, y + h + 6);
+    font(9); g.fillStyle = rgba(col, 0.85); g.fillText(BANDS[k].name + ' ' + A.e[k].toFixed(2), cx, y + h + 20);
+  }
+  g.textAlign = 'left';
+}
+
+function drawReadouts(r, t){
+  var sc = S.sidecar;
+  var inr = panel(r, 'READOUTS', sc ? 'sidecar ' + (S.sidecarName || 'v1') : 'no sidecar');
+  var bpm = estimateBPM(), sec = currentSection(t), ag = sc && sc.kick.length ? agreement(t) : null;
+  var src = S.source === 'synth' ? 'SYNTH ' + SYN_BPM + ' BPM test' : (audio.paused ? 'PAUSED · ' : 'LIVE · ') + S.name;
+  var pitchStr = '—';
+  var act = activeNotes(t);
+  if (S.source === 'track' && sc && sc.melody.length) pitchStr = act.length ? act.map(function(n){ return midiName(n.midi); }).join(' ') + '  (score)' : 'rest  (score)';
+  else if (A.pitch) { var c = Math.round((A.pitch.midi - Math.round(A.pitch.midi)) * 100); pitchStr = midiName(A.pitch.midi) + ' ' + (c >= 0 ? '+' : '') + c + '¢  ' + A.pitch.hz.toFixed(1) + ' Hz est.'; }
+  var secStr = sc ? (sec ? (sec.s ? sec.s.name + (sec.s.energy != null ? '  E ' + sec.s.energy.toFixed(2) : '') : 'pre-roll') + (sec.next ? '  · next ' + (sec.next.t - t).toFixed(1) + ' s' : '') : 'no sections in sidecar') : '— (needs .viz.json)';
+  var rows = [
+    ['MODE', sc ? 'SCORE · sidecar drives kick/melody' : 'FFT · live analysis', sc ? BANDS[1].col : COL.bright],
+    ['SOURCE', src],
+    ['BPM', bpm ? bpm.bpm.toFixed(1) + '   conf ' + Math.round(bpm.conf * 100) + '%  n=' + bpm.n : 'measuring…', COL.bright],
+    ['LOW', Math.max(-99, A.db[0]).toFixed(1) + ' dB   ' + A.e[0].toFixed(3), BANDS[0].col],
+    ['MID', Math.max(-99, A.db[1]).toFixed(1) + ' dB   ' + A.e[1].toFixed(3), BANDS[1].col],
+    ['HIGH', Math.max(-99, A.db[2]).toFixed(1) + ' dB   ' + A.e[2].toFixed(3), BANDS[2].col],
+    ['CENTROID', (A.centroid >= 1000 ? (A.centroid / 1000).toFixed(2) + ' kHz' : A.centroid.toFixed(0) + ' Hz')],
+    ['PITCH', pitchStr],
+    ['SECTION', secStr],
+  ];
+  if (ag) rows.push(['KICK AGREE', Math.round(ag.pct * 100) + '% FFT vs score  n=' + ag.n]);
+  rows.push(['ENGINE', (A.sr / 1000).toFixed(1) + ' kHz · ' + fps.toFixed(0) + ' fps' + (S.calm ? ' · calm' : '')]);
+  var x = inr[0], y = inr[1], w = inr[2], h = inr[3];
+  var rh = Math.max(12, Math.min(20, h / rows.length)), fs = Math.max(9, Math.min(11, rh - 4));
+  var lw = Math.min(84, w * 0.3);
+  g.textBaseline = 'middle';
+  for (var i = 0; i < rows.length; i++) {
+    var ry = y + rh * (i + 0.5); if (ry > y + h + 2) break;
+    font(Math.max(8, fs - 2), 600); g.fillStyle = COL.dim; g.fillText(rows[i][0], x, ry);
+    font(fs); g.fillStyle = rows[i][2] || COL.text; g.fillText(fitText(rows[i][1], w - lw), x + lw, ry);
+  }
+}
+
+function activeNotes(t){
+  var sc = S.sidecar, out = []; if (!sc || !sc.melody.length) return out;
+  var i = lowerBound(sc.melT, t - sc.maxDur - 0.01), end = lowerBound(sc.melT, t + 1e-6);
+  for (; i < end; i++) { var n = sc.melody[i]; if (t >= n.t && t < n.t + n.dur) out.push(n); }
+  return out;
+}
+
+function drawTape(r, t){
+  var sc = S.sidecar, scoreOn = sc && S.source === 'track';
+  var inr = panel(r, 'EVENT TAPE', '−' + TAPE_PAST + ' s … +' + TAPE_FUTURE + ' s' + (scoreOn ? ' · score lookahead' : ''));
+  var lm = 40, x = inr[0] + lm, y = inr[1], w = inr[2] - lm, h = inr[3];
+  if (w < 40 || h < 60) return;
+  var span = TAPE_PAST + TAPE_FUTURE, t0 = t - TAPE_PAST;
+  var tx = function(tt){ return x + w * (tt - t0) / span; };
+  var phx = tx(t);
+  var laneH = 14, lanes = ['KICK', 'SNARE', 'FLUX', 'BANDS'], ly = [], cy = y;
+  var bandsH = Math.max(24, Math.round((h - laneH * 3) * 0.32));
+  var hs = [laneH, laneH, laneH + 6, bandsH];
+  for (var i = 0; i < 4; i++) { ly.push(cy); cy += hs[i] + 3; }
+  var rollY = cy + 2, rollH = y + h - rollY;
+  // lane labels and backgrounds
+  font(8, 600); g.textBaseline = 'middle';
+  for (i = 0; i < 4; i++) { g.fillStyle = '#10141a'; g.fillRect(x, ly[i], w, hs[i]); g.fillStyle = COL.dim; g.fillText(lanes[i], inr[0], ly[i] + hs[i] / 2); }
+  if (rollH > 20) { g.fillStyle = '#10141a'; g.fillRect(x, rollY, w, rollH); g.fillStyle = COL.dim; g.fillText('PITCH', inr[0], rollY + 7); }
+  // second ticks
+  g.fillStyle = '#1c232b';
+  for (var s = Math.ceil(t0); s <= t0 + span; s++) g.fillRect(Math.round(tx(s)), y, 1, h);
+  // future hatch when no score
+  if (!scoreOn) { g.fillStyle = 'rgba(255,255,255,0.025)'; g.fillRect(phx, y, x + w - phx, h); }
+  // sections lane overlay on KICK lane top edge
+  if (scoreOn && sc.sections.length) {
+    font(8); g.textBaseline = 'top';
+    for (i = 0; i < sc.sections.length; i++) {
+      var st = sc.sections[i].t; if (st < t0 - 30 || st > t0 + span) continue;
+      var sx = tx(st); if (sx >= x && sx <= x + w) { g.fillStyle = 'rgba(233,196,106,0.5)'; g.fillRect(Math.round(sx), y, 1, h); g.fillText(sc.sections[i].name, sx + 3, rollY + 1); }
+    }
+  }
+  // kick lane
+  var tick = function(tt, lane, col, hollow){
+    var kx = tx(tt); if (kx < x || kx > x + w) return;
+    if (hollow) { g.strokeStyle = col; g.lineWidth = 1; g.strokeRect(Math.round(kx) - 1.5, ly[lane] + 2.5, 3, hs[lane] - 5); }
+    else { g.fillStyle = col; g.fillRect(Math.round(kx) - 1, ly[lane] + 2, 3, hs[lane] - 4); }
+  };
+  if (scoreOn) {
+    var a = lowerBound(sc.kick, t0), b = lowerBound(sc.kick, t0 + span);
+    for (i = a; i < b; i++) tick(sc.kick[i], 0, sc.kick[i] <= t ? BANDS[0].col : rgba(BANDS[0].col, 0.4));
+    a = lowerBound(sc.snare, t0); b = lowerBound(sc.snare, t0 + span);
+    for (i = a; i < b; i++) tick(sc.snare[i], 1, sc.snare[i] <= t ? COL.bright : 'rgba(238,243,247,0.35)');
+    // FFT detections as hollow shadow marks for comparison
+    for (i = 0; i < kicksFFT.length; i++) tick(kicksFFT[i], 0, 'rgba(159,224,200,0.8)', true);
+  } else {
+    for (i = 0; i < kicksFFT.length; i++) tick(kicksFFT[i], 0, BANDS[0].col);
+    font(8); g.fillStyle = '#3d4753'; g.textBaseline = 'middle'; g.fillText('score only', x + 4, ly[1] + hs[1] / 2);
+  }
+  // flux + threshold
+  var fmax = 1e-6; for (i = 0; i < hist.length; i++) fmax = Math.max(fmax, hist[i].flux, hist[i].thr);
+  var fy = function(v){ return ly[2] + hs[2] - 1 - (hs[2] - 2) * v / fmax; };
+  g.beginPath(); var started = false;
+  for (i = 0; i < hist.length; i++) { var hx = tx(hist[i].t); if (hx < x) continue; if (started) g.lineTo(hx, fy(hist[i].flux)); else { g.moveTo(hx, fy(hist[i].flux)); started = true; } }
+  g.strokeStyle = rgba(BANDS[0].col, 0.8); g.lineWidth = 1; g.stroke();
+  g.beginPath(); started = false;
+  for (i = 0; i < hist.length; i++) { hx = tx(hist[i].t); if (hx < x) continue; if (started) g.lineTo(hx, fy(hist[i].thr)); else { g.moveTo(hx, fy(hist[i].thr)); started = true; } }
+  g.strokeStyle = 'rgba(201,209,218,0.35)'; g.setLineDash([2, 2]); g.stroke(); g.setLineDash([]);
+  // band energy traces
+  for (var k = 0; k < 3; k++) {
+    g.beginPath(); started = false;
+    for (i = 0; i < hist.length; i++) { hx = tx(hist[i].t); if (hx < x) continue; var by = ly[3] + hs[3] - 1 - (hs[3] - 2) * hist[i].e[k]; if (started) g.lineTo(hx, by); else { g.moveTo(hx, by); started = true; } }
+    g.strokeStyle = rgba(BANDS[k].col, 0.85); g.lineWidth = 1.1; g.stroke();
+  }
+  // pitch roll
+  if (rollH > 20) {
+    var lo = scoreOn && sc.melody.length ? sc.mLo : 40, hi = scoreOn && sc.melody.length ? sc.mHi : 96;
+    var my = function(m){ return rollY + rollH - 2 - (rollH - 4) * (m - lo) / (hi - lo); };
+    font(8); g.textBaseline = 'middle';
+    for (var m = Math.ceil(lo / 12) * 12; m <= hi; m += 12) {
+      var yy = Math.round(my(m)) + 0.5; g.fillStyle = '#1c232b'; g.fillRect(x, yy, w, 1);
+      g.fillStyle = '#3d4753'; g.fillText(midiName(m), inr[0] + 14, yy);
+    }
+    if (scoreOn && sc.melody.length) {
+      var nh = Math.max(2, Math.min(8, (rollH - 4) / (hi - lo)));
+      var ia = lowerBound(sc.melT, t0 - sc.maxDur), ib = lowerBound(sc.melT, t0 + span);
+      for (i = ia; i < ib; i++) {
+        var n = sc.melody[i], nx0 = Math.max(x, tx(n.t)), nx1 = Math.min(x + w, tx(n.t + n.dur));
+        if (nx1 <= nx0) continue;
+        var on = t >= n.t && t < n.t + n.dur;
+        g.fillStyle = on ? BANDS[1].col : (n.t > t ? 'rgba(233,196,106,0.25)' : 'rgba(233,196,106,0.5)');
+        g.fillRect(nx0, my(n.midi) - nh / 2, Math.max(1.5, nx1 - nx0 - 1), nh);
+        if (on) { font(9, 600); g.fillStyle = COL.bright; g.textBaseline = 'bottom'; g.fillText(midiName(n.midi), phx + 4, my(n.midi) - nh / 2 - 1); }
+      }
+    } else {
+      for (i = 0; i < hist.length; i++) {
+        var hp = hist[i]; if (hp.midi == null) continue; hx = tx(hp.t); if (hx < x) continue;
+        var al = clamp((hp.ps + 72) / 40, 0.15, 1);
+        g.fillStyle = 'rgba(233,196,106,' + al.toFixed(2) + ')'; g.fillRect(hx, my(clamp(hp.midi, lo, hi)) - 1, 1.6, 2);
+      }
+    }
+  }
+  // playhead
+  g.fillStyle = 'rgba(238,243,247,0.75)'; g.fillRect(Math.round(phx), y, 1, h);
+  font(8); g.fillStyle = COL.dim; g.textBaseline = 'top'; g.textAlign = 'center';
+  g.fillText(fmt(t), phx, y + h - 10 > rollY ? y + h - 10 : y + h - 10); g.textAlign = 'left';
+}
+
+// ---------- main loop ----------
+var lastNow = performance.now();
+function frame(now){
+  var dt = clamp((now - lastNow) / 1000, 0.001, 0.1); lastNow = now;
+  frames++; fpsT += dt; if (fpsT >= 0.5) { fps = frames / fpsT; frames = 0; fpsT = 0; }
+  var useSynth = !S.hasTrack || !S.started || !ac;
+  var newSource = useSynth ? 'synth' : 'track';
+  if (newSource !== S.source) { S.source = newSource; resetEvents(useSynth ? synT : audio.currentTime); }
+  var t, fd, td, live;
+  if (useSynth) {
+    synT += dt; t = synT;
+    synthFrame(t, ac ? ac.sampleRate : 48000); fd = fdSyn; td = tdSyn; live = true;
+  } else {
+    t = audio.currentTime;
+    if (t < A.lastClock - 0.05 || t > A.lastClock + 1.0) resetEvents(t);   // missed seek safety net
+    analyser.getFloatFrequencyData(fdLive); analyser.getFloatTimeDomainData(tdLive);
+    fd = fdLive; td = tdLive; live = !audio.paused;
+    if (!audio.paused && S.sidecar) scoreStep(t, dt);
+  }
+  A.lastClock = t;
+  analyze(fd, td, t, dt, live);
+  updateLamps(dt);
+  // transport readout
+  if (S.hasTrack && !S.seeking) {
+    tcur.textContent = fmt(audio.currentTime);
+    if (isFinite(audio.duration) && audio.duration > 0) seek.value = Math.round(audio.currentTime / audio.duration * 1000);
+  }
+  // draw
+  g.setTransform(DPR, 0, 0, DPR, 0, 0);
+  g.fillStyle = COL.bg; g.fillRect(0, 0, W, H);
+  if (L) {
+    drawSpectrum(L.spec); drawScope(L.scope, td); drawTape(L.tape, t);
+    drawLamps(L.lamps, dt); drawMeters(L.meters); drawReadouts(L.read, t);
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
