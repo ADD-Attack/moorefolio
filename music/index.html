@@ -3,61 +3,176 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Music — Visualizer Prototypes · MooreFolio</title>
+<title>Music — MooreFolio</title>
 <style>
-  :root { --bg:#0b0b10; --card:#14141c; --line:#262633; --fg:#ece9f2; --dim:#9a94ad; --acc:#ff5fa2; }
+  :root { --bg:#0b0b10; --card:#14141c; --line:#262633; --fg:#ece9f2; --dim:#9a94ad; --acc:#ff5fa2; --rust:#c96f2e; }
   * { box-sizing:border-box; }
   body { margin:0; background:var(--bg); color:var(--fg); font:15px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; }
-  main { max-width:880px; margin:0 auto; padding:36px 20px 60px; }
-  h1 { font-size:26px; letter-spacing:.06em; margin:0 0 6px; }
-  .sub { color:var(--dim); margin:0 0 8px; }
-  .note { color:var(--dim); font-size:13.5px; border:1px solid var(--line); border-radius:10px; padding:12px 14px; margin:18px 0 26px; background:#101018; }
-  .note b { color:var(--fg); }
-  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
-  a.card { display:block; background:var(--card); border:1px solid var(--line); border-radius:12px; padding:16px; color:var(--fg); text-decoration:none; }
-  a.card:hover { border-color:var(--acc); }
-  a.card h2 { margin:0 0 4px; font-size:18px; }
-  a.card p { margin:0 0 10px; color:var(--dim); font-size:13.5px; }
-  .dials { font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--acc); }
-  footer { margin-top:34px; color:var(--dim); font-size:12.5px; }
-  code { background:#1d1d28; padding:1px 5px; border-radius:4px; font-size:12.5px; }
+  main { max-width:980px; margin:0 auto; padding:30px 18px 64px; }
+  h1 { font-size:27px; letter-spacing:.05em; margin:0 0 4px; }
+  .sub { color:var(--dim); margin:0 0 20px; }
+  #stage-wrap { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; }
+  #stage { display:block; width:100%; height:min(72vh,640px); border:0; }
+  .row-label { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
+  .btns { display:flex; flex-wrap:wrap; gap:8px; }
+  .btns button { background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:999px;
+    padding:8px 15px; font:inherit; font-size:13.5px; cursor:pointer; }
+  .btns button:hover { border-color:var(--acc); }
+  .btns button.on { background:var(--acc); border-color:var(--acc); color:#16101a; font-weight:650; }
+  .btns button .badge { font-size:10px; letter-spacing:.08em; border:1px solid currentColor; border-radius:4px; padding:0 4px; margin-left:6px; opacity:.75; }
+  #standalone { color:var(--dim); font-size:12.5px; margin-top:10px; }
+  #standalone a { color:var(--dim); }
+  h2 { font-size:21px; margin:52px 0 6px; letter-spacing:.03em; }
+  .eng-sub { color:var(--dim); margin:0 0 22px; max-width:70ch; }
+  .steps { display:flex; flex-direction:column; align-items:stretch; max-width:720px; }
+  .step { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:13px 16px; }
+  .step.gate { border-color:var(--rust); }
+  .step h3 { margin:0 0 3px; font-size:15px; }
+  .step h3 .n { display:inline-block; background:var(--acc); color:#16101a; border-radius:50%; width:21px; height:21px;
+    text-align:center; line-height:21px; font-size:12px; font-weight:700; margin-right:8px; }
+  .step.gate h3 .n { background:var(--rust); color:#fff; }
+  .step p { margin:0; color:var(--dim); font-size:13.5px; }
+  .arrow { text-align:center; color:var(--dim); line-height:1.1; font-size:13px; }
+  .cols { display:grid; grid-template-columns:repeat(auto-fit,minmax(270px,1fr)); gap:14px; margin-top:24px; }
+  .panel { background:#101018; border:1px solid var(--line); border-radius:12px; padding:14px 16px; }
+  .panel h3 { margin:0 0 6px; font-size:14.5px; }
+  .panel p, .panel li { color:var(--dim); font-size:13.5px; }
+  .panel ul { margin:4px 0 0; padding-left:18px; }
+  code { background:#1d1d28; padding:1px 5px; border-radius:4px; font-size:12.5px; color:var(--fg); }
+  footer { margin-top:40px; color:var(--dim); font-size:12.5px; }
 </style>
 </head>
 <body>
 <main>
-  <h1>Music — Visualizer Prototypes</h1>
-  <p class="sub">Six takes on the same idea, built by Opus (medium) to different influence mixes. Pick the direction; the winner becomes the player for the songs on this site.</p>
-  <div class="note">
-    Every prototype opens with the same demo loaded: <b>Mountain King v1</b> — just press play.
-    Each also accepts <b>any song you drag onto the page</b>.
-    Because we make the music, these don't have to guess: the demo ships with a score sidecar
-    (<code>demo.viz.json</code>: 160 exact kick hits, 550 melody notes, terrace sections, generated
-    from the composition script), so in <b>SCORE</b> mode the visuals fire on the composed notes,
-    not an FFT guess. Drop a plain MP3 with no sidecar and they fall back to FFT mode.
-    <b>Dancers</b> also reads a dance guide (<code>demo.dance.json</code>) — who holds the stage,
-    the feeling, and the palette for each stretch of the song.
+  <h1>Music</h1>
+  <p class="sub">Composed, rendered, and mixed in code — then visualized from the score itself. Pick a visualizer, pick a song, press play inside the stage.</p>
+
+  <div id="stage-wrap"><iframe id="stage" title="Music visualizer stage" allow="autoplay"></iframe></div>
+
+  <div class="row-label">Visualizer</div>
+  <div class="btns" id="viz-btns"></div>
+
+  <div class="row-label">Song</div>
+  <div class="btns" id="song-btns"></div>
+  <p id="standalone"></p>
+
+  <h2>The engineering — this isn't generated music</h2>
+  <p class="eng-sub">Tools like Suno turn a text prompt into audio with a generative model: no score, no parts,
+  no way to ask <i>what note is that?</i> This pipeline — it goes by <b>Downbeat</b> — works the other way.
+  Every track starts as written music: note lists in a Python script, checked against music theory,
+  played by sampled real instruments, mixed in code, and passed through measurement gates before anyone hears it.
+  That's also why the player above can do what a normal visualizer can't: it reads the score.</p>
+
+  <div class="steps">
+    <div class="step"><h3><span class="n">1</span>Research</h3>
+      <p>Every track — no exceptions — starts with a brand-new research pass: arrangement and energy architecture,
+      harmony and hook theory, production technique for the chosen palette. Old reports are reference only.</p></div>
+    <div class="arrow">▼</div>
+    <div class="step"><h3><span class="n">2</span>The brief</h3>
+      <p>Research becomes a composition brief: a form table with an energy target (0–1) per section, the chord plan,
+      2–3 motives defined as scale degrees on a rhythm grid, and one rule with teeth — the highest note of the track
+      occurs exactly once, at the final climax.</p></div>
+    <div class="arrow">▼</div>
+    <div class="step"><h3><span class="n">3</span>Compose — notes as data</h3>
+      <p>The music is written as note-list data in Python: pitch, onset, duration, velocity, per part.
+      A mandatory pitch-vs-chord audit checks every melody note against the chord actually sounding under it —
+      a rule born when an early track's drop clashed a semitone against its own harmony.</p></div>
+    <div class="arrow">▼</div>
+    <div class="step"><h3><span class="n">4</span>Render — sampled instruments</h3>
+      <p>Each part is rendered from generated MIDI by the sfizz sampler, playing real recorded instruments:
+      VSCO 2 CE and Virtual Playing Orchestra (strings, brass, winds, choir), the Salamander Grand Piano.
+      Drums and electronic parts are synthesized sample-by-sample in numpy.</p></div>
+    <div class="arrow">▼</div>
+    <div class="step"><h3><span class="n">5</span>Mix — in code</h3>
+      <p>Constant-power orchestral seating, one generated hall impulse response shared by every part so the
+      orchestra sits in a single room, sidechain ducking against the kick, mono below 100 Hz, a soft tanh master.
+      No DAW anywhere in the chain.</p></div>
+    <div class="arrow">▼</div>
+    <div class="step gate"><h3><span class="n">6</span>QA gates — measured, not vibes</h3>
+      <p>Nobody in the pipeline can listen, so quality is arithmetic: final peak ≤ 0.90, a click audit
+      (single-sample jumps &gt; 0.35 FS must be single digits), per-section loudness measured against the brief's
+      energy map, no silent parts, the ending exactly as briefed. A builder agent (Bridge — a fresh session per
+      track, working only from the written brief) must pass all of it before the track reaches a human ear.
+      The owner's listening verdict is the only close.</p></div>
+    <div class="arrow">▼</div>
+    <div class="step"><h3><span class="n">7</span>Sidecars — the score, published with the song</h3>
+      <p>Because the notes exist as data, each song can ship with two extra files. <code>.viz.json</code> is the
+      note layer: exact kick hits, every melody note with its pitch, the section map. <code>.dance.json</code> is
+      the intent layer, written by the producer: who holds the stage in each stretch, what it feels like, how it
+      moves, its palette. The visualizers above consume both.</p></div>
   </div>
-  <div class="grid">
-    <a class="card" href="trippy-flow/"><h2>Trippy Flow</h2>
-      <p>A mirrored fluid — domain-warped noise through a rotating kaleidoscope. Hue drifts with the spectral centroid, bass swells the metaballs, every kick sends a ripple. Nothing flashes.</p>
-      <span class="dials">Trippy 5 · Colorful 4 · Beautiful 3</span></a>
-    <a class="card" href="aurora/"><h2>Aurora</h2>
-      <p>A night sky over a still lake. Three aurora curtains and their reflection; each melody note rises to a height set by its pitch and joins a fading constellation. The kick just makes the horizon breathe.</p>
-      <span class="dials">Beautiful 5 · Colorful 3 · Trippy 2 · Intense 0</span></a>
-    <a class="card" href="signal-lab/"><h2>Signal Lab</h2>
-      <p>The instrument panel: log spectrum, oscilloscope, dB meters, BPM and section readouts, a pitch roll — and three lamps for low/mid/high. The low lamp fires on the kick, like the Raspberry Pi.</p>
-      <span class="dials">Technical 5 · Beautiful 2</span></a>
-    <a class="card" href="dancers/"><h2>Dancers</h2>
-      <p>Seven geometric characters who choreograph: crouch in anticipation, hop on the kick, spin on the hats, re-form at each section. With the dance guide, the named lead takes the stage and the palette follows the song's intent.</p>
-      <span class="dials">Dancing 5 · Colorful 4 · Intense 3</span></a>
-    <a class="card" href="overdrive/"><h2>Overdrive</h2>
-      <p>A reactor core that charges with the song. Kick = particle burst + shockwave ring; sustained loudness fills a charge battery until the visual latches into a climax state, so the climax looks like one.</p>
-      <span class="dials">Intense 5 · Colorful 5 · Trippy 3</span></a>
-    <a class="card" href="wild-card/"><h2>Loom — wild card</h2>
-      <p>The builder's own invention: “every song leaves a cloth.” The track is woven top to bottom into a textile — kick beats the reed, melody is embroidered stitch by stitch, and the finished song remains as cloth.</p>
-      <span class="dials">Beautiful 4 · Technical 3 · Colorful 3 · Discretion 5</span></a>
+
+  <div class="cols">
+    <div class="panel"><h3>Why the visualizer is accurate</h3>
+      <p>A conventional visualizer runs an FFT on the finished audio and guesses — the "bass" light also fires
+      on toms, low strings, any rumble. These prototypes still can (drop in any MP3 and they run in
+      <b>FFT mode</b>), but with a sidecar they switch to <b>SCORE mode</b>: the low lamp in Signal Lab fires on
+      the composed kick hits, Aurora places each note at its true pitch, Dancers changes formation on the real
+      section boundaries — and follows the dance guide's stage custodies.</p></div>
+    <div class="panel"><h3>One song, three files</h3>
+      <ul>
+        <li><code>song.mp3</code> — the audio (plus a FLAC master in the archive)</li>
+        <li><code>song.viz.json</code> — kick / snare / melody / sections, from the score</li>
+        <li><code>song.dance.json</code> — stage, feeling, motion, palette, by the producer</li>
+      </ul>
+      <p>Mountain King above carries all three. Its sidecar was generated directly from the composition
+      script: 160 kick events, 550 melody notes, 11 terraced statements climbing 132 → 192 BPM.</p></div>
+    <div class="panel"><h3>The catalog so far</h3>
+      <ul>
+        <li><b>Mountain King v1</b> — Grieg, re-forged as a horde-escalation cue for the game <i>Return to Eden</i></li>
+        <li><b>Eden Menu v2</b> — menu theme, 80 BPM seamless loop, E Dorian</li>
+        <li><b>Ignition</b> — the track that taught the pipeline its pitch-vs-chord audit</li>
+        <li><b>Battlefield</b> — five versions deep, the long-running war cue</li>
+        <li><b>Saria's Song</b> — an arrangement study, built by Bridge from a written brief</li>
+      </ul></div>
   </div>
-  <footer>Prototypes on the <code>music</code> branch of MooreFolio · Built 2026-10-21 · Each folder's <code>report.md</code> documents what drives what.</footer>
+
+  <footer>Downbeat pipeline · Builder seat: Bridge · Every track on this page was composed as data before it was audio.</footer>
 </main>
+<script>
+  var VIZ = [
+    { slug: 'trippy-flow', name: 'Trippy Flow' },
+    { slug: 'aurora', name: 'Aurora' },
+    { slug: 'signal-lab', name: 'Signal Lab' },
+    { slug: 'dancers', name: 'Dancers' },
+    { slug: 'overdrive', name: 'Overdrive' },
+    { slug: 'wild-card', name: 'Loom (wild card)' }
+  ];
+  var SONGS = [
+    { slug: 'demo', name: 'Mountain King v1', badge: 'SCORE + DANCE' },
+    { slug: 'eden-menu-v2', name: 'Eden Menu v2', badge: 'MELODY' },
+    { slug: 'ignition-v4', name: 'Ignition v4', badge: 'FFT' },
+    { slug: 'battlefield-v5', name: 'Battlefield v5', badge: 'FFT' },
+    { slug: 'saria-v2', name: "Saria's Song v2", badge: 'FFT' }
+  ];
+  var state = { viz: 'dancers', song: 'demo' };
+  try {
+    var h = new URLSearchParams(location.hash.slice(1));
+    if (h.get('viz') && VIZ.some(function (v) { return v.slug === h.get('viz'); })) state.viz = h.get('viz');
+    if (h.get('song') && SONGS.some(function (s) { return s.slug === h.get('song'); })) state.song = h.get('song');
+  } catch (e) {}
+  var stage = document.getElementById('stage');
+  function render() {
+    stage.src = state.viz + '/?song=' + encodeURIComponent(state.song);
+    document.querySelectorAll('#viz-btns button').forEach(function (b) { b.classList.toggle('on', b.dataset.slug === state.viz); });
+    document.querySelectorAll('#song-btns button').forEach(function (b) { b.classList.toggle('on', b.dataset.slug === state.song); });
+    var v = VIZ.find(function (x) { return x.slug === state.viz; });
+    document.getElementById('standalone').innerHTML = 'Now staging: <b>' + v.name + '</b> · <a href="' + state.viz + '/?song=' + encodeURIComponent(state.song) + '">open it standalone ↗</a>';
+    try { history.replaceState(null, '', '#viz=' + state.viz + '&song=' + state.song); } catch (e) {}
+  }
+  VIZ.forEach(function (v) {
+    var b = document.createElement('button');
+    b.textContent = v.name; b.dataset.slug = v.slug;
+    b.addEventListener('click', function () { state.viz = v.slug; render(); });
+    document.getElementById('viz-btns').appendChild(b);
+  });
+  SONGS.forEach(function (s) {
+    var b = document.createElement('button');
+    b.innerHTML = s.name + '<span class="badge">' + s.badge + '</span>'; b.dataset.slug = s.slug;
+    b.addEventListener('click', function () { state.song = s.slug; render(); });
+    document.getElementById('song-btns').appendChild(b);
+  });
+  render();
+</script>
 </body>
 </html>

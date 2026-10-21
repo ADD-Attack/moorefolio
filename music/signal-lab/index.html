@@ -84,6 +84,24 @@
 <div class="drop" id="drop">DROP AUDIO OR .VIZ.JSON</div>
 
 <script>
+  // ---- container song selector (producer patch 2026-10-21) ----
+  (function () {
+    var s = new URLSearchParams(location.search).get('song');
+    if (!s) return;
+    s = s.toLowerCase().replace(/[^a-z0-9-]/g, '');
+    if (!s || s === 'demo') return;
+    window.__songTitle = s.replace(/-/g, ' ').replace(/\b\w/g, function (c) { return c.toUpperCase(); });
+    var of = window.fetch.bind(window);
+    window.fetch = function (u, o) {
+      if (typeof u === 'string') {
+        u = u.split('../assets/demo.mp3').join('../assets/' + s + '.mp3')
+             .split('../assets/demo.viz.json').join('../assets/' + s + '.viz.json')
+             .split('../assets/demo.dance.json').join('../assets/' + s + '.dance.json');
+      }
+      return of(u, o);
+    };
+  })();
+
 (function(){
 'use strict';
 // ---------- constants ----------
@@ -277,7 +295,7 @@ window.addEventListener('drop', function(e){
   if (!window.fetch) return;
   fetch('../assets/demo.mp3').then(function(r){ if (!r.ok) throw 0; return r.blob(); }).then(function(b){
     if (S.hasTrack || !b || !b.size) return;
-    loadAudio(b, 'Mountain King v1 (demo)', true);
+    loadAudio(b, (window.__songTitle || 'Mountain King v1 (demo)'), true);
     return fetch('../assets/demo.viz.json').then(function(r){ return r.ok ? r.json() : null; }).then(function(j){
       if (j && S.isDemo && !S.sidecar) { try { setSidecar(j, true, 'demo.viz.json'); } catch(e){} }
     }).catch(function(){});
