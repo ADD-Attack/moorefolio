@@ -68,7 +68,16 @@ function loadDossier() {
 function saveDossier() { try { localStorage.setItem("chessCoachDossier." + BRANCH, JSON.stringify(dossier)); } catch (_) {} }
 function replayState() { return C.stateFromSans(history.slice()); }
 // All coach text reaches the DOM through textContent only — never innerHTML.
+// Mirror the latest coach text beside the board so it stays readable
+// during play without scrolling; the full log lives in #coachBody.
+function setTicker(text) {
+  const t = $("coachTicker"); if (!t) return;
+  const clean = String(text).replace(/<[^>]*>/g, "").trim();
+  if (!clean) return; // a cleared status is not a message — keep the last line
+  t.textContent = clean;
+}
 function coachLine(text) {
+  setTicker(text);
   const b = $("coachBody"); if (!b) return;
   const stateEl = $("coachState"); if (stateEl) stateEl.remove();
   const p = document.createElement("p"); p.className = "cline";
@@ -76,6 +85,7 @@ function coachLine(text) {
   b.appendChild(p); b.scrollTop = b.scrollHeight;
 }
 function setCoachState(text) {
+  setTicker(text);
   const b = $("coachBody"); if (!b) return;
   let s = $("coachState");
   if (!s) { s = document.createElement("span"); s.id = "coachState"; s.className = "coachstate"; b.appendChild(s); }
