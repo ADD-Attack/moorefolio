@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chess Coach for Kids — MooreFolio</title>
-<meta name="description" content="Play chess on the same computer and same browser — Human vs. Human, single client. A MooreFolio branch of the classic same-computer chess page.">
+<meta name="description" content="A friendly chess coach for kids: short spoken lessons, then real games against the Coach. It talks out loud, shows moves with colors and arrows, and cheers for trying.">
 <style>
   :root{
     --ink:#1d1710; --paper:#f6efe3; --panel:#fffaf0; --line:#d8c9a8;
@@ -93,6 +93,15 @@
   }
   #newGameBtn.locked{opacity:.45;filter:grayscale(.8)}
   .lessonBtn .done{color:#2ecc71}
+  #bigNextOverlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;
+    z-index:35;background:rgba(246,239,227,.35)}
+  #bigNextOverlay .card{position:relative;background:var(--panel);border:3px solid var(--rust);
+    border-radius:18px;padding:34px 48px;text-align:center;max-width:92vw;
+    box-shadow:0 10px 40px rgba(60,40,10,.35)}
+  #bigNextOverlay .bigmsg{font-size:44px;font-weight:bold;line-height:1.15;margin:0 0 24px}
+  #bigNextBtn{font-size:40px;padding:18px 56px;border-radius:16px}
+  #bigNextClose{position:absolute;top:4px;right:8px;background:transparent;color:var(--rust);
+    border:none;font-size:30px;line-height:1;padding:8px 12px}
 </style>
 </head>
 <body>
@@ -108,8 +117,8 @@
       <div class="body" id="capturedByBlack" title="Captured by Black"></div>
     </div>
     <div class="panel"><h3>Game Information</h3>
-      <div class="body small">Human vs. Human<br>Single client (same browser)<br><br>
-      Click a piece, then a highlighted square — or drag the piece.</div>
+      <div class="body small"><span id="gameInfoTitle">You vs. the Coach</span><br><br>
+      Tap a piece, then tap the glowing square to move it — or drag the piece.</div>
     </div>
   </div>
 
@@ -532,6 +541,11 @@ reset();
   </div>
   <button id="newGameBtn" style="font-size:26px;padding:16px 28px;margin-top:16px;width:100%">Play a Real Game! 🏆</button>
   <div id="unlockHint" style="font-size:15px;margin-top:8px">Finish all 8 lessons to unlock!</div>
+  <div id="voiceBox" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;font-size:15px">
+    <label for="voiceSelect">Coach voice — for grown-ups:</label><br>
+    <select id="voiceSelect" style="font-size:16px;padding:6px;max-width:100%;margin-top:6px"></select>
+    <button id="voiceSampleBtn" class="ghost" style="margin-left:8px">▶ Hear it</button>
+  </div>
 </div></div>
 <div id="gate"><div class="card">
   <h3 style="margin:0;color:var(--rust)">♞ Chess Coach — private beta</h3>

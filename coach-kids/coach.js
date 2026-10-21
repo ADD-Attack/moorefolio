@@ -143,6 +143,10 @@ function setModeLabel() {
   const ml = $("modeLine"); if (!ml) return;
   ml.textContent = offlineMode ? "Coach offline — playing Stockfish at your level" : "";
 }
+function updateGameInfo() { // the Coach is always the other side — never "Human vs. Human"
+  const t = $("gameInfoTitle"); if (!t) return;
+  t.textContent = lessonActive ? "Lesson — the Coach is teaching you" : "You vs. the Coach";
+}
 function alertLog(kind, detail) {
   const entry = { t: new Date().toISOString(), kind, detail, ply: history.length, branch: BRANCH };
   if (sessionRecord) sessionRecord.alerts.push(entry);
@@ -306,6 +310,7 @@ function enterOfflineMode(why) {
 }
 // ---------- game flow ----------
 function startGame(kind) {
+  hideBigNext();
   reset(); // base page reset
   scoreLog = []; evalTrail = []; lastEval = null; stepMarks = 0;
   lastPlySeen = 0; paused = false; gameActive = true; coachBusy = false;
@@ -316,6 +321,7 @@ function startGame(kind) {
   lessonActive = false; currentLesson = null; lessonBaseFen = null; undoPendingRetry = false;
   dossier.gamesPlayed++; saveDossier();
   const km = $("kidsMenu"); if (km) km.style.display = "none";
+  updateGameInfo();
   // Fresh game_id per game; reuse the gate session's id only when the
   // token came from storage and no password is in memory to re-bind.
   gameId = (!gatePassword && storedGameId) ? storedGameId : newGameId();
@@ -580,6 +586,8 @@ async function finishGame() {
   try { localStorage.removeItem("chessCoachPaused." + BRANCH); } catch (_) {}
   renderReview(review, { resultText, mode, onlineReview, reviewNote });
   coachLine("Game over. " + resultText + " Your review session is below the board.");
+  updateGameInfo();
+  showBigNext(isWin ? "You won! 🏆" : "Game over!", isWin ? "You won the game! Tap Next!" : "Good game! You finished! Tap Next!");
   if (sessionRecord) { sessionRecord.review = review; sessionRecord.onlineReview = !!onlineReview;
     sessionRecord.finishedAt = new Date().toISOString();
     try { localStorage.setItem("chessCoachLastSession." + BRANCH, JSON.stringify(sessionRecord)); } catch (_) {} }
@@ -652,11 +660,82 @@ const LESSONS = [
 function lessonById(id) { return LESSONS.find((l) => l.id === id) || null; }
 
 // ---------- TTS ----------
+// Voice choice: speechSynthesis voices vary wildly by device and the
+// bare default is usually the robotic one, so pick deliberately.
+// Ranking (best first, English only): a saved parent choice always
+// wins while that voice still exists; otherwise prefer, in order —
+// "Google US English" (Chrome's natural US voice), Microsoft Natural
+// voices (Aria/Jenny/Guy…), any other "Natural" voice, Samantha
+// (macOS/iOS US), Daniel (macOS/iOS UK), other Google English, the
+// older Windows US voices (Zira/David/Catherine) — then any English
+// voice, then the browser's marked default, then the first voice.
+const VOICE_PREFS = [
+  /google us english/i,
+  /microsoft.*(natural|aria|jenny|guy)/i,
+  /natural/i,
+  /samantha/i,
+  /daniel/i,
+  /google.*english/i,
+  /zira|david|catherine/i,
+];
+const VOICE_KEY = "chessCoachVoice." + BRANCH;
+function synth() {
+  return (typeof window !== "undefined" && window.speechSynthesis) ||
+         (typeof speechSynthesis !== "undefined" ? speechSynthesis : null);
+}
+function voiceList() {
+  try { const ss = synth(); return (ss && ss.getVoices && ss.getVoices()) || []; }
+  catch (_) { return []; }
+}
+function savedVoiceName() { try { return localStorage.getItem(VOICE_KEY) || ""; } catch (_) { return ""; } }
+function voiceScore(v) { // lower is better; Infinity = not English
+  if (!v || !/^en([-_]|$)/i.test(v.lang || "")) return Infinity;
+  let r = VOICE_PREFS.findIndex((re) => re.test(v.name || ""));
+  if (r === -1) r = VOICE_PREFS.length; // any other English voice
+  if (/^en[-_]US/i.test(v.lang || "")) r -= 0.5; // US English wins ties
+  return r;
+}
+function pickVoice() {
+  const vs = voiceList();
+  if (!vs.length) return null;
+  const want = savedVoiceName();
+  if (want) {
+    const hit = vs.find((v) => (v.voiceURI && v.voiceURI === want) || v.name === want);
+    if (hit) return hit;
+  }
+  let best = null, bestScore = Infinity;
+  for (const v of vs) { const s = voiceScore(v); if (s < bestScore) { bestScore = s; best = v; } }
+  if (best) return best;
+  return vs.find((v) => v.default) || vs[0] || null;
+}
+function refreshVoicePicker() {
+  const sel = $("voiceSelect"); if (!sel) return;
+  const vs = voiceList();
+  sel.innerHTML = "";
+  for (const v of vs) {
+    const o = document.createElement("option");
+    o.value = v.voiceURI || v.name;
+    o.textContent = v.name + (v.lang ? " (" + v.lang + ")" : "");
+    sel.appendChild(o);
+  }
+  const chosen = pickVoice();
+  if (chosen) sel.value = chosen.voiceURI || chosen.name;
+}
+function initVoicePicker() {
+  const sel = $("voiceSelect"); if (!sel) return;
+  refreshVoicePicker();
+  sel.addEventListener("change", () => {
+    try { localStorage.setItem(VOICE_KEY, sel.value); } catch (_) {}
+  });
+  const sb = $("voiceSampleBtn");
+  if (sb) sb.addEventListener("click", () => speak("Hello! I am your chess coach. Let's play chess!"));
+  const ss = synth(); // voices often arrive async — repopulate when they land
+  if (ss && ss.addEventListener) ss.addEventListener("voiceschanged", refreshVoicePicker);
+}
 function speak(text) {
   try {
     if (dossier.muted) return;
-    const ss = (typeof window !== "undefined" && window.speechSynthesis) ||
-               (typeof speechSynthesis !== "undefined" ? speechSynthesis : null);
+    const ss = synth();
     if (!ss) return;
     ss.cancel();
     let u;
@@ -664,9 +743,40 @@ function speak(text) {
             : (typeof window !== "undefined" ? window.SpeechSynthesisUtterance : null);
     u = U ? new U(String(text)) : { text: String(text) };
     u.rate = 0.92; u.pitch = 1.05;
+    const v = pickVoice();
+    if (v) { try { u.voice = v; if (v.lang) u.lang = v.lang; } catch (_) {} }
     ss.speak(u);
   } catch (_) {}
 }
+// ---------- big Next overlay (lesson done / game over) ----------
+// A kid who cannot read the small buttons needs the way forward to
+// be one huge, spoken target in the middle of the screen. The light
+// backdrop never traps: a plain ✕ closes it and the board (with its
+// own Menu button) is right there.
+let bigNextEl = null, bigNextMsgEl = null;
+function ensureBigNext() {
+  if (bigNextEl) return bigNextEl;
+  const wrap = document.createElement("div"); wrap.id = "bigNextOverlay";
+  const card = document.createElement("div"); card.className = "card";
+  const msg = document.createElement("div"); msg.id = "bigNextMsg"; msg.className = "bigmsg";
+  const next = document.createElement("button"); next.id = "bigNextBtn"; next.textContent = "Next ▶";
+  const close = document.createElement("button"); close.id = "bigNextClose"; close.textContent = "✕";
+  next.addEventListener("click", () => { hideBigNext(); showMenu(); });
+  close.addEventListener("click", hideBigNext);
+  card.appendChild(msg); card.appendChild(next); card.appendChild(close);
+  wrap.appendChild(card);
+  wrap.style.display = "none";
+  document.body.appendChild(wrap);
+  bigNextEl = wrap; bigNextMsgEl = msg;
+  return wrap;
+}
+function showBigNext(msgText, speakText) {
+  const ov = ensureBigNext();
+  if (bigNextMsgEl) bigNextMsgEl.textContent = msgText;
+  ov.style.display = "flex";
+  speak(speakText || msgText);
+}
+function hideBigNext() { if (bigNextEl) bigNextEl.style.display = "none"; }
 // ---------- confetti (self-written canvas, no external assets) ----------
 function spawnConfetti(n) {
   try {
@@ -809,6 +919,7 @@ function capturedFromSans(baseSt, sans) {
 }
 function startLesson(id) {
   const les = lessonById(id); if (!les) return;
+  hideBigNext();
   reset();
   currentLesson = les; lessonBaseFen = les.fen; lessonActive = true; gameActive = false;
   gameOver = false; lessonHeroCaps = 0; undoPendingRetry = false;
@@ -818,6 +929,7 @@ function startLesson(id) {
   gameId = "lesson-" + id + "-" + Date.now().toString(36);
   sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode: "lesson", gameId, alerts: [], moves: [], offline: false };
   const km = $("kidsMenu"); if (km) km.style.display = "none";
+  updateGameInfo();
   coachLine(les.title + " — " + les.goalText);
   setCoachState("");
   connectionPromise = prepareConnection();
@@ -850,15 +962,17 @@ function checkLessonProgress() {
   dossier.lessons[currentLesson.id] = true; saveDossier();
   if (firstTime) awardPoints(50, "lesson complete");
   spawnConfetti(40);
-  coachLine("You did it! You finished " + currentLesson.title + "! ⭐", { speak: true });
-  speak("You did it!");
+  coachLine("You did it! You finished " + currentLesson.title + "! ⭐");
+  showBigNext("You did it! ⭐", "You did it! You finished " + currentLesson.title + "! Tap Next!");
   renderDossier();
   const b = $("coachBody");
   if (b) { const btn = document.createElement("button"); btn.textContent = "🏠 Back to Menu";
     btn.addEventListener("click", showMenu); b.appendChild(btn); }
 }
 function showMenu() {
+  hideBigNext();
   lessonActive = false;
+  updateGameInfo();
   renderMenu();
   const km = $("kidsMenu"); if (km) km.style.display = "";
 }
@@ -964,6 +1078,8 @@ function init(opts) {
     const mub = $("muteBtn"); if (mub) { mub.textContent = dossier.muted ? "🔇" : "🔊";
       mub.addEventListener("click", () => { dossier.muted = !dossier.muted; saveDossier(); mub.textContent = dossier.muted ? "🔇" : "🔊"; }); }
     for (const id of LESSON_IDS) { const lb = $("lessonBtn-" + id); if (lb) lb.addEventListener("click", () => startLesson(id)); }
+    initVoicePicker();
+    updateGameInfo();
     renderMenu();
     if (pendingLevelUp) { coachLine("Level up! You are level " + pendingLevelUp + "!", { speak: false }); speak("Level up! You are level " + pendingLevelUp + "!"); pendingLevelUp = 0; }
     const gate = $("gate");
@@ -979,7 +1095,7 @@ function init(opts) {
   setInterval(poll, 300);
 }
 return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, undoMove, showMenu,
-  drawAnnotations, clearAnnotations, speak, spawnConfetti, _test: {
+  drawAnnotations, clearAnnotations, speak, spawnConfetti, showBigNext, hideBigNext, pickVoice, voiceScore, _test: {
   getDossier: () => dossier, getScoreLog: () => scoreLog, getSession: () => sessionRecord,
   getTarget: () => targetElo, setScoreLog: (s) => { scoreLog = s; },
   getOffline: () => offlineMode, getGameId: () => gameId, hasToken: () => !!sessionToken,
