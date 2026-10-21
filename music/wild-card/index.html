@@ -1,0 +1,609 @@
+<!--
+  Prototype: LOOM — "every song leaves a cloth"
+  Influence dials: trippy 1 / beautiful 4 / technical 3 / dancing 1 / colorful 3 / intense 1
+  Mapping: song time weaves the cloth top -> bottom (the whole track = one finished textile);
+  weft colour across the width = live log spectrum (low crimson -> mid gold -> high teal);
+  KICK = the reed beats up + low lamp bead flashes + a madder pick is woven across the bass threads + the shuttle throws;
+  MELODY (sidecar notes, or FFT pitch estimate) = embroidered running stitches on the thread of that pitch, which also plucks that string;
+  unwoven warp threads vibrate like harp strings with their own frequency band; high band = fibre glints;
+  left selvage = loudness / section energy, right selvage = high band + snare ticks;
+  SCORE mode also pins the upcoming melody as a chalk "cartoon" behind the warp, like a tapestry weaver's draft.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Loom — music visualizer prototype</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#0b0908;color:#e9dfcf;
+    font:14px/1.35 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow-x:hidden}
+  body{display:flex;flex-direction:column;min-height:100vh;min-height:100dvh}
+  header{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:4px 14px;padding:12px 16px 6px}
+  .brand{letter-spacing:.32em;font-weight:600;font-size:15px}
+  .brand small{letter-spacing:.04em;font-weight:400;opacity:.55;margin-left:10px;font-size:12px}
+  .meta{display:flex;align-items:center;gap:10px;min-width:0;font-size:12px}
+  #track{opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:52vw}
+  #sect{opacity:.55;font-style:italic}
+  .badge{font-size:10px;letter-spacing:.18em;padding:2px 7px;border:1px solid rgba(233,223,207,.35);border-radius:3px;opacity:.75}
+  .badge.score{border-color:#e6b65c;color:#f3cf86;opacity:1}
+  #stage{position:relative;flex:1 1 auto;min-height:300px}
+  canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+  #hint{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none;
+    width:min(86%,440px);padding:14px 16px;border-radius:6px;background:rgba(11,9,8,.62);backdrop-filter:blur(2px);transition:opacity .6s}
+  #hint b{display:block;letter-spacing:.3em;font-weight:600;margin-bottom:6px}
+  #hint span{opacity:.75;font-size:13px}
+  #hint.gone{opacity:0}
+  #drop{position:absolute;inset:8px;border:1px dashed rgba(243,207,134,.7);border-radius:8px;display:none;pointer-events:none}
+  #drop.on{display:block}
+  .bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 16px 14px}
+  button,.pick{font:inherit;font-size:12px;color:#e9dfcf;background:rgba(233,223,207,.06);border:1px solid rgba(233,223,207,.22);
+    border-radius:4px;padding:6px 10px;cursor:pointer;white-space:nowrap}
+  button:hover,.pick:hover{background:rgba(233,223,207,.12)}
+  button:disabled{opacity:.35;cursor:default}
+  #play{width:42px;font-size:14px}
+  .pick input{position:absolute;width:1px;height:1px;opacity:0;pointer-events:none}
+  .pick{position:relative}
+  #seek{flex:1 1 140px;min-width:100px;accent-color:#d9a24e}
+  #time{font-variant-numeric:tabular-nums;font-size:12px;opacity:.75;min-width:84px}
+  #status{font-size:11px;opacity:.5;width:100%}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">LOOM<small>every song leaves a cloth</small></div>
+  <div class="meta"><span id="sect"></span><span id="track">No track loaded</span><span id="badge" class="badge">FFT</span></div>
+</header>
+<main id="stage">
+  <canvas id="c" aria-label="Loom visualizer"></canvas>
+  <div id="hint"><b>LOOM</b><span id="hintText">Drop a song anywhere, or choose one below. It will be woven into cloth as it plays: the spectrum is the weft, the kick beats the reed, the melody is stitched on.</span></div>
+  <div id="drop"></div>
+</main>
+<div class="bar">
+  <button id="play" aria-label="Play / pause" disabled>&#9654;</button>
+  <input id="seek" type="range" min="0" max="1000" value="0" aria-label="Seek" disabled>
+  <span id="time">0:00 / 0:00</span>
+  <label class="pick">Song&hellip;<input id="fAudio" type="file" accept="audio/*"></label>
+  <label class="pick">Score .viz.json&hellip;<input id="fViz" type="file" accept=".json,application/json"></label>
+  <button id="save" disabled>Keep the cloth</button>
+  <div id="status"></div>
+</div>
+<audio id="audio" preload="auto"></audio>
+<script>
+(() => {
+'use strict';
+// ---------- constants ----------
+const COLS = 64, ROWS = 360, SELV = 8, IDLE_DUR = 40;
+const FMIN = 30, FSPAN = 400;            // columns span 30 Hz .. 12 kHz (log)
+const FLASH_GAP = 0.34;                  // s between visual flashes (< 3 flashes / s)
+const KICK_COOLDOWN = 0.25;              // s
+const LOOKAHEAD = 0.05;                  // s
+const reduced = matchMedia('(prefers-reduced-motion: reduce)');
+
+// ---------- DOM ----------
+const $ = id => document.getElementById(id);
+const cv = $('c'), ctx = cv.getContext('2d'), stage = $('stage');
+const audio = $('audio'), playBtn = $('play'), seek = $('seek'), timeEl = $('time');
+const badge = $('badge'), trackEl = $('track'), sectEl = $('sect'), hint = $('hint'), hintText = $('hintText');
+const statusEl = $('status'), saveBtn = $('save'), dropEl = $('drop');
+
+// ---------- audio graph ----------
+let actx = null, analyser = null, freq = null, prevFreq = null, binMap = null, bandIdx = null;
+function ensureCtx() {
+  if (!actx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    actx = new AC();
+    analyser = actx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.45;
+    const src = actx.createMediaElementSource(audio);
+    src.connect(analyser); analyser.connect(actx.destination);
+    freq = new Uint8Array(analyser.frequencyBinCount);
+    prevFreq = new Uint8Array(analyser.frequencyBinCount);
+    buildBinMap(actx.sampleRate);
+  }
+  if (actx.state === 'suspended') actx.resume();
+}
+function buildBinMap(sr) {
+  const n = analyser.frequencyBinCount, hzPerBin = sr / analyser.fftSize;
+  const idx = f => Math.max(0, Math.min(n - 1, Math.round(f / hzPerBin)));
+  binMap = [];
+  for (let c = 0; c < COLS; c++) {
+    const f0 = FMIN * Math.pow(FSPAN, c / COLS), f1 = FMIN * Math.pow(FSPAN, (c + 1) / COLS);
+    const a = idx(f0), b = Math.max(a + 1, idx(f1));
+    binMap.push([a, b]);
+  }
+  bandIdx = { low: [idx(20), idx(140)], mid: [idx(140), idx(2000)], high: [idx(2000), idx(12000)], hz: hzPerBin,
+              mel: [idx(180), idx(1800)] };
+}
+
+// ---------- colour per column ----------
+const HUE = new Float32Array(COLS);
+(function () {
+  const stops = [[0, 350], [0.33, 375], [0.55, 402], [0.76, 520], [1, 555]]; // >360 wraps
+  for (let c = 0; c < COLS; c++) {
+    const p = (c + 0.5) / COLS;
+    let i = 0; while (i < stops.length - 2 && p > stops[i + 1][0]) i++;
+    const [p0, h0] = stops[i], [p1, h1] = stops[i + 1];
+    HUE[c] = (h0 + (h1 - h0) * Math.min(1, Math.max(0, (p - p0) / (p1 - p0)))) % 360;
+  }
+})();
+const BASS_COLS = 14;                        // columns below ~140 Hz region
+const colForHz = f => Math.max(0, Math.min(COLS - 1, Math.floor(Math.log(f / FMIN) / Math.log(FSPAN) * COLS)));
+const hzForMidi = m => 440 * Math.pow(2, (m - 69) / 12);
+
+// ---------- state ----------
+const raw = new Float32Array(COLS), live = new Float32Array(COLS), pluck = new Float32Array(COLS);
+const rawB = { low: 0, mid: 0, high: 0 }, band = { low: 0, mid: 0, high: 0 };
+const rowSum = new Float32Array(ROWS * COLS), rowCnt = new Uint16Array(ROWS);
+const rowLoud = new Float32Array(ROWS), rowHigh = new Float32Array(ROWS);
+let kicksW = [], snaresW = [], stitches = [], sectionsW = [];
+let curRow = -1, fabDur = IDLE_DUR;
+let hasTrack = false, everPlayed = false, trackName = '', idleT = 0, idleBar = -1;
+let score = null, scoreIsDemo = false, kc = 0, snc = 0, mc = 0, secC = 0, curSection = null;
+let lastT = 0, wall = 0, lastNow = 0;
+let fluxHist = [], lastKickWall = -9, lastFlashWall = -9, kickFlash = 0, reedPulse = 0;
+let shFrom = 0, shTo = 0, shStart = 0, shDur = 0.4;
+let melLastSample = -9, melCand = null;
+
+// ---------- layout ----------
+let W = 0, H = 0, dpr = 1, fx = 0, fy = 0, fw = 0, fh = 0, cw = 1, rh = 1, bgGrad = null;
+const fab = document.createElement('canvas'), fctx = fab.getContext('2d');
+function resize() {
+  const r = stage.getBoundingClientRect();
+  dpr = Math.min(2.5, window.devicePixelRatio || 1);
+  W = Math.max(1, r.width); H = Math.max(1, r.height);
+  cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  fw = Math.min(W - 28, 980); fx = (W - fw) / 2; fy = 26; fh = Math.max(60, H - fy - 26);
+  cw = (fw - 2 * SELV) / COLS; rh = fh / ROWS;
+  fab.width = Math.round(fw * dpr); fab.height = Math.round(fh * dpr);
+  fctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  bgGrad = ctx.createRadialGradient(W / 2, H * 0.45, 10, W / 2, H * 0.45, Math.max(W, H) * 0.75);
+  bgGrad.addColorStop(0, '#1a1410'); bgGrad.addColorStop(1, '#090807');
+  fullRender();
+}
+new ResizeObserver(resize).observe(stage);
+
+// ---------- helpers ----------
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+function lowerBound(arr, t, key) {
+  let lo = 0, hi = arr.length;
+  while (lo < hi) { const m = (lo + hi) >> 1; if ((key ? arr[m][key] : arr[m]) < t) lo = m + 1; else hi = m; }
+  return lo;
+}
+const fmt = s => { if (!isFinite(s) || s < 0) s = 0; const m = Math.floor(s / 60), x = Math.floor(s % 60); return m + ':' + (x < 10 ? '0' : '') + x; };
+const ease = x => x < 0.5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const tY = t => t / fabDur * fh;   // time -> y inside the cloth
+
+// ---------- cloth (offscreen) ----------
+function resetFabric(dur) {
+  fabDur = dur > 0 ? dur : IDLE_DUR;
+  rowSum.fill(0); rowCnt.fill(0); rowLoud.fill(0); rowHigh.fill(0);
+  kicksW = []; snaresW = []; stitches = []; sectionsW = []; curRow = -1;
+  fctx.clearRect(0, 0, fw, fh);
+}
+function fullRender() {
+  fctx.clearRect(0, 0, fw, fh);
+  for (let r = 0; r < ROWS; r++) if (rowCnt[r] > 0) drawRow(r);
+}
+function drawRow(r) {
+  const y0 = r * rh, y1 = (r + 1) * rh, hh = y1 - y0 + 1, n = rowCnt[r] || 1;
+  fctx.save();
+  fctx.beginPath(); fctx.rect(0, y0, fw, y1 - y0); fctx.clip();
+  fctx.clearRect(0, y0, fw, hh);
+  for (let c = 0; c < COLS; c++) {
+    const v = Math.pow(clamp01(rowSum[r * COLS + c] / n), 1.25);
+    const x = SELV + c * cw;
+    fctx.fillStyle = 'hsl(' + HUE[c].toFixed(0) + ',' + (28 + v * 52).toFixed(0) + '%,' + (9 + v * 56).toFixed(1) + '%)';
+    fctx.fillRect(x, y0, cw + 0.6, hh);
+    if (((c + r) & 1) === 0) { fctx.fillStyle = 'rgba(236,226,206,0.15)'; fctx.fillRect(x + cw * 0.22, y0, cw * 0.56, hh); }
+    else { fctx.fillStyle = 'rgba(255,255,255,0.06)'; fctx.fillRect(x, y0, cw, Math.max(0.5, rh * 0.4)); }
+  }
+  fctx.fillStyle = 'hsl(28,25%,' + (8 + clamp01(rowLoud[r]) * 46).toFixed(1) + '%)';
+  fctx.fillRect(0, y0, SELV - 1, hh);
+  fctx.fillStyle = 'hsl(190,25%,' + (8 + clamp01(rowHigh[r]) * 56).toFixed(1) + '%)';
+  fctx.fillRect(fw - SELV + 1, y0, SELV - 1, hh);
+  drawRowEvents(r);
+  fctx.restore();
+}
+function drawRowEvents(r) {
+  const t0 = r / ROWS * fabDur, t1 = (r + 1) / ROWS * fabDur;
+  // kicks: madder pick across the bass threads + knot on the selvage
+  for (let i = lowerBound(kicksW, t0 - 0.05); i < kicksW.length && kicksW[i] <= t1 + 0.05; i++) {
+    const y = tY(kicksW[i]);
+    fctx.fillStyle = 'rgba(74,8,26,0.72)'; fctx.fillRect(SELV, y - 0.7, cw * BASS_COLS, 1.4);
+    fctx.fillStyle = 'rgba(255,150,150,0.32)'; fctx.fillRect(SELV, y - 0.7, cw * BASS_COLS, 0.5);
+    fctx.fillStyle = 'rgba(255,180,165,0.85)'; fctx.beginPath(); fctx.arc(SELV / 2, y, 1.7, 0, 6.283); fctx.fill();
+  }
+  // snares: silver ticks on the right selvage
+  fctx.fillStyle = 'rgba(222,236,255,0.75)';
+  for (let i = lowerBound(snaresW, t0 - 0.05); i < snaresW.length && snaresW[i] <= t1 + 0.05; i++)
+    fctx.fillRect(fw - SELV + 1, tY(snaresW[i]) - 0.5, SELV - 1, 1);
+  // section labels
+  for (const s of sectionsW) {
+    if (s.t > t1 || s.t < t0 - 2) continue;
+    const y = tY(s.t);
+    fctx.fillStyle = 'rgba(243,207,134,0.8)'; fctx.fillRect(0, y - 0.5, SELV + cw * 3, 1);
+    if (s.name) { fctx.font = '600 9px ui-sans-serif,system-ui,sans-serif'; fctx.fillStyle = 'rgba(255,246,226,0.7)'; fctx.fillText(s.name.toUpperCase(), SELV + 4, y + 10); }
+  }
+  // melody stitches
+  for (let i = lowerBound(stitches, t0 - 12, 't'); i < stitches.length && stitches[i].t <= t1; i++) {
+    const s = stitches[i];
+    if (s.t + s.dur < t0 - 0.05) continue;
+    const x = SELV + (colForHz(hzForMidi(s.midi)) + 0.5) * cw;
+    const y0 = tY(s.t), y1 = Math.max(y0 + 2, tY(s.t + s.dur));
+    fctx.strokeStyle = 'rgba(252,246,232,0.92)'; fctx.lineWidth = 1.5;
+    fctx.setLineDash([2.6, 1.8]); fctx.beginPath(); fctx.moveTo(x, y0); fctx.lineTo(x, y1); fctx.stroke(); fctx.setLineDash([]);
+    const k = 2.2; fctx.lineWidth = 1.1; fctx.beginPath();
+    fctx.moveTo(x - k, y0 - k); fctx.lineTo(x + k, y0 + k); fctx.moveTo(x + k, y0 - k); fctx.lineTo(x - k, y0 + k); fctx.stroke();
+  }
+}
+function weave(t, loud, high) {
+  if (!(fabDur > 0)) return;
+  const r = Math.min(ROWS - 1, Math.floor(t / fabDur * ROWS));
+  if (r < 0) return;
+  if (r !== curRow) { rowSum.fill(0, r * COLS, (r + 1) * COLS); rowCnt[r] = 0; rowLoud[r] = 0; rowHigh[r] = 0; curRow = r; }
+  const o = r * COLS;
+  for (let c = 0; c < COLS; c++) rowSum[o + c] += raw[c];
+  const n = rowCnt[r] = Math.min(65535, rowCnt[r] + 1);
+  rowLoud[r] += (loud - rowLoud[r]) / n; rowHigh[r] += (high - rowHigh[r]) / n;
+  drawRow(r);
+}
+function unweave(t) {          // seeking backwards pulls the threads back out
+  const r = Math.max(0, Math.floor(t / fabDur * ROWS));
+  rowSum.fill(0, r * COLS); rowCnt.fill(0, r); rowLoud.fill(0, r); rowHigh.fill(0, r);
+  kicksW = kicksW.filter(k => k < t); snaresW = snaresW.filter(k => k < t);
+  sectionsW = sectionsW.filter(s => s.t < t);
+  stitches = stitches.filter(s => s.t < t); for (const s of stitches) if (s.t + s.dur > t) s.dur = t - s.t;
+  curRow = -1; fullRender();
+}
+
+// ---------- events ----------
+function onKick(t) {
+  kicksW.push(t);
+  const iv = wall - lastKickWall; lastKickWall = wall;
+  reedPulse = 1;
+  if (wall - lastFlashWall >= FLASH_GAP) { kickFlash = 1; lastFlashWall = wall; }
+  // throw the shuttle to the other side
+  const cur = shuttlePos();
+  shFrom = cur; shTo = shTo > 0.5 ? 0 : 1; shStart = wall;
+  shDur = Math.min(0.6, Math.max(0.2, iv * 0.8)) * (reduced.matches ? 1.6 : 1);
+}
+function onSnare(t) { snaresW.push(t); }
+function onNote(t, midi, dur) {
+  stitches.push({ t, midi, dur });
+  const c = colForHz(hzForMidi(midi)); pluck[c] = 1;
+  if (c > 0) pluck[c - 1] = Math.max(pluck[c - 1], 0.45);
+  if (c < COLS - 1) pluck[c + 1] = Math.max(pluck[c + 1], 0.45);
+}
+function onSection(s) { sectionsW.push(s); curSection = s; sectEl.textContent = s.name || ''; }
+function shuttlePos() { const k = shDur > 0 ? clamp01((wall - shStart) / shDur) : 1; return shFrom + (shTo - shFrom) * ease(k); }
+
+// ---------- score sidecar ----------
+function setScore(j, isDemo) {
+  if (!j || typeof j !== 'object') throw new Error('not an object');
+  const nums = a => Array.isArray(a) ? a.map(Number).filter(isFinite).sort((x, y) => x - y) : [];
+  score = {
+    kick: nums(j.kick), snare: nums(j.snare),
+    melody: (Array.isArray(j.melody) ? j.melody : []).filter(n => n && isFinite(n.t) && isFinite(n.midi))
+      .map(n => ({ t: +n.t, midi: +n.midi, dur: Math.max(0.05, +n.dur || 0.2) })).sort((a, b) => a.t - b.t),
+    sections: (Array.isArray(j.sections) ? j.sections : []).filter(s => s && isFinite(s.t))
+      .map(s => ({ t: +s.t, name: String(s.name || ''), energy: clamp01(+s.energy || 0) })).sort((a, b) => a.t - b.t)
+  };
+  scoreIsDemo = !!isDemo;
+  badge.textContent = 'SCORE'; badge.classList.add('score');
+  resetCursors(audio.currentTime || 0);
+}
+function clearScore() { score = null; scoreIsDemo = false; badge.textContent = 'FFT'; badge.classList.remove('score'); sectEl.textContent = ''; curSection = null; }
+function resetCursors(t) {
+  if (!score) return;
+  kc = lowerBound(score.kick, t); snc = lowerBound(score.snare, t); mc = lowerBound(score.melody, t, 't');
+  secC = lowerBound(score.sections, t + 1e-6, 't');
+  curSection = secC > 0 ? score.sections[secC - 1] : null;
+  sectEl.textContent = curSection ? curSection.name : '';
+}
+function sectionEnergy() { return curSection ? curSection.energy : null; }
+function scoreStep(t) {
+  const L = t + LOOKAHEAD, old = t - 0.5;
+  while (kc < score.kick.length && score.kick[kc] <= L) { const k = score.kick[kc++]; if (k >= old) onKick(k); }
+  while (snc < score.snare.length && score.snare[snc] <= L) { const k = score.snare[snc++]; if (k >= old) onSnare(k); }
+  while (mc < score.melody.length && score.melody[mc].t <= L) { const n = score.melody[mc++]; if (n.t >= old) onNote(n.t, n.midi, n.dur); }
+  while (secC < score.sections.length && score.sections[secC].t <= L) onSection(score.sections[secC++]);
+}
+
+// ---------- FFT analysis ----------
+function avgBins(a, b) { let s = 0; for (let i = a; i <= b; i++) s += freq[i]; return s / ((b - a + 1) * 255); }
+function analyse(t) {
+  analyser.getByteFrequencyData(freq);
+  for (let c = 0; c < COLS; c++) {
+    const [a, b] = binMap[c]; let s = 0;
+    for (let i = a; i < b; i++) s += freq[i];
+    raw[c] = clamp01((s / (b - a) - 40) / 195);
+  }
+  rawB.low = avgBins(bandIdx.low[0], bandIdx.low[1]);
+  rawB.mid = avgBins(bandIdx.mid[0], bandIdx.mid[1]);
+  rawB.high = avgBins(bandIdx.high[0], bandIdx.high[1]);
+  // low-band spectral flux -> kick (FFT mode only)
+  let flux = 0;
+  for (let i = bandIdx.low[0]; i <= bandIdx.low[1]; i++) { const d = freq[i] - prevFreq[i]; if (d > 0) flux += d; }
+  prevFreq.set(freq);
+  fluxHist.push(flux); if (fluxHist.length > 45) fluxHist.shift();
+  if (!score) {
+    const mean = fluxHist.reduce((x, y) => x + y, 0) / fluxHist.length;
+    if (flux > mean * 1.6 + 14 && rawB.low > 0.3 && wall - lastKickWall >= KICK_COOLDOWN) onKick(t);
+    estimateMelody(t);
+  }
+}
+function estimateMelody(t) {       // dominant mid-range peak, sampled every 0.1 s
+  if (t - melLastSample < 0.1) return;
+  melLastSample = t;
+  const [a, b] = bandIdx.mel; let pk = a, pv = 0, s = 0;
+  for (let i = a; i <= b; i++) { s += freq[i]; if (freq[i] > pv) { pv = freq[i]; pk = i; } }
+  const mean = s / (b - a + 1);
+  if (pv < 150 || pv < mean * 1.7 || pk <= 0) { melCand = null; return; }
+  const l = freq[pk - 1], r = freq[pk + 1], den = l - 2 * pv + r;
+  const off = den !== 0 ? 0.5 * (l - r) / den : 0;
+  const midi = Math.round(69 + 12 * Math.log2((pk + off) * bandIdx.hz / 440));
+  const last = stitches[stitches.length - 1];
+  if (last && last.est && last.midi === midi && t - (last.t + last.dur) < 0.16) { last.dur = t - last.t + 0.1; return; }
+  if (melCand === midi) { onNote(t - 0.1, midi, 0.2); stitches[stitches.length - 1].est = true; melCand = null; }
+  else melCand = midi;
+}
+
+// ---------- idle: a synthetic sampler swatch ----------
+const IDLE_MEL = [62, 65, 69, 67, 65, 62, 60, 57, 60, 62, 65, 72, 69, 67, 65, 64];
+function gauss(x, m, s) { const d = (x - m) / s; return Math.exp(-d * d / 2); }
+function synth(t) {
+  const bp = 0.8, ph = (t % bp) / bp, pulse = Math.exp(-ph * 5), bar = Math.floor(t / bp);
+  const mm = 0.45 + 0.08 * Math.sin(t * 0.13), mv = 0.32 + 0.14 * Math.sin(t * 0.4), hv = 0.16 + 0.1 * Math.sin(t * 0.7 + 1);
+  for (let c = 0; c < COLS; c++) {
+    const p = c / COLS;
+    raw[c] = clamp01(0.75 * pulse * gauss(p, 0.12, 0.07) + mv * gauss(p, mm, 0.12) + hv * gauss(p, 0.8, 0.1) + 0.04 * (1 + Math.sin(c * 1.7 + t * 2.3)));
+  }
+  rawB.low = 0.2 + 0.55 * pulse; rawB.mid = mv; rawB.high = hv;
+  if (bar !== idleBar) {
+    idleBar = bar; onKick(bar * bp);
+    if (bar % 2 === 1) onSnare(bar * bp);
+    onNote(bar * bp, IDLE_MEL[bar % IDLE_MEL.length], bp * 0.75);
+    if (bar % 16 === 0) onSection({ t: bar * bp, name: 'sampler ' + (bar / 16 + 1), energy: 0.3 + 0.2 * ((bar / 16) % 3) });
+  }
+}
+
+// ---------- main loop ----------
+function frame(now) {
+  const dt = Math.min(0.1, Math.max(0.001, (now - lastNow) / 1000 || 0.016)); lastNow = now; wall = now / 1000;
+  const idle = !everPlayed;
+  let t, playing = false;
+  if (idle) {
+    idleT += dt;
+    if (idleT >= IDLE_DUR) { idleT = 0; idleBar = -1; resetFabric(IDLE_DUR); }
+    t = idleT; playing = true; synth(t);
+  } else {
+    t = audio.currentTime || 0;
+    if (t < lastT - 0.05) { unweave(t); resetCursors(t); }
+    else if (t > lastT + 0.75) resetCursors(t);           // forward jump: skip ahead, leave bare warp
+    lastT = t;
+    const D = audio.duration;
+    if (isFinite(D) && D > 0 && Math.abs(D - fabDur) > 0.01) { fabDur = D; fullRender(); }
+    playing = !audio.paused && !audio.ended;
+    if (playing && analyser) analyse(t);
+    else { raw.fill(0); rawB.low = rawB.mid = rawB.high = 0; }
+    if (playing && score) scoreStep(t);
+  }
+  // smoothing: fast attack, slower decay
+  const att = 1 - Math.exp(-dt / 0.03), dec = 1 - Math.exp(-dt / 0.25);
+  for (let c = 0; c < COLS; c++) { const v = raw[c]; live[c] += (v - live[c]) * (v > live[c] ? att : dec); pluck[c] *= Math.exp(-dt / 0.6); }
+  for (const k of ['low', 'mid', 'high']) { const v = rawB[k]; band[k] += (v - band[k]) * (v > band[k] ? att : dec); }
+  if (playing) {
+    const se = sectionEnergy();
+    const loud = se != null ? 0.5 * se + 0.5 * (rawB.low + rawB.mid) : clamp01((rawB.low + rawB.mid + rawB.high) / 1.6);
+    weave(t, loud, clamp01(rawB.high * 2));
+  }
+  kickFlash = Math.max(0, kickFlash - dt / 0.3);
+  reedPulse *= Math.exp(-dt / 0.18);
+  draw(t, idle);
+  ui(t);
+  requestAnimationFrame(frame);
+}
+
+// ---------- drawing ----------
+function wood(x, y, w, h, a) {
+  const g = ctx.createLinearGradient(0, y, 0, y + h);
+  g.addColorStop(0, 'rgba(140,100,62,' + a + ')'); g.addColorStop(0.5, 'rgba(98,68,42,' + a + ')'); g.addColorStop(1, 'rgba(60,40,24,' + a + ')');
+  ctx.fillStyle = g; ctx.fillRect(x, y, w, h);
+}
+function draw(t, idle) {
+  const calm = reduced.matches;
+  ctx.fillStyle = bgGrad || '#0b0908'; ctx.fillRect(0, 0, W, H);
+  const fellY = fy + clamp01(t / fabDur) * fh;
+  // loom frame: posts + cloth beam (top) + warp beam (bottom)
+  wood(fx - 12, fy - 18, 6, fh + 36, 0.85); wood(fx + fw + 6, fy - 18, 6, fh + 36, 0.85);
+  wood(fx - 10, fy - 14, fw + 20, 10, 1); wood(fx - 10, fy + fh + 6, fw + 20, 10, 1);
+  // bare warp above the fell (shows through skipped rows)
+  ctx.strokeStyle = 'rgba(226,214,192,0.14)'; ctx.lineWidth = 1; ctx.beginPath();
+  for (let c = 0; c < COLS; c++) { const x = fx + SELV + (c + 0.5) * cw; ctx.moveTo(x, fy); ctx.lineTo(x, fellY); }
+  ctx.stroke();
+  // the woven cloth
+  ctx.drawImage(fab, fx, fy, fw, fh);
+  // the cartoon: upcoming score notes chalked behind the warp
+  if (score && !idle) {
+    ctx.fillStyle = 'rgba(190,212,255,0.17)';
+    const end = Math.min(score.melody.length, mc + 4000);
+    for (let i = mc; i < end; i++) {
+      const n = score.melody[i]; if (n.t <= t) continue;
+      const x = fx + SELV + (colForHz(hzForMidi(n.midi)) + 0.5) * cw;
+      ctx.fillRect(x - 1.5, fy + tY(n.t), 3, Math.max(1.5, tY(n.dur)));
+    }
+    ctx.fillStyle = 'rgba(255,170,160,0.13)';
+    const kend = Math.min(score.kick.length, kc + 4000);
+    for (let i = kc; i < kend; i++) ctx.fillRect(fx + 1, fy + tY(score.kick[i]) - 0.4, SELV - 2, 0.8);
+  }
+  // live warp: unwoven threads vibrate like strings, each tuned to its own band
+  const top = fellY + 14, bot = fy + fh, len = bot - top;
+  if (len > 4) {
+    const segs = 18;
+    for (let c = 0; c < COLS; c++) {
+      const e = Math.min(1.4, live[c] * 0.9 + pluck[c]);
+      const amp = (calm ? 0.12 : 1) * e * (cw * 0.45 + 2.5);
+      const w = (calm ? 4 : 22) + c * (calm ? 0.05 : 0.5);
+      const x0 = fx + SELV + (c + 0.5) * cw;
+      ctx.strokeStyle = 'hsla(' + HUE[c].toFixed(0) + ',' + (18 + e * 55).toFixed(0) + '%,' + (62 + e * 20).toFixed(0) + '%,' + (0.28 + Math.min(1, e) * 0.55).toFixed(2) + ')';
+      ctx.lineWidth = 1 + pluck[c] * 0.8;
+      ctx.beginPath();
+      for (let i = 0; i <= segs; i++) {
+        const u = i / segs, y = top + u * len;
+        const d = amp * (Math.sin(Math.PI * u) * Math.sin(wall * w + c) + 0.3 * Math.sin(2 * Math.PI * u) * Math.sin(wall * w * 1.9 + c * 2));
+        if (i === 0) ctx.moveTo(x0 + d, y); else ctx.lineTo(x0 + d, y);
+      }
+      ctx.stroke();
+    }
+    // fibre glints from the high band
+    if (!calm) {
+      const n = Math.floor(band.high * 10);
+      ctx.fillStyle = 'rgba(255,255,245,0.8)';
+      for (let i = 0; i < n; i++) {
+        const c = (COLS * 0.6 + Math.random() * COLS * 0.4) | 0;
+        ctx.globalAlpha = 0.3 + Math.random() * 0.6;
+        ctx.fillRect(fx + SELV + (c + 0.5) * cw - 0.8, top + Math.random() * len, 1.6, 1.6);
+      }
+      ctx.globalAlpha = 1;
+    }
+  }
+  // the reed: beats up to the fell on every kick (the Pi's bass lamp lives here)
+  const reedY = fellY + (calm ? 8 : 3 + 10 * (1 - reedPulse));
+  const fl = kickFlash * (calm ? 0.35 : 1);
+  if (fl > 0.01) {
+    ctx.save(); ctx.shadowColor = 'rgba(255,70,90,' + (0.9 * fl).toFixed(2) + ')'; ctx.shadowBlur = 18 * fl;
+    ctx.fillStyle = 'rgba(255,80,96,' + (0.55 * fl).toFixed(2) + ')'; ctx.fillRect(fx, reedY - 1, fw, 5); ctx.restore();
+  }
+  wood(fx - 4, reedY, fw + 8, 3, 0.95);
+  // three lamps on the reed: low / mid / high (low flashes with the kick)
+  const lamps = [[350, Math.max(band.low * 0.7, fl)], [40, band.mid], [185, band.high * 1.6]];
+  for (let i = 0; i < 3; i++) {
+    const [h, v] = lamps[i], e = clamp01(v), lx = fx + 14 + i * 13, ly = reedY + 1.5;
+    ctx.fillStyle = 'hsla(' + h + ',80%,' + (22 + e * 50).toFixed(0) + '%,1)';
+    ctx.beginPath(); ctx.arc(lx, ly, 4, 0, 6.283); ctx.fill();
+    if (e > 0.15) { ctx.fillStyle = 'hsla(' + h + ',90%,65%,' + (e * 0.25).toFixed(2) + ')'; ctx.beginPath(); ctx.arc(lx, ly, 9, 0, 6.283); ctx.fill(); }
+  }
+  // the shuttle and the weft it trails
+  const s = shuttlePos(), sx = fx + SELV + s * (fw - 2 * SELV), sy = fellY - 1;
+  let dc = 0; for (let c = 1; c < COLS; c++) if (live[c] > live[dc]) dc = c;
+  const originX = shTo >= 0.5 ? fx + SELV : fx + fw - SELV;
+  if (Math.abs(sx - originX) > 2 && wall - shStart < shDur + 0.25) {
+    ctx.strokeStyle = 'hsla(' + HUE[dc].toFixed(0) + ',65%,62%,0.7)'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(originX, sy); ctx.lineTo(sx, sy); ctx.stroke();
+  }
+  ctx.save(); ctx.translate(sx, sy);
+  if (!calm) { ctx.shadowColor = 'hsla(' + HUE[dc].toFixed(0) + ',80%,60%,' + (0.3 + band.mid * 0.6).toFixed(2) + ')'; ctx.shadowBlur = 10; }
+  ctx.fillStyle = '#8a6038'; ctx.beginPath();
+  ctx.moveTo(-18, 0); ctx.quadraticCurveTo(-8, -4.5, 0, -4.5); ctx.quadraticCurveTo(8, -4.5, 18, 0);
+  ctx.quadraticCurveTo(8, 4.5, 0, 4.5); ctx.quadraticCurveTo(-8, 4.5, -18, 0); ctx.fill();
+  ctx.shadowBlur = 0;
+  ctx.fillStyle = 'hsl(' + HUE[dc].toFixed(0) + ',60%,' + (45 + band.mid * 30).toFixed(0) + '%)';
+  ctx.fillRect(-6, -1.6, 12, 3.2);
+  ctx.restore();
+}
+
+// ---------- UI ----------
+let seeking = false;
+function ui(t) {
+  const D = audio.duration;
+  timeEl.textContent = fmt(hasTrack ? t : 0) + ' / ' + fmt(hasTrack ? D : 0);
+  if (!seeking && hasTrack && isFinite(D) && D > 0) seek.value = Math.round(t / D * 1000);
+  playBtn.innerHTML = hasTrack && !audio.paused ? '&#10073;&#10073;' : '&#9654;';
+}
+function togglePlay() {
+  if (!hasTrack) { $('fAudio').click(); return; }
+  ensureCtx();
+  if (audio.paused) {
+    if (audio.ended) audio.currentTime = 0;
+    const p = audio.play(); if (p && p.catch) p.catch(e => status('Playback blocked: ' + e.message));
+  } else audio.pause();
+}
+function status(s) { statusEl.textContent = s || ''; }
+function loadAudio(src, name, isDemo) {
+  if (!isDemo && scoreIsDemo) clearScore();
+  if (audio.src && audio.src.startsWith('blob:')) URL.revokeObjectURL(audio.src);
+  audio.src = src; audio.load();
+  hasTrack = true; everPlayed = false; trackName = name; idleT = 0; idleBar = -1;
+  resetFabric(IDLE_DUR);
+  trackEl.textContent = name; trackEl.title = name;
+  playBtn.disabled = false; seek.disabled = false; saveBtn.disabled = false;
+  hint.classList.remove('gone');
+  hintText.textContent = '“' + name + '” is ready. Press play (or Space) and the loom will weave the whole song, top to bottom, into one cloth.';
+  status('');
+}
+function loadFile(f) {
+  if (!f) return;
+  if (/\.json$/i.test(f.name) || f.type === 'application/json') { loadVizFile(f); return; }
+  if (f.type && !f.type.startsWith('audio/') && !/\.(mp3|wav|ogg|oga|flac|m4a|aac|opus|webm)$/i.test(f.name)) { status('That does not look like an audio file.'); return; }
+  loadAudio(URL.createObjectURL(f), f.name.replace(/\.[^.]+$/, ''), false);
+}
+function loadVizFile(f) {
+  f.text().then(txt => { setScore(JSON.parse(txt), false); status('Score loaded: ' + f.name); })
+    .catch(e => status('Could not read score: ' + e.message));
+}
+audio.addEventListener('play', () => {
+  if (!everPlayed) { everPlayed = true; resetFabric(audio.duration); lastT = audio.currentTime; unweave(lastT); resetCursors(lastT); }
+  hint.classList.add('gone');
+});
+audio.addEventListener('ended', () => {
+  hint.classList.remove('gone');
+  hintText.textContent = 'The cloth is finished. “Keep the cloth” saves it as an image; play again to re-weave.';
+});
+audio.addEventListener('error', () => { if (hasTrack) status('This browser could not decode that audio file.'); });
+playBtn.addEventListener('click', () => { togglePlay(); playBtn.blur(); });
+seek.addEventListener('input', () => {
+  seeking = true; const D = audio.duration;
+  if (isFinite(D) && D > 0) audio.currentTime = seek.value / 1000 * D;
+});
+seek.addEventListener('change', () => { seeking = false; seek.blur(); });
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space' || e.key === ' ') { e.preventDefault(); togglePlay(); }
+});
+$('fAudio').addEventListener('change', e => { loadFile(e.target.files[0]); e.target.value = ''; });
+$('fViz').addEventListener('change', e => { if (e.target.files[0]) loadVizFile(e.target.files[0]); e.target.value = ''; });
+let dragDepth = 0;
+window.addEventListener('dragenter', e => { e.preventDefault(); dragDepth++; dropEl.classList.add('on'); });
+window.addEventListener('dragleave', () => { if (--dragDepth <= 0) { dragDepth = 0; dropEl.classList.remove('on'); } });
+window.addEventListener('dragover', e => e.preventDefault());
+window.addEventListener('drop', e => {
+  e.preventDefault(); dragDepth = 0; dropEl.classList.remove('on');
+  const files = [...(e.dataTransfer && e.dataTransfer.files || [])];
+  files.filter(f => /\.json$/i.test(f.name)).forEach(loadVizFile);
+  const a = files.find(f => !/\.json$/i.test(f.name)); if (a) loadFile(a);
+});
+saveBtn.addEventListener('click', () => {
+  const pad = 24 * dpr, foot = 44 * dpr;
+  const ex = document.createElement('canvas'); ex.width = fab.width + pad * 2; ex.height = fab.height + pad + foot;
+  const x = ex.getContext('2d');
+  x.fillStyle = '#0b0908'; x.fillRect(0, 0, ex.width, ex.height);
+  x.drawImage(fab, pad, pad);
+  x.fillStyle = 'rgba(233,223,207,0.8)'; x.font = (12 * dpr) + 'px ui-sans-serif,system-ui,sans-serif';
+  x.fillText((trackName || 'Loom sampler') + '  ·  woven by LOOM', pad, ex.height - foot / 2.4);
+  ex.toBlob(b => {
+    if (!b) return;
+    const a = document.createElement('a'); a.href = URL.createObjectURL(b);
+    a.download = (trackName || 'loom').replace(/[^\w\- ]+/g, '').trim().replace(/\s+/g, '-') + '-cloth.png';
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  }, 'image/png');
+});
+
+// ---------- demo autoload (silently falls back to the picker on file://) ----------
+(async () => {
+  try {
+    const r = await fetch('../assets/demo.mp3'); if (!r.ok) throw new Error(r.status);
+    const b = await r.blob(); if (!b.size) throw new Error('empty');
+    if (!hasTrack) loadAudio(URL.createObjectURL(b), 'Mountain King v1 (demo)', true);
+    try { const v = await fetch('../assets/demo.viz.json'); if (v.ok && !score) setScore(await v.json(), true); } catch (e) { /* optional */ }
+  } catch (e) { /* stay on the picker */ }
+})();
+
+resize();
+requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

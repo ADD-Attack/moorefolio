@@ -1,0 +1,754 @@
+<!--
+  Prototype: AURORA  (brief 2, slug "aurora")
+  Influence dials: trippy 2 / beautiful 5 / technical 0 / dancing 1 / colorful 3 / intense 0
+  Mapping: low band (+kick) swells the lowest green curtain and breathes the horizon glow; mid band lifts the
+  teal-violet middle curtain; high band shimmers the rose fringe and the stars; melody notes (SCORE sidecar, or
+  FFT pitch-peak onsets) rise from the horizon as lights whose height is pitch and whose hue is pitch class,
+  linked into a fading constellation; section energy (or long-term loudness) sets overall aurora intensity.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aurora — music visualizer prototype</title>
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;height:100%;background:#020309;color:#cdd7e5;
+    font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;-webkit-font-smoothing:antialiased}
+  #stage{position:fixed;inset:0;width:100%;height:100%;display:block}
+  .top{position:fixed;top:max(14px,env(safe-area-inset-top));left:16px;right:16px;display:flex;align-items:baseline;
+    gap:12px;pointer-events:none;flex-wrap:wrap}
+  .brand{font-size:11px;letter-spacing:.38em;text-transform:uppercase;opacity:.55}
+  #track{font-size:13px;opacity:.85;font-weight:300;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:60vw}
+  #badge{font-size:9.5px;letter-spacing:.18em;padding:3px 8px;border-radius:999px;border:1px solid rgba(160,230,205,.35);
+    color:#a6ead2;opacity:.8}
+  #badge.score{border-color:rgba(214,170,255,.55);color:#e0c6ff}
+  .bar{position:fixed;left:50%;bottom:max(14px,env(safe-area-inset-bottom));transform:translateX(-50%);
+    width:min(680px,calc(100% - 24px));display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;
+    padding:10px 14px;border-radius:16px;background:rgba(5,9,18,.42);
+    -webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,.06)}
+  #play{flex:0 0 auto;width:36px;height:36px;border-radius:50%;border:1px solid rgba(190,240,225,.35);
+    background:rgba(150,230,205,.08);color:#d9fff2;cursor:pointer;display:grid;place-items:center;padding:0}
+  #play:disabled{opacity:.35;cursor:default}
+  #play svg{width:14px;height:14px;fill:currentColor}
+  .time{font-size:11.5px;font-variant-numeric:tabular-nums;opacity:.7;flex:0 0 auto}
+  #seek{flex:1 1 140px;min-width:0;accent-color:#9fe8cf;height:18px;margin:0;background:transparent}
+  .pick{display:flex;gap:12px;flex:0 0 auto;margin-left:auto}
+  .pick label{font-size:11px;letter-spacing:.08em;opacity:.65;cursor:pointer;border-bottom:1px dotted rgba(205,215,229,.4);
+    padding-bottom:1px;white-space:nowrap}
+  .pick label:hover,.pick label:focus-within{opacity:1}
+  .vh{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;padding:0;margin:-1px}
+  #hint{position:fixed;left:0;right:0;top:42%;text-align:center;font-size:12.5px;letter-spacing:.12em;font-weight:300;
+    opacity:.5;pointer-events:none;transition:opacity 1.2s;padding:0 24px}
+  #hint.gone{opacity:0}
+  #drop{position:fixed;inset:12px;border:1px dashed rgba(170,235,215,.45);border-radius:20px;display:grid;place-items:center;
+    font-size:13px;letter-spacing:.2em;color:#bdf3df;background:rgba(2,6,12,.35);opacity:0;pointer-events:none;transition:opacity .25s}
+  body.dragging #drop{opacity:1}
+  @media (max-width:480px){ .pick{margin-left:0;width:100%;justify-content:center} #track{max-width:52vw} }
+</style>
+</head>
+<body>
+<canvas id="stage" aria-label="Aurora music visualization"></canvas>
+<div class="top">
+  <span class="brand">Aurora</span>
+  <span id="track">No track loaded</span>
+  <span id="badge" title="FFT: driven by live audio analysis. SCORE: kick and melody driven by the .viz.json sidecar.">FFT</span>
+</div>
+<div id="hint">drop a song anywhere, or choose a file below</div>
+<div class="bar">
+  <button id="play" type="button" aria-label="Play" disabled>
+    <svg viewBox="0 0 16 16" id="icon"><path d="M4 2.5v11l9.5-5.5z"/></svg>
+  </button>
+  <span class="time" id="cur">0:00</span>
+  <input id="seek" type="range" min="0" max="1000" value="0" step="1" aria-label="Seek">
+  <span class="time" id="dur">0:00</span>
+  <div class="pick">
+    <label>audio file<input class="vh" id="fileAudio" type="file" accept="audio/*,.mp3,.wav,.ogg,.flac,.m4a,.aac"></label>
+    <label>score .viz.json<input class="vh" id="fileViz" type="file" accept=".json,application/json"></label>
+  </div>
+</div>
+<div id="drop">release to load</div>
+<script>
+(function () {
+  'use strict';
+
+  // ---------- DOM ----------
+  var canvas = document.getElementById('stage');
+  var ctx = canvas.getContext('2d');
+  var playBtn = document.getElementById('play');
+  var icon = document.getElementById('icon');
+  var seek = document.getElementById('seek');
+  var curEl = document.getElementById('cur');
+  var durEl = document.getElementById('dur');
+  var trackEl = document.getElementById('track');
+  var badge = document.getElementById('badge');
+  var hint = document.getElementById('hint');
+  var fileAudio = document.getElementById('fileAudio');
+  var fileViz = document.getElementById('fileViz');
+
+  var PLAY_PATH = 'M4 2.5v11l9.5-5.5z';
+  var PAUSE_PATH = 'M4 2.5h3v11H4zM9 2.5h3v11H9z';
+
+  // ---------- reduced motion (calm mode) ----------
+  var mq = window.matchMedia ? window.matchMedia('(prefers-reduced-motion: reduce)') : null;
+  var calm = !!(mq && mq.matches);
+  if (mq) {
+    var onMq = function () { calm = mq.matches; };
+    if (mq.addEventListener) mq.addEventListener('change', onMq); else if (mq.addListener) mq.addListener(onMq);
+  }
+
+  // ---------- audio ----------
+  var audio = new Audio();
+  audio.preload = 'auto';
+  var actx = null, analyser = null, srcNode = null, freq = null, prevFreq = null;
+  var currentUrl = null, hasTrack = false;
+  var binHz = 44100 / 2048;
+  var lowLo, lowHi, midLo, midHi, highLo, highHi, melLo, melHi;
+
+  function computeBins() {
+    binHz = actx.sampleRate / 2048;
+    var half = 1024;
+    function b(f) { return Math.max(1, Math.min(half - 1, Math.round(f / binHz))); }
+    lowLo = b(20); lowHi = Math.max(lowLo, b(140) - 1);
+    midLo = b(140); midHi = Math.max(midLo, b(2000) - 1);
+    highLo = b(2000); highHi = Math.max(highLo, b(12000) - 1);
+    melLo = b(180); melHi = b(1600);
+  }
+
+  function ensureAudioGraph() {
+    if (actx) return;
+    var AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    actx = new AC();
+    analyser = actx.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = 0.55;
+    srcNode = actx.createMediaElementSource(audio);
+    srcNode.connect(analyser);
+    analyser.connect(actx.destination);
+    freq = new Uint8Array(analyser.frequencyBinCount);
+    prevFreq = new Uint8Array(analyser.frequencyBinCount);
+    computeBins();
+  }
+
+  function setTrack(url, name) {
+    if (currentUrl && currentUrl !== url && currentUrl.indexOf('blob:') === 0) URL.revokeObjectURL(currentUrl);
+    currentUrl = url;
+    audio.src = url;
+    audio.load();
+    hasTrack = true;
+    trackEl.textContent = name;
+    playBtn.disabled = false;
+    hint.classList.add('gone');
+    resetCursors();
+    updateIcon();
+  }
+
+  function togglePlay() {
+    if (!hasTrack) return;
+    ensureAudioGraph();
+    if (actx && actx.state === 'suspended') actx.resume();
+    if (audio.paused) {
+      var p = audio.play();
+      if (p && p.catch) p.catch(function () { updateIcon(); });
+    } else {
+      audio.pause();
+    }
+  }
+
+  function updateIcon() {
+    var playing = !audio.paused && !audio.ended;
+    icon.firstElementChild.setAttribute('d', playing ? PAUSE_PATH : PLAY_PATH);
+    playBtn.setAttribute('aria-label', playing ? 'Pause' : 'Play');
+  }
+
+  playBtn.addEventListener('click', togglePlay);
+  audio.addEventListener('play', updateIcon);
+  audio.addEventListener('pause', updateIcon);
+  audio.addEventListener('ended', updateIcon);
+  audio.addEventListener('loadedmetadata', function () { durEl.textContent = fmt(audio.duration); });
+  audio.addEventListener('seeking', resetCursors);
+  audio.addEventListener('seeked', resetCursors);
+
+  var scrubbing = false;
+  seek.addEventListener('input', function () {
+    scrubbing = true;
+    if (hasTrack && isFinite(audio.duration)) {
+      audio.currentTime = (seek.value / 1000) * audio.duration;
+      curEl.textContent = fmt(audio.currentTime);
+    }
+  });
+  seek.addEventListener('change', function () { scrubbing = false; resetCursors(); });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.code !== 'Space' && e.key !== ' ') return;
+    var t = e.target;
+    if (t && (t.tagName === 'BUTTON' || (t.tagName === 'INPUT' && t.type === 'file'))) return;
+    e.preventDefault();
+    togglePlay();
+  });
+
+  function fmt(s) {
+    if (!isFinite(s) || s < 0) s = 0;
+    var m = Math.floor(s / 60), r = Math.floor(s % 60);
+    return m + ':' + (r < 10 ? '0' : '') + r;
+  }
+
+  // ---------- sidecar (SCORE mode) ----------
+  var score = null;          // {kick, snare, melody, sections, lo, hi}
+  var scoreUserPicked = false;
+  var cur = { kick: 0, snare: 0, mel: 0, sec: -1 };
+
+  function setScore(data, userPicked) {
+    var s = normalizeScore(data);
+    if (!s) return false;
+    score = s;
+    scoreUserPicked = !!userPicked;
+    badge.textContent = 'SCORE';
+    badge.classList.add('score');
+    resetCursors();
+    return true;
+  }
+  function clearScore() {
+    score = null; scoreUserPicked = false;
+    badge.textContent = 'FFT';
+    badge.classList.remove('score');
+  }
+  function numSort(a) {
+    return (Array.isArray(a) ? a : []).filter(function (x) { return typeof x === 'number' && isFinite(x); })
+      .sort(function (a, b) { return a - b; });
+  }
+  function normalizeScore(d) {
+    if (!d || typeof d !== 'object') return null;
+    var mel = (Array.isArray(d.melody) ? d.melody : []).filter(function (n) {
+      return n && isFinite(n.t) && isFinite(n.midi);
+    }).map(function (n) { return { t: +n.t, midi: +n.midi, dur: isFinite(n.dur) ? Math.max(0, +n.dur) : 0.4 }; })
+      .sort(function (a, b) { return a.t - b.t; });
+    var secs = (Array.isArray(d.sections) ? d.sections : []).filter(function (s) { return s && isFinite(s.t); })
+      .map(function (s) { return { t: +s.t, name: String(s.name || ''), energy: isFinite(s.energy) ? +s.energy : 0.5 }; })
+      .sort(function (a, b) { return a.t - b.t; });
+    var kick = numSort(d.kick), snare = numSort(d.snare);
+    if (!kick.length && !mel.length && !secs.length && !snare.length) return null;
+    var lo = 127, hi = 0;
+    mel.forEach(function (n) { if (n.midi < lo) lo = n.midi; if (n.midi > hi) hi = n.midi; });
+    if (!mel.length) { lo = 48; hi = 84; }
+    if (hi - lo < 12) { var c = (hi + lo) / 2; lo = c - 6; hi = c + 6; }
+    return { kick: kick, snare: snare, melody: mel, sections: secs, lo: lo - 1, hi: hi + 1 };
+  }
+  // first index with time >= t
+  function lowerBound(arr, t, key) {
+    var a = 0, b = arr.length;
+    while (a < b) { var m = (a + b) >> 1; var v = key ? arr[m][key] : arr[m]; if (v < t) a = m + 1; else b = m; }
+    return a;
+  }
+  function resetCursors() {
+    if (!score) return;
+    var t = audio.currentTime || 0;
+    cur.kick = lowerBound(score.kick, t);
+    cur.snare = lowerBound(score.snare, t);
+    cur.mel = lowerBound(score.melody, t, 't');
+    cur.sec = lowerBound(score.sections, t + 0.0001, 't') - 1;
+    lastAudioT = t;
+  }
+
+  // ---------- loading: auto demo, picker, drag & drop ----------
+  function loadAudioFile(f) {
+    if (!f) return;
+    if (score && !scoreUserPicked) clearScore(); // the demo sidecar does not describe a different song
+    setTrack(URL.createObjectURL(f), f.name.replace(/\.[^.]+$/, ''));
+  }
+  function loadVizFile(f) {
+    if (!f) return;
+    var r = new FileReader();
+    r.onload = function () {
+      try { if (!setScore(JSON.parse(r.result), true)) flashMsg('sidecar has no kick / melody / sections'); }
+      catch (e) { flashMsg('could not read that .viz.json'); }
+    };
+    r.readAsText(f);
+  }
+  function isJson(f) { return /\.json$/i.test(f.name) || f.type === 'application/json'; }
+  function isAudio(f) { return /^audio\//.test(f.type) || /\.(mp3|wav|ogg|oga|flac|m4a|aac|opus|webm)$/i.test(f.name); }
+
+  fileAudio.addEventListener('change', function () { loadAudioFile(fileAudio.files[0]); fileAudio.value = ''; });
+  fileViz.addEventListener('change', function () { loadVizFile(fileViz.files[0]); fileViz.value = ''; });
+
+  var dragDepth = 0;
+  window.addEventListener('dragenter', function (e) { e.preventDefault(); dragDepth++; document.body.classList.add('dragging'); });
+  window.addEventListener('dragover', function (e) { e.preventDefault(); });
+  window.addEventListener('dragleave', function () { if (--dragDepth <= 0) { dragDepth = 0; document.body.classList.remove('dragging'); } });
+  window.addEventListener('drop', function (e) {
+    e.preventDefault(); dragDepth = 0; document.body.classList.remove('dragging');
+    var files = e.dataTransfer && e.dataTransfer.files ? Array.prototype.slice.call(e.dataTransfer.files) : [];
+    var a = null, j = null;
+    files.forEach(function (f) { if (!j && isJson(f)) j = f; else if (!a && isAudio(f)) a = f; });
+    if (a) loadAudioFile(a);
+    if (j) loadVizFile(j);
+    if (!a && !j && files.length) flashMsg('that file is not audio');
+  });
+
+  var msgTimer = 0;
+  function flashMsg(m) {
+    hint.textContent = m; hint.classList.remove('gone');
+    clearTimeout(msgTimer);
+    msgTimer = setTimeout(function () {
+      if (hasTrack) hint.classList.add('gone'); else hint.textContent = 'drop a song anywhere, or choose a file below';
+    }, 2600);
+  }
+
+  // Try the demo; any failure (404, file:// CORS, no fetch) falls back silently to the picker.
+  if (window.fetch) {
+    fetch('../assets/demo.mp3').then(function (r) {
+      if (!r.ok) throw new Error('no demo');
+      return r.blob();
+    }).then(function (b) {
+      if (hasTrack) return; // user already chose something
+      setTrack(URL.createObjectURL(b), 'Mountain King v1 (demo)');
+      return fetch('../assets/demo.viz.json').then(function (r) {
+        if (!r.ok) throw new Error('no sidecar');
+        return r.json();
+      }).then(function (d) { if (!score) setScore(d, false); });
+    }).catch(function () { /* silent fallback */ });
+  }
+
+  // ---------- canvas sizing ----------
+  var W = 0, H = 0, dpr = 1, hz = 0;
+  var off = document.createElement('canvas'), octx = off.getContext('2d');
+  var aw = 0, ah = 0;
+  function resize() {
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    W = window.innerWidth; H = window.innerHeight;
+    canvas.width = Math.round(W * dpr); canvas.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    hz = Math.round(H * (W < H ? 0.70 : 0.74));
+    aw = Math.max(90, Math.round(W / 3)); ah = Math.max(60, Math.round(hz / 3));
+    off.width = aw; off.height = ah;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  // ---------- noise ----------
+  var R = new Float32Array(256);
+  for (var i = 0; i < 256; i++) R[i] = Math.random();
+  function noise(x) {
+    var fl = Math.floor(x), f = x - fl, u = f * f * (3 - 2 * f), i0 = fl & 255;
+    return R[i0] + (R[(i0 + 1) & 255] - R[i0]) * u;
+  }
+  function fbm(x) { return noise(x) * 0.65 + noise(x * 2.3 + 17.1) * 0.35; }
+  function smooth(a, b, x) { var t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
+  function clamp(x, a, b) { return x < a ? a : x > b ? b : x; }
+
+  // ---------- scene data ----------
+  var stars = [];
+  for (i = 0; i < 360; i++) {
+    stars.push({ x: Math.random(), y: Math.pow(Math.random(), 1.35), s: Math.random() < 0.06 ? 1.6 + Math.random() : 0.5 + Math.random() * 0.8,
+      p: Math.random() * 6.283, w: 0.4 + Math.random() * 1.6, b: 0.25 + Math.random() * 0.6 });
+  }
+  var ridge = [];
+  for (i = 0; i <= 160; i++) {
+    var u = i / 160;
+    ridge.push(0.012 + 0.05 * Math.pow(fbm(u * 5 + 3), 1.6) * (0.55 + 0.45 * Math.sin(u * 3.1 + 0.6)) + 0.012 * noise(u * 40));
+  }
+  var ribbons = [
+    { band: 'low',  base: 0.66, amp: 0.10, fr: 0.9, sp: 0.045,  hgt: 0.40, h1: 140, h2: 178, seed: 0 },
+    { band: 'mid',  base: 0.50, amp: 0.12, fr: 0.7, sp: -0.032, hgt: 0.34, h1: 168, h2: 262, seed: 41 },
+    { band: 'high', base: 0.34, amp: 0.08, fr: 1.2, sp: 0.055,  hgt: 0.22, h1: 300, h2: 330, seed: 97 }
+  ];
+  var strip = document.createElement('canvas'); strip.width = 1; strip.height = 128;
+  var sctx = strip.getContext('2d');
+  function paintStrip(h1, h2) {
+    var g = sctx.createLinearGradient(0, 0, 0, 128);
+    g.addColorStop(0, 'hsla(' + h2 + ',80%,62%,0)');
+    g.addColorStop(0.45, 'hsla(' + h2 + ',75%,60%,0.22)');
+    g.addColorStop(0.84, 'hsla(' + h1 + ',90%,58%,0.7)');
+    g.addColorStop(0.95, 'hsla(' + h1 + ',100%,78%,1)');
+    g.addColorStop(1, 'hsla(' + h1 + ',100%,70%,0)');
+    sctx.clearRect(0, 0, 1, 128);
+    sctx.fillStyle = g; sctx.fillRect(0, 0, 1, 128);
+  }
+  // glow sprites, one per pitch class (hue = pitch class)
+  var glows = [];
+  function pcHue(pc) { return (150 + pc * 17) % 360; }
+  for (i = 0; i < 12; i++) {
+    var gc = document.createElement('canvas'); gc.width = gc.height = 64;
+    var gx = gc.getContext('2d'), rg = gx.createRadialGradient(32, 32, 0, 32, 32, 32);
+    var hh = pcHue(i);
+    rg.addColorStop(0, 'hsla(' + hh + ',60%,96%,1)');
+    rg.addColorStop(0.12, 'hsla(' + hh + ',85%,78%,0.85)');
+    rg.addColorStop(0.4, 'hsla(' + hh + ',85%,60%,0.22)');
+    rg.addColorStop(1, 'hsla(' + hh + ',85%,50%,0)');
+    gx.fillStyle = rg; gx.fillRect(0, 0, 64, 64);
+    glows.push(gc);
+  }
+
+  // ---------- drive state ----------
+  var E = { low: 0.3, mid: 0.3, high: 0.2 };   // smoothed band energies 0..1
+  var loud = 0.5, energy = 0.5, hueShift = 0, centroidN = 0.4;
+  var lastKick = -10, lastKickVis = -10;       // in clock seconds
+  var lights = [], lastLight = null;
+  var fluxHist = [], midFluxHist = [], lastBeatT = -10, lastMelT = -10, lastShoot = -10;
+  var shoot = null, secLabel = '', secLabelT = -10, lastAudioT = 0;
+  var clock = 0, lastNow = performance.now();
+  var idleNextKick = 1.5, idleNextNote = 0.8, idleNote = 4;
+  var PENTA = [55, 57, 60, 62, 64, 67, 69, 72, 74, 76, 79];
+
+  function kick(strength) {
+    if (clock - lastKickVis < 0.34) return; // visual cap: < 3 swells per second
+    lastKickVis = clock; lastKick = clock;
+    kickAmp = strength;
+  }
+  var kickAmp = 1;
+  function kickEnv() {
+    var t = clock - lastKick;
+    if (t < 0) return 0;
+    var e = t < 0.09 ? t / 0.09 : Math.exp(-(t - 0.09) / 0.55);
+    return e * kickAmp * (calm ? 0.35 : 1);
+  }
+
+  function spawnLight(midi, dur, lo, hi, phaseT) {
+    var n = clamp((midi - lo) / (hi - lo), 0, 1);
+    var pc = ((Math.round(midi) % 12) + 12) % 12;
+    var phrase = 22;
+    var fx = 0.08 + 0.84 * (((phaseT % phrase) + phrase) % phrase) / phrase;
+    var L = { fx: fx + (Math.random() - 0.5) * 0.015, fy: n, born: clock, dur: Math.max(0.5, Math.min(dur, 4)), pc: pc,
+      size: 0.75 + 0.5 * n, prev: null };
+    if (lastLight && clock - lastLight.born < 3.5 && Math.abs(lastLight.fx - L.fx) < 0.2) L.prev = lastLight;
+    lights.push(L); lastLight = L;
+    if (lights.length > 140) lights.shift();
+  }
+  function lightAlpha(L) {
+    var age = clock - L.born;
+    var rise = calm ? 0.9 : 1.3;
+    if (age < rise) return calm ? age / rise : Math.min(1, age / 0.25);
+    var hold = L.dur;
+    if (age < rise + hold) return 1;
+    return Math.max(0, 1 - (age - rise - hold) / 3.2);
+  }
+
+  // ---------- analysis per frame ----------
+  function analyse(dt) {
+    var playing = hasTrack && !audio.paused && analyser;
+    var tl, tm, th;
+    if (playing) {
+      analyser.getByteFrequencyData(freq);
+      var s = 0, k;
+      for (k = lowLo; k <= lowHi; k++) s += freq[k];
+      tl = s / ((lowHi - lowLo + 1) * 255);
+      s = 0; for (k = midLo; k <= midHi; k++) s += freq[k];
+      tm = s / ((midHi - midLo + 1) * 255);
+      s = 0; for (k = highLo; k <= highHi; k++) s += freq[k];
+      th = s / ((highHi - highLo + 1) * 255);
+      // gentle perceptual lift so quiet mixes still breathe
+      tl = Math.pow(tl, 0.85); tm = Math.pow(tm * 1.25, 0.8); th = Math.pow(th * 1.8, 0.75);
+
+      // spectral centroid -> slow hue drift
+      var num = 0, den = 0;
+      for (k = lowLo; k <= highHi; k++) { num += k * freq[k]; den += freq[k]; }
+      if (den > 0) { var cn = clamp(Math.log2((num / den) * binHz / 200) / 5, 0, 1); centroidN += (cn - centroidN) * (1 - Math.exp(-dt / 2.5)); }
+
+      // low-band spectral flux kick detection (FFT mode only drives kicks when no score)
+      var flux = 0;
+      for (k = lowLo; k <= lowHi; k++) { var d = freq[k] - prevFreq[k]; if (d > 0) flux += d; }
+      flux /= (lowHi - lowLo + 1) * 255;
+      var mean = 0, sd = 0;
+      for (k = 0; k < fluxHist.length; k++) mean += fluxHist[k];
+      mean /= Math.max(1, fluxHist.length);
+      for (k = 0; k < fluxHist.length; k++) sd += (fluxHist[k] - mean) * (fluxHist[k] - mean);
+      sd = Math.sqrt(sd / Math.max(1, fluxHist.length));
+      var at = audio.currentTime;
+      if (fluxHist.length > 20 && flux > mean + 1.6 * sd && flux > 0.025 && clock - lastBeatT >= 0.25) {
+        lastBeatT = clock;
+        if (!score || !score.kick.length) kick(clamp(0.55 + flux * 6, 0.55, 1));
+      }
+      fluxHist.push(flux); if (fluxHist.length > 43) fluxHist.shift();
+
+      // FFT melody estimate: mid-band onset + dominant peak in 180–1600 Hz
+      if (!score || !score.melody.length) {
+        var mf = 0;
+        for (k = melLo; k <= melHi; k++) { var dm = freq[k] - prevFreq[k]; if (dm > 0) mf += dm; }
+        mf /= (melHi - melLo + 1) * 255;
+        var mm = 0; for (k = 0; k < midFluxHist.length; k++) mm += midFluxHist[k];
+        mm /= Math.max(1, midFluxHist.length);
+        if (midFluxHist.length > 20 && mf > mm * 1.9 && mf > 0.018 && clock - lastMelT > 0.22) {
+          var pk = melLo, pv = 0;
+          for (k = melLo; k <= melHi; k++) if (freq[k] > pv) { pv = freq[k]; pk = k; }
+          if (pv > 110) {
+            // parabolic interpolation for a finer peak
+            var a0 = freq[pk - 1] || 0, a2 = freq[pk + 1] || 0, den2 = a0 - 2 * pv + a2;
+            var off2 = den2 !== 0 ? clamp(0.5 * (a0 - a2) / den2, -0.5, 0.5) : 0;
+            var f = (pk + off2) * binHz;
+            spawnLight(69 + 12 * Math.log2(f / 440), 0.6, 50, 86, at);
+            lastMelT = clock;
+          }
+        }
+        midFluxHist.push(mf); if (midFluxHist.length > 43) midFluxHist.shift();
+      }
+      // occasional shooting star on a strong high-band lift (FFT mode)
+      if (!score && th - E.high > 0.18 && clock - lastShoot > 9) startShoot();
+
+      var tmp = prevFreq; prevFreq = freq; freq = tmp;
+      // long-term loudness -> overall intensity (FFT mode)
+      loud += (((tl + tm + th) / 3) - loud) * (1 - Math.exp(-dt / 4));
+    } else {
+      // idle: a gentle synthetic pulse so the sky is alive before anything is loaded
+      var c = clock;
+      tl = 0.30 + 0.07 * Math.sin(c * 0.55) + 0.04 * Math.sin(c * 0.21);
+      tm = 0.30 + 0.09 * Math.sin(c * 0.37 + 1.3);
+      th = 0.20 + 0.07 * Math.sin(c * 0.83 + 2.1);
+      loud += (0.42 - loud) * (1 - Math.exp(-dt / 4));
+      centroidN += (0.4 + 0.15 * Math.sin(c * 0.05) - centroidN) * (1 - Math.exp(-dt / 3));
+      if (c >= idleNextKick) { kick(0.4); idleNextKick = c + 3.6; }
+      if (c >= idleNextNote) {
+        idleNote = clamp(idleNote + [-2, -1, -1, 1, 1, 2, 0][Math.floor(Math.random() * 7)], 0, PENTA.length - 1);
+        spawnLight(PENTA[idleNote], 1.4, 50, 84, c);
+        idleNextNote = c + 1.5 + Math.random() * 1.6;
+      }
+      if (!calm && c - lastShoot > 16 && Math.random() < 0.004) startShoot();
+    }
+    // smoothing: fast attack, slower decay (time-based)
+    var ka = 1 - Math.exp(-dt / 0.05), kd = 1 - Math.exp(-dt / 0.45);
+    E.low += (tl - E.low) * (tl > E.low ? ka : kd);
+    E.mid += (tm - E.mid) * (tm > E.mid ? ka : kd);
+    E.high += (th - E.high) * (th > E.high ? ka : kd);
+  }
+
+  // ---------- SCORE events ----------
+  function scoreEvents() {
+    if (!score || !hasTrack) return;
+    var t = audio.currentTime || 0;
+    if (Math.abs(t - lastAudioT) > 0.6) resetCursors(); // seek / jump safety
+    lastAudioT = t;
+    if (audio.paused) return;
+    var ahead = t + 0.05, s = score;
+    while (cur.kick < s.kick.length && s.kick[cur.kick] <= ahead) { kick(1); cur.kick++; }
+    while (cur.snare < s.snare.length && s.snare[cur.snare] <= ahead) { snareShimmer = 1; cur.snare++; }
+    while (cur.mel < s.melody.length && s.melody[cur.mel].t <= ahead) {
+      var n = s.melody[cur.mel]; spawnLight(n.midi, n.dur, s.lo, s.hi, n.t); cur.mel++;
+    }
+    while (cur.sec + 1 < s.sections.length && s.sections[cur.sec + 1].t <= ahead) {
+      cur.sec++;
+      var sc = s.sections[cur.sec];
+      if (sc.name) { secLabel = sc.name; secLabelT = clock; }
+      if (cur.sec > 0 && clock - lastShoot > 6) startShoot();
+    }
+  }
+  var snareShimmer = 0;
+
+  function startShoot() {
+    if (calm) return;
+    lastShoot = clock;
+    var dir = Math.random() < 0.5 ? -1 : 1;
+    shoot = { x: 0.2 + Math.random() * 0.6, y: 0.05 + Math.random() * 0.25, vx: dir * (0.32 + Math.random() * 0.15), vy: 0.12, t: 0 };
+  }
+
+  // ---------- render ----------
+  function drawAurora(dt, intensity) {
+    var tm = clock * (calm ? 0.35 : 1);
+    octx.globalCompositeOperation = 'destination-out';
+    octx.fillStyle = 'rgba(0,0,0,' + (calm ? 0.25 : 0.42) + ')';
+    octx.fillRect(0, 0, aw, ah);
+    octx.globalCompositeOperation = 'lighter';
+    var ke = kickEnv();
+    for (var r = 0; r < ribbons.length; r++) {
+      var rb = ribbons[r], e = E[rb.band];
+      var h1 = rb.h1 + hueShift, h2 = rb.h2 + hueShift;
+      paintStrip(h1, h2);
+      var boost = r === 0 ? ke * 0.55 : (r === 2 ? snareShimmer * 0.25 : 0);
+      var ee = clamp(e + boost, 0, 1.4);
+      for (var x = 0; x < aw; x++) {
+        var u = x / aw;
+        var n = fbm(u * rb.fr * 3 + tm * rb.sp + rb.seed);
+        var yb = (rb.base + rb.amp * (n - 0.5) * 2 + 0.02 * Math.sin(u * 4 + tm * 0.11 + r)) * ah;
+        var env = smooth(0.32, 0.72, noise(u * 1.7 + tm * rb.sp * 0.7 + rb.seed + 5));
+        env *= 0.35 + 0.65 * smooth(0.0, 0.5, ee);
+        if (env < 0.01) continue;
+        var ray = noise(u * 30 + tm * 0.22 * (r % 2 ? -1 : 1) + rb.seed * 3);
+        ray = 0.35 + 0.65 * ray * ray;
+        var h = rb.hgt * ah * (0.55 + 0.75 * ee) * (0.65 + 0.55 * ray);
+        var a = env * ray * (0.16 + 0.75 * ee) * intensity;
+        if (a < 0.004) continue;
+        octx.globalAlpha = Math.min(1, a);
+        octx.drawImage(strip, x, yb - h, 1.6, h);
+      }
+    }
+    octx.globalAlpha = 1;
+    octx.globalCompositeOperation = 'source-over';
+  }
+
+  function ridgePath(yBase, sign) {
+    ctx.beginPath();
+    ctx.moveTo(0, yBase);
+    for (var i = 0; i < ridge.length; i++) ctx.lineTo((i / (ridge.length - 1)) * W, yBase - sign * ridge[i] * H);
+    ctx.lineTo(W, yBase);
+    ctx.closePath();
+  }
+
+  function frame(now) {
+    var dt = Math.min(0.1, Math.max(0.001, (now - lastNow) / 1000));
+    lastNow = now; clock += dt;
+
+    analyse(dt);
+    scoreEvents();
+    snareShimmer *= Math.exp(-dt / 0.3);
+
+    // overall intensity: section energy (SCORE) or long-term loudness (FFT/idle)
+    var target;
+    if (score && cur.sec >= 0 && score.sections[cur.sec]) target = clamp(score.sections[cur.sec].energy, 0, 1);
+    else target = clamp(loud * 1.6, 0.2, 1);
+    energy += (target - energy) * (1 - Math.exp(-dt / 3));
+    var intensity = 0.55 + 0.6 * energy;
+    var hsTarget = (centroidN - 0.4) * 60 + (score && cur.sec >= 0 ? (cur.sec % 3 - 1) * 10 : 0);
+    hueShift += (hsTarget - hueShift) * (1 - Math.exp(-dt / 5));
+
+    // transport readout
+    if (hasTrack && !scrubbing && isFinite(audio.duration) && audio.duration > 0) {
+      seek.value = Math.round((audio.currentTime / audio.duration) * 1000);
+      curEl.textContent = fmt(audio.currentTime);
+    }
+
+    // sky
+    var sky = ctx.createLinearGradient(0, 0, 0, hz);
+    sky.addColorStop(0, '#020309');
+    sky.addColorStop(0.6, '#050a16');
+    sky.addColorStop(1, 'hsl(' + (200 + hueShift * 0.5) + ',45%,' + (8 + 4 * energy) + '%)');
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = sky; ctx.fillRect(0, 0, W, hz);
+
+    // stars (twinkle depth follows the high band)
+    var tw = calm ? 0.15 : clamp(0.25 + E.high * 0.9 + snareShimmer * 0.3, 0, 1);
+    ctx.fillStyle = '#e8f0ff';
+    for (var i = 0; i < stars.length; i++) {
+      var st = stars[i];
+      var a = st.b * (1 - tw * 0.5 + tw * 0.5 * Math.sin(clock * st.w * (calm ? 0.3 : 1.4) + st.p)) * (1 - 0.35 * st.y);
+      ctx.globalAlpha = clamp(a * (1 - smooth(0.75, 1, st.y)), 0, 1);
+      var sx = st.x * W, sy = st.y * hz * 0.95;
+      ctx.fillRect(sx, sy, st.s, st.s);
+    }
+    ctx.globalAlpha = 1;
+
+    // aurora (low-res offscreen, upscaled = natural softness)
+    drawAurora(dt, intensity);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.imageSmoothingEnabled = true;
+    ctx.drawImage(off, 0, 0, aw, ah, 0, 0, W, hz);
+
+    // shooting star
+    if (shoot) {
+      shoot.t += dt;
+      var px = (shoot.x + shoot.vx * shoot.t) * W, py = (shoot.y + shoot.vy * shoot.t) * hz;
+      var fa = Math.sin(Math.min(1, shoot.t / 1.1) * Math.PI);
+      var lg = ctx.createLinearGradient(px, py, px - shoot.vx * W * 0.25, py - shoot.vy * hz * 0.25);
+      lg.addColorStop(0, 'rgba(235,245,255,' + (0.8 * fa) + ')');
+      lg.addColorStop(1, 'rgba(235,245,255,0)');
+      ctx.strokeStyle = lg; ctx.lineWidth = 1.2;
+      ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(px - shoot.vx * W * 0.25, py - shoot.vy * hz * 0.25); ctx.stroke();
+      if (shoot.t > 1.1) shoot = null;
+    }
+
+    // melody lights: rise from the horizon to a height set by pitch; hue = pitch class
+    var skyTop = hz * 0.08, skyBot = hz * 0.86;
+    var alive = [];
+    for (i = 0; i < lights.length; i++) {
+      var L = lights[i], la = lightAlpha(L);
+      if (la <= 0 && clock - L.born > 1) { L.dead = true; continue; }
+      if (L.prev && L.prev.dead) L.prev = null;
+      alive.push(L);
+      var age = clock - L.born, rise = calm ? 0.9 : 1.3;
+      var ty = skyBot - L.fy * (skyBot - skyTop);
+      var y = ty;
+      if (!calm && age < rise) { var q = age / rise; q = 1 - Math.pow(1 - q, 3); y = hz - 4 + (ty - hz + 4) * q; }
+      var drift = Math.max(0, age - rise - L.dur) * (calm ? 1.5 : 5);
+      y -= drift;
+      L.x = L.fx * W; L.y = y; L.a = la;
+      // constellation thread to the previous note
+      if (L.prev && L.prev.a > 0 && L.prev.x !== undefined && age > rise * 0.8) {
+        ctx.globalAlpha = 0.18 * Math.min(la, L.prev.a);
+        ctx.strokeStyle = 'hsl(' + pcHue(L.pc) + ',60%,80%)';
+        ctx.lineWidth = 0.7;
+        ctx.beginPath(); ctx.moveTo(L.prev.x, L.prev.y); ctx.lineTo(L.x, L.y); ctx.stroke();
+      }
+      var sz = (14 + 16 * L.size) * (0.85 + 0.25 * la) * (W < 500 ? 0.8 : 1);
+      ctx.globalAlpha = la;
+      ctx.drawImage(glows[L.pc], L.x - sz / 2, y - sz / 2, sz, sz);
+      // rising trail while ascending
+      if (!calm && age < rise) {
+        ctx.globalAlpha = 0.25 * (1 - age / rise);
+        ctx.drawImage(glows[L.pc], L.x - 2, y, 4, Math.max(0, hz - y));
+      }
+    }
+    lights = alive;
+    ctx.globalAlpha = 1;
+    ctx.globalCompositeOperation = 'source-over';
+
+    // mountains on the far shore
+    ctx.fillStyle = '#03050b';
+    ridgePath(hz + 1, 1); ctx.fill();
+
+    // water: mirrored sky, softened
+    var waterH = H - hz, s = waterH / hz;
+    ctx.fillStyle = '#02040a'; ctx.fillRect(0, hz, W, waterH);
+    ctx.save();
+    ctx.translate(0, hz); ctx.scale(1, -s);
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.globalAlpha = 0.3;
+    ctx.drawImage(off, 0, 0, aw, ah, 0, -hz, W, hz);
+    ctx.globalAlpha = 0.22;
+    for (i = 0; i < lights.length; i++) {
+      var M = lights[i]; if (M.a <= 0) continue;
+      var rs = 10 + 8 * M.size;
+      ctx.globalAlpha = 0.22 * M.a;
+      ctx.drawImage(glows[M.pc], M.x - rs / 2, (M.y - hz) - rs, rs, rs * 2);
+    }
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = '#04070e';
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    for (i = 0; i < ridge.length; i++) ctx.lineTo((i / (ridge.length - 1)) * W, -ridge[i] * H);
+    ctx.lineTo(W, 0); ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    // ripples
+    var rip = (clock * (calm ? 2 : 6)) % 14;
+    ctx.fillStyle = 'rgba(2,3,8,0.55)';
+    for (var yy = hz + 3 + rip * 0.3; yy < H; yy += 4 + (yy - hz) * 0.09) {
+      ctx.fillRect(0, yy, W, 1 + (yy - hz) * 0.015);
+    }
+    var wg = ctx.createLinearGradient(0, hz, 0, H);
+    wg.addColorStop(0, 'rgba(2,3,9,0.05)'); wg.addColorStop(1, 'rgba(2,3,9,0.9)');
+    ctx.fillStyle = wg; ctx.fillRect(0, hz, W, waterH);
+
+    // horizon breath on kick (a slow swell, never a strobe)
+    var ke = kickEnv();
+    if (ke > 0.01) {
+      var hg = ctx.createLinearGradient(0, hz - H * 0.14, 0, hz + H * 0.04);
+      var hc = 'hsla(' + (150 + hueShift) + ',80%,58%,';
+      hg.addColorStop(0, hc + '0)'); hg.addColorStop(0.8, hc + (0.16 * ke) + ')'); hg.addColorStop(1, hc + '0)');
+      ctx.globalCompositeOperation = 'lighter';
+      ctx.fillStyle = hg; ctx.fillRect(0, hz - H * 0.14, W, H * 0.18);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+
+    // vignette
+    var vg = ctx.createRadialGradient(W / 2, H * 0.45, Math.min(W, H) * 0.35, W / 2, H * 0.45, Math.max(W, H) * 0.8);
+    vg.addColorStop(0, 'rgba(0,0,0,0)'); vg.addColorStop(1, 'rgba(0,0,0,0.55)');
+    ctx.fillStyle = vg; ctx.fillRect(0, 0, W, H);
+
+    // section name, quietly
+    var sa = clock - secLabelT;
+    if (secLabel && sa < 6) {
+      ctx.globalAlpha = 0.55 * Math.min(1, sa / 1.2) * Math.min(1, (6 - sa) / 1.5);
+      ctx.fillStyle = '#dfe9f5';
+      ctx.font = '300 12px system-ui,-apple-system,sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(secLabel.toUpperCase().split('').join(' '), W / 2, hz + Math.min(40, (H - hz) * 0.3));
+      ctx.globalAlpha = 1;
+    }
+
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>
