@@ -25,7 +25,7 @@ try:
 except Exception as e: print('GPU',e)
 s.render.film_transparent=False; s.use_nodes=False
 cam=bpy.data.objects.new('cam',bpy.data.cameras.new('cam')); s.collection.objects.link(cam); s.camera=cam
-shots={'full':(c+mathutils.Vector((0.05,0,0.04)),32,9,5.2,(1840,1168),85),'mouth':(mathutils.Vector((0.5,0,0.1)),55,10,1.25,(1400,1400),50)}
+shots={'tail':(mathutils.Vector((-0.66,0,-0.17)),-45,14,1.35,(1400,1400),50),'full':(c+mathutils.Vector((0.05,0,0.04)),32,9,5.2,(1840,1168),85),'mouth':(mathutils.Vector((0.5,0,0.1)),55,10,1.25,(1400,1400),50)}
 rec={}
 for n,(tgt,az,el,dist,res,lens) in shots.items():
     d=mathutils.Vector((math.sin(math.radians(az))*math.cos(math.radians(el)),-math.cos(math.radians(az))*math.cos(math.radians(el)),math.sin(math.radians(el))))

@@ -82,3 +82,29 @@ Captures: captures/clay-full.png, clay-mouth.png, compare-full-vs-reference.png 
 |---|---|---|---|
 | 4 Modeled detail | 5.5 | 5.5 | Ticks gone; plate and flank grooves read as modeled channels; throat deep. Grooves are still shallower and softer than the reference's dark cut seams; some seam edges carry slight surface waviness. |
 | 1B Body (F2/F2b/F3/F4/F5) | 6.0 | 6.0 | F2b seams now defined. F5 is unchanged in size (the rings read a little better) and remains the weak feature, ~4/5. |
+
+---
+# TAIL PASS (post-gate improvement, Decision 46) — Forge, 2026-10-22
+
+Owner direction: fix the tail on the clay with exaggerated features, no engine. **Tail-only change**: body, mouth and legs are built byte-identically by the same pipeline (same c1 source, retopo, seam deepening, cuts and budgets; verified tri counts unchanged within ±1 for those nodes).
+
+**Method (scripts/build.py, TS/TL/RD block)** — sculpting on c1's formed tail before the node cuts:
+1. Radial inflation from the tail's own axis (per-1 cm slice centroids): 4.5 cm × (1.3 at the root → 0.7 at the tip), so it tapers. The ramp runs 6 cm into the socket, so the root flares into the body as a thick collar.
+2. Length ×1.5 from the socket (x-stretch only, so the segments stay aligned).
+3. Five carved transverse ring grooves (1.3 cm deep, Gaussian width 5.5 mm), with rounded pillow pads between them (|sin|^0.35 profile); 3× tail-only smoothing.
+4. Segment cuts are placed in grooves 1 and 3, so the tail_01→02→03 joints hide in seams. Pivots are at the segment roots; the chain is unchanged.
+
+**Provenance:** no Hunyuan call and no generated image in this pass. All tail geometry is c1-wholebody-s42 (prompt 92f9ec6c), sculpted.
+
+**Contract:** 41,679 tris (tail 2,386 / 1,899 / 1,400; body 17,998; mouth 11,999; legs ~1,500 each). 9 nodes, same hierarchy. Tangents + UV0 present; Draco off; one clay material; no glare; bg corner 228.
+
+**Captures:**
+- `captures/clay-full.png`, `clay-mouth.png`, and the new `clay-tail.png` (rear-3/4 tail detail, az −45°, el 14°).
+- `compare-full-vs-reference.png`.
+- The fix-pass captures moved to `captures/fixpass/`.
+
+**Self-score F5 (render review: clay-full + clay-tail vs the reference): MATCH 5.5 / QUALITY 5.5** (up from panel 3.8/4.2).
+- Thick, tapering and clearly ringed, with a fleshy root collar.
+- The ring count is 5 against the reference's ~6, and the ring profile is more regular and stacked than the reference's lumpy two-row pads.
+- The tip end is flatter than the reference's rounded tip.
+- The tail sits slightly low behind the hind leg in the full view.

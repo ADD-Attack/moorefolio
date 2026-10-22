@@ -5,7 +5,14 @@ BB,BM=(int(args[2]),int(args[3])) if len(args)>3 else (20000,12000)
 VOX=float(args[4]) if len(args)>4 else 0.004
 DEEP=float(args[5]) if len(args)>5 else 0.0
 SMI=int(args[6]) if len(args)>6 else 20
-TS=float(args[7]) if len(args)>7 else 1.0
+TS=float(args[7]) if len(args)>7 else 0.0
+RD=float(args[12]) if len(args)>12 else 0.018
+RW=0.0055
+RAMP=0.06
+NR=5
+PADK=0.9
+TR=[]
+TDK=float(args[11]) if len(args)>11 else 1.0
 TL=float(args[8]) if len(args)>8 else 1.0
 NS=float(args[9]) if len(args)>9 else 1.0
 NL=float(args[10]) if len(args)>10 else 1.0
@@ -67,17 +74,38 @@ if VOX>0:
     for f in caps:
         if len(f.verts)<40: continue
         pk=bmesh.ops.poke(bm,faces=[f]); cv=pk['verts'][0]; cv.co.x-=0.08
-if TS>1.0:
-    # FIX-PASS F5: thicken/lengthen c1's own tail about its per-slice axis (ramped at the socket)
-    tv=[v for v in bm.verts if v.co.x<XT0+0.02]; bins={}
-    for v in tv: bins.setdefault(round(v.co.x,2),[]).append(v.co.copy())
-    cen={k:sum(c,mathutils.Vector())/len(c) for k,c in bins.items()}
-    for v in tv:
-        k=round(v.co.x,2); c=cen[k]; t=min(1.0,max(0.0,(XT0+0.02-v.co.x)/0.04))
-        r=1+(TS-1)*t; L=1+(TL-1)*t
-        y=c.y+(v.co.y-c.y)*r; z=c.z+(v.co.z-c.z)*r; x=XT0+(v.co.x-XT0)*L if v.co.x<XT0 else v.co.x
-        v.co.x,v.co.y,v.co.z=x,y,z
-    print('TAIL_SCALED',len(tv))
+if TS>0:
+    # TAIL-PASS (Decision 46): exaggerate c1's tail on the clay. Radial displacement from the tail's own axis (per-slice centroids),
+    # x-stretch from the socket, carved transverse ring grooves with bulging pads; all pre-cut so the chain stays aligned
+    import math as _m
+    tv=[v for v in bm.verts if v.co.x<XT0+RAMP and abs(v.co.y)<0.16 and -0.36<v.co.z<-0.02]
+    core=[v for v in tv if v.co.x<XT0-0.005]
+    bins={}
+    for v in core: bins.setdefault(round(v.co.x*100),[]).append(v.co)
+    cen={k:(sum(c.y for c in L)/len(L),sum(c.z for c in L)/len(L)) for k,L in bins.items()}
+    keys=sorted(cen)
+    def axis(x):
+        k=round(x*100); k=min(max(k,keys[0]),keys[-1])
+        while k not in cen: k+=1
+        return cen[k]
+    tip0=min(v.co.x for v in core); span=XT0-tip0
+    orig=[(v,v.co.copy()) for v in tv]
+    for v,c in orig:
+        cy,cz=axis(min(c.x,XT0-0.006)); r=mathutils.Vector((0,c.y-cy,c.z-cz))
+        if r.length<1e-6: continue
+        rd=r.normalized(); t=min(1.0,max(0.0,(XT0+RAMP-c.x)/RAMP))**1.5; u=min(1.0,max(0.0,(XT0-c.x)/span))
+        x=XT0+(c.x-XT0)*TL if c.x<XT0 else c.x
+        off=TS*t*(1.3-0.6*u)
+        if c.x<XT0:
+            sp=span*TL/NR; ph=(XT0-x)/sp
+            g=_m.exp(-((ph-round(ph))*sp/RW)**2) if round(ph)>=1 else 0.0
+            pad=abs(_m.sin(_m.pi*ph))**0.35
+            off+= -RD*g + RD*PADK*pad
+        v.co=mathutils.Vector((x,c.y,c.z))+rd*off
+    sp=span*TL/NR; rings=[XT0-sp*k for k in range(1,NR+1)]; TR[:]=[rings[0],rings[2]]
+    tvs=[v for v,c in orig if c.x<XT0+0.02]
+    for _ in range(3): bmesh.ops.smooth_vert(bm,verts=tvs,factor=0.5,use_axis_x=True,use_axis_y=True,use_axis_z=True)
+    print('TAIL_EXAGGERATED',len(tv),TS,TL,'rings',[round(r,3) for r in rings])
 if DEEP>0:
     # FIX-PASS seam depth: unsharp-mask along normals, concave side only (grooves deepen; plate domes untouched)
     bm.normal_update(); sm=bm.copy()
@@ -85,11 +113,11 @@ if DEEP>0:
     sm.verts.ensure_lookup_table(); bm.verts.ensure_lookup_table(); nd=0
     for v,w in zip(bm.verts,sm.verts):
         d=(v.co-w.co).dot(v.normal)
-        if d<0: v.co+=v.normal*d*DEEP; nd+=1
+        if d<0: v.co+=v.normal*d*(DEEP*TDK if v.co.x<XT0 else DEEP); nd+=1
     sm.free(); print('DEEPENED',nd)
 print('REMESH tris',len(bm.faces),'boundary',sum(1 for e in bm.edges if e.is_boundary),'nonman',sum(1 for e in bm.edges if not e.is_manifold))
 XT,XM,ZL,XC=-0.56,0.40,-0.34,0.05
-T1,T2=XT-0.065,XT-0.115
+T1,T2=(TR[0],TR[1]) if TR else (XT-0.065*TL,XT-0.115*TL)
 def cut(co,no):
     g=bm.verts[:]+bm.edges[:]+bm.faces[:]
     bmesh.ops.bisect_plane(bm,geom=g,plane_co=co,plane_no=no,dist=1e-6)
@@ -103,7 +131,7 @@ def region(c):
     return 'body'
 groups={}
 for f in bm.faces: groups.setdefault(region(f.calc_center_median()),[]).append(f.index)
-budget={'body':BB,'mouth':BM,'leg_FL':1500,'leg_FR':1500,'leg_BL':1500,'leg_BR':1500,'tail_01':1600,'tail_02':1300,'tail_03':1000}
+budget={'body':BB,'mouth':BM,'leg_FL':1500,'leg_FR':1500,'leg_BL':1500,'leg_BR':1500,'tail_01':2400,'tail_02':1900,'tail_03':1400}
 bm.faces.ensure_lookup_table()
 clay=bpy.data.materials.new('clay'); clay.diffuse_color=(0.62,0.6,0.57,1)
 objs={}

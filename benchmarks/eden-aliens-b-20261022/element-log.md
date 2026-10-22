@@ -46,3 +46,15 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 16:03 | tail chain scaled as one unit about tail_01's root | DECLINED — tail_01 stalk stays thin; scaled segments became open tubes (previews/fix-tail-scaling-REJECTED.png) |
 | 17:08 | tail = c1 formed tail, unscaled, retopo + ring deepening, budget 1.6k/1.3k/1.0k | ACCEPTED as the deadline-safe fallback — rings and taper read, size unchanged |
 | — | gen-rear34-01 | NOT USED — no producer GO arrived before tail time |
+
+## TAIL PASS (Decision 46: on the clay, exaggerated; no Hunyuan, no generated image)
+
+| time CDT | action | verdict / reason |
+|---|---|---|
+| 17:41 | normal-direction inflate 3 cm + x-stretch ×1.35 pre-cut | partial — thicker and continuous, but no transverse rings |
+| 17:43 | carved 6 ring grooves (my arg slip: RD=1.0 m) | DECLINED — exploded geometry (operator error, re-run) |
+| 17:45 | 6 rings, normal-direction carve | DECLINED — thin washers + spikes (noisy normals) |
+| 17:47 | radial displacement from the per-slice tail axis, 6 rings | partial — clean, but accordion discs; thin stalk at the socket |
+| 17:49 | rounded pads, root ramp extended 6 cm into the socket | partial — root flares into the body; still disc-like |
+| 17:50 | 5 pillow rings, pad ×0.9, groove 1.1 cm, 3× tail-only smoothing | ACCEPTED shape (previews/tailpass-iteration-5ring.png) |
+| 17:56 | exaggeration step-up: 4.5 cm inflate, ×1.5 length, groove 1.3 cm | **ACCEPTED (delivered)** — chunkier and longer, rings read at full-shot distance |
