@@ -22,3 +22,10 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 14:07 | c1-wholebody-s42-mc | c1 | 42 | **DECLINED** | voxel-blocky stair-stepped surface on every form (previews/c1-wholebody-s42-mc-REJECTED.png); surface-net c1 stays |
 
 **Lesson for the series:** part crops of a single creature that cut through the body melt into sheets/walls (c2, c2b, c3). A whole-body straight-on crop gave clean parts, including the mouth.
+
+## FIX PASS (2026-10-22) — Decision 45 STEP 0: capability test
+
+| time CDT | id | source | action | reason |
+|---|---|---|---|---|
+| 15:37 | gen-rear34-01 | pack aliens-b-3d-reference.png (full image, as the edit reference); model openai/gpt-image-1.5 via image_generate; prompt: "Same creature, same 3D clay-render style, same light grey background and studio lighting. Rotate the camera to a rear three-quarter view (seen from behind-left, tail toward the viewer, mouth facing away). Keep every form identical to the reference: the same plate bands, the same 4 stub legs, and the segmented tapering tail with 6-7 stacked ring segments, clearly visible. Single creature, whole body in frame, no new features." | GENERATED (route works; completed ~16:03) | capability test passed: an in-session, reference-derived generation exists → generated/captest-rear34.png |
+| 16:55 | gen-rear34-01 | — | SELF-CHECK vs reference: **PARTIAL DRIFT** | view is rear-side, not a true rear-3/4 (the mouth is still visible at right). The tail is drawn chunkier, with a two-row ring split and a heavy collar at the root, i.e. **more** tail than the reference shows — possible invention. The plate bands and the 4 legs are consistent. Awaiting producer spot-check (Decision 45 condition 2). **Not used in the build** — no GO received; the tail is built from the formed mesh |
