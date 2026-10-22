@@ -84,7 +84,7 @@ Captures: captures/clay-full.png, clay-mouth.png, compare-full-vs-reference.png 
 | 1B Body (F2/F2b/F3/F4/F5) | 6.0 | 6.0 | F2b seams now defined. F5 is unchanged in size (the rings read a little better) and remains the weak feature, ~4/5. |
 
 ---
-# TAIL PASS (post-gate improvement, Decision 46) — Forge, 2026-10-22
+# TAIL PASS (17:58; superseded framing — see GATE-RETRY below. The gate was NOT passed) — Forge, 2026-10-22
 
 Owner direction: fix the tail on the clay with exaggerated features, no engine. **Tail-focused change.** Mouth and legs are unchanged: same pipeline, same c1 source, retopo, seam deepening, cuts and budgets. **One deliberate body edit:** the root-collar ramp reshapes the body's rear socket (the last 6 cm in front of the tail, inside |y|<0.16, -0.36<z<-0.02) so the tail flares into it. The rest of the body is unchanged (its tri count moved by 1).
 
@@ -108,3 +108,35 @@ Owner direction: fix the tail on the clay with exaggerated features, no engine. 
 - The ring count is 5 against the reference's ~6, and the ring profile is more regular and stacked than the reference's lumpy two-row pads.
 - The tip end is flatter than the reference's rounded tip.
 - The tail sits slightly low behind the hind leg in the full view.
+
+---
+# GATE-RETRY (Decision 46 as corrected: the clay gate stands FAILED at re-panel Detail 5.5/4.6, 1B 6.8/6.2, F5 3.8/4.2; this is the new attempt) — Forge, 2026-10-22
+
+Two halves, both on the clay. No engine, no generated image. Source still c1-wholebody-s42 (prompt 92f9ec6c).
+
+**1. Tail (F5), exaggerated.** Carried from the 17:58 tail pass:
+- Radial inflation 4.5 cm (root 1.3× → tip 0.7×), length ×1.5.
+- Five carved ring grooves (1.3 cm deep) with rounded pillow pads.
+- Root collar flaring into the body's rear socket; segment joints hidden in grooves.
+
+**2. Detail finish (the Cat 4 QUALITY gap): deeper, cleaner grooves.**
+- **Denoise first:** the surface is denoised (4 smoothing iterations) before deepening, which removes the seam waviness that the old pass amplified.
+- **Deepen:** grooves are deepened ×4.0 against an 80-iteration smoothed reference (was ×2.0 / 40), concave side only, so plate domes and massing are unchanged.
+- **Mouth zone:** x > 0.15 is deepened at 0.7×, and the throat cup is pushed back 12 cm and excluded from deepening, so the throat stays deep (×4.5 and an unprotected ×4.0 turned it into a ball; both declined, logged).
+
+**Protected:** massing, silhouette, mouth unit, belly, legs and plate shapes come from the same cuts and budgets; the 9 nodes are unchanged. The only deliberate body edit is the tail-root collar in the rear socket.
+
+**Contract:** 41,701 tris (body 17,996 · mouth 11,997 · legs ~1,500 · tail 2,374/1,936/1,400). Tangents + UV0. Draco off. One clay material; no glare; bg corner 228.
+
+**Captures:**
+- `captures/clay-full.png`, `clay-mouth.png`, `clay-tail.png` (rear-3/4 tail detail).
+- `compare-full-vs-reference.png`.
+- Earlier rounds are in `captures/gate1/`, `fixpass/` and `tailpass/`.
+
+## Self-scores (render review: full/mouth/tail captures + the frozen-camera compare)
+| Category | MATCH | QUALITY | Evidence |
+|---|---|---|---|
+| 4 Modeled detail | 5.5 | 5.5 | Plate and flank grooves are continuous, deeper channels with clean walls; waviness much reduced; no ticks; throat deep. Still short of the reference's tight dark slit seams (ours are wider, U-shaped channels). One tiny dark speck at the hind-leg socket (clay-tail). |
+| 1B Body | 6.5 | 6.5 | F2/F2b grooves read; F5 is now thick and clearly ringed (5 rings vs ~6; flat tip; regular stacked rings vs the reference's lumpy two-row pads). |
+
+Calibration note: on this ticket my strong categories ran ~1 low and my detail call was exact. I have held detail at 5.5/5.5 and not inflated it.

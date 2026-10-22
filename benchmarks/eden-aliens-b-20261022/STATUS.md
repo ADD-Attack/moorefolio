@@ -1,10 +1,14 @@
-# STATUS — EDEN-3D-01 — TAIL PASS DELIVERED (clay gate passed by owner override, Decision 46). STOPPED — standing by for the next phase. No materials started.
+# STATUS — EDEN-3D-01 — GATE-RETRY DELIVERED. STOPPED for the producer re-panel (Cat 4 + Cat 1B). The clay gate stands FAILED until re-tried. No materials.
 
 **Done:**
-- The tail is exaggerated on the clay: thicker, ×1.5 longer, 5 pronounced pillow rings, root collar.
-- Tail-only change; the 9-node chain is unchanged; 41,679 tris.
-- Fresh full, mouth and tail-detail captures + reference compare; element-log, NOTE, STATUS.
+- Tail exaggerated on the clay (thicker, ×1.5 longer, 5 pronounced pillow rings, root collar).
+- Detail finish: denoised + ×4 groove deepening, mouth zone scaled, throat protected.
+- 9 nodes, 41,701 tris.
+- Fresh full / mouth / tail-detail captures + reference compare; element-log, NOTE, STATUS.
 
-**Known residuals:** ring count 5 (reference ~6); flattish tip.
+**Residuals:**
+- Grooves are U-channels, not the reference's tight slits.
+- 5 tail rings vs ~6; flat tail tip.
+- One tiny speck at the hind-leg socket.
 
-**Capability (Decision 46.2):** granted in full. The five fences remain practice; this pass used no generated images.
+**Capability (Decision 46):** granted in full; fences kept; no generated images used in this attempt.

@@ -58,3 +58,13 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 17:49 | rounded pads, root ramp extended 6 cm into the socket | partial — root flares into the body; still disc-like |
 | 17:50 | 5 pillow rings, pad ×0.9, groove 1.1 cm, 3× tail-only smoothing | ACCEPTED shape (previews/tailpass-iteration-5ring.png) |
 | 17:56 | exaggeration step-up: 4.5 cm inflate, ×1.5 length, groove 1.3 cm | **ACCEPTED (delivered)** — chunkier and longer, rings read at full-shot distance |
+
+## GATE-RETRY (Decision 46 corrected: the gate stands FAILED; new attempt = exaggerated tail + detail finish). No engine, no generated image.
+
+| time CDT | action | verdict / reason |
+|---|---|---|
+| 17:58 | tail from TAIL-PASS carried (4.5 cm radial inflate, ×1.5, 5 pillow rings, root collar) | carried |
+| 18:01 | detail: denoise the base (4 smoothing iters) before deepening; deepen ×3.0 vs a 60-iter reference | partial — waviness mostly gone, cleaner channels; still soft |
+| 18:04 | deepen ×4.5 vs an 80-iter reference | DECLINED — the throat reads as a convex ball; folds/specks on the deepest dorsal seam (previews/gateretry-deep4.5-throat-ball-REJECTED.png) |
+| 18:07 | ×4.0, throat-cup verts excluded from deepening | DECLINED — throat still ball-like (the tube widened around the cup) |
+| 18:10 | ×4.0 body; mouth zone (x>0.15) at 0.7× (=2.8); cup pushed back 12 cm | **ACCEPTED (delivered)** — deep throat restored, body grooves at full strength |

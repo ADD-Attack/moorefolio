@@ -8,8 +8,10 @@ SMI=int(args[6]) if len(args)>6 else 20
 TS=float(args[7]) if len(args)>7 else 0.0
 RD=float(args[12]) if len(args)>12 else 0.018
 RW=0.0055
+CAPV=[]
 RAMP=0.06
 NR=5
+DN=int(args[13]) if len(args)>13 else 0
 PADK=0.9
 TR=[]
 TDK=float(args[11]) if len(args)>11 else 1.0
@@ -73,7 +75,7 @@ if VOX>0:
     print('THROAT_CAPS',len(caps),[len(f.verts) for f in caps][:6])
     for f in caps:
         if len(f.verts)<40: continue
-        pk=bmesh.ops.poke(bm,faces=[f]); cv=pk['verts'][0]; cv.co.x-=0.08
+        pk=bmesh.ops.poke(bm,faces=[f]); cv=pk['verts'][0]; cv.co.x-=0.12; CAPV.extend(set(v for fc in pk['faces'] for v in fc.verts))
 if TS>0:
     # TAIL-PASS (Decision 46): exaggerate c1's tail on the clay. Radial displacement from the tail's own axis (per-slice centroids),
     # x-stretch from the socket, carved transverse ring grooves with bulging pads; all pre-cut so the chain stays aligned
@@ -107,14 +109,19 @@ if TS>0:
     for _ in range(3): bmesh.ops.smooth_vert(bm,verts=tvs,factor=0.5,use_axis_x=True,use_axis_y=True,use_axis_z=True)
     print('TAIL_EXAGGERATED',len(tv),TS,TL,'rings',[round(r,3) for r in rings])
 if DEEP>0:
-    # FIX-PASS seam depth: unsharp-mask along normals, concave side only (grooves deepen; plate domes untouched)
-    bm.normal_update(); sm=bm.copy()
+    # GATE-RETRY detail: denoise base (DN light iters) then deepen grooves vs a wide smoothed reference (SMI iters), concave side only
+    capset=set(CAPV); keep={v.index:v.co.copy() for v in capset} if capset else {}
+    bm.verts.index_update(); keep={v.index:v.co.copy() for v in capset}
+    bm.normal_update(); base=bm.copy(); sm=bm.copy()
+    for _ in range(DN): bmesh.ops.smooth_vert(base,verts=base.verts,factor=0.5,use_axis_x=True,use_axis_y=True,use_axis_z=True)
     for _ in range(SMI): bmesh.ops.smooth_vert(sm,verts=sm.verts,factor=0.5,use_axis_x=True,use_axis_y=True,use_axis_z=True)
-    sm.verts.ensure_lookup_table(); bm.verts.ensure_lookup_table(); nd=0
-    for v,w in zip(bm.verts,sm.verts):
-        d=(v.co-w.co).dot(v.normal)
-        if d<0: v.co+=v.normal*d*(DEEP*TDK if v.co.x<XT0 else DEEP); nd+=1
-    sm.free(); print('DEEPENED',nd)
+    base.verts.ensure_lookup_table(); sm.verts.ensure_lookup_table(); bm.verts.ensure_lookup_table(); nd=0
+    for v,bv,w in zip(bm.verts,base.verts,sm.verts):
+        d=(bv.co-w.co).dot(v.normal); v.co=bv.co.copy()
+        if d<0: v.co+=v.normal*d*(DEEP*TDK if v.co.x<XT0 else (DEEP*0.7 if v.co.x>0.15 else DEEP)); nd+=1
+    for v in bm.verts:
+        if v.index in keep: v.co=keep[v.index]
+    base.free(); sm.free(); print('CUP_PROTECTED',len(keep)); print('DEEPENED',nd,'DN',DN,'SMI',SMI,'DEEP',DEEP)
 print('REMESH tris',len(bm.faces),'boundary',sum(1 for e in bm.edges if e.is_boundary),'nonman',sum(1 for e in bm.edges if not e.is_manifold))
 XT,XM,ZL,XC=-0.56,0.40,-0.34,0.05
 T1,T2=(TR[0],TR[1]) if TR else (XT-0.065*TL,XT-0.115*TL)
