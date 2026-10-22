@@ -86,7 +86,7 @@ Captures: captures/clay-full.png, clay-mouth.png, compare-full-vs-reference.png 
 ---
 # TAIL PASS (post-gate improvement, Decision 46) — Forge, 2026-10-22
 
-Owner direction: fix the tail on the clay with exaggerated features, no engine. **Tail-only change**: body, mouth and legs are built byte-identically by the same pipeline (same c1 source, retopo, seam deepening, cuts and budgets; verified tri counts unchanged within ±1 for those nodes).
+Owner direction: fix the tail on the clay with exaggerated features, no engine. **Tail-focused change.** Mouth and legs are unchanged: same pipeline, same c1 source, retopo, seam deepening, cuts and budgets. **One deliberate body edit:** the root-collar ramp reshapes the body's rear socket (the last 6 cm in front of the tail, inside |y|<0.16, -0.36<z<-0.02) so the tail flares into it. The rest of the body is unchanged (its tri count moved by 1).
 
 **Method (scripts/build.py, TS/TL/RD block)** — sculpting on c1's formed tail before the node cuts:
 1. Radial inflation from the tail's own axis (per-1 cm slice centroids): 4.5 cm × (1.3 at the root → 0.7 at the tip), so it tapers. The ramp runs 6 cm into the socket, so the root flares into the body as a thick collar.
