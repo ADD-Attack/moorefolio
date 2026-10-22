@@ -68,3 +68,16 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 18:04 | deepen ×4.5 vs an 80-iter reference | DECLINED — the throat reads as a convex ball; folds/specks on the deepest dorsal seam (previews/gateretry-deep4.5-throat-ball-REJECTED.png) |
 | 18:07 | ×4.0, throat-cup verts excluded from deepening | DECLINED — throat still ball-like (the tube widened around the cup) |
 | 18:10 | ×4.0 body; mouth zone (x>0.15) at 0.7× (=2.8); cup pushed back 12 cm | **ACCEPTED (delivered)** — deep throat restored, body grooves at full strength |
+
+## GATE-RETRY v2 — operative method (Muse 2nd correction: "engine" = Blender; tail via REGENERATED REFERENCE → Hunyuan; Blender only for the stitch). Supersedes the hand-modelled tail of a834870.
+
+| time CDT | id | source / params | action | reason |
+|---|---|---|---|---|
+| 18:13 | gen-tail-ref-01 | edit of pack aliens-b-3d-reference.png; model openai/gpt-image-1.5 (image_generate); prompt: "Using this creature as the reference, show ONLY its tail as a single isolated object… pure side view… Exaggerate the tail: much bigger and thicker…, 6 stacked rounded pillow-like ring segments separated by deep, sharp grooves…, curving slightly upward toward a rounded tip. The wide root end is cut flat where it would join the body…" → generated/gen-tail-ref-01.png | GENERATED | fence 1 (reference-derived), fence 4 (whole unit from a missing view: an isolated tail is not visible in the pack) |
+| 18:18 | gen-tail-ref-01 | self-check vs the pack reference | **APPROVED as Hunyuan input** | same material/style; tapering ringed tail with an upturned tip, as in the reference, exaggerated per order. Noted simplification: single-row rings (the reference pads split into two rows). Never used as ground truth (fence 2) |
+| 18:18 | c4-gentail-s42 (prompt 72328b2e) | gen-tail-ref-01 padded square, bg (228,227,227) | SENT → **DECLINED** | the tail formed well (6 rings, round section) but fused with a ground slab and a diagonal sheet grown from the drop shadow / bg gradient |
+| 18:24 | c4b-gentail-s42 (prompt 7e640c0c) | gen-tail-ref-01 masked by saturation (>70), shadow/gradient flattened to (228,228,228), padded | SENT → **APPROVED** | clean closed volume: 6 pronounced rings, round section, flat circular root cap, upturned tip; no slab, no melt (previews/c4b-gentail-s42-APPROVED.png) |
+| 18:28 | stitch v1 | LEN 0.38, collapse-decimated raw element | **DECLINED** | the surface-net shell shattered into facets under 97% decimation |
+| 18:31 | stitch v2 | + voxel remesh 2.5 mm (manifold: 0 boundary / 0 non-manifold) before decimation, LEN 0.42 | partial | clean rings and taper, but slender vs the reference's chunky tail |
+| 18:33 | stitch v3 | + ×1.45 thickness about the element axis (pre-cut, so the chain stays aligned) | **ACCEPTED (delivered)** | chunky, 6 pronounced pillow rings, curled tip, seated 3 cm into the socket |
+| 18:35 | verify | per-node POSITION buffer hash vs bace685 GLB | PASS | body, mouth and leg_FL/FR/BL/BR byte-identical; only tail_01..03 differ |

@@ -110,7 +110,7 @@ Owner direction: fix the tail on the clay with exaggerated features, no engine. 
 - The tail sits slightly low behind the hind leg in the full view.
 
 ---
-# GATE-RETRY (Decision 46 as corrected: the clay gate stands FAILED at re-panel Detail 5.5/4.6, 1B 6.8/6.2, F5 3.8/4.2; this is the new attempt) — Forge, 2026-10-22
+# GATE-RETRY v1 — SUPERSEDED (hand-modelled in Blender, the opposite of the owner's direction; kept for the record; captures in captures/gateretry-handmodel-superseded/) (Decision 46 as corrected: the clay gate stands FAILED at re-panel Detail 5.5/4.6, 1B 6.8/6.2, F5 3.8/4.2; this is the new attempt) — Forge, 2026-10-22
 
 Two halves, both on the clay. No engine, no generated image. Source still c1-wholebody-s42 (prompt 92f9ec6c).
 
@@ -140,3 +140,35 @@ Two halves, both on the clay. No engine, no generated image. Source still c1-who
 | 1B Body | 6.5 | 6.5 | F2/F2b grooves read; F5 is now thick and clearly ringed (5 rings vs ~6; flat tip; regular stacked rings vs the reference's lumpy two-row pads). |
 
 Calibration note: on this ticket my strong categories ran ~1 low and my detail call was exact. I have held detail at 5.5/5.5 and not inflated it.
+
+---
+# GATE-RETRY v2 — OPERATIVE (owner direction via Muse's 2nd correction) — Forge, 2026-10-22
+
+The gate stands FAILED (re-panel Detail 5.5/4.6, 1B 6.8/6.2, F5 3.8/4.2). This is the retry.
+
+**Method:** regenerated reference → Hunyuan → tail element → Blender stitch only.
+- **Base:** the bace685 clay, **unchanged**. Body, mouth and legs are verified byte-identical by per-node POSITION hash against the bace685 GLB; that includes the retopo, the seam work and the throat.
+- **Changed geometry:** only tail_01..03. The v1 groove-deepening and hand-modelled tail are not in this delivery.
+
+**Tail element provenance (Decision 45/46 fences, all logged in element-log.md):**
+1. **Reference:** `generated/gen-tail-ref-01.png`. Model openai/gpt-image-1.5, an edit of the pack aliens-b-3d-reference.png. It shows the tail only, side view, exaggerated (bigger, thicker, 6 pronounced rings). I self-checked it against the reference and approved it as Hunyuan input only; it is not ground truth.
+2. **Hunyuan:** `c4b-gentail-s42`, prompt **7e640c0c-87db-49fa-9a5f-d68a1a179d10**, seed 42, fp16 v2.1, octree 256, surface net 0.6. Input: gen-tail-ref-01 masked by saturation (shadow and gradient flattened to bg 228), padded to 1024². The unmasked first send (c4, prompt 72328b2e) was declined: it grew slabs.
+3. **Stitch (`scripts/stitch.py`, Blender):**
+   - Keep the largest island, close holes, then voxel remesh 2.5 mm into a manifold (raw collapse-decimation shattered it, so declined).
+   - Rotate the root to the socket, scale to 0.42 m length, then ×1.45 thickness about the element axis.
+   - Seat it 3 cm into the body at x=-0.56, z=-0.19.
+   - Cut into thirds (tail_01/02/03), cap the cuts, decimate to 2,400/1,900/1,400.
+   - Root pivots; chain body→tail_01→tail_02→tail_03; provisional UVs.
+
+**Contract:** 41,694 tris. 9 nodes, same hierarchy. Tangents + UV0. Draco off. One clay material; no glare; bg corner 228.
+
+**Captures (256 spp):** `captures/clay-full.png`, `clay-mouth.png` (unchanged geometry), `clay-tail.png` (rear-3/4 tail detail), `compare-full-vs-reference.png`.
+
+**Self-scores (render review):**
+
+| Category | MATCH | QUALITY | Evidence |
+|---|---|---|---|
+| 1B Body | 6.5 | 6.5 | F5: a chunky tapering tail, 6 pronounced pillow rings, upturned rounded tip; reads at full-shot distance. Single-row rings vs the reference's two-row pads; set a little lower and narrower at the root than the reference's. F2/F2b/F3/F4 as at bace685. |
+| 4 Modeled detail | 5.0 | 5.0 | Body detail is the bace685 state (ticks gone; seams deepened ×2.0; slight waviness remains; U-channels vs the reference's slits). The new tail adds crisp, well-formed ring grooves. |
+
+Note: Cat 4 detail beyond the tail is deliberately unchanged, per "everything else stays exactly as delivered at bace685". The stronger ×4 groove finish from v1 is available as a separate option if the producer wants it on the body.
