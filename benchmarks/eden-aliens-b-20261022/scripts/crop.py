@@ -9,3 +9,4 @@ def sq(box,name):
 sq((0,20,1420,1168),'c1-wholebody.png')
 sq((1060,250,1420,950),'c2-mouth.png')
 sq((0,600,262,900),'c3-tail.png')
+sq((880,180,1440,1010),'c2b-mouth.png')

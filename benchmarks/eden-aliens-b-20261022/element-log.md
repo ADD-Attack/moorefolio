@@ -15,3 +15,10 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 13:44 | c1-wholebody-s42 | c1 | 42 | **APPROVED (base mass)** | the 3 dorsal plate bands, the flank plate row, 4 two-part legs and a ringed tail all formed and read right in both previews; the mouth end is shallow → mouth comes from a separate element |
 | 13:44 | c2-mouth-s42 (prompt b8c4ec1c) | c2 | 42 | **DECLINED** | an open half-shell with heavy voxel stair-stepping; the cropped body edge became a flat sheet; the lip ring only partly formed |
 | 13:44 | c2b-mouth | re-request: wider crop with the whole mouth + collar + a band of forehead, centred | 7 | RE-REQUEST queued | give the encoder a closed volume to read rather than a cut edge |
+| 13:45 | c2b-mouth-s7 (prompt 98994a1d) | c2b (880,180,1440,1010) | 7 | **DECLINED** | the crop edge through the body became a flat wall/plane; only a partial head shell formed, and the mouth was not readable |
+| 13:46 | c3-tail-s42 (prompt 9b5e0015) | c3 v2 | 42 | **DECLINED** | it formed as a relief sheet with a backing slab, not a volume; the c1 tail already reads as stacked rings |
+| 13:47 | c1-wholebody-s42 | — | — | **APPROVED as SOLE source for all nodes** | a 4-side + top sheet (previews/c1-sheet.png) showed a real lip ring and cavity facing +X: the mouth comes from c1, and the separate mouth element is no longer needed. A baked ground slab (z≈-0.53) is stripped in the build |
+| 14:06 | c1-wholebody-s42-mc (prompt c25e7a33) | c1 | 42 | SENT (mesher re-request: VoxelToMesh 'basic' instead of 'surface net') | tried to remove the surface-net double-walled seams that leave dark ticks |
+| 14:07 | c1-wholebody-s42-mc | c1 | 42 | **DECLINED** | voxel-blocky stair-stepped surface on every form (previews/c1-wholebody-s42-mc-REJECTED.png); surface-net c1 stays |
+
+**Lesson for the series:** part crops of a single creature that cut through the body melt into sheets/walls (c2, c2b, c3). A whole-body straight-on crop gave clean parts, including the mouth.

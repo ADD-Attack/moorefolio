@@ -1,0 +1,52 @@
+{
+ "full": {
+  "cam": [
+   2.7172703742980957,
+   -4.359415531158447,
+   0.869360089302063
+  ],
+  "az": 32,
+  "el": 9,
+  "dist": 5.2,
+  "res": [
+   1840,
+   1168
+  ],
+  "lens": 85
+ },
+ "mouth": {
+  "cam": [
+   1.508384108543396,
+   -0.7060781717300415,
+   0.3170602321624756
+  ],
+  "az": 55,
+  "el": 10,
+  "dist": 1.25,
+  "res": [
+   1400,
+   1400
+  ],
+  "lens": 50
+ },
+ "settings": {
+  "phase": "QA clay",
+  "engine": "CYCLES",
+  "samples": 256,
+  "adaptive": 0.01,
+  "denoise": true,
+  "view": "Standard",
+  "bg_srgb": 228,
+  "materials": [
+   "QA_clay"
+  ],
+  "glare": "absent (compositor off)",
+  "emission": 0,
+  "lights": {
+   "key": 90,
+   "fill": 25,
+   "rim": 70
+  },
+  "shadow_catcher": true
+ }
+}
