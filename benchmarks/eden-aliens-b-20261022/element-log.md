@@ -29,3 +29,20 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 |---|---|---|---|---|
 | 15:37 | gen-rear34-01 | pack aliens-b-3d-reference.png (full image, as the edit reference); model openai/gpt-image-1.5 via image_generate; prompt: "Same creature, same 3D clay-render style, same light grey background and studio lighting. Rotate the camera to a rear three-quarter view (seen from behind-left, tail toward the viewer, mouth facing away). Keep every form identical to the reference: the same plate bands, the same 4 stub legs, and the segmented tapering tail with 6-7 stacked ring segments, clearly visible. Single creature, whole body in frame, no new features." | GENERATED (route works; completed ~16:03) | capability test passed: an in-session, reference-derived generation exists → generated/captest-rear34.png |
 | 16:55 | gen-rear34-01 | — | SELF-CHECK vs reference: **PARTIAL DRIFT** | view is rear-side, not a true rear-3/4 (the mouth is still visible at right). The tail is drawn chunkier, with a two-row ring split and a heavy collar at the root, i.e. **more** tail than the reference shows — possible invention. The plate bands and the 4 legs are consistent. Awaiting producer spot-check (Decision 45 condition 2). **Not used in the build** — no GO received; the tail is built from the formed mesh |
+
+## FIX PASS build log (no new Hunyuan calls; all work on approved c1-wholebody-s42, prompt 92f9ec6c)
+
+| time CDT | action | verdict / reason |
+|---|---|---|
+| 15:38 | retopo: inward solidify 6 mm + voxel remesh 4 mm on c1 | ACCEPTED — manifold (0 boundary / 0 non-manifold, 1.33M tris); closes the open shell that made earlier remeshes collapse |
+| 15:40 | drop inner wall (faces >3 mm from the original c1 surface) | ACCEPTED — exterior seam ticks gone in render; it opened the throat back (fixed 15:50) |
+| 15:43 | seam deepening ×1.2 (unsharp mask along normals, concave side only) | too weak — re-run |
+| 15:46 | seam deepening ×3.0, 40 smoothing iters | DECLINED — amplified surface noise into crumpled seam edges |
+| 15:43–15:46 | keep the mouth-zone inner wall to close the throat | DECLINED — read as a convex ball in the throat |
+| 15:50 | throat cup: cap the tube-end loop (123 edges), poke the centre back 8 cm; mouth/body cut left uncapped (the nodes abut) | ACCEPTED — deep concave throat, no disc |
+| 15:50 | seam deepening ×2.0, 40 iters | ACCEPTED — grooves read; noise acceptable |
+| 15:52 | tail ×1.7 thick / ×1.35 long, per-slice in the raw mesh | DECLINED — caught body-rear verts: thin neck + crumpled tip |
+| 15:59 | tail per-node scale about each node's own pivot | DECLINED — segments misaligned, gaps |
+| 16:03 | tail chain scaled as one unit about tail_01's root | DECLINED — tail_01 stalk stays thin; scaled segments became open tubes (previews/fix-tail-scaling-REJECTED.png) |
+| 17:08 | tail = c1 formed tail, unscaled, retopo + ring deepening, budget 1.6k/1.3k/1.0k | ACCEPTED as the deadline-safe fallback — rings and taper read, size unchanged |
+| — | gen-rear34-01 | NOT USED — no producer GO arrived before tail time |

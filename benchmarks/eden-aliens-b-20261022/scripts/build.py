@@ -3,6 +3,13 @@ import bpy,bmesh,sys,mathutils
 args=sys.argv[sys.argv.index('--')+1:]; glb,outdir=args[0],args[1]
 BB,BM=(int(args[2]),int(args[3])) if len(args)>3 else (20000,12000)
 VOX=float(args[4]) if len(args)>4 else 0.004
+DEEP=float(args[5]) if len(args)>5 else 0.0
+SMI=int(args[6]) if len(args)>6 else 20
+TS=float(args[7]) if len(args)>7 else 1.0
+TL=float(args[8]) if len(args)>8 else 1.0
+NS=float(args[9]) if len(args)>9 else 1.0
+NL=float(args[10]) if len(args)>10 else 1.0
+XT0=-0.56
 bpy.ops.wm.read_factory_settings(use_empty=True)
 bpy.ops.import_scene.gltf(filepath=glb)
 src=[o for o in bpy.context.scene.objects if o.type=='MESH'][0]
@@ -30,13 +37,59 @@ bmesh.ops.holes_fill(bm,edges=bd,sides=120); print('RAW_BOUNDARY_AFTER',sum(1 fo
 bmesh.ops.triangulate(bm,faces=bm.faces)
 # voxel remesh the formed mesh into a clean manifold surface (shell is near-closed here); same form, no double walls
 if VOX>0:
+    # FIX-PASS retopo: inward solidify closes the open shell, then voxel remesh -> clean manifold on c1's outer surface
+    from mathutils.bvhtree import BVHTree
+    ref_bvh=BVHTree.FromBMesh(bm)
     bm.to_mesh(src.data); bm.free()
+    so=src.modifiers.new('so','SOLIDIFY'); so.thickness=0.006; so.offset=-1.0; so.use_even_offset=True
     rm=src.modifiers.new('rm','REMESH'); rm.mode='VOXEL'; rm.voxel_size=VOX; rm.use_smooth_shade=True
-    bpy.context.view_layer.objects.active=src; bpy.ops.object.modifier_apply(modifier='rm')
+    bpy.context.view_layer.objects.active=src; bpy.ops.object.modifier_apply(modifier='so'); bpy.ops.object.modifier_apply(modifier='rm')
     bm=bmesh.new(); bm.from_mesh(src.data); bmesh.ops.triangulate(bm,faces=bm.faces)
+    isl2=[]; seen=set()
+    for v in bm.verts:
+        if v in seen: continue
+        st=[v]; comp=[]; seen.add(v)
+        while st:
+            x=st.pop(); comp.append(x)
+            for e in x.link_edges:
+                y=e.other_vert(x)
+                if y not in seen: seen.add(y); st.append(y)
+        isl2.append(comp)
+    isl2.sort(key=len); print('REMESH_ISLANDS',[len(i) for i in isl2[-4:]])
+    bmesh.ops.delete(bm,geom=[v for c in isl2[:-1] for v in c],context='VERTS')
+    inner=[f for f in bm.faces if ref_bvh.find_nearest(f.calc_center_median())[3]>0.003]
+    print('INNER_WALL_DELETED',len(inner),'of',len(bm.faces)); bmesh.ops.delete(bm,geom=inner,context='FACES')
+    bmesh.ops.delete(bm,geom=[v for v in bm.verts if not v.link_faces],context='VERTS')
+    # throat: cap the open tube end (boundary loops in the mouth zone) and pull the cap centre back -> concave cup
+    bd=[e for e in bm.edges if e.is_boundary and min(v.co.x for v in e.verts)>0.12]
+    r=bmesh.ops.holes_fill(bm,edges=bd,sides=0); caps=r['faces']
+    print('THROAT_CAPS',len(caps),[len(f.verts) for f in caps][:6])
+    for f in caps:
+        if len(f.verts)<40: continue
+        pk=bmesh.ops.poke(bm,faces=[f]); cv=pk['verts'][0]; cv.co.x-=0.08
+if TS>1.0:
+    # FIX-PASS F5: thicken/lengthen c1's own tail about its per-slice axis (ramped at the socket)
+    tv=[v for v in bm.verts if v.co.x<XT0+0.02]; bins={}
+    for v in tv: bins.setdefault(round(v.co.x,2),[]).append(v.co.copy())
+    cen={k:sum(c,mathutils.Vector())/len(c) for k,c in bins.items()}
+    for v in tv:
+        k=round(v.co.x,2); c=cen[k]; t=min(1.0,max(0.0,(XT0+0.02-v.co.x)/0.04))
+        r=1+(TS-1)*t; L=1+(TL-1)*t
+        y=c.y+(v.co.y-c.y)*r; z=c.z+(v.co.z-c.z)*r; x=XT0+(v.co.x-XT0)*L if v.co.x<XT0 else v.co.x
+        v.co.x,v.co.y,v.co.z=x,y,z
+    print('TAIL_SCALED',len(tv))
+if DEEP>0:
+    # FIX-PASS seam depth: unsharp-mask along normals, concave side only (grooves deepen; plate domes untouched)
+    bm.normal_update(); sm=bm.copy()
+    for _ in range(SMI): bmesh.ops.smooth_vert(sm,verts=sm.verts,factor=0.5,use_axis_x=True,use_axis_y=True,use_axis_z=True)
+    sm.verts.ensure_lookup_table(); bm.verts.ensure_lookup_table(); nd=0
+    for v,w in zip(bm.verts,sm.verts):
+        d=(v.co-w.co).dot(v.normal)
+        if d<0: v.co+=v.normal*d*DEEP; nd+=1
+    sm.free(); print('DEEPENED',nd)
 print('REMESH tris',len(bm.faces),'boundary',sum(1 for e in bm.edges if e.is_boundary),'nonman',sum(1 for e in bm.edges if not e.is_manifold))
 XT,XM,ZL,XC=-0.56,0.40,-0.34,0.05
-T1,T2=-0.625,-0.675
+T1,T2=XT-0.065,XT-0.115
 def cut(co,no):
     g=bm.verts[:]+bm.edges[:]+bm.faces[:]
     bmesh.ops.bisect_plane(bm,geom=g,plane_co=co,plane_no=no,dist=1e-6)
@@ -50,7 +103,7 @@ def region(c):
     return 'body'
 groups={}
 for f in bm.faces: groups.setdefault(region(f.calc_center_median()),[]).append(f.index)
-budget={'body':BB,'mouth':BM,'leg_FL':1500,'leg_FR':1500,'leg_BL':1500,'leg_BR':1500,'tail_01':1200,'tail_02':1000,'tail_03':800}
+budget={'body':BB,'mouth':BM,'leg_FL':1500,'leg_FR':1500,'leg_BL':1500,'leg_BR':1500,'tail_01':1600,'tail_02':1300,'tail_03':1000}
 bm.faces.ensure_lookup_table()
 clay=bpy.data.materials.new('clay'); clay.diffuse_color=(0.62,0.6,0.57,1)
 objs={}
@@ -58,7 +111,7 @@ for name,idx in groups.items():
     b2=bm.copy(); b2.faces.ensure_lookup_table(); keep=set(idx)
     bmesh.ops.delete(b2,geom=[f for f in b2.faces if f.index not in keep],context='FACES')
     bmesh.ops.delete(b2,geom=[v for v in b2.verts if not v.link_faces],context='VERTS')
-    def oncut(v): return any(abs(v.co.x-q)<1e-4 for q in (XT,T1,T2,XM)) or abs(v.co.z-ZL)<1e-4
+    def oncut(v): return any(abs(v.co.x-q)<1e-4 for q in (XT,T1,T2)) or abs(v.co.z-ZL)<1e-4
     ce=[e for e in b2.edges if e.is_boundary and oncut(e.verts[0]) and oncut(e.verts[1])]
     if ce: bmesh.ops.holes_fill(b2,edges=ce,sides=0)
     bmesh.ops.triangulate(b2,faces=b2.faces)
@@ -76,6 +129,14 @@ for name,idx in groups.items():
     b3.to_mesh(o.data); b3.free()
     for p in o.data.polygons: p.use_smooth=True
     print('NODE',name,'raw',n,'->',len(o.data.polygons))
+# FIX-PASS F5: whole tail chain scaled as one unit about tail_01's root (segments stay aligned)
+if NS!=1.0 or NL!=1.0:
+    tvs=[v.co for v in objs['tail_01'].data.vertices]; P=mathutils.Vector((XT,0,sum(c.z for c in tvs)/len(tvs)))
+    M=mathutils.Matrix.Translation(P)@mathutils.Matrix.Diagonal((NL,NS,NS,1.0))@mathutils.Matrix.Translation(-P)
+    for tn in ('tail_01','tail_02','tail_03'): objs[tn].data.transform(M)
+    T1s,T2s=XT+(T1-XT)*NL,XT+(T2-XT)*NL
+    print('TAIL_CHAIN_SCALED',NS,NL)
+else: T1s,T2s=T1,T2
 # pivots: legs at hip-cut centre, tail segs at root, mouth at cut centre
 def set_origin(o,pt):
     o.data.transform(mathutils.Matrix.Translation(-pt)); o.location=pt
@@ -83,7 +144,7 @@ for name,o in objs.items():
     vs=[v.co for v in o.data.vertices]
     if name.startswith('leg'): pt=mathutils.Vector((sum(v.x for v in vs)/len(vs),sum(v.y for v in vs)/len(vs),ZL))
     elif name=='mouth': pt=mathutils.Vector((XM,0,sum(v.z for v in vs)/len(vs)))
-    elif name.startswith('tail'): pt=mathutils.Vector(({'tail_01':XT,'tail_02':T1,'tail_03':T2}[name],0,sum(v.z for v in vs)/len(vs)))
+    elif name.startswith('tail'): pt=mathutils.Vector(({'tail_01':XT,'tail_02':T1s,'tail_03':T2s}[name],0,sum(v.z for v in vs)/len(vs)))
     else: pt=mathutils.Vector((0,0,0))
     set_origin(o,pt)
 bpy.context.view_layer.update()

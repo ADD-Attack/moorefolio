@@ -52,3 +52,33 @@ Calibrated down per my history (I ran ~1–2 high versus panels).
 
 ## Thinking level
 Ran at LOW (Decision 38/40). Proposal only, not applied: a medium bump for the retopo pass on gap 1.
+
+---
+# FIX PASS (2026-10-22, after the clay-gate panel: Cat 4 FAIL, F5 FAIL) — Forge
+
+Thinking: the medium bump was approved but not patchable on this runtime, so the pass ran at **low**. The session also hit its limit at 16:03 and resumed at ~17:05.
+
+## Changes (detail only; massing / silhouette / mouth / belly / legs protected — same c1 source, same cut planes, same 9 nodes)
+1. **Seam ticks (target 1): FIXED.**
+   - Clean retopo onto the c1 surface: inward solidify 6 mm → voxel remesh 4 mm (manifold) → drop the inner wall (faces >3 mm from the original c1).
+   - This removes the surface-net double walls that caused the ticks. None are visible in either capture.
+2. **Seam depth (target 2) + F2b (target 4): IMPROVED.** A geometric unsharp mask along normals, concave side only (×2.0 against a 40-iteration smoothed copy), deepens the dorsal-band and flank-plate grooves without inflating plate domes. Modeled geometry, no normal map.
+3. **Mouth throat:** the open throat end is capped with a concave cup (the tube-end loop poked back 8 cm). The mouth/body cut is left uncapped since the nodes abut. The throat now reads deep instead of ending at a disc.
+4. **F5 tail (target 3): NOT ENLARGED. HONEST GAP.**
+   - Three enlargement methods were tried and declined in render (see element-log).
+   - The delivered tail is c1's own tail, retopologized with deepened ring grooves and a higher budget (3.9k tris). It reads as ringed and tapering, but is still smaller and thinner than the reference.
+   - Next step: generated image gen-rear34-01 → Hunyuan tail element, once the producer GO arrives, or a hand sculpt pass.
+
+## Provenance
+- Every node comes from Hunyuan c1-wholebody-s42 (prompt 92f9ec6c).
+- **No element passed through a generated image.** gen-rear34-01 (CAPTEST, gpt-image-1.5) is logged and committed but unused (no GO; self-check found partial drift: rear-side rather than rear-3/4, and an invented-looking two-row tail and root collar).
+
+## Contract
+39,886 tris (body 17,999 · mouth 11,999 · legs 4×~1,500 · tail 1,596/1,298/998). Hierarchy unchanged. Tangents + TEXCOORD_0 present. Draco off. One clay material; no glare. Rendered bg corner 228.
+Captures: captures/clay-full.png, clay-mouth.png, compare-full-vs-reference.png (gate-1 captures moved to captures/gate1/).
+
+## Self-scores — re-panel categories only (render review: the fix captures vs the reference)
+| Category | MATCH | QUALITY | Evidence |
+|---|---|---|---|
+| 4 Modeled detail | 5.5 | 5.5 | Ticks gone; plate and flank grooves read as modeled channels; throat deep. Grooves are still shallower and softer than the reference's dark cut seams; some seam edges carry slight surface waviness. |
+| 1B Body (F2/F2b/F3/F4/F5) | 6.0 | 6.0 | F2b seams now defined. F5 is unchanged in size (the rings read a little better) and remains the weak feature, ~4/5. |
