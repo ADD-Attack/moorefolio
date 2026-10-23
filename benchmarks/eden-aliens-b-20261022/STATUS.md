@@ -15,3 +15,6 @@
 - The STITCH-BLEND seat (98a44eb) is discarded by owner ruling (lip visible at full-body angle). The base returns to the bace685 body.
 - Regenerating the tail WITH its root transition (tail + rear-body margin, two-row lumpy pads, 3 candidates); Hunyuan element; stitch = seat + cut only, no skirt.
 - Materials paused again.
+
+## 21:12 CDT — RESTRUCTURE attempt 2, STEP 1 DONE → STANDING BY
+Candidates pushed: generated/gen-tail2-cand-01/02/03.png. Element-log entry per candidate (my pick: cand-02). No masking, Hunyuan or stitching in this step. Awaiting the owner's pick and the producer's step-2 go. (The pre-gate attempt-2 run is archived in stitch-regen-attempt2-FAILED/ and is not acted on.)

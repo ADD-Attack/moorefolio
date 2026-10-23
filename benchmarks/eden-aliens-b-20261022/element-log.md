@@ -120,3 +120,15 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 21:05 | seat B | S 0.44, transition at −0.53, cut at element x −0.05 | **FAIL** | a dark gap at the top of the root (the open cut exposed where our rear recedes) + a plate-edge rim on the transition top |
 | 21:08 | seat C | S 0.46, transition at −0.48, cut at element x −0.12 | **FAIL** | smaller, but a dark slit still shows at the top of the root in the full view, and the transition edge reads as a rim in the close-up |
 | 21:08 | — | — | STOP per order item 6 | the element cannot seat without a visible lip/gap; no further seat fix invented |
+
+## RESTRUCTURE attempt 2 — STEP 1 (step-gated walkthrough, owner direction 20:51 CDT; the order reached me at ~21:10)
+Source for all three: edit of the pack aliens-b-3d-reference.png (never from scratch). Model: openai/gpt-image-1.5 (image_generate), one request, count 3, generated 20:52 CDT.
+Prompt: "Edit of this exact creature, same 3D clay-render style, same smooth orange material, same light grey plain background, same soft studio lighting. Show a close-up, straight-on side view of ONLY the rear end: the tail together with the rounded rear part of the body it grows out of (include a margin of the rear body contour around the tail root so the transition from body to tail is clearly visible and continuous). Keep the tail's anatomy exactly as in the reference: two rows of lumpy rounded pads (an upper row and a lower row of segments, as in the reference), tapering and curving slightly upward to a rounded tip, but make the tail a bit bigger and thicker with the pad grooves pronounced and readable. The tail root must flow organically out of the body with no collar, no ring, no step. No legs, no mouth, no front of the creature; plain background, no shadow on the ground, single object."
+
+| file | my verdict (one line) |
+|---|---|
+| generated/gen-tail2-cand-01.png | Two-row pads read well, but a large dorsal plate bulges down over the tail root and would fuse into the element. |
+| generated/gen-tail2-cand-02.png | **My pick:** the cleanest organic root flow out of the rear body; two-row lumpy pads; the body runs off the right edge (a margin to discard). |
+| generated/gen-tail2-cand-03.png | Best-defined pads and a deep groove line, but a leg bulge sits at the lower-right crop edge (attached-anatomy risk). |
+
+Disclosure: before this step-gated order reached me, I had already run cand-02 through prep + Hunyuan + three seat tests under the earlier attempt-2 order. All three seats failed acceptance (record: stitch-regen-attempt2-FAILED/, d9cc3e6). Those results are **not** acted on; they are archived and await the owner's pick and the producer's step-2 go like everything else.
