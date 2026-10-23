@@ -13,8 +13,9 @@
   .sub { color:var(--dim); margin:0 0 20px; }
   #stage-wrap { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; }
   #stage { display:block; width:100%; height:min(72vh,640px); border:0; }
-  #video-wrap { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; }
-  #video-wrap video { display:block; width:100%; height:auto; }
+  #video-wrap, #video-wrap2 { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; }
+  #video-wrap video, #video-wrap2 video { display:block; width:100%; height:auto; }
+  #video-wrap2 { margin-top:26px; }
   .vid-cap { color:var(--dim); font-size:12.5px; margin-top:10px; }
   .row-label { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
   .btns { display:flex; flex-wrap:wrap; gap:8px; }
@@ -68,7 +69,17 @@
     <source src="assets/mountain-king-unreal.mp4" type="video/mp4">
   </video></div>
   <p class="vid-cap">Unreal Engine 5.0 · Sequencer render · 854×480 · The first 28 seconds of Mountain King v1.
-  A live version — the engine listening to a real MIDI input instead of a baked timeline — is in build.</p>
+  The follow-up removes the hand-baking entirely — it's the next video down.</p>
+  <p class="eng-sub">Ten seconds of the same chamber, rendered a different way: nothing here was hand-keyed.
+  A cue sheet — one merged stream of timestamped events from the track's <code>.viz.json</code> score and its
+  <code>.dance.json</code> choreography — fed a baker script instead: kick events flare the torches, melody
+  notes pulse the accent light, and the stage segment's palette sets its color. It's the seed of a music-video
+  pipeline: cue files in, staged renders out.</p>
+  <div id="video-wrap2"><video controls preload="metadata" poster="assets/mountain-king-cue-demo-poster.jpg">
+    <source src="assets/mountain-king-cue-demo.mp4" type="video/mp4">
+  </video></div>
+  <p class="vid-cap">Cue-driven proof · Unreal Engine 5.0 · 854×480 · The first 10 seconds of Mountain King v1,
+  staged entirely by its cue file — kick-synced to the frame.</p>
 
   <h2>The engineering — this isn't generated music</h2>
   <p class="eng-sub">Tools like Suno turn a text prompt into audio with a generative model: no score, no parts,
