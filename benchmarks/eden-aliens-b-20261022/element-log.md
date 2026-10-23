@@ -107,3 +107,16 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 |---|---|
 | re-bake mat.py (pass-4 settings, unchanged) on 98a44eb geometry; base hash verified; GEOMETRY_FROZEN True | ACCEPTED — the finish sits on the re-seated tail and skirt; map sizes consistent with the prior bake |
 | generated images | none used |
+
+## STITCH-REGEN attempt 2 (owner override, 2026-10-22 20:52–21:08). Base = bace685 body; tail re-installed from a fresh element; seat + cut only.
+| time CDT | id | source / params | action | reason |
+|---|---|---|---|---|
+| 20:52 | gen-tailroot-c1/c2/c3 | 3 edits of the pack aliens-b-3d-reference.png, openai/gpt-image-1.5; prompt: rear-end close-up, tail + margin of the rear-body contour, "two rows of lumpy rounded pads (an upper row and a lower row…, as in the reference)", bigger/thicker, root flows out of the body, no collar/ring/step, no ground shadow | GENERATED ×3 | fences 1/4; anatomy per the reference |
+| 20:55 | c1 | self-check | DECLINED | a dorsal plate bulges over the root and would fuse into the element |
+| 20:55 | c3 | self-check | DECLINED | best pads, but a leg bulge at the right crop edge would grow as attached anatomy |
+| 20:55 | c2 | self-check | **APPROVED** | cleanest organic root flow; two-row lumpy pads like the reference |
+| 20:56 | c5-tailroot-s42 (prompt a65d389d) | c2, saturation-masked to flat bg 228, padded | SENT → **APPROVED** | clean closed volume: Hunyuan closed the cropped margin into a small rear-body blob with the tail growing out of it; two-row pads and the transition are formed in the element; no melt/slabs |
+| 21:02 | seat A | S 0.40, transition at (−0.58,−0.20), blob cut at element x +0.10 | **FAIL** | the element's blob pokes out of our body: open dark cavity at the rear + blob plate fragments as an extra hump |
+| 21:05 | seat B | S 0.44, transition at −0.53, cut at element x −0.05 | **FAIL** | a dark gap at the top of the root (the open cut exposed where our rear recedes) + a plate-edge rim on the transition top |
+| 21:08 | seat C | S 0.46, transition at −0.48, cut at element x −0.12 | **FAIL** | smaller, but a dark slit still shows at the top of the root in the full view, and the transition edge reads as a rim in the close-up |
+| 21:08 | — | — | STOP per order item 6 | the element cannot seat without a visible lip/gap; no further seat fix invented |
