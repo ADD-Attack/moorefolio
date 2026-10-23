@@ -10,3 +10,8 @@
 **Residuals:** a slight rim at the low close-up; old c1 stalk lumps near the hind leg (body geometry, untouched by order). A body-socket feather fixes both, on the owner's word.
 
 **Materials:** PAUSED at b5f72d3 (checkpoint 4f0a58e). Resume needs the producer's explicit go plus a tail-region re-bake on this geometry.
+
+## 20:52 CDT — STITCH-REGEN in progress (owner override)
+- The STITCH-BLEND seat (98a44eb) is discarded by owner ruling (lip visible at full-body angle). The base returns to the bace685 body.
+- Regenerating the tail WITH its root transition (tail + rear-body margin, two-row lumpy pads, 3 candidates); Hunyuan element; stitch = seat + cut only, no skirt.
+- Materials paused again.
