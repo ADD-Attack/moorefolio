@@ -1,0 +1,26 @@
+{
+ "straight": {
+  "edge_stretch_min": 0.0,
+  "p01": 0.715,
+  "p99": 1.236,
+  "max": 14.333
+ },
+ "scurve": {
+  "edge_stretch_min": 0.0,
+  "p01": 0.589,
+  "p99": 1.346,
+  "max": 14.42
+ },
+ "coil": {
+  "edge_stretch_min": 0.0,
+  "p01": 0.763,
+  "p99": 1.174,
+  "max": 13.876
+ },
+ "rest": {
+  "edge_stretch_min": 0.0,
+  "p01": 1.0,
+  "p99": 1.0,
+  "max": 1.0
+ }
+}

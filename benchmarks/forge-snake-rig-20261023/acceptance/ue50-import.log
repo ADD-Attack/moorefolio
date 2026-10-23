@@ -1,0 +1,7 @@
+[2026.10.23-15.14.23:062][  0]LogPythonScriptCommandlet: Display: Running Python script: C:\Users\Moore\AppData\Local\Temp\ScratchRigCheck\ue_import_check.py
+[2026.10.23-15.14.28:492][  0]LogFbx: Warning: Bones digested - 27  Depth of hierarchy - 27
+[2026.10.23-15.14.32:411][  0]LogSkeletalMesh: Display: Waiting for skeletal meshes to be ready 0/1 (forge_snake_rigged) ...
+[2026.10.23-15.14.37:331][  0]LogSkeletalMesh: Display: Waiting for skeletal meshes to be ready 0/1 (forge_snake_rigged) ...
+[2026.10.23-15.14.45:885][  0]LogPythonScriptCommandlet: Display: Python script executed successfully
+[2026.10.23-15.14.45:894][  0]LogInit: Display: Warning/Error Summary (Unique only)
+[2026.10.23-15.14.45:901][  0]LogInit: Display: LogFbx: Warning: Bones digested - 27  Depth of hierarchy - 27

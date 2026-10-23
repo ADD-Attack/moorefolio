@@ -1,0 +1,31 @@
+{
+ "imported": [
+  "/Game/RigCheck/forge_snake_rigged.forge_snake_rigged"
+ ],
+ "classes": {
+  "/Game/RigCheck/forge_snake_rigged.forge_snake_rigged": "SkeletalMesh"
+ },
+ "bounds_origin": [
+  88.65254211425781,
+  57.10267639160156,
+  195.82618761062622
+ ],
+ "bounds_extent": [
+  390.7589569091797,
+  336.4622344970703,
+  201.1117091178894
+ ],
+ "imported_extent": [
+  390.7589569091797,
+  336.4622344970703,
+  201.1117091178894
+ ],
+ "imported_origin": [
+  88.65254211425781,
+  57.10267639160156,
+  195.82618761062622
+ ],
+ "skeleton": "/Game/RigCheck/forge_snake_rigged_Skeleton.forge_snake_rigged_Skeleton",
+ "materials": 8,
+ "lod0_verts": 0
+}
