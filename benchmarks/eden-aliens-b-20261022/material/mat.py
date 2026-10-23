@@ -56,17 +56,17 @@ ao=N.new('ShaderNodeAmbientOcclusion'); ao.samples=32; ao.inputs['Distance'].def
 noise=N.new('ShaderNodeTexNoise'); noise.inputs['Scale'].default_value=7.0; noise.inputs['Detail'].default_value=4.0
 noise2=N.new('ShaderNodeTexNoise'); noise2.inputs['Scale'].default_value=28.0; noise2.inputs['Detail'].default_value=2.0
 attr=N.new('ShaderNodeAttribute'); attr.attribute_name='mmask'; asep=N.new('ShaderNodeSeparateColor'); L.new(attr.outputs['Color'],asep.inputs[0])
-base=lin((240,96,10)); dark=lin((196,50,14)); hi=lin((250,150,40)); under=lin((190,52,28)); seam=lin((62,16,6))
+base=lin((240,96,10)); dark=lin((196,50,14)); hi=lin((253,176,74)); under=lin((176,42,22)); seam=lin((118,24,8))
 c=mix(base,dark,mr(noise.outputs['Fac'],0.0,1.0,0,0)) if False else base
-c=mix(c,hi,mr(sep.outputs['Z'],0.55,0.95,0,0.35))                    # lit tops a touch warmer/lighter (master highlight band)
-c=mix(c,under,mr(sep.outputs['Z'],0.15,-0.6,0,0.95))               # red-orange underside (master)
+c=mix(c,hi,mr(sep.outputs['Z'],0.35,0.9,0,0.65))                    # lit tops a touch warmer/lighter (master highlight band)
+c=mix(c,under,mr(sep.outputs['Z'],0.25,-0.45,0,1.0))               # red-orange underside (master)
 pt=geo.outputs['Pointiness']
 groove=mr(asep.outputs['Blue'],PT0,PT1)                                                  # 0 flat/convex -> 1 deep concave (smooth, vertex-interpolated)
 c=mix(c,seam,groove)
 mouthc=mix(lin((10,2,1)),lin((88,16,6)),mr(asep.outputs['Green'],0.75,0.15)) # interior: maroon at rim -> near-black deep
 c=mix(c,mouthc,asep.outputs['Red'])
 L.new(c,bsdf.inputs['Base Color'])
-rough=mr(groove,0,1,0.6,0.75); rough=mix((0.5,0.5,0.5,1),(0.8,0.8,0.8,1),mr(ao.outputs['AO'],0.8,0.3)) if False else rough
+rough=mix(mix((0.62,0.62,0.62,1),(0.36,0.36,0.36,1),mr(sep.outputs['Z'],0.2,0.85)),(0.78,0.78,0.78,1),mr(sep.outputs['Z'],-0.1,-0.6)); rough=mix(rough,(0.7,0.7,0.7,1),groove); rough=mix((0.5,0.5,0.5,1),(0.8,0.8,0.8,1),mr(ao.outputs['AO'],0.8,0.3)) if False else rough
 L.new(rough,bsdf.inputs['Roughness']); bsdf.inputs['Metallic'].default_value=0.0
 em=N.new('ShaderNodeMath'); em.operation='MULTIPLY'; L.new(asep.outputs['Red'],em.inputs[0])
 em2=N.new('ShaderNodeMath'); em2.operation='POWER'; em2.inputs[1].default_value=4.0; L.new(asep.outputs['Green'],em2.inputs[0]); L.new(em2.outputs[0],em.inputs[1])
@@ -111,7 +111,7 @@ for o in objs: o.select_set(True)
 bake('rough','ROUGHNESS')
 bake('emission','EMIT')
 # 5 pack ORM: R=AO, G=rough, B=metal(0)
-A=list(imgs['ao'].pixels); Rg=list(imgs['rough'].pixels); orm=bpy.data.images.new('orm',RES,RES,alpha=False); orm.colorspace_settings.name='Non-Color'
+A=[0.55+0.45*x for x in imgs['ao'].pixels]; Rg=list(imgs['rough'].pixels); orm=bpy.data.images.new('orm',RES,RES,alpha=False); orm.colorspace_settings.name='Non-Color'
 px=[0.0]*(RES*RES*4)
 for i in range(0,len(px),4): px[i]=A[i]; px[i+1]=Rg[i]; px[i+2]=0.0; px[i+3]=1.0
 orm.pixels=px; orm.filepath_raw=os.path.join(out,'orm.png'); orm.file_format='PNG'; orm.save(); print('PACKED orm')
@@ -123,7 +123,7 @@ tb=tex(os.path.join(out,'basecolor.png'),True); to=tex(os.path.join(out,'orm.png
 FL.new(tb.outputs['Color'],fb.inputs['Base Color'])
 so=FN.new('ShaderNodeSeparateColor'); FL.new(to.outputs['Color'],so.inputs[0]); FL.new(so.outputs['Green'],fb.inputs['Roughness']); FL.new(so.outputs['Blue'],fb.inputs['Metallic'])
 FL.new(te.outputs['Color'],fb.inputs['Emission Color'])
-tn2=tex(os.path.join(out,'normal.png'),False); nm=FN.new('ShaderNodeNormalMap'); FL.new(tn2.outputs['Color'],nm.inputs['Color']); FL.new(nm.outputs['Normal'],fb.inputs['Normal']); fb.inputs['Emission Strength'].default_value=EMIT; fb.inputs['Specular IOR Level'].default_value=0.3
+tn2=tex(os.path.join(out,'normal.png'),False); nm=FN.new('ShaderNodeNormalMap'); FL.new(tn2.outputs['Color'],nm.inputs['Color']); FL.new(nm.outputs['Normal'],fb.inputs['Normal']); fb.inputs['Emission Strength'].default_value=EMIT; fb.inputs['Specular IOR Level'].default_value=0.5
 g=bpy.data.node_groups.get('glTF Material Output') or bpy.data.node_groups.new('glTF Material Output','ShaderNodeTree')
 if not g.interface.items_tree: g.interface.new_socket('Occlusion',in_out='INPUT',socket_type='NodeSocketFloat')
 gn=FN.new('ShaderNodeGroup'); gn.node_tree=g; FL.new(so.outputs['Red'],gn.inputs['Occlusion'])

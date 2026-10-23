@@ -127,3 +127,41 @@ Geometry: bace685, **byte-identical** (GEOMETRY_FROZEN; per-node tri counts equa
 | 6 | Bump/normal | 5.0 | 5.0 | geometry-derived clean normal map; no noise relief |
 | 7 | Texture maps | 5.5 | 5.5 | clean, hand-painted-style basecolor; correct ORM + normal; tiny-island atlas remains |
 | 8 | Materials | 5.0 | 5.5 | smooth satin skin like the 3D ref and master; no grunge |
+
+---
+## FINISH-PASS-2 (Decision 56; re-panel: 4 5.0/4.9, 6 PASS, 7 4.8/4.6, 8 4.8/4.7) — Forge, 2026-10-23 09:50 CDT
+Geometry bace685 byte-identical (GEOMETRY_FROZEN; per-node tri counts equal, 39,886). Texture/shader only. No generated images; GPU light-class only.
+
+**Root causes:**
+- Grooves read thin/scorched because the mask band was narrow and the seam colour was a near-black brown (62,16,6).
+- The full-strength ORM AO re-darkened and speckled the groove interiors under Cycles.
+- The value structure was too timid: highlight ≤35%, underside started only below the equator.
+- Roughness was uniform at ~0.6–0.75 with specular 0.3, which reads as clay.
+
+**Changes (mat.py):**
+1. **Grooves:**
+   - Wider, continuous bands: mask threshold 0.075→0.125 (was 0.11→0.16).
+   - Colour is now a clean deep red (118,24,8) instead of dirty brown.
+   - Groove bump 0.25 (was 0.4).
+   - ORM AO compressed to 0.55–1.0, so grooves don't speckle or go black.
+2. **Value:**
+   - The pale highlight band (253,176,74) reaches 65% on the plate tops (Z 0.35→0.9).
+   - The deeper red-orange underside (176,42,22) starts at the flank (Z 0.25→−0.45) and reaches 100%.
+3. **Material variation:** roughness follows form (plate tops 0.36 satin → mid 0.62 → belly 0.78, grooves 0.7); specular 0.5. Clean: no noise anywhere.
+4. **Tail:** the joint line is softened (lighter seam colour, compressed AO). It is still visible as a thin line, and the under-root speck remains. Both come from mesh shading at a cut cap / tiny flipped-face chips, which texture can't fully remove without a geometry edit.
+
+**Captures** (256 spp, same staging): mat-full, mat-mouth, mat-tail, mat-compare-master-ref-render. **Flat Workbench pair:** flat-mat-full, flat-compare (+ flat-mat-mouth). The previous pass is archived in archive-finishpass1-f00a50b/.
+
+### Self-scores (render review; calibrated)
+| # | Category | MATCH | QUALITY |
+|---|---|---|---|
+| 4 | Modeled detail | 5.0 | 5.0 |
+| 6 | Bump/normal | 5.5 | 5.0 |
+| 7 | Texture maps | 5.5 | 5.0 |
+| 8 | Materials | 5.5 | 5.0 |
+
+**Honest remaining gaps:**
+- Tiny dark chip specks at a few seam spots (mesh shading).
+- The tail joint line and under-root speck.
+- The front plate top hot-spots slightly at the key light.
+- Grooves are still softer than the master's bold black outlines.
