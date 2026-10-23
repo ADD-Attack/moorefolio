@@ -229,3 +229,31 @@ Removing both properly means feathering the body socket itself. That is a body e
 - The old c1 stalk lumps by the hind leg (body geometry) are still faintly visible beneath the root.
 
 **Materials:** still paused. The material bake must be redone on this geometry when the producer gives the go.
+
+---
+# STITCH-REGEN v3 (owner process: crop → edit the crop → 3Dify) — Forge, 2026-10-22 21:43 CDT
+**Supersedes** v2 3af2f2a (bare-crop feed; ineligible under this process). Its captures are in `captures/stitchregen-v2-3af2f2a/`.
+
+**Feed chain:**
+1. **Crop:** `generated/tail3-crop.png`, box (0,560,420,960) of the pack reference.
+2. **Edit:** `generated/tail3-edit.png`, made by openai/gpt-image-1.5 **on the crop**. The exact prompt is in element-log.md. It asked to keep this exact tail, show it true side-on, complete the cut-off rear contour and remove the leg.
+3. **Prep (non-generative):** mask → flat 228 → square → 1024².
+4. **Hunyuan:** c7-tail3-s42, prompt **97b9d845**, seed 42.
+
+**Stitch** (`scripts/stitch_regen.py`). Seat + cut only: no skirt, flare, conform or stretch.
+- Voxel remesh 6 mm; uniform scale 0.30; no yaw needed (the edit made the tail side-on).
+- Root seated at (x −0.47, z −0.16), under the rear plate overhang.
+- Bulb cut at element x +0.40; chain cut into tail_01/02/03 (2,600/1,900/1,400); root pivots; same parenting.
+
+**Acceptance: PASS.** No lip/gap/rim at the root in `captures/clay-tail.png`, `captures/compare-full-vs-reference.png` or `captures/root-zoom.png`.
+
+**Body untouched:** body, mouth and legs byte-identical to bace685. 41,894 tris; 9 nodes; tangents + UV0; Draco off; clay.
+
+**Versus v2:** the stubby, blunt fan tip is gone. The tail is long, tapers, and curves up to a rounded tip, as in the reference, with two-row lumpy pads.
+
+**Gaps:**
+- Pad count is slightly lower than the reference (the edit drew ~5 upper / 4 lower).
+- The tail sits a touch low and lies flatter than the reference's upward sweep.
+- Faint old-stalk lumps by the hind leg (body geometry, untouched).
+
+**Materials:** paused; they must be re-baked on this geometry on the producer's go.
