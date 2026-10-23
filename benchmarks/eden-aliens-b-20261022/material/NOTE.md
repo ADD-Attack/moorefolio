@@ -74,3 +74,26 @@ Inputs: clay numbers (Cat 4 5.5/5.0; 1B 6.6/6.4 post-blend with F5 4.8/5.6; mout
 | — | Overall | 5.5 | 5.5 | unchanged |
 
 **Added gap:** a thin dark line at the tail_01/02 segment joint (a cut-cap seam picked up by the AO bake).
+
+---
+## MATERIALS-FINAL — on the operative FIX build bace685 (owner finish order 22:00 CDT) — Forge, 2026-10-22 22:15
+- **Geometry restored from bace685** (blend sha 06d1d144 verified). The folder-root aliens_b_clay.glb/.blend are restored to bace685. Same mat.py pass-4 settings, procedural re-bake; **GEOMETRY_FROZEN True**, 39,886 tris, 9 nodes. GLB: ORM shared by MR + occlusion; tangents; Draco off; Principled; KHR_materials_specular.
+- **Captures** (256 spp, same staging): captures/mat-full, mat-mouth, mat-tail, mat-compare-master-ref-render. The blend-base materials (1af8201) are archived in archive-blend-98a44eb/; the pre-blend set is in prebase-b5f72d3/.
+- **Generated images:** none.
+
+### Self-scorecard (render review of the final captures; calibrated down)
+Inputs: bace685 clay panel numbers (Cat 4 4.5/4.0 at gate-1 → post-fix detail; F5 3.8/4.2 on this tail).
+
+| # | Category | MATCH | QUALITY | Evidence |
+|---|---|---|---|---|
+| 1A | Mouth unit | 6.5 | 6.0 | maroon-to-black cavity, lip ring + collar read |
+| 1B | Body features | 5.5 | 5.5 | plates and flank seams read through the finish; **the tail is the c1 original, small and thin (F5 weak)** |
+| 2 | Silhouette | 5.5 | 6.0 | egg body, mouth bulge; small tail |
+| 3 | Massing | 5.5 | 6.0 | tail under-massed vs the reference |
+| 4 | Modeled detail | 5.0 | 5.0 | AO seam darkening keeps the grooves legible; specks at pits; a dark line at a tail joint |
+| 5 | Color | 6.0 | 5.5 | ember hue sampled from the master; red-orange underside; softer contrast than the sprite |
+| 6 | Bump/normal | 4.5 | 4.5 | no normal map; geometry + AO only |
+| 7 | Texture maps | 5.0 | 5.0 | clean 2K bakes, correct ORM; generic mottling; tiny-island atlas |
+| 8 | Materials | 5.0 | 5.0 | satin clay skin matches the 3D ref; less vivid than the sprite |
+| 9 | Lighting/effects | 5.0 | 5.0 | faint deep-throat ember, tight glare |
+| — | Overall | 5.5 | 5.5 | the right creature and palette; the tail is the main known gap |
