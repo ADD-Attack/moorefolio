@@ -259,12 +259,12 @@ Removing both properly means feathering the body socket itself. That is a body e
 **Materials:** paused; they must be re-baked on this geometry on the producer's go.
 
 ---
-# STITCH-REGEN v3 — FINAL (owner-settled process: edit whole picture → crop → 3D maker + stitch) — Forge, 2026-10-22 21:37 CDT
+# STITCH-REGEN v4 (relabeled from "v3 FINAL"; final process: edit whole picture → crop → 3D maker + stitch) — Forge, 2026-10-22 21:37 CDT
 Supersedes a5c6280 (crop→edit route; captures in captures/v3-ownerproc-a5c6280/).
 
 **Feed chain:**
 1. **Whole-picture edit:** gen-tail2-edit-02 (gpt-image-1.5 edit of the pack reference).
-2. **Crop:** `generated/tail3-crop.png`, box (40,180,1000,900).
+2. **Crop:** `generated/tail4-crop.png`, box (40,180,1000,900).
 3. **Prep:** non-generative mask/flatten/square.
 4. **Hunyuan:** c8-tail3r-s42, prompt **67649d03**.
 

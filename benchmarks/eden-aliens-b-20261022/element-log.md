@@ -181,3 +181,8 @@ Reason: the most root transition in frame. The hind-leg pad sits in the body mar
 | 21:33 | c8-tail3r-s42 (prompt 67649d03-8881-4f4c-9d7e-97cb11d201e7, seed 42) | fp16 v2.1, octree 256, surface net 0.6 | **APPROVED** | clean volume: two-row lumpy pads, full taper, upturned tip, root swells into a plate-capped bulb; side-on (yaw 0) |
 | 21:35 | seat 1 | S 0.32, root (−0.47,−0.16), bulb cut at element x +0.38; no skirt/flare/stretch | **PASS → delivered** | no lip/gap/rim in the close-up, the full compare or the root zoom |
 | 21:37 | verify | per-node POSITION hash vs bace685 | PASS | body, mouth, legs byte-identical; only tail_01..03 differ |
+
+## LABEL CORRECTION (producer redirect 21:38 CDT) — STITCH-REGEN v4 = the final-process build at a67da32
+- **v4 (operative, final process: whole-picture edit → crop → Hunyuan → stitch)** is the build delivered at a67da32. Its crop is renamed **generated/tail4-crop.png** (was tail3-crop.png in a67da32). Source edit: generated/superseded-edits/gen-tail2-edit-02.png (sha a8fec068…, the 20:52 gpt-image-1.5 whole-picture edit of the pack reference; prompt logged at "STITCH-REGEN attempt 2"). Box (40,180,1000,900). Hunyuan prompt 67649d03. Acceptance PASS.
+- **Superseded by the final process (NOT a delivery):** generated/ownerproc-crop-edit/tail3-crop.png + tail3-edit.png and the a5c6280 build (21:15 crop→edit-crop route). tail3-edit was never fed after the redirect.
+- **FALLBACK:** 3af2f2a plain-crop STITCH-REGEN (declared gap: stubby tail).
