@@ -91,3 +91,13 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 19:36 | pass 3 (2K, specular 0.3) | partial — saturated ember; the lower-body gradient was weaker than the refs |
 | 19:43 | pass 4 (2K, stronger red-orange underside band) | **ACCEPTED (delivered)** |
 | — | generated images | none used in the material phase |
+
+## STITCH-BLEND (owner-directed, post-gate, 2026-10-22). Same Hunyuan tail element c4b (prompt 7e640c0c); no new generation.
+| time CDT | variant (stitch.py args) | verdict / reason |
+|---|---|---|
+| 20:05 | −10% (LEN 0.378), flare 4 cm / 6 cm zone + conform-to-body | DECLINED — lampshade collar, spike streak; old c1 stalk visible |
+| 20:07 | flare 3.5 cm / 12 cm, no conform, seat 6 cm | partial — smoother; rim and stalk still visible |
+| 20:09 | flare 5.5 cm / 15 cm, seat 8 cm | partial — stalk buried; trumpet rim protrudes at the rear-bottom |
+| 20:11 | + conform outside root verts onto the body | DECLINED — crumpled facets (unstable nearest-point snaps) |
+| 20:13 | flare 4.5 cm / 15 cm, **saturating at the body surface**, seat 8 cm, z −0.18 | **ACCEPTED** — the tail swells out of the rear mass with no cork step in the full view; small residual rim at the low close-up |
+| 20:15 | verify: per-node POSITION hash vs the 2c25df3 GLB | PASS — body, mouth, 4 legs byte-identical; only tail_01..03 differ |

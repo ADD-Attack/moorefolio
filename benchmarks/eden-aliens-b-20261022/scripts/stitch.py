@@ -3,7 +3,12 @@
 import bpy,bmesh,sys,math,mathutils
 a=sys.argv[sys.argv.index('--')+1:]; glb,out=a[0],a[1]; RS=float(a[2]); LEN=float(a[3]); ZC=float(a[4]); YAW=float(a[5]) if len(a)>5 else 0.0
 THICK=float(a[6]) if len(a)>6 else 1.0
-XT=-0.56; EMBED=0.03
+FLARE=float(a[7]) if len(a)>7 else 0.0
+FZ=float(a[8]) if len(a)>8 else 0.05
+CONF=int(a[9]) if len(a)>9 else 1
+SAT=int(a[11]) if len(a)>11 else 0
+EMBED=float(a[10]) if len(a)>10 else 0.03
+XT=-0.56
 body=bpy.data.objects['aliens_b_body']; clay=body.data.materials[0]
 for n in ('tail_03','tail_02','tail_01'): bpy.data.objects.remove(bpy.data.objects[n])
 before=set(bpy.data.objects); bpy.ops.import_scene.gltf(filepath=glb)
@@ -40,6 +45,24 @@ rm=el.modifiers.new('rm','REMESH'); rm.mode='VOXEL'; rm.voxel_size=0.0025
 bpy.context.view_layer.objects.active=el; bpy.ops.object.modifier_apply(modifier='rm')
 bm=bmesh.new(); bm.from_mesh(el.data); bmesh.ops.triangulate(bm,faces=bm.faces)
 print('ELEMENT_REMESH boundary',sum(1 for e in bm.edges if e.is_boundary),'nonman',sum(1 for e in bm.edges if not e.is_manifold))
+# STITCH-BLEND: root skirt flares radially and conforms onto the body surface (body itself untouched)
+if FLARE>0:
+    from mathutils.bvhtree import BVHTree
+    bb=bmesh.new(); bb.from_mesh(body.data); bb.transform(body.matrix_world); bvh=BVHTree.FromBMesh(bb)
+    X0=XT-FZ; X1=XT+(EMBED if SAT==0 else 0.0); nf=0; nc=0
+    for v in bm.verts:
+        t=(v.co.x-X0)/(X1-X0)
+        if t<=0: continue
+        t=min(1.0,t); w=t**2.2
+        r=mathutils.Vector((0,v.co.y,v.co.z-ZC))
+        if r.length<1e-5: continue
+        v.co+=r.normalized()*FLARE*w; nf+=1
+        p,n,_,d=bvh.find_nearest(v.co)
+        if CONF==1 and p is not None and w>0.55 and d<0.05:
+            k=min(1.0,(w-0.55)/0.35); v.co=v.co.lerp(p-n*0.004,k); nc+=1
+        if CONF==2 and p is not None and w>0.45 and (v.co-p).dot(n)>0:
+            k=min(1.0,(w-0.45)/0.45); k=k*k*(3-2*k); v.co=v.co.lerp(p+n*0.0015,k); nc+=1
+    bb.free(); print('FLARED',nf,'CONFORMED',nc)
 print('ELEMENT tris',len(bm.faces),'bounds x',round(min(v.co.x for v in bm.verts),3),round(max(v.co.x for v in bm.verts),3),'z',round(min(v.co.z for v in bm.verts),3),round(max(v.co.z for v in bm.verts),3))
 # 3 segments by length thirds measured from the socket plane
 tip=min(v.co.x for v in bm.verts); seg=(XT-tip)/3.0; T1,T2=XT-seg,XT-2*seg

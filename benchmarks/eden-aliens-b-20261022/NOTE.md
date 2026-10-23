@@ -172,3 +172,27 @@ The gate stands FAILED (re-panel Detail 5.5/4.6, 1B 6.8/6.2, F5 3.8/4.2). This i
 | 4 Modeled detail | 5.0 | 5.0 | Body detail is the bace685 state (ticks gone; seams deepened ×2.0; slight waviness remains; U-channels vs the reference's slits). The new tail adds crisp, well-formed ring grooves. |
 
 Note: Cat 4 detail beyond the tail is deliberately unchanged, per "everything else stays exactly as delivered at bace685". The stronger ×4 groove finish from v1 is available as a separate option if the producer wants it on the body.
+
+---
+# STITCH-BLEND (post-gate, owner-directed stitch refinement) — Forge, 2026-10-22 20:15 CDT
+
+**Owner read** (matching my STATUS concern #4): the pipeline tail was a plug, not a blend; oversize; "thrown on there".
+
+**Scope:** the seat only. Base is the operative clay 2c25df3; the Hunyuan tail element c4b is unchanged in form; Blender work is limited to the stitch.
+
+**Changes:**
+1. **Scale −10%:** length 0.42 → 0.378 m, uniform, so the ×1.45 thickness ratio and the ring forms are untouched.
+2. **Root blend:** tail_01's root skirt widens radially along a 15 cm zone (up to +4.5 cm, smooth t^2.2 profile). The widening saturates at the body surface plane (x=−0.56) instead of growing inside the body, so no rim pokes out. The root is seated 8 cm into the mass and sits at z −0.18. This buries the old c1 stalk and removes the cork step.
+3. **Body untouched:** body, mouth and legs are byte-identical to 2c25df3 (per-node POSITION hash). I did the blend entirely in tail_01 rather than sculpting the body socket, so the rigid tail joint stays clean for animation.
+
+**Contract:** 41,692 tris; 9 nodes; same hierarchy; tangents + UV0; Draco off; clay.
+
+**Captures (256 spp):** clay-full, clay-mouth (unchanged geometry), clay-tail, compare-full-vs-reference. The 2c25df3 captures moved to `captures/gateretry-v2-2c25df3/`.
+
+**Residuals:**
+- A slight rim where the widened root meets the rear-bottom curve, visible in the low tail close-up only.
+- Some old c1 stalk lumps (body geometry, kept byte-identical by order) still show between the tail root and the hind leg.
+
+Removing both properly means feathering the body socket itself. That is a body edit; I'll do it on the owner's word.
+
+**Material phase note:** the paused material bake (b5f72d3) is on the 2c25df3 tail. When materials resume, the tail region of the atlas must be re-baked on this geometry. That is a procedural re-bake, not a repaint.
