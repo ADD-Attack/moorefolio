@@ -46,7 +46,7 @@ attr=N.new('ShaderNodeAttribute'); attr.attribute_name='mmask'; asep=N.new('Shad
 base=lin((240,96,10)); dark=lin((196,50,14)); hi=lin((250,150,40)); under=lin((190,52,28)); seam=lin((62,16,6))
 c=mix(base,dark,mr(noise.outputs['Fac'],0.45,0.72,0,0.55))           # mottling
 c=mix(c,hi,mr(sep.outputs['Z'],0.55,0.95,0,0.35))                    # lit tops a touch warmer/lighter (master highlight band)
-c=mix(c,under,mr(sep.outputs['Z'],-0.15,-0.75,0,0.85))               # red-orange underside (master)
+c=mix(c,under,mr(sep.outputs['Z'],0.15,-0.6,0,0.95))               # red-orange underside (master)
 c=mix(c,dark,mr(noise2.outputs['Fac'],0.55,0.75,0,0.25))             # fine mottle
 c=mix(seam,c,mr(ao.outputs['AO'],0.30,0.82))                         # grooves/seams read dark from geometry AO
 mouthc=mix(lin((10,2,1)),lin((88,16,6)),mr(asep.outputs['Green'],0.75,0.15)) # interior: maroon at rim -> near-black deep
@@ -90,7 +90,7 @@ def tex(path,col):
 tb=tex(os.path.join(out,'basecolor.png'),True); to=tex(os.path.join(out,'orm.png'),False); te=tex(os.path.join(out,'emission.png'),True)
 FL.new(tb.outputs['Color'],fb.inputs['Base Color'])
 so=FN.new('ShaderNodeSeparateColor'); FL.new(to.outputs['Color'],so.inputs[0]); FL.new(so.outputs['Green'],fb.inputs['Roughness']); FL.new(so.outputs['Blue'],fb.inputs['Metallic'])
-FL.new(te.outputs['Color'],fb.inputs['Emission Color']); fb.inputs['Emission Strength'].default_value=EMIT
+FL.new(te.outputs['Color'],fb.inputs['Emission Color']); fb.inputs['Emission Strength'].default_value=EMIT; fb.inputs['Specular IOR Level'].default_value=0.3
 g=bpy.data.node_groups.get('glTF Material Output') or bpy.data.node_groups.new('glTF Material Output','ShaderNodeTree')
 if not g.interface.items_tree: g.interface.new_socket('Occlusion',in_out='INPUT',socket_type='NodeSocketFloat')
 gn=FN.new('ShaderNodeGroup'); gn.node_tree=g; FL.new(so.outputs['Red'],gn.inputs['Occlusion'])

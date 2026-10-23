@@ -81,3 +81,13 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 18:31 | stitch v2 | + voxel remesh 2.5 mm (manifold: 0 boundary / 0 non-manifold) before decimation, LEN 0.42 | partial | clean rings and taper, but slender vs the reference's chunky tail |
 | 18:33 | stitch v3 | + ×1.45 thickness about the element axis (pre-cut, so the chain stays aligned) | **ACCEPTED (delivered)** | chunky, 6 pronounced pillow rings, curled tip, seated 3 cm into the socket |
 | 18:35 | verify | per-node POSITION buffer hash vs bace685 GLB | PASS | body, mouth and leg_FL/FR/BL/BR byte-identical; only tail_01..03 differ |
+
+## MATERIAL PHASE (2026-10-22)
+| time CDT | action | verdict / reason |
+|---|---|---|
+| 19:27 | palette sampled from the 2D master + pack ref | the dispatch palette (near-black plates, cream belly, glowing mouth) conflicts with both images → built to the images; pushback in STATUS |
+| 19:29 | pass 1 (1K) | DECLINED — the mouth blew out yellow (emission 3.0 over the whole cavity); the body read salmon |
+| 19:33 | pass 2 (1K) | partial — dark maroon interior + deep-throat ember OK; sheen still pinkish |
+| 19:36 | pass 3 (2K, specular 0.3) | partial — saturated ember; the lower-body gradient was weaker than the refs |
+| 19:43 | pass 4 (2K, stronger red-orange underside band) | **ACCEPTED (delivered)** |
+| — | generated images | none used in the material phase |
