@@ -148,3 +148,13 @@ gen-tail2-cand-01/02/03.png are re-saved as **bare crop rectangles**: identical 
 ## ATTEMPT 2 — FEED IMAGE SELECTED (21:02 CDT, before any Hunyuan run)
 **SELECTED: generated/gen-tail2-cand-02.png — pure crop (0,560,420,960) of the pack aliens-b-3d-reference.png, 420×400, zero generated pixels.**
 Reason: the most root transition in frame. The hind-leg pad sits in the body margin, which lands inside our body after seating and is discarded at the seat cut.
+
+## ATTEMPT 2 (pure crop) — PREP → HUNYUAN → STITCH (21:03–21:31 CDT)
+| time | id | params | action | reason |
+|---|---|---|---|---|
+| 21:05 | prep c6-tail2-prep.png | gen-tail2-cand-02 → saturation mask (>70) → bg flattened to (228,228,228) → square pad ×1.12 → 1024² (non-generative) | DONE | removes shadow/gradient (slab prevention); tail pixels unchanged |
+| 21:20 | c6-tail2-s42 (prompt c539b9c5-cd39-446b-a4b3-8fcf43e7e1db, seed 42) | fp16 v2.1, octree 256, surface net 0.6 | **APPROVED (tail portion)** | two-row lumpy pads formed from the real reference tail; the body-margin end grew a crumpled blob with the fused leg pad (crop-edge effect), which is discarded at the seat cut; the tail axis is yawed −45° (the reference's 3/4 view) |
+| 21:23 | seat 1 | yaw +44.9°, stretch 1.45 (undo 3/4 foreshortening), S 0.27, root at (−0.50,−0.19), blob cut at element x −0.30 | partial | no lip; tail too stubby |
+| 21:26 | seat 2 | S 0.32, stretch 1.5, z −0.18 | **FAIL (close)** | the zoom shows a small dark slit between the top of the root and the plate overhang |
+| 21:29 | seat 3 | root 3 cm deeper (−0.47) and 1 cm higher (−0.17) | **PASS → delivered** | no lip/rim/gap in the tail close-up, the full compare or the root zoom |
+| 21:31 | verify | per-node POSITION hash vs the bace685 GLB | PASS | body, mouth, 4 legs byte-identical; only tail_01..03 differ |

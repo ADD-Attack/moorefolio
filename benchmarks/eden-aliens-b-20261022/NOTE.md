@@ -196,3 +196,36 @@ Note: Cat 4 detail beyond the tail is deliberately unchanged, per "everything el
 Removing both properly means feathering the body socket itself. That is a body edit; I'll do it on the owner's word.
 
 **Material phase note:** the paused material bake (b5f72d3) is on the 2c25df3 tail. When materials resume, the tail region of the atlas must be re-baked on this geometry. That is a procedural re-bake, not a repaint.
+
+---
+# STITCH-REGEN attempt 2 (owner-directed; pure-crop feed image) — Forge, 2026-10-22 21:31 CDT
+
+**Supersedes** STITCH-BLEND 98a44eb (lip ruled against by the owner) and the failed edit-based attempt (stitch-regen-attempt2-FAILED/).
+
+**Feed image:** `generated/gen-tail2-cand-02.png`, a **pure crop (0,560,420,960)** of the pack reference with zero generated pixels. Selected and pushed before Hunyuan (c3b6500).
+
+**Prep (non-generative):** saturation mask → flat bg 228 → square pad → 1024² (`crops/c6-tail2-prep.png`).
+
+**Element:** Hunyuan c6-tail2-s42, prompt **c539b9c5**, seed 42.
+- The tail formed with the reference's two-row lumpy pads.
+- The cut body margin grew a crumpled blob with the fused leg pad; that is discarded at the seat cut.
+
+**Stitch** (`scripts/stitch_regen.py`). Seat + cut only: no skirt, no flare, no surface conform.
+- Voxel remesh (6 mm) for a clean manifold.
+- Yaw +44.9° to square the 3/4-view tail onto the body axis.
+- **×1.5 stretch along the tail axis** to undo the 3/4 foreshortening (a seating transform, flagged here).
+- Uniform scale 0.32.
+- Root buried at (x −0.47, z −0.17), so the root top tucks under the rear plate overhang.
+- Blob cut at element x −0.30.
+- Chain cut into tail_01/02/03, decimated to 2,600/1,900/1,400, root pivots, same parenting.
+
+**Acceptance test: PASS.** No visible lip/rim/gap at the root in `captures/clay-tail.png`, `captures/compare-full-vs-reference.png` or the 3× root zoom `captures/root-zoom.png`.
+
+**Body untouched:** body, mouth and legs are byte-identical to bace685 (per-node POSITION hash). Contract: 41,893 tris, 9 nodes, tangents + UV0, Draco off, clay.
+
+**Honest gaps:**
+- The tail reads **stubby with a blunt, fan-like tip**. That residue of the reference's 3/4 foreshortening survives Hunyuan even after the ×1.5 stretch. The reference tail is longer and tapers to a point.
+- It sits slightly lower and wider than the reference tail.
+- The old c1 stalk lumps by the hind leg (body geometry) are still faintly visible beneath the root.
+
+**Materials:** still paused. The material bake must be redone on this geometry when the producer gives the go.
