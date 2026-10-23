@@ -177,3 +177,7 @@ Reason: the most root transition in frame. The hind-leg pad sits in the body mar
 - The owner-process run (crop → edit crop, a5c6280) is archived to generated/ownerproc-crop-edit/ (tail3-crop/edit), superseded.
 - **(1) Edit:** generated/superseded-edits/gen-tail2-edit-02.png (= cand-02 whole-picture edit of the pack reference, gpt-image-1.5, 20:52; prompt logged above).
 - **(2) Crop → generated/tail3-crop.png:** box (40,180,1000,900) of gen-tail2-edit-02 (1574×999), 960×720: full tail + root transition + a thin rear-body margin; a plate sliver at top-right. Pushed before Hunyuan.
+| 21:30 | prep c8-tail3r-prep.png | tail3-crop → saturation mask → bg 228 → square pad → 1024² (non-generative) | DONE | |
+| 21:33 | c8-tail3r-s42 (prompt 67649d03-8881-4f4c-9d7e-97cb11d201e7, seed 42) | fp16 v2.1, octree 256, surface net 0.6 | **APPROVED** | clean volume: two-row lumpy pads, full taper, upturned tip, root swells into a plate-capped bulb; side-on (yaw 0) |
+| 21:35 | seat 1 | S 0.32, root (−0.47,−0.16), bulb cut at element x +0.38; no skirt/flare/stretch | **PASS → delivered** | no lip/gap/rim in the close-up, the full compare or the root zoom |
+| 21:37 | verify | per-node POSITION hash vs bace685 | PASS | body, mouth, legs byte-identical; only tail_01..03 differ |

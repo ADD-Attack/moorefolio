@@ -257,3 +257,24 @@ Removing both properly means feathering the body socket itself. That is a body e
 - Faint old-stalk lumps by the hind leg (body geometry, untouched).
 
 **Materials:** paused; they must be re-baked on this geometry on the producer's go.
+
+---
+# STITCH-REGEN v3 — FINAL (owner-settled process: edit whole picture → crop → 3D maker + stitch) — Forge, 2026-10-22 21:37 CDT
+Supersedes a5c6280 (crop→edit route; captures in captures/v3-ownerproc-a5c6280/).
+
+**Feed chain:**
+1. **Whole-picture edit:** gen-tail2-edit-02 (gpt-image-1.5 edit of the pack reference).
+2. **Crop:** `generated/tail3-crop.png`, box (40,180,1000,900).
+3. **Prep:** non-generative mask/flatten/square.
+4. **Hunyuan:** c8-tail3r-s42, prompt **67649d03**.
+
+**Stitch:** seat + cut only. Scale 0.32, root at (−0.47,−0.16) under the plate overhang, bulb cut at element x +0.38, chain into tail_01/02/03. **Acceptance: PASS on the first seat** (close-up, compare, root zoom).
+
+**Body untouched:** body, mouth and legs byte-identical to bace685. 41,894 tris, 9 nodes.
+
+**Gaps:**
+- The edit's pads are smoother and more regular than the reference's lumps.
+- The tail sits a touch low/flat vs the reference sweep.
+- Faint old-stalk lumps by the hind leg.
+
+**Materials:** paused.
