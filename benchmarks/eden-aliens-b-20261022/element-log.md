@@ -158,3 +158,12 @@ Reason: the most root transition in frame. The hind-leg pad sits in the body mar
 | 21:26 | seat 2 | S 0.32, stretch 1.5, z −0.18 | **FAIL (close)** | the zoom shows a small dark slit between the top of the root and the plate overhang |
 | 21:29 | seat 3 | root 3 cm deeper (−0.47) and 1 cm higher (−0.17) | **PASS → delivered** | no lip/rim/gap in the tail close-up, the full compare or the root zoom |
 | 21:31 | verify | per-node POSITION hash vs the bace685 GLB | PASS | body, mouth, 4 legs byte-identical; only tail_01..03 differ |
+
+## OWNER PROCESS (21:15 CDT): crop → edit the CROP → 3Dify the edit. Applied as v3.
+**Archived as INELIGIBLE feeds under this process** (wrong input): generated/gen-tail2-cand-01/02/03.png (bare crops, no edit) and generated/superseded-edits/gen-tail2-edit-0N.png (whole-image edits). The 3af2f2a STITCH-REGEN (from bare crop cand-02) is superseded by this process.
+
+| time | file | detail |
+|---|---|---|
+| 21:32 | **generated/tail3-crop.png** | pure crop of the pack aliens-b-3d-reference.png, box (0,560,420,960), 420×400: tail + rear-body margin (+ hind-leg pad at lower right) |
+| 21:33 | **generated/tail3-edit.png** | image edit run ON THE CROP. Model openai/gpt-image-1.5 (image_generate), count 1. **Exact prompt:** "Edit this cropped image. Keep this exact tail — same two rows of lumpy rounded pads, same number of segments, same orange clay material, same soft studio lighting — and show it in a pure side view (tail running horizontally from the body on the right to the tip on the left, not angled toward the camera), so its full length and the upward curve to the rounded tip are visible. Keep the rounded rear body on the right that the tail grows out of, and complete its contour smoothly where the crop cuts it off. Remove the leg at the lower right. Plain flat light grey background, no ground shadow, nothing else in the frame." |
+| 21:33 | tail3-edit self-check | **ACCEPTED as feed.** Same two-row lumpy pads, now true side view with full length and an upturned rounded tip (fixes the 3/4 foreshortening behind the stubby v2 tail); leg removed; rear body completed as a smooth bulb (still cut at the right frame edge, in the discard zone). Pad count reads as ~5 upper / 4 lower vs the crop's ~5/5: minor. |
