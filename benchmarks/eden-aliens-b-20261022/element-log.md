@@ -132,3 +132,12 @@ Prompt: "Edit of this exact creature, same 3D clay-render style, same smooth ora
 | generated/gen-tail2-cand-03.png | Best-defined pads and a deep groove line, but a leg bulge sits at the lower-right crop edge (attached-anatomy risk). |
 
 Disclosure: before this step-gated order reached me, I had already run cand-02 through prep + Hunyuan + three seat tests under the earlier attempt-2 order. All three seats failed acceptance (record: stitch-regen-attempt2-FAILED/, d9cc3e6). Those results are **not** acted on; they are archived and await the owner's pick and the producer's step-2 go like everything else.
+
+## STEP 1 AMENDED (owner ruling 20:57: the feed image must be a CROP of the reference). The edit-based candidates are moved to generated/superseded-edits/gen-tail2-edit-0N.png (not candidates).
+All three: source = pack aliens-b-3d-reference.png (1840×1168), **reference pixels only**, padded to a square with flat colour sampled from each crop's own top-left background pixel (228,228,228), +40 px canvas margin. **No generation, no outpainting, no redraw, no smoothing.** Regions: the crop rectangle = reference; everything outside it = flat padding.
+
+| file | crop box (x0,y0,x1,y1) | canvas / paste offset | my verdict |
+|---|---|---|---|
+| generated/gen-tail2-cand-01.png | (0,600,355,920) — tight: whole tail + thin rear-body margin, stopping just before the hind-leg pad | 395² / (20,37) | Cleanest tail read with no leg occlusion. The transition margin is thin and the body is hard-cut at the right/top edges (melt/wall risk, in the discard zone). |
+| generated/gen-tail2-cand-02.png | (0,560,420,960) — medium: tail + root transition + more rear body | 460² / (20,30) | **My pick:** the most root transition in frame. The hind-leg shoulder pad intrudes at the lower right (attached-anatomy risk); body hard-cut at the right edge. |
+| generated/gen-tail2-cand-03.png | (0,420,520,1000) — wide: adds the plate overhang above the root and the hind-leg pad/leg | 620² / (50,20) | Most context, but the leg and plate overhang occlude/compete with the root and would likely fuse into the element. |

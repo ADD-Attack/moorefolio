@@ -18,3 +18,12 @@
 
 ## 21:12 CDT — RESTRUCTURE attempt 2, STEP 1 DONE → STANDING BY
 Candidates pushed: generated/gen-tail2-cand-01/02/03.png. Element-log entry per candidate (my pick: cand-02). No masking, Hunyuan or stitching in this step. Awaiting the owner's pick and the producer's step-2 go. (The pre-gate attempt-2 run is archived in stitch-regen-attempt2-FAILED/ and is not acted on.)
+
+## 21:20 CDT — STEP 1 (AMENDED: reference crops) DONE → STANDING BY for the owner's pick
+- generated/gen-tail2-cand-01/02/03.png are now reference CROPS (pixels untouched, flat-padded). The earlier edit-based files are moved to generated/superseded-edits/.
+- **Usability concerns (stated, not acted on):**
+  1. The reference shows the tail from a front-left 3/4 angle, not true side-on. Hunyuan will infer the far side.
+  2. Every window that holds the root transition must hard-cut the body at the crop edge. This ticket's history (c2/c2b/c3 at gate 1) shows cut body edges grow walls/sheets. Those would fall in the discard zone, but they may distort the transition itself.
+  3. The hind-leg shoulder pad overlaps the lower root in any window wider than cand-01.
+  - Possible mitigations, for the owner to choose: (a) mask the leg out at prep; (b) outpaint only the cut body margin, keeping tail pixels untouched (flagged regions); (c) use cand-01 and accept a thinner transition.
+- No masking, Hunyuan or stitching done in this step.
