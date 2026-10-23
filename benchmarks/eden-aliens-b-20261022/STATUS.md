@@ -30,3 +30,6 @@ Candidates pushed: generated/gen-tail2-cand-01/02/03.png. Element-log entry per 
 
 ## 21:24 CDT — STEP 1 FINAL FORM → STANDING BY
 Candidates are now pure crops: bare reference rectangles with zero generated pixels and no padding. The mitigation list in my 21:20 note is reduced to non-generative options only: (a) mask/flatten the leg and background at PREP, or (c) use cand-01. Option (b), outpainting, is struck by owner ruling.
+
+## 21:02 CDT — FEED IMAGE SELECTED → continuing (prep → Hunyuan → judge → stitch)
+**generated/gen-tail2-cand-02.png**, pure crop (0,560,420,960) of the pack reference. Reason: the most root transition in frame; the leg pad is in the discard margin.

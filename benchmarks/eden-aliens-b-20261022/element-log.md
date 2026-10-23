@@ -144,3 +144,7 @@ All three: source = pack aliens-b-3d-reference.png (1840×1168), **reference pix
 
 ## STEP 1 FINAL FORM (owner 20:58: strike the margins clause; zero generated pixels and no canvas extension)
 gen-tail2-cand-01/02/03.png are re-saved as **bare crop rectangles**: identical reference pixels, no padding. Boxes are unchanged: 01 (0,600,355,920) 355×320 · 02 (0,560,420,960) 420×400 · 03 (0,420,520,1000) 520×580. Squaring/padding and any background flattening move to the separately gated PREP step. Verdicts unchanged (pick: cand-02; concerns as in STATUS).
+
+## ATTEMPT 2 — FEED IMAGE SELECTED (21:02 CDT, before any Hunyuan run)
+**SELECTED: generated/gen-tail2-cand-02.png — pure crop (0,560,420,960) of the pack aliens-b-3d-reference.png, 420×400, zero generated pixels.**
+Reason: the most root transition in frame. The hind-leg pad sits in the body margin, which lands inside our body after seating and is discarded at the seat cut.
