@@ -27,3 +27,6 @@ Candidates pushed: generated/gen-tail2-cand-01/02/03.png. Element-log entry per 
   3. The hind-leg shoulder pad overlaps the lower root in any window wider than cand-01.
   - Possible mitigations, for the owner to choose: (a) mask the leg out at prep; (b) outpaint only the cut body margin, keeping tail pixels untouched (flagged regions); (c) use cand-01 and accept a thinner transition.
 - No masking, Hunyuan or stitching done in this step.
+
+## 21:24 CDT — STEP 1 FINAL FORM → STANDING BY
+Candidates are now pure crops: bare reference rectangles with zero generated pixels and no padding. The mitigation list in my 21:20 note is reduced to non-generative options only: (a) mask/flatten the leg and background at PREP, or (c) use cand-01. Option (b), outpainting, is struck by owner ruling.
