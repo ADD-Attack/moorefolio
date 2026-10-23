@@ -1,4 +1,4 @@
-# STATUS — Checkpoint 1 (2026-10-23 ~16:20 CDT)
+# STATUS — CLAY GATE DELIVERED (2026-10-23 16:30 CDT). STOPPED for the blind clay panel.
 
 - Engine ref received from producer and sha256 verified.
 - Seat vision is OK through the file reader. The `view_image` tool faults with "Gateway caller authority"; this was reported to the producer and is not blocking.
