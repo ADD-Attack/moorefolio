@@ -1,4 +1,6 @@
-# NOTE — EDEN-3D-01 MATERIAL PHASE delivery — Forge, 2026-10-22
+# NOTE — EDEN-3D-01 MATERIAL PHASE — Forge, 2026-10-22
+
+> **FINAL = blended base 98a44eb (see the addendum at the end).** The sections below describe the method, which is unchanged. The pre-blend delivery b5f72d3 is archived in `prebase-b5f72d3/`.
 
 **Base:** the operative clay 2c25df3 (blend hash verified). **Geometry FROZEN:** every bake asserts that world vertex positions are unchanged (`GEOMETRY_FROZEN True`), 41,694 tris, 9 nodes, same hierarchy. The only mesh-data change is UVs: one shared 2048 atlas across the 9 nodes, replacing the provisional per-node unwraps.
 
@@ -46,3 +48,29 @@ The dispatch's near-black plates, cream belly, plate-dark tail rings and glowing
 | 8 | Materials | 5.0 | 5.0 | Satin clay-like skin fits the 3D ref; less vivid than the sprite. |
 | 9 | Lighting/effects | 5.0 | 5.0 | Faint deep-throat ember with tight glare; no projectile FX (out of scope). |
 | — | Overall | 5.5 | 5.5 | Reads as the right creature in the right colours; finish is solid but not yet rich. |
+
+---
+## FINAL addendum — re-based onto the blended clay 98a44eb (2026-10-22 20:49 CDT)
+- **Base:** 98a44eb aliens_b_clay.blend (hash verified). The same `mat.py` with the same pass-4 parameters was re-run; the bake is procedural, so nothing was hand-painted and nothing needed re-projecting.
+- **GEOMETRY_FROZEN True:** 41,692 tris, 9 nodes. GLB verified: ORM shared by metallicRoughness and occlusion; emissive ×0.6; Draco off; KHR_materials_specular.
+- **Captures re-rendered** on this base: full, mouth, tail, 3-way compare (256 spp, same staging).
+- **Change vs b5f72d3:** only the tail region. The AO crease where the root skirt meets the body helps the join read as grown in, not plugged.
+
+### Self-scorecard re-verified on the final captures (render review; calibrated down)
+Inputs: clay numbers (Cat 4 5.5/5.0; 1B 6.6/6.4 post-blend with F5 4.8/5.6; mouth 6.8/6.1; silhouette 5.8/6.5; massing 6.3/6.7).
+
+| # | Category | MATCH | QUALITY | Change vs b5f72d3 and why |
+|---|---|---|---|---|
+| 1A | Mouth unit | 6.5 | 6.0 | unchanged |
+| 1B | Body features | 6.0 | 6.0 | −0.5 MATCH: the blended skirt scored less reference-like on F5 at the spot panel |
+| 2 | Silhouette | 5.5 | 6.0 | unchanged |
+| 3 | Massing | 6.0 | 6.5 | unchanged |
+| 4 | Modeled detail | 5.0 | 5.0 | unchanged; grooves read through the finish |
+| 5 | Color | 6.0 | 5.5 | unchanged |
+| 6 | Bump/normal | 4.5 | 4.5 | unchanged (no normal map) |
+| 7 | Texture maps | 5.0 | 5.0 | unchanged |
+| 8 | Materials | 5.0 | 5.0 | unchanged |
+| 9 | Lighting/effects | 5.0 | 5.0 | unchanged |
+| — | Overall | 5.5 | 5.5 | unchanged |
+
+**Added gap:** a thin dark line at the tail_01/02 segment joint (a cut-cap seam picked up by the AO bake).

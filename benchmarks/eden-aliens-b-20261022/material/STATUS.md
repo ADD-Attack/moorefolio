@@ -1,14 +1,14 @@
-# STATUS — EDEN-3D-01 MATERIAL PHASE — DELIVERED. STOPPED for the full-rubric blind panel.
-
-**PAUSED 2026-10-22 20:05 CDT by owner redirect: stitch blend pass first. Material work frozen exactly as at b5f72d3; resumes only on the producer's explicit go after the Cat 1B + Cat 4 spot re-panel.**
+# STATUS — EDEN-3D-01 MATERIALS (FINAL, blended base 98a44eb) — DELIVERED. STOPPED for the full-rubric blind panel.
 
 **Done:**
-- Textured GLB + blend + 2K textures (basecolor, ORM, emission) on frozen 2c25df3 geometry (asserted unchanged).
-- Captures: full, mouth, tail, plus a 3-way side-by-side.
-- NOTE with method, palette ruling, gaps, and the full 1–9 self-scorecard.
+- Materials re-based onto the blended clay: procedural re-bake, geometry frozen and verified, 41,692 tris, 9 nodes.
+- Textured GLB + blend + 2K textures; captures (full, mouth, tail, 3-way compare).
+- NOTE addendum with the re-verified 1–9 scorecard.
 
-**Open question for the producer/owner:** the palette. I built to the images (all ember orange, dark seams, dark mouth) instead of the dispatch prose (near-black plates, cream belly, glowing mouth). Rule which one is wanted; a switch is shader-only.
+**Archive:** the pre-blend delivery is in material/prebase-b5f72d3/.
 
-**Geometry needs:** none raised.
+**Palette:** from the master (producer confirmed the pushback).
+
+**Generated images:** none used in materials.
 
 **Thinking:** low.

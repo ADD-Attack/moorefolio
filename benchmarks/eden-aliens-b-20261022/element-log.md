@@ -101,3 +101,9 @@ Source: crops of aliens-b-3d-reference.png only (bg sampled at (228,228,228)), p
 | 20:11 | + conform outside root verts onto the body | DECLINED — crumpled facets (unstable nearest-point snaps) |
 | 20:13 | flare 4.5 cm / 15 cm, **saturating at the body surface**, seat 8 cm, z −0.18 | **ACCEPTED** — the tail swells out of the rear mass with no cork step in the full view; small residual rim at the low close-up |
 | 20:15 | verify: per-node POSITION hash vs the 2c25df3 GLB | PASS — body, mouth, 4 legs byte-identical; only tail_01..03 differ |
+
+## MATERIALS (final, blended base 98a44eb) — 2026-10-22 20:46
+| action | verdict / reason |
+|---|---|
+| re-bake mat.py (pass-4 settings, unchanged) on 98a44eb geometry; base hash verified; GEOMETRY_FROZEN True | ACCEPTED — the finish sits on the re-seated tail and skirt; map sizes consistent with the prior bake |
+| generated images | none used |
