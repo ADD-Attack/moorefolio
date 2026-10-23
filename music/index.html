@@ -13,6 +13,9 @@
   .sub { color:var(--dim); margin:0 0 20px; }
   #stage-wrap { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; }
   #stage { display:block; width:100%; height:min(72vh,640px); border:0; }
+  #video-wrap { border:1px solid var(--line); border-radius:14px; overflow:hidden; background:#000; }
+  #video-wrap video { display:block; width:100%; height:auto; }
+  .vid-cap { color:var(--dim); font-size:12.5px; margin-top:10px; }
   .row-label { font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--dim); margin:18px 0 8px; }
   .btns { display:flex; flex-wrap:wrap; gap:8px; }
   .btns button { background:var(--card); color:var(--fg); border:1px solid var(--line); border-radius:999px;
@@ -55,6 +58,17 @@
   <div class="row-label">Song</div>
   <div class="btns" id="song-btns"></div>
   <p id="standalone"></p>
+
+  <h2>The same score, rendered in Unreal Engine</h2>
+  <p class="eng-sub">The stage above runs in your browser. This one doesn't: the Mountain King v1 score was taken into
+  Unreal Engine 5, where the same <code>.viz.json</code> sidecar was baked into a Sequencer timeline — 64 composed kick
+  hits flare four torches in a stone chamber, and the terrace shift at 14.5 s turns the accent light from cave violet
+  to moss green. No FFT anywhere: the engine is reading the score, frame-exact.</p>
+  <div id="video-wrap"><video controls preload="metadata" poster="assets/mountain-king-unreal-poster.jpg">
+    <source src="assets/mountain-king-unreal.mp4" type="video/mp4">
+  </video></div>
+  <p class="vid-cap">Unreal Engine 5.0 · Sequencer render · 854×480 · The first 28 seconds of Mountain King v1.
+  A live version — the engine listening to a real MIDI input instead of a baked timeline — is in build.</p>
 
   <h2>The engineering — this isn't generated music</h2>
   <p class="eng-sub">Tools like Suno turn a text prompt into audio with a generative model: no score, no parts,
