@@ -97,3 +97,33 @@ Inputs: bace685 clay panel numbers (Cat 4 4.5/4.0 at gate-1 → post-fix detail;
 | 8 | Materials | 5.0 | 5.0 | satin clay skin matches the 3D ref; less vivid than the sprite |
 | 9 | Lighting/effects | 5.0 | 5.0 | faint deep-throat ember, tight glare |
 | — | Overall | 5.5 | 5.5 | the right creature and palette; the tail is the main known gap |
+
+---
+## FINISH-PASS (owner: "the ridges seem wonky"; panel fails 4/6/7/8) — Forge, 2026-10-23 05:48 CDT
+Geometry: bace685, **byte-identical** (GEOMETRY_FROZEN; per-node tri counts equal to 8c72687, 39,886). Texture/finish only.
+
+**Root cause found:**
+- The scratchy "stitches" and the pit specks came from **short-radius AO sampling the noisy Hunyuan seam surface**.
+- The grunge came from **two noise-mottle layers**.
+
+**Changes (mat.py):**
+1. **Ridges:**
+   - Seam colour is now driven by a **smoothed concavity mask**: Laplacian depth along the normal ÷ mean edge length, diffused over 12 neighbour iterations, thresholded 0.11→0.16. Each seam becomes one continuous, deliberate dark groove band.
+   - The AO darkening of the basecolor is removed.
+2. **Clean texture:** both noise-mottle layers are removed. The basecolor is now ember base + master highlight band + red-orange underside + groove line only (hand-painted read). Roughness is driven by the groove mask, not noise.
+3. **Relief/normal (new normal.png, glTF normalTexture):**
+   - Baked **selected-to-active from a groove-weighted smoothed copy** of each node (smooth ×30, weighted by the mask). That cleans the jagged seam shading.
+   - Plus a gentle bump that deepens the groove profile.
+   - The real mesh is untouched.
+   - ORM AO is re-baked at 12 cm radius / 32 samples, so it is smooth instead of speckled.
+4. **Artifacts:** most pit specks are gone with the AO change. **Residual:** the dark line at the tail_01/02 joint and a small speck under the tail root are reduced but still visible in the tail close-up.
+
+**Captures:** 256 spp, same staging: captures/mat-full, mat-mouth, mat-tail, mat-compare-master-ref-render. The previous final is archived in archive-materialsfinal-8c72687/.
+
+### Self-scorecard, cats 4/6/7/8 (render review; calibrated down)
+| # | Category | MATCH | QUALITY | Evidence |
+|---|---|---|---|---|
+| 4 | Modeled detail | 5.0 | 5.0 | grooves read as clean continuous lines; a little seam waviness still shows in the mouth collar |
+| 6 | Bump/normal | 5.0 | 5.0 | geometry-derived clean normal map; no noise relief |
+| 7 | Texture maps | 5.5 | 5.5 | clean, hand-painted-style basecolor; correct ORM + normal; tiny-island atlas remains |
+| 8 | Materials | 5.0 | 5.5 | smooth satin skin like the 3D ref and master; no grunge |

@@ -1,6 +1,4 @@
-# STATUS — EDEN-3D-01 — MATERIALS-FINAL DELIVERED on the operative bace685 build. STOPPED for the full-rubric panel (cats 1–9) + the owner's morning review.
-
-- **Final textured asset:** material/aliens_b.glb + aliens_b_mat.blend + textures/ (2K basecolor/ORM/emission). 39,886 tris, 9 nodes, tangents on, Draco off, Principled, ORM packed. Geometry = bace685, frozen (asserted).
-- **Captures:** material/captures/ (full, mouth, tail, master|ref|render compare).
-- **Folder-root clay GLB/blend restored to bace685.**
-- **Main known gap:** the small, thin original tail (F5). No geometry changes without a new order.
+# STATUS — EDEN-3D-01 — FINISH-PASS DELIVERED (texture/finish only, bace685 geometry byte-identical). STOPPED for the spot re-panel (cats 4/6/7/8) + owner's eye.
+- Final textured asset: material/aliens_b.glb (+ blend, textures incl. the new normal.png), 39,886 tris, per-node tri counts unchanged, 9 nodes, tangents on, Draco off, ORM + normal.
+- Ridges = clean groove lines from a smoothed concavity mask; mottling removed; clean normal baked from a smoothed copy.
+- Residual: the tail_01/02 joint line + a small speck under the tail root (reduced, not gone).
