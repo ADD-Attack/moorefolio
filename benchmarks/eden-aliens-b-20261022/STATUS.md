@@ -7,3 +7,5 @@
 **Gaps:** pad count slightly low; tail sits a touch low/flat; faint old-stalk lumps by the hind leg.
 
 **Archived:** v2 captures in captures/stitchregen-v2-3af2f2a/; gen-tail2 candidates ineligible under the owner process.
+
+## 21:27 CDT — v3 (settled process) crop pushed: generated/tail3-crop.png = crop (40,180,1000,900) of gen-tail2-edit-02. Continuing to prep/Hunyuan/stitch.

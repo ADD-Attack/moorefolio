@@ -172,3 +172,8 @@ Reason: the most root transition in frame. The hind-leg pad sits in the body mar
 | 21:39 | seat 1 | S 0.30, root (−0.50,−0.17), bulb cut at element x +0.40 | FAIL (close) | the root zoom shows a small dark slit under the plate overhang |
 | 21:41 | seat 2 | root 3 cm deeper (−0.47), 1 cm higher (−0.16) | **PASS → delivered** | no lip/gap/rim in the tail close-up, the full compare or the root zoom |
 | 21:43 | verify | per-node POSITION hash vs bace685 | PASS | body, mouth, legs byte-identical; only tail_01..03 differ |
+
+## OWNER-SETTLED PROCESS (21:23 CDT): (1) edit the whole picture → (2) crop → (3) 3D maker + stitch. Applied as STITCH-REGEN v3 (final).
+- The owner-process run (crop → edit crop, a5c6280) is archived to generated/ownerproc-crop-edit/ (tail3-crop/edit), superseded.
+- **(1) Edit:** generated/superseded-edits/gen-tail2-edit-02.png (= cand-02 whole-picture edit of the pack reference, gpt-image-1.5, 20:52; prompt logged above).
+- **(2) Crop → generated/tail3-crop.png:** box (40,180,1000,900) of gen-tail2-edit-02 (1574×999), 960×720: full tail + root transition + a thin rear-body margin; a plate sliver at top-right. Pushed before Hunyuan.
