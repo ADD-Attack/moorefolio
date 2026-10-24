@@ -390,7 +390,7 @@ function runElement(desc, idx, total){
     const clock=$("#hudClock");
     const tick=()=>{ const left=timeoutMs-(nowMs()-tStart); clock.textContent=fmtClock(left);
       clock.classList.toggle("low", left<10000);
-      if(left<=0){ finish({solved:false, accuracy:0, note:"timed out"}); return; } raf=requestAnimationFrame(tick); };
+      if(left<=0){ finish(desc.onTimeout? desc.onTimeout() : {solved:false, accuracy:0, note:"timed out"}); return; } raf=requestAnimationFrame(tick); };
     const finish=(result)=>{
       if(doneFlag) return; doneFlag=true; cancelAnimationFrame(raf);
       const elapsed=nowMs()-tStart;
@@ -515,13 +515,16 @@ function sliderFactory(hard){ return function(rng){ return {
     });
   }};};}
 
-function clickSeriesFactory(hard){ return function(rng){ return {
+function clickSeriesFactory(hard){ return function(rng){
+  const total=hard?8:6; let hits=0, misses=0;
+  return {
   id: hard?"clicks-hard":"clicks", title: hard?"Click Series — Small & Fast":"Click Series",
   instruction:"Click each target as it appears. They get smaller. Clicks that miss still count — against you.",
-  timeout: hard?144:108,
+  timeout: hard?112:84,
+  onTimeout(){ return {solved:false, accuracy:hits/total, note:hits+"/"+total+" targets before the timer"}; },
   mount(play, done){
-    const total=hard?8:6; const sizes=hard?[64,54,45,38,32,27,23,20]:[92,76,62,52,43,34];
-    let hits=0, misses=0, cur=null;
+    const sizes=hard?[64,54,45,38,32,27,23,20]:[92,76,62,52,43,34];
+    let cur=null;
     const spawn=()=>{ if(cur) cur.remove();
       const size=sizes[hits]; const pad=10;
       const x=rng.range(pad, Math.max(pad+1,(play.clientWidth||900)-size-pad));
