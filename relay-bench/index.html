@@ -1012,13 +1012,13 @@ function readDialogFactory(){ return function(rng){
   }};};}
 
 function watchGaugeFactory(){ return function(rng){
-  const crossAt=rng.int(42000,60000);           // ms into the run
+  const crossAt=rng.int(30000,45000);           // ms into the run
   const BAND_LO=25.2, BAND_HI=25.9, CENTER=25.55;
   return {
   id:"watch-gauge", title:"ECU — Watch the Gauge",
   instruction:"Watch the AFR readout. Click FLAG the moment it rails — the moment it enters the band 25.2 – 25.9. Not before.",
   subnote:"Noise spikes approach the band but never enter it. Clicking early fails. So does never clicking.",
-  timeout:80,
+  timeout:60,
   mount(play, done){
     let over=false; const fin=r=>{ if(over) return; over=true; clearInterval(iv); done(r); };
     const wrap=el("div"); wrap.style.cssText="text-align:center;padding:16px 0;";
@@ -1077,7 +1077,7 @@ function verifyBurnFactory(){ return function(rng){
   id:"verify-burn", title:"ECU — Verify Before You Burn",
   instruction:"Burn the tune — but verify like the job depends on it. It does. Requested: "+FIELD+" = "+requested+"%.",
   subnote:"Each step unlocks only when the current one is verified. The read-back wants the value the dialog SHOWS.",
-  timeout:240,
+  timeout:180,
   onTimeout(){ return {solved:false, accuracy:stepsDone/4, note:"verified "+stepsDone+" of 4 steps before the timer"}; },
   mount(play, done){
     let finalValue=null, caught=false;
@@ -1120,7 +1120,7 @@ function verifyBurnFactory(){ return function(rng){
   }};};}
 
 function scanLogFactory(){ return function(rng){
-  const N=400, first=rng.int(170,320);
+  const N=400, first=rng.int(150,300);
   const rows=[];
   for(let i=0;i<N;i++){ let afr;
     if(i<first) afr=+(11.8+rng.next()*4.4).toFixed(1);                        // 11.8–16.2, never a rail
@@ -1131,7 +1131,7 @@ function scanLogFactory(){ return function(rng){
   id:"scan-log", title:"ECU — Scan the Log",
   instruction:"A datalog: 400 rows. Click the FIRST row where AFR reaches 25.0 or higher.",
   subnote:"Later rows rail too. First is the skill. One wrong row is forgiven; the second ends it.",
-  timeout:120,
+  timeout:100,
   mount(play, done){
     const pane=el("div"); pane.style.cssText="max-width:760px;margin:0 auto;max-height:48vh;overflow-y:auto;border:1px solid #30363d;border-radius:8px;background:#0d1117;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#c9d1d9;";
     const hd=el("div",null,"  row    time    rpm    map    afr    clt   tps"); hd.style.cssText="position:sticky;top:0;background:#1d2126;padding:5px 8px;color:#8b949e;white-space:pre;";

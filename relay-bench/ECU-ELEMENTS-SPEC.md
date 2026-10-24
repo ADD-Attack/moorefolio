@@ -57,8 +57,9 @@ design; the battery's expected runtime grew with them.
   band) and crosses into the stated band **once**, late in the window.
 - **Rules:** flag inside the band = solved; flag early or on a noise
   spike = failed (first click final); never flagging = failed by
-  timeout. Duration 75 s (pool); the band and the crossing time are
-  seed-determined.
+  timeout. The crossing comes 30–45 s in (seed-determined), the band
+  holds ~9 s, and the element caps at 60 s — trimmed 2026-10-24 to
+  keep the full battery's runtime in check without gutting the watch.
 - **Scoring:** solved with accuracy scaled by how deep into the band the
   value was at flag time (edge-grazing flags earn less than centered
   ones); speed component replaced by a patience component — elapsed
@@ -83,7 +84,7 @@ design; the battery's expected runtime grew with them.
   wrong tune and fails, with the receipt naming the step it skipped.
 - **Scoring:** solved only by catching the discrepancy (or by a clean
   load in seed variants with no discrepancy — see below). Partial: each
-  completed verified step counts if the element times out (240 s).
+  completed verified step counts if the element times out (180 s).
 - **Seed variance:** ~1 run in 3 loads clean — blind suspicion must not
   be a dominant strategy; reporting a discrepancy that isn't there
   fails the read-back step.
@@ -104,8 +105,8 @@ design; the battery's expected runtime grew with them.
   exceeding row = failed with the note naming both row numbers —
   "first" is the skill. One wrong row click is recoverable (real work
   allows undo); the second ends it.
-- **Scoring:** accuracy 1 for the first row; timeout 120 s reports rows
-  scrolled as telemetry (not score). Partial credit: none — the answer
+- **Scoring:** accuracy 1 for the first row; timeout 100 s (the first
+  rail sits at row 150–300 of 400). Partial credit: none — the answer
   is a single find.
 - **Origin:** the AFR-rail hunts through the Miata datalogs — hundreds
   of rows, one first crossing.
