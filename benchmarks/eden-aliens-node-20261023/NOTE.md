@@ -37,3 +37,30 @@ Scored from `compare-front-vs-ref.png` and the four staging angles only (D36). S
 3. **Feet are thinner and fewer** (7 nodes, against the contract's ≥4) than the ref's root mass. Thickening the root bases would cost tris.
 4. **The back of the mound** is unreferenced and was hallucinated by Hunyuan as lumps and pods. It is plausible but has no ground truth.
 5. **The crown between the top pods** is muddy compared with the ref's clean vein knot.
+
+---
+# CLAY-FIX addendum (2026-10-23, after the panel's Cat 4 fail at 5.0/4.8)
+
+Detail-only. **Frozen and unchanged in method:** mound form, pod field, massing/proportions (same X ×1.12 correction), and node structure (`aliens_node` → `body` → `foot_01..07`). One `clay` material. **43,648 tris** against the 45k cap. Captures are in `captures-fix/`, with identical staging plus one added `clay-base-34` close-up of the foot junctions. The original clay-gate captures remain in `captures/`.
+
+## What changed (all on the formed mesh; no generated images, no new Hunyuan run)
+1. **F5 veins:** concave-side unsharp (EDEN-3D-01 recipe) at 222k faces before decimation. Troughs between the cords and around the pod rims are deeper and the floors stay clean, with no noise added.
+2. **Horns:** thickening moved to high-res, low-frequency gnarl knots added, and the **left-horn secondary prong** grown from the horn's own vertices.
+3. **Foot seams:** each foot is now separated by planar cuts, a flat plane across the root plus a horizontal limiter, with both sides capped. The joint reads as a clean ring rather than a jagged crack. The z-offset sheath from the clay gate is gone.
+4. **Feet:** +4 mm knobby thickening tapered from the joint. **Trade declared:** to pay for the cut and cap geometry, the mound decimation target went from 40k to 39.2k (body is ~1k tris lighter).
+
+## Self-scores (render review only: `captures-fix/compare-front-vs-ref`, `clay-pods-front`, `clay-base-34`, side, back)
+| Item | MATCH | QUALITY | Evidence |
+|---|---|---|---|
+| Cat 4 Modeled detail | 5.5 | 5.5 | Vein troughs now read as grooves under the key light (front and pod close-up). Horns are knotted and the left horn has a prong. The base no longer has jagged scars. Still short of the ref: its crisp branching vein network, and the crown knot between the top pods remains muddy. |
+| 1B · F3 horns | 5.0 | 5.0 | Gnarled with a visible left prong. The right horn is still short and stubby against the ref's tall spike. |
+| 1B · F4 feet | 5.0 | 5.0 | Slightly thicker with knobby forks. Still 7 roots and thinner than the ref's heavy root mass, because massing is frozen. |
+| 1B · F5 veins | 4.5 | 5.0 | Clean deeper troughs. The cords are still Hunyuan's layout, softer and less branched than the ref. |
+
+## Remaining gaps (honest)
+- **Joint rings are visible** as clean lines at each root. That's inherent to rigid foot nodes. They are no longer cracks.
+- **Two tiny specks** at the z 0.24 limiter cut on the front base (visible in `clay-base-34`, centre-left and centre-right, just above the roots).
+- **Crown between the top pods** is still muddy. **Right horn** is short.
+- **The back** remains unreferenced (Hunyuan's guess).
+
+STOPPED for the spot re-panel (Cat 4 + Cat 1B). Materials are held.

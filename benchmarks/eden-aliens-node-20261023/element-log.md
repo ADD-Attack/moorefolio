@@ -14,3 +14,14 @@ Feed prep: none. The feed is the full reference frame, byte-identical. CLIPVisio
 | 6 | 16:26 | APPROVE | stub + offset overlap split v3 | — | — | Body keeps short root stubs and each foot sheathes its stub with a 2 mm normal offset. Residual: hairline seams. |
 | 7 | 16:27 | APPROVE | horn refine (F3) | — | — | Horns were thin twigs vs the ref's thick spikes. Base-weighted taper scale (xy ×2.0 at base → ×1 at tip, z ×1.45) on the formed mesh. Uniform-scale attempt declined: it gave blunt fingers. |
 | 8 | 16:29 | BUILD | budget re-decimate | — | — | 46,765 tris was over the 45k cap. Re-decimated (target 40k) → 44,548 final. |
+
+## CLAY-FIX (panel: Cat 4 FAIL 5.0/4.8) — 2026-10-23 evening
+| # | action | item | reason |
+|---|---|---|---|
+| 9 | BUILD | F5 vein troughs (`detail.py`) | EDEN-3D-01 concave-side unsharp on the 222k-face formed mesh before decimation. Two passes: depth = vertex − 14-iteration Laplacian surface along the normal; concave side only; diffused 3 iterations; feet zone excluded. Only troughs deepen; cords untouched. |
+| 10 | DECLINE | horn gnarl v1 | Gnarl applied before thickening read as crumpled high-frequency noise, and the prong didn't show. |
+| 11 | APPROVE | horn gnarl v2 + left prong | Thickening moved to high-res. Low-frequency knots scaled to horn radius. Left prong grown by a gaussian pull of the horn's own vertices on its outer flank. |
+| 12 | DECLINE | planar foot split v1 | The 331° foot's flood-fill leaked up the right flank, leaving a vertical crack through the flank pod. |
+| 13 | APPROVE | planar foot split v2 (`build3.py`) | Each root is bisected by a flat plane across its axis, plus a horizontal plane at z 0.24 that limits the flood-fill. Both sides are capped, giving clean flush joint rings instead of jagged triangle-edge seams. The sheath/offset lip is removed. |
+| 14 | APPROVE | feet thickening | +4 mm along the normal with knob modulation, tapering from 0 at the joint ring to full at 5 cm out. Within budget. |
+| 15 | BUILD | budget | The extra cuts cost tris, so the decimation target was lowered to 39.2k. Final 43,648 tris (body + 7 feet). The mound gets slightly fewer tris than at the clay gate (declared trade). |
