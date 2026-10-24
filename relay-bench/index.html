@@ -1179,6 +1179,37 @@ function setExactlyFactory(){ return function(rng){
     row.append(inp,b); wrap.append(lab,read,slider,row); play.appendChild(wrap);
   }};};}
 
+function movingBallFactory(){ return function(rng){
+  const NEED=2; let hits=0, misses=0;
+  return {
+  id:"lead-ball", title:"Lead the Ball",
+  instruction:"The ball never stops moving — constant speed, bouncing off the walls. Click it twice. Where it is in your screenshot is not where it will be when your click lands: lead it.",
+  subnote:"Misses count. The path never speeds up, slows down, or cheats — it is pure prediction.",
+  timeout:120,
+  onTimeout(){ return {solved:false, accuracy:hits/NEED, note:hits+"/"+NEED+" hits before the timer"}; },
+  mount(play, done){
+    const W=880,H=400,S=54;
+    const field=el("div"); field.style.cssText="position:relative;width:"+W+"px;max-width:100%;height:"+H+"px;margin:0 auto;background:#0d1117;border:1px solid #30363d;border-radius:10px;overflow:hidden;";
+    const ball=el("div"); ball.style.cssText="position:absolute;width:"+S+"px;height:"+S+"px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #ffd28d, #ff9f2e 60%, #e07b00);cursor:pointer;box-shadow:0 0 18px rgba(255,159,46,.5);";
+    field.appendChild(ball); play.appendChild(field);
+    const status=el("div"); status.style.cssText="text-align:center;margin-top:10px;color:var(--dim);min-height:20px;"; play.appendChild(status);
+    let x=rng.range(60,W-120), y=rng.range(60,H-120);
+    const ang=rng.range(0,Math.PI*2), SPD=55;
+    let vx=Math.cos(ang)*SPD, vy=Math.sin(ang)*SPD;
+    let over=false; const fin=r=>{ if(over) return; over=true; clearInterval(iv); done(r); };
+    let last=performance.now();
+    const iv=setInterval(()=>{ const now=performance.now(); const dt=Math.min(0.05,(now-last)/1000); last=now;
+      x+=vx*dt; y+=vy*dt;
+      if(x<0){ x=0; vx=Math.abs(vx); } if(x>W-S){ x=W-S; vx=-Math.abs(vx); }
+      if(y<0){ y=0; vy=Math.abs(vy); } if(y>H-S){ y=H-S; vy=-Math.abs(vy); }
+      ball.style.left=x+"px"; ball.style.top=y+"px"; }, 16);
+    ball.addEventListener("pointerdown", e=>{ e.stopPropagation(); hits++;
+      logEvent("ball-hit",{hits});
+      if(hits>=NEED){ fin({solved:true, accuracy:hits/(hits+misses), note:NEED+" hits · "+misses+" miss"+(misses===1?"":"es")}); }
+      else status.textContent="One down — lead it again."; });
+    field.addEventListener("pointerdown", e=>{ if(e.target===field){ misses++; status.textContent="Missed — it is not where it was."; } });
+  }};};}
+
 /* ---------------- roster + pool ---------------- */
 const ROSTER=[ sliderFactory(false), clickSeriesFactory(false), stroopFactory(false), chessFactory(false),
   notButtonFactory(), simonFactory(), ruleChangeFactory(), stroopFactory(true),
@@ -1186,7 +1217,7 @@ const ROSTER=[ sliderFactory(false), clickSeriesFactory(false), stroopFactory(fa
   readDialogFactory(), watchGaugeFactory(), verifyBurnFactory(), scanLogFactory(), setExactlyFactory(), leaveAloneFactory() ];
 const POOL=[ ...ROSTER,
   sliderFactory(true), clickSeriesFactory(true), chessFactory(true), wordProblemFactory(true), captureFactory(true),
-  doubleNegativeFactory(), flankerFactory(), countCatsFactory(), confirmshameFactory(), sideswipeFactory(), typeExactFactory() ];
+  doubleNegativeFactory(), flankerFactory(), countCatsFactory(), confirmshameFactory(), sideswipeFactory(), typeExactFactory(), movingBallFactory() ];
 </script>
 </body>
 </html>
