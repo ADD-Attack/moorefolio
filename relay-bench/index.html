@@ -725,13 +725,15 @@ function ruleChangeFactory(){ return function(rng){
     const box=el("div",null,""); box.style.cssText="text-align:center;font-size:24px;font-weight:700;padding:16px;min-height:60px;";
     const row=el("div"); row.style.cssText="display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:20px 0;";
     play.append(box,row);
+    const WANTS=[["LARGEST",a=>a[0]],["SECOND LARGEST",a=>a[1]],["LARGEST",a=>a[0]],["SMALLEST",a=>a[3]],["SECOND SMALLEST",a=>a[2]]];
     const show=()=>{ if(round>=NEED){ done({solved:correct>=4, accuracy:correct/NEED, note:correct+"/"+NEED+" rounds"}); return; }
-      const wantLargest=round<3;
-      box.textContent="Round "+(round+1)+" of "+NEED+" — Click the "+(wantLargest?"LARGEST":"SMALLEST")+" circle.";
+      const [wlab,wpick]=WANTS[round];
+      box.textContent="Round "+(round+1)+" of "+NEED+" — Click the "+wlab+" circle.";
       row.innerHTML="";
       const sz=rng.shuffle(sizes.slice());
+      const sortedDesc=sz.slice().sort((a,b)=>b-a);
       sz.forEach(s=>{ const d=el("div"); d.style.cssText="width:"+s+"px;height:"+s+"px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #8dffc0, var(--green) 60%, #0da854);cursor:pointer;";
-        d.addEventListener("click", ()=>{ const want=wantLargest?Math.max(...sz):Math.min(...sz);
+        d.addEventListener("click", ()=>{ const want=wpick(sortedDesc);
           if(s===want) correct++; round++; setTimeout(show, 550); });
         row.appendChild(d); }); };
     show();
