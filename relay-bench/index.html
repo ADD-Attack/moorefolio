@@ -156,11 +156,11 @@
       <div class="modes">
         <button class="mode sel" data-mode="set">
           <div class="mname">Set Benchmark</div>
-          <div class="mdesc">The canonical battery: the same 12 elements, the same seed, every run. This is the record book — scores compare across agents and across builds. Read its number as the CALIBRATION score.</div>
+          <div class="mdesc">The canonical battery: the same 18 elements, the same seed, every run. This is the record book — scores compare across agents and across builds. Read its number as the CALIBRATION score.</div>
         </button>
         <button class="mode" data-mode="randomized">
           <div class="mname">Randomized Set</div>
-          <div class="mdesc">The same 12 elements, but the order is shuffled and every test's content is re-rolled. Same shape, nothing memorizable. Read its number as the CAPABILITY score.</div>
+          <div class="mdesc">The same 18 elements, but the order is shuffled and every test's content is re-rolled. Same shape, nothing memorizable. Read its number as the CAPABILITY score.</div>
         </button>
         <button class="mode" data-mode="fullrandom">
           <div class="mname">Full Random</div>
@@ -173,8 +173,9 @@
       <input id="opName" type="text" placeholder="e.g. Muse · R14 · Abraham" autocomplete="off">
     </div>
     <button id="startBtn">▶&nbsp; START</button>
-    <p class="fineprint">Set and Randomized runs target about five minutes. Full Random runs longer.
-      If a test stalls, it times out, gets scored, and the battery moves on.</p>
+    <p class="fineprint">The battery now includes six ECU elements (dialog reading, gauge watching, a verified burn,
+      a log scan, exact entry, and one test of doing nothing) — a full Set run takes ten minutes or more.
+      Full Random runs longer still. If a test stalls, it times out, gets scored, and the battery moves on.</p>
   </section>
 
   <!-- ================= STAGE ================= -->
@@ -311,7 +312,7 @@ function headlineScore(subscores){
    Battery engine + elements (DOM)
    ===================================================================== */
 const $=s=>document.querySelector(s);
-const SET_SEED = "RELAYBENCH-SET-001";
+const SET_SEED = "RELAYBENCH-SET-002";
 let RUN=null; // {mode, seed, rng, operator, startedAt, battery:[], results:[], events:[], quit}
 
 function nowMs(){return performance.now();}
@@ -421,7 +422,7 @@ function finishRun(){
   const cycleMs=srt.length? (srt.length%2? srt[(srt.length-1)/2] : Math.round((srt[srt.length/2-1]+srt[srt.length/2])/2)) : null;
   const KIND={set:"calibration", randomized:"capability", fullrandom:"exhibition"};
   const receipt={
-    bench:"relay-bench", version:1, mode:RUN.mode, seed:RUN.seed, operator:RUN.operator||null,
+    bench:"relay-bench", version:2, mode:RUN.mode, seed:RUN.seed, operator:RUN.operator||null,
     startedAt:new Date(Date.now()-totalMs).toISOString(), durationMs: totalMs,
     headline: score, scoreKind: KIND[RUN.mode], operatorCycleMs: cycleMs, comparable: RUN.mode!=="fullrandom",
     environment: envStamp(),
@@ -963,10 +964,224 @@ function typeExactFactory(){ return function(rng){
     row.append(input, submit); play.appendChild(row); setTimeout(()=>input.focus(),200);
   }};};}
 
+/* =====================================================================
+   ECU elements — mapped to the tuning job (spec: ECU-ELEMENTS-SPEC.md)
+   ===================================================================== */
+function readDialogFactory(){ return function(rng){
+  const FIELDS=[
+    ["Idle Valve Minimum Duty","%",()=> (rng.int(10,60)+rng.pick([0,0.2,0.5])).toFixed(1)],
+    ["Idle Target RPM","rpm",()=> String(rng.int(750,1100))],
+    ["Cranking Pulsewidth","ms",()=> (rng.int(20,90)/10).toFixed(1)],
+    ["Warmup Enrichment","%",()=> String(rng.int(105,160))],
+    ["Rev Limit","rpm",()=> String(rng.int(6500,7800))],
+    ["Injector Dead Time","ms",()=> (rng.int(5,15)/10).toFixed(1)],
+    ["Fan On Temp","°F",()=> String(rng.int(185,215))],
+    ["Boost Cut","kPa",()=> String(rng.int(180,260))],
+    ["Accel Enrichment","%",()=> String(rng.int(110,190))],
+    ["EGO Correction Limit","%",()=> String(rng.int(5,25))],
+    ["Idle Advance","°",()=> (rng.int(0,150)/10).toFixed(1)],
+    ["Overrun Fuel Cut","rpm",()=> String(rng.int(1400,2200))] ];
+  const vals=FIELDS.map(([n,u,g])=>({name:n, unit:u, value:g()}));
+  const ask=vals[rng.int(0,vals.length-1)];
+  return {
+  id:"read-dialog", title:"ECU — Read the Dialog",
+  instruction:"A settings dialog, straight from the tuning laptop. Report the exact value of: "+ask.name,
+  subnote:"Read what the dialog shows — not what the file was supposed to say.",
+  timeout:90,
+  mount(play, done){
+    const dlg=el("div"); dlg.style.cssText="max-width:640px;margin:6px auto;background:#1d2126;border:1px solid #30363d;border-radius:10px;padding:14px 18px;font-size:11px;color:#c9d1d9;";
+    const h=el("div",null,"Engine Settings — Idle & Fuel"); h.style.cssText="font-size:12px;font-weight:700;color:#e6edf3;border-bottom:1px solid #30363d;padding-bottom:8px;margin-bottom:10px;";
+    dlg.appendChild(h);
+    const grid=el("div"); grid.style.cssText="display:grid;grid-template-columns:1fr 1fr;gap:7px 26px;";
+    vals.forEach(v=>{ const row=el("div"); row.style.cssText="display:flex;justify-content:space-between;gap:10px;border-bottom:1px dotted #2a2f36;padding-bottom:4px;";
+      const lab=el("span",null,v.name); const val=el("span",null,v.value+" "+v.unit); val.style.cssText="font-family:ui-monospace,Menlo,Consolas,monospace;color:#8dffc0;";
+      row.append(lab,val); grid.appendChild(row); });
+    dlg.appendChild(grid); play.appendChild(dlg);
+    const row=el("div"); row.style.cssText="display:flex;gap:10px;justify-content:center;margin-top:16px;";
+    const input=el("input"); input.type="text"; input.placeholder=ask.name+" = ?"; input.style.cssText="font-size:16px;padding:10px 14px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#e6edf3;width:240px;";
+    const btn=el("button","bigbtn","Report value");
+    const status=el("div"); status.style.cssText="text-align:center;margin-top:10px;color:var(--dim);min-height:20px;";
+    let tries=0;
+    const tryIt=()=>{ const got=input.value.trim();
+      if(got===ask.value || got===ask.value+" "+ask.unit || got===ask.value+ask.unit){
+        done({solved:true, accuracy:1, note:"read "+ask.name+" = "+ask.value+" "+ask.unit+" off the dialog"+(tries? " · "+tries+" wrong report(s) first":"")});
+      } else { tries++; status.textContent="The dialog disagrees — read it again."; input.select(); } };
+    btn.addEventListener("click", tryIt);
+    input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryIt(); });
+    row.append(input, btn); play.append(row, status);
+  }};};}
+
+function watchGaugeFactory(){ return function(rng){
+  const crossAt=rng.int(42000,60000);           // ms into the run
+  const BAND_LO=25.2, BAND_HI=25.9, CENTER=25.55;
+  return {
+  id:"watch-gauge", title:"ECU — Watch the Gauge",
+  instruction:"Watch the AFR readout. Click FLAG the moment it rails — the moment it enters the band 25.2 – 25.9. Not before.",
+  subnote:"Noise spikes approach the band but never enter it. Clicking early fails. So does never clicking.",
+  timeout:80,
+  mount(play, done){
+    let over=false; const fin=r=>{ if(over) return; over=true; clearInterval(iv); done(r); };
+    const wrap=el("div"); wrap.style.cssText="text-align:center;padding:16px 0;";
+    const lab=el("div",null,"AFR"); lab.style.cssText="color:var(--dim);letter-spacing:.3em;font-size:13px;";
+    const big=el("div",null,"—"); big.style.cssText="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:92px;font-weight:700;color:#e6edf3;line-height:1.1;";
+    const band=el("div",null,"flag band: 25.2 – 25.9"); band.style.cssText="color:var(--dim);font-size:14px;margin-bottom:18px;";
+    const btn=el("button","bigbtn","⚑ FLAG"); btn.style.cssText+="font-size:26px;padding:16px 44px;";
+    wrap.append(lab,big,band,btn); play.appendChild(wrap);
+    const t0=Date.now(); let val=21.5;
+    const iv=setInterval(()=>{ const t=Date.now()-t0;
+      if(t>=crossAt && t<crossAt+9000){ val=CENTER + (rng.next()*0.5-0.25); }        // in the band ~9s
+      else if(t>=crossAt+9000){ val=22.5 + rng.next()*1.5; }                          // drifted back out
+      else { val += (rng.next()-0.5)*0.7; val=Math.max(19.2, Math.min(24.3, val));    // wander
+        if(rng.chance(0.06)) val=24.4+rng.next()*0.4; }                               // noise spike, never in band
+      big.textContent=val.toFixed(1);
+      big.style.color=(val>=BAND_LO&&val<=BAND_HI)? "var(--red)" : "#e6edf3";
+    }, 500);
+    btn.addEventListener("click", ()=>{ const t=Date.now()-t0;
+      if(val>=BAND_LO && val<=BAND_HI){ const acc=Math.max(0.6, 1-Math.abs(val-CENTER));
+        fin({solved:true, accuracy:+acc.toFixed(2), note:"flagged in the band at "+val.toFixed(1)+" ("+(t/1000).toFixed(0)+"s in)"}); }
+      else fin({solved:false, accuracy:0, note:"flagged early at "+val.toFixed(1)+" — the band was never entered"}); });
+  }};};}
+
+function leaveAloneFactory(){ return function(rng){
+  const fault=rng.chance(0.25);
+  const flipAt=fault? rng.int(12000,16000) : -1;
+  return {
+  id:"leave-alone", title:"ECU — Leave It Alone",
+  instruction:"Do nothing for 20 seconds — unless the status flips to FAULT. Then, and only then, press APPLY.",
+  subnote:"Any click before a FAULT fails this test. The button is very pressable. That is the test.",
+  timeout:30,
+  mount(play, done){
+    let over=false, flipped=false;
+    const fin=r=>{ if(over) return; over=true; clearTimeout(tEnd); clearTimeout(tFlip); done(r); };
+    const wrap=el("div"); wrap.style.cssText="text-align:center;padding:26px 0;";
+    const status=el("div",null,"STATUS: NORMAL"); status.style.cssText="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:22px;color:var(--green);margin-bottom:26px;";
+    const btn=el("button","bigbtn","APPLY"); btn.style.cssText+="font-size:30px;padding:22px 64px;animation:pulseGlow 1.6s ease-in-out infinite;";
+    const style=el("style",null,"@keyframes pulseGlow{0%,100%{box-shadow:0 0 0 rgba(88,255,160,0)}50%{box-shadow:0 0 34px rgba(88,255,160,.45)}}");
+    wrap.append(status, btn); play.append(style, wrap);
+    const t0=Date.now();
+    const tFlip= fault? setTimeout(()=>{ flipped=true; status.textContent="STATUS: FAULT — press APPLY"; status.style.color="var(--red)"; }, flipAt) : null;
+    const tEnd=setTimeout(()=>{ if(!fault) fin({solved:true, accuracy:1, note:"hands off for the full 20s — nothing happened, correctly"});
+      else fin({solved:false, accuracy:0, note:"the FAULT came at "+(flipAt/1000).toFixed(0)+"s and went unanswered"}); }, 20000);
+    play.addEventListener("pointerdown", ()=>{ if(over) return;
+      if(flipped){ fin({solved:true, accuracy:1, note:"FAULT answered at "+((Date.now()-t0)/1000).toFixed(1)+"s"}); }
+      else fin({solved:false, accuracy:0, note:"clicked at "+((Date.now()-t0)/1000).toFixed(1)+"s — no fault had occurred"}); });
+  }};};}
+
+function verifyBurnFactory(){ return function(rng){
+  const FIELD="Idle Valve Minimum Duty";
+  const requested="15.0";
+  const hasTrap=rng.chance(0.67);
+  const loaded=hasTrap? "50.2" : "15.0";
+  let stepsDone=0;
+  return {
+  id:"verify-burn", title:"ECU — Verify Before You Burn",
+  instruction:"Burn the tune — but verify like the job depends on it. It does. Requested: "+FIELD+" = "+requested+"%.",
+  subnote:"Each step unlocks only when the current one is verified. The read-back wants the value the dialog SHOWS.",
+  timeout:240,
+  onTimeout(){ return {solved:false, accuracy:stepsDone/4, note:"verified "+stepsDone+" of 4 steps before the timer"}; },
+  mount(play, done){
+    let finalValue=null, caught=false;
+    const head=el("div"); head.style.cssText="text-align:center;font-size:15px;color:var(--dim);margin-bottom:12px;";
+    const panel=el("div"); panel.style.cssText="max-width:560px;margin:0 auto;background:#14181d;border:1px solid #30363d;border-radius:10px;padding:18px;";
+    play.append(head, panel);
+    const NAMES=["Load the file","Read back the dialog","Burn","Re-read to confirm"];
+    const stepsBar=s=>{ head.textContent="Step "+s+" of 4 — "+NAMES[s-1]; };
+    const fieldRow=v=>{ const d=el("div"); d.style.cssText="font-size:11px;background:#1d2126;border:1px solid #30363d;border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;color:#c9d1d9;margin-top:8px;";
+      const a=el("span",null,FIELD); const b=el("span",null,v+" %"); b.style.cssText="font-family:ui-monospace,Menlo,Consolas,monospace;color:#8dffc0;";
+      d.append(a,b); return d; };
+    const say=t=>{ const m=el("div",null,t); m.style.cssText="font-size:14px;color:#c9d1d9;"; return m; };
+    const warn=t=>{ const m=el("div",null,t); m.style.cssText="margin-top:12px;color:#ffb454;font-size:14px;font-weight:600;"; return m; };
+    const btn=(label,fn)=>{ const b=el("button","bigbtn",label); b.style.cssText+="display:block;margin:14px auto 0;"; b.addEventListener("click",fn); return b; };
+    const askValue=(label, expect, onOk)=>{ const row=el("div"); row.style.cssText="display:flex;gap:10px;justify-content:center;margin-top:12px;";
+      const inp=el("input"); inp.type="text"; inp.placeholder=FIELD+" = ?"; inp.style.cssText="font-size:15px;padding:9px 12px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#e6edf3;width:200px;";
+      const b=el("button","bigbtn",label);
+      const st=el("div"); st.style.cssText="text-align:center;margin-top:8px;color:var(--dim);min-height:18px;font-size:13px;";
+      b.addEventListener("click", ()=>{ const got=inp.value.trim().replace(/%$/,"");
+        if(got===expect) onOk(); else { st.textContent="That is not what the dialog shows."; inp.select(); } });
+      row.append(inp,b); panel.append(row, st); };
+    stepsBar(1); panel.appendChild(say("Requested value: "+requested+"%. Load the staged tune file."));
+    panel.appendChild(btn("Load tune file", ()=>{ stepsDone=1; step2(); }));
+    function step2(){ panel.innerHTML=""; stepsBar(2);
+      panel.appendChild(say("The dialog after loading:")); panel.appendChild(fieldRow(loaded));
+      askValue("Verify read-back", loaded, ()=>{ stepsDone=2;
+        if(hasTrap){ panel.appendChild(warn("The dialog shows "+loaded+"% — the request was "+requested+"%. The loaded value differs."));
+          panel.appendChild(btn("Fix it to "+requested+"%", ()=>{ caught=true; finalValue=requested; step3(); }));
+          panel.appendChild(btn("Burn as loaded ("+loaded+"%)", ()=>{ finalValue=loaded; step3(); }));
+        } else { finalValue=loaded; step3(); } }); }
+    function step3(){ panel.innerHTML=""; stepsBar(3);
+      panel.appendChild(say("Ready to burn. The ECU will receive:")); panel.appendChild(fieldRow(finalValue));
+      panel.appendChild(btn("Burn to ECU", ()=>{ stepsDone=3;
+        if(hasTrap && !caught){ done({solved:false, accuracy:0.5, note:"burned "+loaded+"% — the read-back discrepancy was verified, then burned anyway"}); return; }
+        step4(); })); }
+    function step4(){ panel.innerHTML=""; stepsBar(4);
+      panel.appendChild(say("Burn complete. The dialog now shows:")); panel.appendChild(fieldRow(finalValue));
+      askValue("Confirm", finalValue, ()=>{ stepsDone=4;
+        done({solved:true, accuracy:1, note: hasTrap? "caught the "+loaded+" vs "+requested+" discrepancy, fixed it, burned, confirmed" : "clean load — read back, burned, confirmed at "+finalValue+"%"}); }); }
+  }};};}
+
+function scanLogFactory(){ return function(rng){
+  const N=400, first=rng.int(170,320);
+  const rows=[];
+  for(let i=0;i<N;i++){ let afr;
+    if(i<first) afr=+(11.8+rng.next()*4.4).toFixed(1);                        // 11.8–16.2, never a rail
+    else if(i===first) afr=+(25.1+rng.next()*1.2).toFixed(1);                 // the first rail
+    else afr= rng.chance(0.12)? +(24.8+rng.next()*2.4).toFixed(1) : +(11.8+rng.next()*5.5).toFixed(1);
+    rows.push({t:(i*0.4).toFixed(1), rpm:rng.int(900,6400), map:rng.int(25,190), afr, clt:rng.int(150,225), tps:rng.int(0,100)}); }
+  return {
+  id:"scan-log", title:"ECU — Scan the Log",
+  instruction:"A datalog: 400 rows. Click the FIRST row where AFR reaches 25.0 or higher.",
+  subnote:"Later rows rail too. First is the skill. One wrong row is forgiven; the second ends it.",
+  timeout:120,
+  mount(play, done){
+    const pane=el("div"); pane.style.cssText="max-width:760px;margin:0 auto;max-height:48vh;overflow-y:auto;border:1px solid #30363d;border-radius:8px;background:#0d1117;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11px;color:#c9d1d9;";
+    const hd=el("div",null,"  row    time    rpm    map    afr    clt   tps"); hd.style.cssText="position:sticky;top:0;background:#1d2126;padding:5px 8px;color:#8b949e;white-space:pre;";
+    pane.appendChild(hd);
+    const status=el("div"); status.style.cssText="text-align:center;margin-top:10px;color:var(--dim);min-height:20px;";
+    let wrongs=0;
+    rows.forEach((r,i)=>{ const d=el("div",null,
+      "  "+String(i+1).padStart(4)+"  "+String(r.t).padStart(6)+"  "+String(r.rpm).padStart(5)+"  "+String(r.map).padStart(4)+"  "+r.afr.toFixed(1).padStart(5)+"  "+String(r.clt).padStart(4)+"  "+String(r.tps).padStart(4));
+      d.style.cssText="padding:2px 8px;white-space:pre;cursor:pointer;border-bottom:1px solid #161b21;";
+      d.addEventListener("click", ()=>{ const rail=r.afr>=25.0;
+        if(i===first){ done({solved:true, accuracy:1, note:"first AFR rail at row "+(first+1)+" (AFR "+r.afr+")"+(wrongs? " · "+wrongs+" wrong row first":"")}); }
+        else if(rail){ done({solved:false, accuracy:0, note:"row "+(i+1)+" rails (AFR "+r.afr+") — but the first rail is row "+(first+1)}); }
+        else { wrongs++; if(wrongs>=2){ done({solved:false, accuracy:0, note:"two wrong rows — row "+(i+1)+" reads AFR "+r.afr+"; the first rail is row "+(first+1)}); }
+          else { status.textContent="Row "+(i+1)+" reads AFR "+r.afr+" — not a rail. One more chance."; d.style.background="#3a2a12"; } } });
+      pane.appendChild(d); });
+    play.append(pane, status);
+  }};};}
+
+function setExactlyFactory(){ return function(rng){
+  const TARGET=15.0, STEP=0.7, MIN=10, BASE=10;
+  const startSteps=rng.int(1,6);                       // 10.7 … 14.2 grid points
+  return {
+  id:"set-exactly", title:"ECU — Set It Exactly",
+  instruction:"Set the field to 15.0 — then report the value it actually shows.",
+  subnote:"The control quantizes to a grid. 15.0 may not exist on it. Report the readout, not the request.",
+  timeout:90,
+  mount(play, done){
+    const wrap=el("div"); wrap.style.cssText="max-width:520px;margin:10px auto;text-align:center;";
+    const lab=el("div",null,"Idle Valve Minimum Duty (%)"); lab.style.cssText="font-size:13px;color:var(--dim);margin-bottom:6px;";
+    const read=el("div",null,"—"); read.style.cssText="font-family:ui-monospace,Menlo,Consolas,monospace;font-size:54px;font-weight:700;color:#8dffc0;";
+    const slider=el("input"); slider.type="range"; slider.min=String(MIN); slider.max="20"; slider.step=String(STEP);
+    slider.value=(BASE+startSteps*STEP).toFixed(1); slider.style.cssText="width:100%;margin:18px 0 6px;";
+    const shown=()=> (Math.round((parseFloat(slider.value)-BASE)/STEP)*STEP+BASE).toFixed(1);
+    const upd=()=>{ read.textContent=shown(); };
+    slider.addEventListener("input", upd); upd();
+    const row=el("div"); row.style.cssText="display:flex;gap:10px;justify-content:center;margin-top:16px;";
+    const inp=el("input"); inp.type="text"; inp.placeholder="the value it shows = ?"; inp.style.cssText="font-size:16px;padding:10px 14px;border-radius:8px;border:1px solid #30363d;background:#0d1117;color:#e6edf3;width:230px;";
+    const b=el("button","bigbtn","Report value");
+    b.addEventListener("click", ()=>{ const got=inp.value.trim().replace(/%$/,""); const actual=shown();
+      if(got===actual){ done({solved:true, accuracy:1, note:"reported the readout: "+actual+" (target 15.0 does not exist on this grid)"}); }
+      else if(got==="15.0"||got==="15"){ done({solved:false, accuracy:0, note:"reported the request (15.0) — the readout says "+actual}); }
+      else done({solved:false, accuracy:0, note:"reported "+got+" — the readout says "+actual}); });
+    row.append(inp,b); wrap.append(lab,read,slider,row); play.appendChild(wrap);
+  }};};}
+
 /* ---------------- roster + pool ---------------- */
 const ROSTER=[ sliderFactory(false), clickSeriesFactory(false), stroopFactory(false), chessFactory(false),
   notButtonFactory(), simonFactory(), ruleChangeFactory(), stroopFactory(true),
-  wordProblemFactory(false), fakeDialogFactory(), keyNotShownFactory(), captureFactory(false) ];
+  wordProblemFactory(false), fakeDialogFactory(), keyNotShownFactory(), captureFactory(false),
+  readDialogFactory(), watchGaugeFactory(), verifyBurnFactory(), scanLogFactory(), setExactlyFactory(), leaveAloneFactory() ];
 const POOL=[ ...ROSTER,
   sliderFactory(true), clickSeriesFactory(true), chessFactory(true), wordProblemFactory(true), captureFactory(true),
   doubleNegativeFactory(), flankerFactory(), countCatsFactory(), confirmshameFactory(), sideswipeFactory(), typeExactFactory() ];

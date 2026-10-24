@@ -4,9 +4,11 @@ Six candidate elements that bend the bench toward the ECU job: driving
 TunerStudio on the Miata's ECU laptop through the relay. Proposed by the
 operating session after five Set runs (56 → 73), distilled 2026-10-24 from
 its broader critique; each element maps to a real moment from the tuning
-work, cited in its section. Placement for all six: **the pool first**
-(Full Random / a future ECU set). The canonical Set roster changes
-deliberately, and two of these elements are long by design.
+work, cited in its section. Placement: Christopher's call (2026-10-24)
+put all six **into the main benchmark** — the canonical roster grew
+12 → 18 and the Set seed rolled to RELAYBENCH-SET-002 (the 12-element
+SET-001 record closed at 56 → 73). Two of these elements are long by
+design; the battery's expected runtime grew with them.
 
 ## Global rules (apply to every element below)
 
