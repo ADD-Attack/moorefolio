@@ -156,15 +156,15 @@
       <div class="modes">
         <button class="mode sel" data-mode="set">
           <div class="mname">Set Benchmark</div>
-          <div class="mdesc">The canonical battery: the same 12 elements, the same seed, every run. This is the record book — scores compare across agents and across builds.</div>
+          <div class="mdesc">The canonical battery: the same 12 elements, the same seed, every run. This is the record book — scores compare across agents and across builds. Read its number as the CALIBRATION score.</div>
         </button>
         <button class="mode" data-mode="randomized">
           <div class="mname">Randomized Set</div>
-          <div class="mdesc">The same 12 elements, but the order is shuffled and every test's content is re-rolled. Same shape, nothing memorizable.</div>
+          <div class="mdesc">The same 12 elements, but the order is shuffled and every test's content is re-rolled. Same shape, nothing memorizable. Read its number as the CAPABILITY score.</div>
         </button>
         <button class="mode" data-mode="fullrandom">
           <div class="mname">Full Random</div>
-          <div class="mdesc">The deep pool: ~20 draws from every test ever warehoused here, including the weird ones. Scored, but stamped non-comparable — this mode is the showpiece.</div>
+          <div class="mdesc">The deep pool: ~20 draws from every test ever warehoused here, including the weird ones. Scored, but stamped EXHIBITION — non-comparable; this mode is the showpiece.</div>
         </button>
       </div>
     </div>
@@ -192,7 +192,7 @@
 
   <!-- ================= SCORE ================= -->
   <section id="scoreScreen">
-    <p class="kicker">Final Score</p>
+    <p class="kicker" id="scoreKind">Final Score</p>
     <div id="bigScore">0<small> / 100</small></div>
     <div id="verdict"></div>
     <div id="runMeta"></div>
@@ -417,10 +417,13 @@ function finishRun(){
   const totalMs=Math.round(nowMs()-RUN.t0);
   const clicks=RUN.events.filter(e=>e.type==="pointerdown");
   const intervals=[]; for(let i=1;i<clicks.length;i++) intervals.push(clicks[i].t-clicks[i-1].t);
+  const srt=intervals.slice().sort((a,b)=>a-b);
+  const cycleMs=srt.length? (srt.length%2? srt[(srt.length-1)/2] : Math.round((srt[srt.length/2-1]+srt[srt.length/2])/2)) : null;
+  const KIND={set:"calibration", randomized:"capability", fullrandom:"exhibition"};
   const receipt={
     bench:"relay-bench", version:1, mode:RUN.mode, seed:RUN.seed, operator:RUN.operator||null,
     startedAt:new Date(Date.now()-totalMs).toISOString(), durationMs: totalMs,
-    headline: score, comparable: RUN.mode!=="fullrandom",
+    headline: score, scoreKind: KIND[RUN.mode], operatorCycleMs: cycleMs, comparable: RUN.mode!=="fullrandom",
     environment: envStamp(),
     elements: RUN.results.map(r=>({n:r.n, id:r.id, title:r.title, solved:r.solved, subscore:r.subscore,
       accuracy:+(r.accuracy||0).toFixed(3), elapsedMs:r.elapsedMs, timeoutMs:r.timeoutMs, note:r.note||"", extra:r.extra||null})),
@@ -429,8 +432,10 @@ function finishRun(){
   };
   RUN.receipt=receipt;
   const ss=$("#scoreScreen"); ss.style.display="block";
+  $("#scoreKind").textContent="Final Score — "+KIND[RUN.mode].toUpperCase();
   $("#verdict").textContent=verdictFor(score);
-  $("#runMeta").textContent="Mode: "+RUN.mode+" · Seed: "+RUN.seed+" · "+RUN.results.length+" elements · "+fmtClock(totalMs)+
+  $("#runMeta").textContent="Mode: "+RUN.mode+" ("+KIND[RUN.mode]+" score) · Seed: "+RUN.seed+" · "+RUN.results.length+" elements · "+fmtClock(totalMs)+
+    (cycleMs? " · Median action cycle: "+(cycleMs/1000).toFixed(1)+"s":"")+
     (RUN.operator? " · Operator: "+RUN.operator:"") + (RUN.mode==="fullrandom"?" · (non-comparable)":"");
   const body=$("#breakBody"); body.innerHTML="";
   for(const r of RUN.results){
