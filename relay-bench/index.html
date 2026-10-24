@@ -713,21 +713,21 @@ function simonFactory(){ return function(rng){
   }};};}
 
 function ruleChangeFactory(){ return function(rng){
-  let correct=0;
+  let correct=0; const NEED=5;
   return {
   id:"rule-change", title:"Trap — The Rule Changed",
   instruction:"Follow the instruction shown in the box — and keep following it. It will change.",
   subnote:"First click per round is final.",
   timeout:75,
-  onTimeout(){ return {solved:false, accuracy:correct/5, note:correct+"/5 rounds before the timer"}; },
+  onTimeout(){ return {solved:false, accuracy:correct/NEED, note:correct+"/"+NEED+" rounds before the timer"}; },
   mount(play, done){
     const sizes=[30,55,85,120]; let round=0;
     const box=el("div",null,""); box.style.cssText="text-align:center;font-size:24px;font-weight:700;padding:16px;min-height:60px;";
     const row=el("div"); row.style.cssText="display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:20px 0;";
     play.append(box,row);
-    const show=()=>{ if(round>=5){ done({solved:correct>=4, accuracy:correct/5, note:correct+"/5 rounds"}); return; }
+    const show=()=>{ if(round>=NEED){ done({solved:correct>=4, accuracy:correct/NEED, note:correct+"/"+NEED+" rounds"}); return; }
       const wantLargest=round<3;
-      box.textContent="Round "+(round+1)+" of 6 — Click the "+(wantLargest?"LARGEST":"SMALLEST")+" circle.";
+      box.textContent="Round "+(round+1)+" of "+NEED+" — Click the "+(wantLargest?"LARGEST":"SMALLEST")+" circle.";
       row.innerHTML="";
       const sz=rng.shuffle(sizes.slice());
       sz.forEach(s=>{ const d=el("div"); d.style.cssText="width:"+s+"px;height:"+s+"px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #8dffc0, var(--green) 60%, #0da854);cursor:pointer;";
