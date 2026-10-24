@@ -593,12 +593,24 @@ function chessFactory(unique){ return function(rng){
         pcEl.style.opacity="0.35";
         const move=ev=>{ if(dragClone){ dragClone.style.left=ev.clientX+"px"; dragClone.style.top=ev.clientY+"px"; } };
         const up=ev=>{ document.removeEventListener("pointermove", move); document.removeEventListener("pointerup", up);
-          const from=dragFrom; dragFrom=-1; endDragVisual();
+          const from=dragFrom; dragFrom=-1;
           let under=null; try{ under=document.elementFromPoint(ev.clientX, ev.clientY); }catch(_){ }
           const tsq=under&&under.closest? under.closest(".sq") : null;
-          if(tsq && boardEl.contains(tsq)){ const to=+tsq.dataset.sq;
-            if(to!==from){ attempt(from, to); return; } }
-          selected=(selected===from)?-1:from; render(); };
+          let to=-1; if(tsq && boardEl.contains(tsq)) to=+tsq.dataset.sq;
+          // A drop only "lands" if it is the mating move; anything else glides home.
+          const lands = to>=0 && to!==from && legalMoves(from).some(m=>m.to===to) &&
+                        mateUcis.has(uciOf(from,to,board[from]));
+          const srcEl=boardEl.querySelector('[data-sq="'+from+'"]');
+          const dstEl=lands? tsq : srcEl;
+          const finish=()=>{ endDragVisual();
+            if(to>=0 && to!==from){ attempt(from, to); return; }
+            selected=(selected===from)?-1:from; render(); };
+          if(dragClone && dstEl){
+            const r=dstEl.getBoundingClientRect();
+            dragClone.style.transition="left .16s ease, top .16s ease";
+            dragClone.style.left=(r.left+r.width/2)+"px"; dragClone.style.top=(r.top+r.height/2)+"px";
+            setTimeout(finish, 175);
+          } else finish(); };
         document.addEventListener("pointermove", move);
         document.addEventListener("pointerup", up);
       }
