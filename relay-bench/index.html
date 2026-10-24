@@ -706,7 +706,7 @@ function ruleChangeFactory(){ return function(rng){
   id:"rule-change", title:"Trap — The Rule Changed",
   instruction:"Follow the instruction shown in the box — and keep following it. It will change.",
   subnote:"First click per round is final.",
-  timeout:80,
+  timeout:100,
   mount(play, done){
     const sizes=[30,55,85,120]; let round=0, correct=0;
     const box=el("div",null,""); box.style.cssText="text-align:center;font-size:24px;font-weight:700;padding:16px;min-height:60px;";
