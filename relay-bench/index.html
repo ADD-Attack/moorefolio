@@ -705,13 +705,15 @@ function simonFactory(){ return function(rng){
   }};};}
 
 function ruleChangeFactory(){ return function(rng){
+  let correct=0;
   return {
   id:"rule-change", title:"Trap — The Rule Changed",
   instruction:"Follow the instruction shown in the box — and keep following it. It will change.",
   subnote:"First click per round is final.",
-  timeout:100,
+  timeout:80,
+  onTimeout(){ return {solved:false, accuracy:correct/6, note:correct+"/6 rounds before the timer"}; },
   mount(play, done){
-    const sizes=[30,55,85,120]; let round=0, correct=0;
+    const sizes=[30,55,85,120]; let round=0;
     const box=el("div",null,""); box.style.cssText="text-align:center;font-size:24px;font-weight:700;padding:16px;min-height:60px;";
     const row=el("div"); row.style.cssText="display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:20px 0;";
     play.append(box,row);
