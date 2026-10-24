@@ -518,7 +518,7 @@ function sliderFactory(hard){ return function(rng){ return {
 function clickSeriesFactory(hard){ return function(rng){ return {
   id: hard?"clicks-hard":"clicks", title: hard?"Click Series — Small & Fast":"Click Series",
   instruction:"Click each target as it appears. They get smaller. Clicks that miss still count — against you.",
-  timeout: hard?40:45,
+  timeout: hard?144:108,
   mount(play, done){
     const total=hard?8:6; const sizes=hard?[64,54,45,38,32,27,23,20]:[92,76,62,52,43,34];
     let hits=0, misses=0, cur=null;
