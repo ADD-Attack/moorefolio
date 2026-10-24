@@ -1180,12 +1180,12 @@ function setExactlyFactory(){ return function(rng){
   }};};}
 
 function movingBallFactory(){ return function(rng){
-  const NEED=2; let hits=0, misses=0;
+  const NEED=1; let hits=0, misses=0;
   return {
   id:"lead-ball", title:"Lead the Ball",
-  instruction:"The ball never stops moving — constant speed, bouncing off the walls. Click it twice. Where it is in your screenshot is not where it will be when your click lands: lead it.",
+  instruction:"The ball never stops moving — constant speed, bouncing off the walls. Click it once. Where it is in your screenshot is not where it will be when your click lands: lead it.",
   subnote:"Misses count. The path never speeds up, slows down, or cheats — it is pure prediction.",
-  timeout:120,
+  timeout:60,
   onTimeout(){ return {solved:false, accuracy:hits/NEED, note:hits+"/"+NEED+" hits before the timer"}; },
   mount(play, done){
     const W=880,H=400,S=54;
