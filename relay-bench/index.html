@@ -82,8 +82,10 @@
   .sq.light{background:#e9e2cf;} .sq.dark{background:#7a9457;}
   .sq .pc{font-size:calc(var(--sq) * .72); line-height:1; cursor:grab; touch-action:none; z-index:3;
     text-shadow:0 2px 3px rgba(0,0,0,.45);}
-  .sq .pc.w{color:#fff; -webkit-text-stroke:1.5px #222;}
-  .sq .pc.b{color:#14181d;}
+  .sq .pc.w{color:#ffffff; -webkit-text-stroke:2px #16181c; paint-order:stroke fill;
+    text-shadow:0 2px 5px rgba(0,0,0,.65);}
+  .sq .pc.b{color:#121519; -webkit-text-stroke:2px #f2f2f2; paint-order:stroke fill;
+    text-shadow:0 2px 5px rgba(0,0,0,.4);}
   .sq.hl{outline:4px solid var(--amber); outline-offset:-4px; z-index:2;}
 
   /* flash / capture */
@@ -536,17 +538,20 @@ function clickSeriesFactory(hard){ return function(rng){ return {
   }};};}
 
 /* chess glyphs */
-const GLYPH={w:{K:"♔",Q:"♕",R:"♖",B:"♗",N:"♘"}, b:{K:"♚",Q:"♛",R:"♜",B:"♝",N:"♞"}};
+const GLYPH={w:{K:"♚",Q:"♛",R:"♜",B:"♝",N:"♞"}, b:{K:"♚",Q:"♛",R:"♜",B:"♝",N:"♞"}};
 function chessFactory(unique){ return function(rng){
   const puzzle=genMateIn1(rng);
   return {
   id: unique?"chess-unique":"chess", title:"Chess — Mate in 1 (6×6)",
   instruction:"White to move. Find checkmate in one move — drag the piece (or click it, then click its square).",
-  subnote:"No pawns on this little board: K Q R B N only. A legal move that isn't mate is an error and the position resets.",
+  subnote:"You are the WHITE pieces (pale, dark outline). The dark pieces are Black. No pawns: K Q R B N only. A legal move that isn't mate is an error and the position resets.",
   timeout:120,
   mount(play, done){
     if(!puzzle){ done({solved:false, accuracy:0, note:"generator failed"}); return; }
     let board=puzzle.board.slice(); let errors=0; let selected=-1; let dragFrom=-1;
+    const legend=el("div",null,"<span style='color:#fff;-webkit-text-stroke:1px #16181c;font-size:22px;'>♞</span> <b>WHITE = yours</b> &nbsp;·&nbsp; <span style='color:#121519;-webkit-text-stroke:1px #f2f2f2;font-size:22px;'>♞</span> <b>BLACK = the king to mate</b>");
+    legend.style.cssText="text-align:center;margin:2px 0 8px;font-size:15px;color:var(--dim);";
+    play.appendChild(legend);
     const st=statusLine(play);
     const sqPx=Math.max(46, Math.min(66, Math.floor((play.clientWidth||900)*0.52/6)));
     const boardEl=el("div","board");
