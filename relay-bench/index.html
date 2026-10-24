@@ -498,7 +498,7 @@ function sliderFactory(hard){ return function(rng){ return {
   id: hard?"slider-hard":"slider", title: hard?"Hold & Slide — Tight Zone":"Hold & Slide",
   instruction:"Press and hold the knob, slide it into the glowing zone, and let go.",
   subnote:"Releasing outside the zone doesn't end the test — grab it and adjust.",
-  timeout: hard?50:45,
+  timeout: hard?50:30,
   mount(play, done){
     const W=play.clientWidth||900, H=Math.max(340, play.clientHeight||420);
     const trackW=Math.round(W*0.72), trackX=Math.round(W*0.14), trackY=Math.round(H*(0.35+rng.next()*0.3));
@@ -554,7 +554,7 @@ function chessFactory(unique){ return function(rng){
   id: unique?"chess-unique":"chess", title:"Chess — Mate in 1 (6×6)",
   instruction:"White to move. Find checkmate in one move — drag the piece (or click it, then click its square).",
   subnote:"You are the WHITE pieces (pale, dark outline). The dark pieces are Black. No pawns: K Q R B N only. A legal move that isn't mate is an error and the position resets.",
-  timeout:120,
+  timeout:90,
   mount(play, done){
     if(!puzzle){ done({solved:false, accuracy:0, note:"generator failed"}); return; }
     let board=puzzle.board.slice(); let errors=0; let selected=-1; let dragFrom=-1;
@@ -648,7 +648,7 @@ function stroopFactory(reverse){ return function(rng){
   instruction: reverse? ("Click the button that SAYS “"+tname+"” — whatever color it is printed in.")
                       : ("Click the button whose PRINT COLOR is "+tname.toLowerCase()+" — ignore what the words say."),
   subnote:"First click is final.",
-  timeout:60,
+  timeout:45,
   mount(play, done){
     const field=el("div"); field.style.cssText="position:relative;min-height:46vh;"; play.appendChild(field);
     const shuffled=shuffleInPlace(btns.slice(), rng);
@@ -748,7 +748,7 @@ function wordProblemFactory(hard){ return function(rng){
   return {
   id: hard?"word-problem-hard":"word-problem", title:"Word Problem"+(hard?" — Three Steps":""),
   instruction:"Read it, work it out, type the answer. Wrong answers cost accuracy but the test keeps going.",
-  timeout:90,
+  timeout:60,
   mount(play, done){
     const wp=el("div","wp", text); play.appendChild(wp);
     const row=el("div","answerRow");
@@ -841,7 +841,7 @@ function fakeDialogFactory(){ return function(rng){
   id:"fake-dialog", title:"Trap — Fake System Dialog",
   instruction:"Close the pop-up dialog.",
   subnote:"First click is final. Not everything that looks like a system button is one.",
-  timeout:40,
+  timeout:30,
   mount(play, done){
     const dlg=el("div","fakedlg");
     dlg.style.left=rng.range(8,50)+"%"; dlg.style.top=rng.range(4,28)+"%";
@@ -861,7 +861,7 @@ function keyNotShownFactory(){ return function(rng){
   id:"key-not-shown", title:"Trap — The Key You Don't See",
   instruction:"Press the key you do NOT see. The keys in play are: "+set.join(" ")+".",
   subnote:"Type it on the keyboard. A shown key is a wrong key.",
-  timeout:40,
+  timeout:30,
   mount(play, done){
     const row=el("div"); row.style.cssText="text-align:center;padding:30px 0;";
     shown.forEach(k=>{ const s=el("span","keycap",k); row.appendChild(s); });
