@@ -687,7 +687,7 @@ function simonFactory(){ return function(rng){
   return {
   id:"simon-says", title:"Trap — Simon Says",
   instruction:"Press the named side — but ONLY when Simon says so. On other rounds, press PASS.",
-  subnote:"First click per round is final. A round with no click in 12 seconds counts as wrong.",
+  subnote:"First click per round is final. A round with no click in 20 seconds counts as wrong.",
   timeout:85,
   onTimeout(){ return {solved:false, accuracy:prog.correct/rounds.length, note:prog.correct+"/"+rounds.length+" rounds before the timer"}; },
   mount(play, done){
@@ -703,7 +703,7 @@ function simonFactory(){ return function(rng){
       const r=rounds[ri];
       banner.textContent=(r.simon? "Simon says: click the "+r.side+" button." : "Click the "+r.side+" button.");
       banner.style.color=r.simon?"var(--green)":"var(--dim)";
-      clearTimeout(timer); timer=setTimeout(()=>{ ri++; show(); }, 12000); };
+      clearTimeout(timer); timer=setTimeout(()=>{ ri++; show(); }, 20000); };
     const judge=(key)=>{ const r=rounds[ri]; clearTimeout(timer);
       const ok=(r.simon&&key===r.side)||(!r.simon&&key==="PASS");
       if(ok) correct++; prog.correct=correct; ri++;
