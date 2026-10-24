@@ -58,7 +58,7 @@ design; the battery's expected runtime grew with them.
 - **Rules:** flag inside the band = solved; flag early or on a noise
   spike = failed (first click final); never flagging = failed by
   timeout. The crossing comes 30–45 s in (seed-determined), the band
-  holds ~9 s, and the element caps at 60 s — trimmed 2026-10-24 to
+  holds ~22 s (extended 2026-10-24: the dwell must exceed the ~15 s operator cycle or the crossing can live and die between screenshots — the same fairness rule as Simon's 20 s window), and the element caps at 60 s — trimmed 2026-10-24 to
   keep the full battery's runtime in check without gutting the watch.
 - **Scoring:** solved with accuracy scaled by how deep into the band the
   value was at flag time (edge-grazing flags earn less than centered
