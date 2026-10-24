@@ -603,7 +603,7 @@ function stroopFactory(reverse){ return function(rng){
   instruction: reverse? ("Click the button that SAYS “"+tname+"” — whatever color it is printed in.")
                       : ("Click the button whose PRINT COLOR is "+tname.toLowerCase()+" — ignore what the words say."),
   subnote:"First click is final.",
-  timeout:30,
+  timeout:60,
   mount(play, done){
     const field=el("div"); field.style.cssText="position:relative;min-height:46vh;"; play.appendChild(field);
     const shuffled=shuffleInPlace(btns.slice(), rng);
