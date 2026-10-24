@@ -677,11 +677,13 @@ function notButtonFactory(){ return function(rng){
    ===================================================================== */
 function simonFactory(){ return function(rng){
   const rounds=[]; for(let i=0;i<5;i++) rounds.push({simon: rng.chance(0.6), side: rng.chance(0.5)?"LEFT":"RIGHT"});
+  const prog={correct:0};
   return {
   id:"simon-says", title:"Trap — Simon Says",
   instruction:"Press the named side — but ONLY when Simon says so. On other rounds, press PASS.",
   subnote:"First click per round is final. A round with no click in 12 seconds counts as wrong.",
   timeout:100,
+  onTimeout(){ return {solved:false, accuracy:prog.correct/rounds.length, note:prog.correct+"/"+rounds.length+" rounds before the timer"}; },
   mount(play, done){
     let ri=0, correct=0, timer=null; const banner=el("div",null,"");
     banner.style.cssText="text-align:center;font-size:26px;font-weight:700;padding:18px 8px;min-height:66px;";
@@ -698,7 +700,7 @@ function simonFactory(){ return function(rng){
       clearTimeout(timer); timer=setTimeout(()=>{ ri++; show(); }, 12000); };
     const judge=(key)=>{ const r=rounds[ri]; clearTimeout(timer);
       const ok=(r.simon&&key===r.side)||(!r.simon&&key==="PASS");
-      if(ok) correct++; ri++;
+      if(ok) correct++; prog.correct=correct; ri++;
       if(ri>=rounds.length){ done({solved:correct>=4, accuracy:correct/rounds.length, note:correct+"/"+rounds.length+" rounds correct"}); }
       else show(); };
     show();
@@ -911,11 +913,13 @@ function confirmshameFactory(){ return function(rng){
   }};};}
 
 function sideswipeFactory(){ return function(rng){
+  const prog={correct:0};
   return {
   id:"sideswipe", title:"Trap — Sideswipe",
   instruction:"RED dot → LEFT button. BLUE dot → RIGHT button. The dot's side means nothing.",
   subnote:"First click per round is final.",
   timeout:60,
+  onTimeout(){ return {solved:false, accuracy:prog.correct/3, note:prog.correct+"/3 rounds before the timer"}; },
   mount(play, done){
     let round=0, correct=0; const stage=el("div"); stage.style.cssText="position:relative;min-height:46vh;"; play.appendChild(stage);
     const show=()=>{ if(round>=3){ done({solved:correct>=2, accuracy:correct/3, note:correct+"/3 rounds"}); return; }
@@ -926,7 +930,7 @@ function sideswipeFactory(){ return function(rng){
       stage.appendChild(dot);
       const bL=el("button","bigbtn","◀ LEFT"); bL.style.cssText+="position:absolute;left:10%;bottom:16%;";
       const bR=el("button","bigbtn","RIGHT ▶"); bR.style.cssText+="position:absolute;right:10%;bottom:16%;";
-      const judge=(k)=>{ const want=color==="red"?"L":"R"; if(k===want) correct++; round++; setTimeout(show,400); };
+      const judge=(k)=>{ const want=color==="red"?"L":"R"; if(k===want) correct++; prog.correct=correct; round++; setTimeout(show,400); };
       bL.addEventListener("click", ()=>judge("L")); bR.addEventListener("click", ()=>judge("R"));
       stage.append(bL,bR); };
     show();
