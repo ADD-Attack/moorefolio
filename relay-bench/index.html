@@ -572,17 +572,36 @@ function chessFactory(unique){ return function(rng){
         note:"mate delivered · "+errors+" wrong move"+(errors===1?"":"s")+" first", extra:{mateIn:1}}); }
       else { errors++; board=puzzle.board.slice(); selected=-1; render();
         st.textContent="Legal — but not mate. Position reset. ("+errors+" error"+(errors>1?"s":"")+")"; logEvent("chess-wrongmove",{from,to}); } };
+    let dragClone=null;
+    const endDragVisual=()=>{ if(dragClone){ dragClone.remove(); dragClone=null; }
+      boardEl.querySelectorAll(".pc").forEach(p=>{ p.style.opacity=""; }); };
     boardEl.addEventListener("pointerdown", e=>{
       const pcEl=e.target.closest(".pc"); const sqEl=e.target.closest(".sq"); if(!sqEl) return;
       const sq=+sqEl.dataset.sq;
-      if(selected>=0 && sq!==selected){ attempt(selected, sq); return; }
-      if(pcEl && board[sq] && board[sq].c==='w'){ dragFrom=sq; }
-    });
-    boardEl.addEventListener("pointerup", e=>{
-      const sqEl=e.target.closest(".sq");
-      if(dragFrom>=0 && sqEl){ const sq=+sqEl.dataset.sq;
-        if(sq!==dragFrom){ attempt(dragFrom, sq); dragFrom=-1; return; } }
-      if(dragFrom>=0){ selected=(selected===dragFrom)?-1:dragFrom; dragFrom=-1; render(); }
+      if(selected>=0 && sq!==selected){
+        if(board[sq]&&board[sq].c==='w'){ selected=sq; render(); return; }  // reselect, not an error
+        attempt(selected, sq); return; }
+      if(pcEl && board[sq] && board[sq].c==='w'){
+        dragFrom=sq;
+        const p=board[sq];
+        dragClone=el("span","pc "+p.c, GLYPH[p.c][p.t]);
+        dragClone.style.cssText="position:fixed;z-index:999;pointer-events:none;line-height:1;"+
+          "font-size:"+(sqPx*0.78)+"px;transform:translate(-50%,-55%) scale(1.12);"+
+          "left:"+e.clientX+"px;top:"+e.clientY+"px;text-shadow:0 8px 16px rgba(0,0,0,.55);"+
+          (p.c==='w' ? "color:#ffffff;-webkit-text-stroke:2px #16181c;" : "color:#121519;-webkit-text-stroke:2px #f2f2f2;");
+        document.body.appendChild(dragClone);
+        pcEl.style.opacity="0.35";
+        const move=ev=>{ if(dragClone){ dragClone.style.left=ev.clientX+"px"; dragClone.style.top=ev.clientY+"px"; } };
+        const up=ev=>{ document.removeEventListener("pointermove", move); document.removeEventListener("pointerup", up);
+          const from=dragFrom; dragFrom=-1; endDragVisual();
+          let under=null; try{ under=document.elementFromPoint(ev.clientX, ev.clientY); }catch(_){ }
+          const tsq=under&&under.closest? under.closest(".sq") : null;
+          if(tsq && boardEl.contains(tsq)){ const to=+tsq.dataset.sq;
+            if(to!==from){ attempt(from, to); return; } }
+          selected=(selected===from)?-1:from; render(); };
+        document.addEventListener("pointermove", move);
+        document.addEventListener("pointerup", up);
+      }
     });
     render();
   }};};}
