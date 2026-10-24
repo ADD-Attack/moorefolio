@@ -526,7 +526,7 @@ function clickSeriesFactory(hard){ return function(rng){
   return {
   id: hard?"clicks-hard":"clicks", title: hard?"Click Series — Small & Fast":"Click Series",
   instruction:"Click each target as it appears. They get smaller. Clicks that miss still count — against you.",
-  timeout: hard?112:70,
+  timeout: hard?112:80,
   onTimeout(){ return {solved:false, accuracy:hits/total, note:hits+"/"+total+" targets before the timer"}; },
   mount(play, done){
     const sizes=hard?[64,54,45,38,32,27,23,20]:[92,76,62,52,43];
@@ -718,7 +718,7 @@ function ruleChangeFactory(){ return function(rng){
   id:"rule-change", title:"Trap — The Rule Changed",
   instruction:"Follow the instruction shown in the box — and keep following it. It will change.",
   subnote:"First click per round is final.",
-  timeout:75,
+  timeout:85,
   onTimeout(){ return {solved:false, accuracy:correct/NEED, note:correct+"/"+NEED+" rounds before the timer"}; },
   mount(play, done){
     const sizes=[30,55,85,120]; let round=0;
@@ -1031,8 +1031,8 @@ function watchGaugeFactory(){ return function(rng){
     wrap.append(lab,big,band,btn); play.appendChild(wrap);
     const t0=Date.now(); let val=21.5;
     const iv=setInterval(()=>{ const t=Date.now()-t0;
-      if(t>=crossAt && t<crossAt+9000){ val=CENTER + (rng.next()*0.5-0.25); }        // in the band ~9s
-      else if(t>=crossAt+9000){ val=22.5 + rng.next()*1.5; }                          // drifted back out
+      if(t>=crossAt && t<crossAt+22000){ val=CENTER + (rng.next()*0.5-0.25); }        // in the band ~22s
+      else if(t>=crossAt+22000){ val=22.5 + rng.next()*1.5; }                          // drifted back out
       else { val += (rng.next()-0.5)*0.7; val=Math.max(19.2, Math.min(24.3, val));    // wander
         if(rng.chance(0.06)) val=24.4+rng.next()*0.4; }                               // noise spike, never in band
       big.textContent=val.toFixed(1);
