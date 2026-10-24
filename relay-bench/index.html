@@ -1,0 +1,925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Relay Bench — a hands-on test battery for computer-use agents</title>
+<style>
+  :root{
+    --bg:#07090c; --panel:#0e1218; --panel2:#131926; --ink:#e8f0ea; --dim:#8fa398;
+    --green:#22ff88; --green-dk:#0d3; --red:#ff5c6c; --amber:#ffb547; --blue:#57b6ff;
+    --line:#1e2836;
+  }
+  *{box-sizing:border-box; -webkit-user-select:none; user-select:none;}
+  html,body{margin:0; padding:0; background:var(--bg); color:var(--ink);
+    font-family:"Avenir Next","Segoe UI",system-ui,-apple-system,Roboto,Helvetica,Arial,sans-serif;
+    min-height:100vh; overflow-x:hidden;}
+  button{font-family:inherit; cursor:pointer;}
+  input{font-family:inherit;}
+  .wrap{max-width:1180px; margin:0 auto; padding:28px 20px 60px;}
+
+  /* ---------- start screen ---------- */
+  #startScreen{padding-top:4vh;}
+  .kicker{letter-spacing:.35em; font-size:12px; color:var(--green); text-transform:uppercase; margin:0 0 10px;}
+  h1.title{font-size:clamp(44px,8vw,96px); line-height:.95; margin:0 0 14px; font-weight:800;}
+  h1.title .thin{color:var(--dim); font-weight:300;}
+  .brief{max-width:720px; font-size:17px; line-height:1.55; color:#c9d6cd;}
+  .brief b{color:var(--ink);}
+  .card{background:var(--panel); border:1px solid var(--line); border-radius:16px; padding:20px; margin:22px 0;}
+  .card h3{margin:0 0 12px; font-size:13px; letter-spacing:.22em; text-transform:uppercase; color:var(--dim);}
+  .modes{display:flex; gap:12px; flex-wrap:wrap;}
+  .mode{flex:1 1 220px; text-align:left; background:var(--panel2); color:var(--ink);
+    border:2px solid var(--line); border-radius:14px; padding:16px;}
+  .mode.sel{border-color:var(--green); box-shadow:0 0 0 1px var(--green), 0 0 28px rgba(34,255,136,.15);}
+  .mode .mname{font-size:19px; font-weight:700; margin-bottom:6px;}
+  .mode .mdesc{font-size:13.5px; color:var(--dim); line-height:1.45;}
+  #opName{width:100%; background:var(--panel2); border:1px solid var(--line); border-radius:10px;
+    color:var(--ink); font-size:16px; padding:12px 14px; outline:none;}
+  #opName:focus{border-color:var(--green);}
+  #startBtn{display:block; width:100%; margin-top:24px; padding:26px 10px; font-size:30px; font-weight:800;
+    letter-spacing:.06em; color:#04140a; background:linear-gradient(180deg,#4dff9d,var(--green) 55%,#12d96c);
+    border:none; border-radius:18px; box-shadow:0 10px 44px rgba(34,255,136,.35), inset 0 1px 0 #d8ffe9;}
+  #startBtn:active{transform:translateY(2px);}
+  .fineprint{color:var(--dim); font-size:13px; margin-top:14px; line-height:1.5;}
+
+  /* ---------- stage ---------- */
+  #stage{display:none;}
+  #hud{display:flex; align-items:center; gap:16px; padding:14px 4px; border-bottom:1px solid var(--line);
+    position:sticky; top:0; background:rgba(7,9,12,.92); z-index:40; backdrop-filter:blur(4px);}
+  #hud .el{font-size:13px; letter-spacing:.18em; text-transform:uppercase; color:var(--dim); white-space:nowrap;}
+  #hud .ttl{font-size:20px; font-weight:700; flex:1; text-align:center; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;}
+  #hud .clock{font-variant-numeric:tabular-nums; font-size:20px; font-weight:700; color:var(--green); min-width:74px; text-align:right;}
+  #hud .clock.low{color:var(--red);}
+  #quitBtn{background:none; border:1px solid var(--line); color:var(--dim); border-radius:8px; padding:6px 10px; font-size:12px;}
+  #instruction{font-size:clamp(20px,3.4vw,32px); font-weight:700; text-align:center; padding:26px 12px 6px; line-height:1.3;}
+  #subnote{text-align:center; color:var(--dim); font-size:14.5px; min-height:20px; padding:0 12px;}
+  #play{position:relative; min-height:62vh; margin-top:10px; animation:fadein .35s ease both;}
+  @keyframes fadein{from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:none;}}
+  .toast{position:absolute; left:50%; top:38%; transform:translate(-50%,-50%); font-size:54px; font-weight:800;
+    pointer-events:none; z-index:60; text-shadow:0 4px 30px rgba(0,0,0,.6); animation:toast .9s ease both;}
+  @keyframes toast{0%{opacity:0; transform:translate(-50%,-50%) scale(.7);} 25%{opacity:1; transform:translate(-50%,-50%) scale(1.05);}
+    70%{opacity:1;} 100%{opacity:0; transform:translate(-50%,-58%) scale(1);}}
+
+  /* generic test widgets */
+  .bigbtn{background:var(--panel2); color:var(--ink); border:2px solid var(--line); border-radius:14px;
+    padding:18px 26px; font-size:20px; font-weight:700;}
+  .bigbtn:active{transform:scale(.97);}
+  .target{position:absolute; border-radius:50%; background:radial-gradient(circle at 35% 30%, #8dffc0, var(--green) 60%, #0da854);
+    border:3px solid #d8ffe9; box-shadow:0 0 24px rgba(34,255,136,.5); cursor:pointer;}
+  .ring{position:absolute; border-radius:50%; border:3px dashed rgba(87,182,255,.75); pointer-events:none;}
+
+  /* slider */
+  .track{position:absolute; height:14px; border-radius:7px; background:#1a2331; border:1px solid var(--line);}
+  .zone{position:absolute; height:14px; border-radius:7px; background:rgba(34,255,136,.55); box-shadow:0 0 14px rgba(34,255,136,.6);}
+  .knob{position:absolute; width:46px; height:46px; border-radius:50%; background:radial-gradient(circle at 35% 30%, #ffffff, #b9c8be 55%, #7d8f84);
+    border:2px solid #39463f; box-shadow:0 6px 18px rgba(0,0,0,.55); cursor:grab; touch-action:none; z-index:5;}
+  .knob:active{cursor:grabbing;}
+
+  /* chess */
+  .board{display:grid; gap:0; border:3px solid #39463f; border-radius:6px; overflow:hidden; box-shadow:0 14px 40px rgba(0,0,0,.5);}
+  .sq{display:flex; align-items:center; justify-content:center; position:relative;}
+  .sq.light{background:#e9e2cf;} .sq.dark{background:#7a9457;}
+  .sq .pc{font-size:calc(var(--sq) * .72); line-height:1; cursor:grab; touch-action:none; z-index:3;
+    text-shadow:0 2px 3px rgba(0,0,0,.45);}
+  .sq .pc.w{color:#fff; -webkit-text-stroke:1.5px #222;}
+  .sq .pc.b{color:#14181d;}
+  .sq.hl{outline:4px solid var(--amber); outline-offset:-4px; z-index:2;}
+
+  /* flash / capture */
+  .glyphs{display:flex; gap:26px; justify-content:center; align-items:center; padding:34px 0;}
+  .glyph{font-size:84px; line-height:1;}
+
+  /* word problem */
+  .wp{max-width:680px; margin:10px auto; font-size:21px; line-height:1.6; background:var(--panel);
+    border:1px solid var(--line); border-radius:14px; padding:22px 26px;}
+  .answerRow{display:flex; gap:12px; justify-content:center; margin-top:18px;}
+  #ansInput{width:220px; background:var(--panel2); border:2px solid var(--line); border-radius:10px; color:var(--ink);
+    font-size:22px; padding:10px 14px; text-align:center; outline:none; -webkit-user-select:text; user-select:text;}
+  #ansInput:focus{border-color:var(--green);}
+
+  /* fake dialog */
+  .fakedlg{position:absolute; width:430px; max-width:92%; background:#f2f4f6; color:#17202a; border-radius:10px;
+    box-shadow:0 24px 70px rgba(0,0,0,.65); padding:0 0 18px; z-index:30;}
+  .fakedlg .bar{display:flex; justify-content:space-between; align-items:center; background:#dde3e8; border-radius:10px 10px 0 0;
+    padding:8px 12px; font-size:13px; font-weight:600; color:#3c4750;}
+  .fakedlg .x{background:#e81123; color:#fff; border:none; width:34px; height:24px; border-radius:4px; font-size:13px;}
+  .fakedlg .body{padding:18px 20px 4px; font-size:15.5px; line-height:1.5;}
+  .fakedlg .row{display:flex; gap:10px; justify-content:flex-end; padding:12px 20px 0; align-items:center;}
+  .fakedlg .ok{background:#0b5cad; color:#fff; border:none; padding:9px 26px; border-radius:5px; font-size:15px; font-weight:700;}
+  .fakedlg .dismiss{background:none; border:none; color:#5a6a76; font-size:12.5px; text-decoration:underline; margin-right:auto;}
+
+  .keycap{display:inline-flex; align-items:center; justify-content:center; width:84px; height:84px; margin:0 10px;
+    background:var(--panel2); border:2px solid var(--line); border-bottom-width:5px; border-radius:12px; font-size:34px; font-weight:800;}
+
+  /* ---------- score screen ---------- */
+  #scoreScreen{display:none; text-align:center; padding-top:3vh;}
+  #bigScore{font-size:clamp(90px,20vw,190px); font-weight:800; line-height:1; color:var(--green);
+    text-shadow:0 0 60px rgba(34,255,136,.35);}
+  #bigScore small{font-size:.32em; color:var(--dim); font-weight:300;}
+  #verdict{font-size:22px; color:#c9d6cd; margin:6px 0 4px;}
+  #runMeta{color:var(--dim); font-size:14px; margin-bottom:8px;}
+  table.break{margin:20px auto; border-collapse:collapse; min-width:min(760px,94vw); text-align:left; font-size:15px;}
+  table.break th, table.break td{padding:9px 12px; border-bottom:1px solid var(--line);}
+  table.break th{color:var(--dim); font-size:12px; letter-spacing:.16em; text-transform:uppercase;}
+  .pill{display:inline-block; padding:2px 10px; border-radius:99px; font-size:12.5px; font-weight:700;}
+  .pill.pass{background:rgba(34,255,136,.16); color:var(--green);}
+  .pill.fail{background:rgba(255,92,108,.16); color:var(--red);}
+  #receipt{width:min(860px,94vw); height:220px; margin:14px auto; display:block; background:#05070a; color:#9fe8c0;
+    border:1px solid var(--line); border-radius:10px; font-family:ui-monospace,Menlo,Consolas,monospace; font-size:11.5px;
+    padding:12px; -webkit-user-select:text; user-select:text;}
+  #prevRuns{max-width:820px; margin:18px auto; text-align:left;}
+  #prevRuns h3{color:var(--dim); font-size:12px; letter-spacing:.2em; text-transform:uppercase;}
+  #prevRuns .pr{display:flex; justify-content:space-between; gap:10px; padding:7px 4px; border-bottom:1px solid var(--line); font-size:14px;}
+  .rowBtns{display:flex; gap:12px; justify-content:center; margin-top:18px; flex-wrap:wrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <!-- ================= START ================= -->
+  <section id="startScreen">
+    <p class="kicker">MooreFolio · Hidden Test Page</p>
+    <h1 class="title">RELAY <span class="thin">BENCH</span></h1>
+    <p class="brief"><b>What this is:</b> a battery of hands-on tests for a computer-use agent — an AI that
+      sees the screen and works a real mouse and keyboard. Clicking, holding, dragging, reading pop-ups,
+      solving a chess mate, typing an answer, catching something that flashes by. Every test is scored by
+      this page itself. <b>One big score at the end.</b></p>
+    <p class="brief"><b>How to run it:</b> pick a mode, press the big green <b>START</b>, then work through
+      whatever appears, one test at a time. Read each instruction as it comes — some of them are traps.
+      You can stop mid-test and keep going; only the trap tests judge your first click. The battery ends on
+      the score screen, which includes a copyable receipt of the whole run.</p>
+    <div class="card">
+      <h3>Mode</h3>
+      <div class="modes">
+        <button class="mode sel" data-mode="set">
+          <div class="mname">Set Benchmark</div>
+          <div class="mdesc">The canonical battery: the same 12 elements, the same seed, every run. This is the record book — scores compare across agents and across builds.</div>
+        </button>
+        <button class="mode" data-mode="randomized">
+          <div class="mname">Randomized Set</div>
+          <div class="mdesc">The same 12 elements, but the order is shuffled and every test's content is re-rolled. Same shape, nothing memorizable.</div>
+        </button>
+        <button class="mode" data-mode="fullrandom">
+          <div class="mname">Full Random</div>
+          <div class="mdesc">The deep pool: ~20 draws from every test ever warehoused here, including the weird ones. Scored, but stamped non-comparable — this mode is the showpiece.</div>
+        </button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Operator (optional — stamped on the receipt)</h3>
+      <input id="opName" type="text" placeholder="e.g. Muse · R14 · Abraham" autocomplete="off">
+    </div>
+    <button id="startBtn">▶&nbsp; START</button>
+    <p class="fineprint">Set and Randomized runs target about five minutes. Full Random runs longer.
+      If a test stalls, it times out, gets scored, and the battery moves on.</p>
+  </section>
+
+  <!-- ================= STAGE ================= -->
+  <section id="stage">
+    <div id="hud">
+      <div class="el" id="hudEl">Element 1 / 12</div>
+      <div class="ttl" id="hudTitle">Test</div>
+      <div class="clock" id="hudClock">0:00</div>
+      <button id="quitBtn">End run</button>
+    </div>
+    <div id="instruction"></div>
+    <div id="subnote"></div>
+    <div id="play"></div>
+  </section>
+
+  <!-- ================= SCORE ================= -->
+  <section id="scoreScreen">
+    <p class="kicker">Final Score</p>
+    <div id="bigScore">0<small> / 100</small></div>
+    <div id="verdict"></div>
+    <div id="runMeta"></div>
+    <table class="break"><thead><tr><th>#</th><th>Test</th><th>Result</th><th>Score</th><th>Time</th><th>Notes</th></tr></thead>
+      <tbody id="breakBody"></tbody></table>
+    <div class="rowBtns">
+      <button class="bigbtn" id="copyBtn">⧉ Copy receipt (JSON)</button>
+      <button class="bigbtn" id="againBtn">↻ Run again</button>
+    </div>
+    <textarea id="receipt" readonly></textarea>
+    <div id="prevRuns"><h3>Previous runs on this machine</h3><div id="prevList"></div></div>
+  </section>
+</div>
+
+<script>
+"use strict";
+/* =====================================================================
+   RELAY BENCH — pure core (RNG, chess, scoring). DOM-free; the section
+   between CORE-BEGIN and CORE-END is extracted and unit-tested in node.
+   ===================================================================== */
+//==CORE-BEGIN==
+function hashSeed(str){let h=2166136261>>>0;for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function mulberry32(seed){let a=seed>>>0;return function(){a|=0;a=(a+0x6D2B79F5)|0;let t=Math.imul(a^(a>>>15),1|a);t=(t+Math.imul(t^(t>>>7),61|t))^t;return((t^(t>>>14))>>>0)/4294967296;};}
+function RNG(seed){this.a=seed>>>0;}
+RNG.prototype.next=function(){const f=mulberry32(this.a);const v=f();this.a=(this.a+0x6D2B79F5)>>>0;return v;};
+RNG.prototype.range=function(lo,hi){return lo+this.next()*(hi-lo);};
+RNG.prototype.int=function(lo,hi){return Math.floor(this.range(lo,hi+1));};
+RNG.prototype.pick=function(arr){return arr[Math.floor(this.next()*arr.length)];};
+RNG.prototype.shuffle=function(arr){const a=arr.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(this.next()*(i+1));const t=a[i];a[i]=a[j];a[j]=t;}return a;};
+RNG.prototype.chance=function(p){return this.next()<p;};
+
+/* ---- 6x6 mini-chess: pieces K Q R B N, no pawns. Board: array(36), idx = r*6+c.
+   Piece: {c:'w'|'b', t:'K'|'Q'|'R'|'B'|'N'} ---- */
+const DIRS={K:[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]],
+  N:[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]],
+  R:[[0,1],[0,-1],[1,0],[-1,0]], B:[[1,1],[1,-1],[-1,1],[-1,-1]]};
+function sqRC(i){return [Math.floor(i/6), i%6];}
+function inB(r,c){return r>=0&&r<6&&c>=0&&c<6;}
+function attacks(bd, from){
+  const p=bd[from]; if(!p) return []; const [r,c]=sqRC(from); const out=[];
+  const slide=(dirs)=>{for(const [dr,dc] of dirs){let rr=r+dr, cc=c+dc; while(inB(rr,cc)){out.push(rr*6+cc); if(bd[rr*6+cc]) break; rr+=dr; cc+=dc;}}};
+  if(p.t==='K'||p.t==='N'){for(const [dr,dc] of DIRS[p.t]){const rr=r+dr, cc=c+dc; if(inB(rr,cc)) out.push(rr*6+cc);}}
+  else if(p.t==='R') slide(DIRS.R); else if(p.t==='B') slide(DIRS.B);
+  else if(p.t==='Q'){slide(DIRS.R); slide(DIRS.B);}
+  return out;
+}
+function isAttacked(bd, sq, byColor){
+  for(let i=0;i<36;i++){const p=bd[i]; if(p&&p.c===byColor){if(attacks(bd,i).includes(sq)) return true;}}
+  return false;
+}
+function kingOf(bd,color){for(let i=0;i<36;i++){const p=bd[i]; if(p&&p.c===color&&p.t==='K') return i;} return -1;}
+function legalMoves(bd,color){
+  const moves=[];
+  for(let i=0;i<36;i++){const p=bd[i]; if(!p||p.c!==color) continue;
+    for(const to of attacks(bd,i)){const tp=bd[to]; if(tp&&tp.c===color) continue; if(tp&&tp.t==='K') continue;
+      const nb=bd.slice(); nb[to]=p; nb[i]=null;
+      if(!isAttacked(nb, kingOf(nb,color), color==='w'?'b':'w')) moves.push({from:i,to:to});}}
+  return moves;
+}
+function givesCheck(bd,color){return isAttacked(bd, kingOf(bd,color), color==='w'?'b':'w');}
+function isMate(bd,color){return givesCheck(bd,color)&&legalMoves(bd,color).length===0;}
+/* Build a verified mate-in-1 for White to move. Method: place the black king,
+   build a mating net around it, verify position sanity + a mating move exists;
+   re-roll on failure. Returns {board, solution:{from,to}} or null. */
+function genMateIn1(rng){
+  for(let attempt=0; attempt<400; attempt++){
+    const bd=new Array(36).fill(null);
+    // black king on an edge or corner (mates live there)
+    const edge=[]; for(let i=0;i<36;i++){const [r,c]=sqRC(i); if(r===0||r===5||c===0||c===5) edge.push(i);}
+    const bk=rng.pick(edge); bd[bk]={c:'b',t:'K'};
+    // white king somewhere not adjacent, not on top of the action
+    let wk=-1; for(let t=0;t<50&&wk<0;t++){const s=rng.int(0,35); if(s===bk) continue;
+      const [r1,c1]=sqRC(s),[r2,c2]=sqRC(bk); if(Math.abs(r1-r2)<=1&&Math.abs(c1-c2)<=1) continue; wk=s;}
+    if(wk<0) continue; bd[wk]={c:'w',t:'K'};
+    // 2-3 white attackers
+    const types=['Q','R','B','N','Q','R'];
+    const nAtt=rng.int(2,3);
+    let placed=0;
+    for(let t=0;t<60&&placed<nAtt;t++){const s=rng.int(0,35); if(bd[s]) continue;
+      bd[s]={c:'w',t:types[rng.int(0,types.length-1)]}; placed++;}
+    // sanity: black not already mated/stalemated into a corner with no game,
+    // white not in check (white to move, black just moved — black may not have
+    // left white in an impossible state; require: black NOT currently delivering
+    // mate, position not already mate for black), black not already in mate.
+    if(isMate(bd,'w')) continue;
+    if(isMate(bd,'b')) continue;         // puzzle must not already be over
+    if(givesCheck(bd,'w')) continue;     // white to move while in check is fine in chess,
+                                         // but keep positions clean: skip.
+    // find a mating move
+    const mates=legalMoves(bd,'w').filter(m=>{const nb=bd.slice(); nb[m.to]=nb[m.from]; nb[m.from]=null; return isMate(nb,'b');});
+    if(mates.length===0) continue;
+    // the position must not be an immediate stalemate trap for black if white
+    // plays quietly — not required; any mate wins. Return.
+    return {board:bd, solution:mates[0], mateCount:mates.length};
+  }
+  return null;
+}
+/* ---- scoring: per-element 0..100, accuracy (<=70) first, speed (<=30) second.
+   result: {solved, accuracy:0..1, elapsedMs, timeoutMs} ---- */
+function scoreElement(result){
+  if(!result) return 0;
+  const acc=Math.max(0,Math.min(1,result.accuracy||0));
+  const frac=result.timeoutMs>0 ? Math.max(0,Math.min(1, result.elapsedMs/result.timeoutMs)) : 1;
+  const speed=1-frac;                       // faster solve -> closer to 1
+  let s=70*acc + 30*speed*(result.solved?1:0.25);
+  if(!result.solved) s=Math.min(s, 40*acc); // unsolved caps low
+  return Math.round(Math.max(0,Math.min(100,s)));
+}
+function headlineScore(subscores){
+  if(!subscores.length) return 0;
+  return Math.round(subscores.reduce((a,b)=>a+b,0)/subscores.length);
+}
+//==CORE-END==
+
+/* =====================================================================
+   Battery engine + elements (DOM)
+   ===================================================================== */
+const $=s=>document.querySelector(s);
+const SET_SEED = "RELAYBENCH-SET-001";
+let RUN=null; // {mode, seed, rng, operator, startedAt, battery:[], results:[], events:[], quit}
+
+function nowMs(){return performance.now();}
+function fmtClock(ms){const s=Math.max(0,Math.ceil(ms/1000));return Math.floor(s/60)+":"+String(s%60).padStart(2,"0");}
+function el(tag, cls, html){const e=document.createElement(tag); if(cls) e.className=cls; if(html!=null) e.innerHTML=html; return e;}
+function shuffleInPlace(a, rng){for(let i=a.length-1;i>0;i--){const j=Math.floor(rng.next()*(i+1)); const t=a[i]; a[i]=a[j]; a[j]=t;} return a;}
+
+function logEvent(type, data){
+  if(!RUN) return;
+  RUN.events.push(Object.assign({t: Math.round(nowMs()-RUN.t0), el: RUN.currentId||null, type}, data||{}));
+}
+/* global telemetry: every real pointer press + key during a run */
+document.addEventListener("pointerdown", e=>{ if(RUN&&RUN.active) logEvent("pointerdown",{x:Math.round(e.clientX), y:Math.round(e.clientY)}); }, true);
+document.addEventListener("keydown", e=>{ if(RUN&&RUN.active) logEvent("keydown",{key:e.key}); }, true);
+
+function envStamp(){
+  return { dpr: window.devicePixelRatio||1,
+    viewport:[window.innerWidth, window.innerHeight],
+    screen:[window.screen.width, window.screen.height],
+    ua: navigator.userAgent, lang: navigator.language, tz: Intl.DateTimeFormat().resolvedOptions().timeZone };
+}
+
+/* ---------- battery construction ---------- */
+/* Element descriptor: {id, title, timeout, make(rng)->{mount(play, api), par}} */
+const api={};
+
+/* Each make() returns an object with mount(play, done) where done(result) ends the
+   element. result: {solved, accuracy, note, extra} — elapsed/timeout filled by engine. */
+function buildBattery(mode, batterySeed){
+  const rng=new RNG(hashSeed(batterySeed));
+  const roster=ROSTER.map(f=>f(rng)); // roster factories consume rng in fixed order for set mode
+  if(mode==="set"){ return {battery: roster, seedUsed: batterySeed}; }
+  if(mode==="randomized"){
+    const order=rng.shuffle(roster.map((_,i)=>i));
+    return {battery: order.map(i=>roster[i]), seedUsed: batterySeed};
+  }
+  // full random: draw ~20 from the whole pool (roster factories + pool-only
+  // factories). Repeats re-invoke the factory so no descriptor is mounted twice.
+  const order=rng.shuffle(POOL.map((_,i)=>i));
+  const draws=[];
+  for(let i=0; draws.length<20; i++){ draws.push(POOL[order[i%order.length]](rng)); if(i>80) break; }
+  return {battery: draws, seedUsed: batterySeed};
+}
+
+async function startRun(){
+  const mode=document.querySelector(".mode.sel").dataset.mode;
+  const operator=$("#opName").value.trim();
+  let seed;
+  if(mode==="set") seed=SET_SEED;
+  else seed=(mode==="randomized"?"RNDSET-":"FULLRND-")+Math.floor(Math.random()*0xffffffff).toString(16).toUpperCase();
+  const {battery}=buildBattery(mode, seed);
+  RUN={mode, seed, operator, battery, results:[], events:[], t0:nowMs(), active:true, quit:false, currentId:null};
+  $("#startScreen").style.display="none";
+  $("#scoreScreen").style.display="none";
+  $("#stage").style.display="block";
+  window.scrollTo(0,0);
+  for(let i=0;i<battery.length;i++){
+    if(RUN.quit) break;
+    RUN.currentId=battery[i].id+"#"+(i+1);
+    const res=await runElement(battery[i], i, battery.length);
+    RUN.results.push(Object.assign({n:i+1, id:battery[i].id, title:battery[i].title}, res));
+  }
+  RUN.active=false;
+  finishRun();
+}
+
+function runElement(desc, idx, total){
+  return new Promise(resolve=>{
+    $("#hudEl").textContent="Element "+(idx+1)+" / "+total;
+    $("#hudTitle").textContent=desc.title;
+    const play=$("#play"); play.innerHTML=""; 
+    $("#instruction").textContent=desc.instruction||"";
+    $("#subnote").textContent=desc.subnote||"";
+    const tStart=nowMs(); const timeoutMs=desc.timeout*1000;
+    let doneFlag=false, raf=0;
+    const clock=$("#hudClock");
+    const tick=()=>{ const left=timeoutMs-(nowMs()-tStart); clock.textContent=fmtClock(left);
+      clock.classList.toggle("low", left<10000);
+      if(left<=0){ finish({solved:false, accuracy:0, note:"timed out"}); return; } raf=requestAnimationFrame(tick); };
+    const finish=(result)=>{
+      if(doneFlag) return; doneFlag=true; cancelAnimationFrame(raf);
+      const elapsed=nowMs()-tStart;
+      const full=Object.assign({}, result, {elapsedMs:Math.round(elapsed), timeoutMs});
+      full.subscore=scoreElement(full);
+      logEvent("element-end",{solved:!!result.solved, subscore:full.subscore});
+      toast(result.solved?"✓":"✕", result.solved?"var(--green)":"var(--red)");
+      setTimeout(()=>resolve(full), 550);
+    };
+    RUN.currentFinish=finish;
+    tick();
+    try{ desc.mount(play, finish, RUN); }catch(err){ finish({solved:false, accuracy:0, note:"error: "+err.message}); }
+  });
+}
+function toast(txt,color){ const t=el("div","toast",txt); t.style.color=color; $("#play").appendChild(t); setTimeout(()=>t.remove(),950); }
+
+/* ---------- score screen / receipt ---------- */
+function verdictFor(s){ return s>=90?"Flawless hands. Suspiciously good.": s>=75?"Sharp. A few bruises, nothing broken.":
+  s>=55?"Working hands — the traps drew some blood.": s>=35?"The mouse is willing; the reading needs work.":"The relay deserves better. So does the score screen."; }
+function finishRun(){
+  $("#stage").style.display="none";
+  const subs=RUN.results.map(r=>r.subscore);
+  const score=headlineScore(subs);
+  const totalMs=Math.round(nowMs()-RUN.t0);
+  const clicks=RUN.events.filter(e=>e.type==="pointerdown");
+  const intervals=[]; for(let i=1;i<clicks.length;i++) intervals.push(clicks[i].t-clicks[i-1].t);
+  const receipt={
+    bench:"relay-bench", version:1, mode:RUN.mode, seed:RUN.seed, operator:RUN.operator||null,
+    startedAt:new Date(Date.now()-totalMs).toISOString(), durationMs: totalMs,
+    headline: score, comparable: RUN.mode!=="fullrandom",
+    environment: envStamp(),
+    elements: RUN.results.map(r=>({n:r.n, id:r.id, title:r.title, solved:r.solved, subscore:r.subscore,
+      accuracy:+(r.accuracy||0).toFixed(3), elapsedMs:r.elapsedMs, timeoutMs:r.timeoutMs, note:r.note||"", extra:r.extra||null})),
+    telemetry:{ actions: RUN.events.length, pointerdowns: clicks.length,
+      interClickMs: intervals, events: RUN.events.slice(0,600) }
+  };
+  RUN.receipt=receipt;
+  const ss=$("#scoreScreen"); ss.style.display="block";
+  $("#verdict").textContent=verdictFor(score);
+  $("#runMeta").textContent="Mode: "+RUN.mode+" · Seed: "+RUN.seed+" · "+RUN.results.length+" elements · "+fmtClock(totalMs)+
+    (RUN.operator? " · Operator: "+RUN.operator:"") + (RUN.mode==="fullrandom"?" · (non-comparable)":"");
+  const body=$("#breakBody"); body.innerHTML="";
+  for(const r of RUN.results){
+    const tr=el("tr");
+    tr.innerHTML="<td>"+r.n+"</td><td>"+r.title+"</td><td><span class='pill "+(r.solved?"pass":"fail")+"'>"+
+      (r.solved?"SOLVED":"FAILED")+"</span></td><td><b>"+r.subscore+"</b></td><td>"+(r.elapsedMs/1000).toFixed(1)+"s</td><td>"+(r.note||"")+"</td>";
+    body.appendChild(tr);
+  }
+  $("#receipt").value=JSON.stringify(receipt,null,1);
+  // animate the big number
+  const big=$("#bigScore"); const t0=nowMs();
+  const anim=()=>{ const f=Math.min(1,(nowMs()-t0)/1100); const v=Math.round(score*(0.2+0.8*f)*(2-f)/1.0 );
+    big.innerHTML=Math.min(score,Math.round(score*f*(2-f)))+"<small> / 100</small>";
+    if(f<1) requestAnimationFrame(anim); else big.innerHTML=score+"<small> / 100</small>"; };
+  anim();
+  // local history
+  try{
+    const key="relayBenchRuns"; const arr=JSON.parse(localStorage.getItem(key)||"[]");
+    arr.unshift({at:new Date().toISOString(), mode:RUN.mode, seed:RUN.seed, score, operator:RUN.operator||""});
+    localStorage.setItem(key, JSON.stringify(arr.slice(0,24)));
+    renderPrev(arr);
+  }catch(e){ $("#prevRuns").style.display="none"; }
+  window.scrollTo(0,0);
+}
+function renderPrev(arr){
+  const list=$("#prevList"); list.innerHTML="";
+  if(!arr||!arr.length){ list.innerHTML="<div class='pr'><span>No previous runs yet.</span></div>"; return; }
+  for(const r of arr.slice(0,8)){
+    const d=el("div","pr");
+    d.innerHTML="<span>"+new Date(r.at).toLocaleString()+"</span><span>"+r.mode+"</span><span>"+(r.operator||"—")+"</span><b>"+r.score+" / 100</b>";
+    list.appendChild(d);
+  }
+}
+
+/* ---------- start screen wiring ---------- */
+document.querySelectorAll(".mode").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".mode").forEach(x=>x.classList.remove("sel")); b.classList.add("sel");
+}));
+$("#startBtn").addEventListener("click", startRun);
+$("#quitBtn").addEventListener("click",()=>{ if(RUN){ RUN.quit=true; if(RUN.currentFinish) RUN.currentFinish({solved:false, accuracy:0, note:"run ended early"}); }});
+$("#againBtn").addEventListener("click",()=>location.reload());
+$("#copyBtn").addEventListener("click",()=>{
+  const ta=$("#receipt"); ta.select();
+  if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(ta.value).catch(()=>document.execCommand("copy")); }
+  else document.execCommand("copy");
+  $("#copyBtn").textContent="✓ Copied"; setTimeout(()=>$("#copyBtn").textContent="⧉ Copy receipt (JSON)",1600);
+});
+try{ renderPrev(JSON.parse(localStorage.getItem("relayBenchRuns")||"[]")); }catch(e){}
+</script>
+<script>
+/* =====================================================================
+   Elements A — slider, click series, chess, stroop, not-button
+   ===================================================================== */
+function statusLine(play){ const d=el("div",null,""); d.style.cssText="text-align:center;color:var(--amber);font-size:16px;min-height:22px;margin-top:8px;"; play.appendChild(d); return d; }
+function centerOf(node, play){ const r=node.getBoundingClientRect(), p=play.getBoundingClientRect();
+  return {x:r.left-p.left+r.width/2, y:r.top-p.top+r.height/2}; }
+
+function sliderFactory(hard){ return function(rng){ return {
+  id: hard?"slider-hard":"slider", title: hard?"Hold & Slide — Tight Zone":"Hold & Slide",
+  instruction:"Press and hold the knob, slide it into the glowing zone, and let go.",
+  subnote:"Releasing outside the zone doesn't end the test — grab it and adjust.",
+  timeout: hard?50:45,
+  mount(play, done){
+    const W=play.clientWidth||900, H=Math.max(340, play.clientHeight||420);
+    const trackW=Math.round(W*0.72), trackX=Math.round(W*0.14), trackY=Math.round(H*(0.35+rng.next()*0.3));
+    const zoneW=hard?44:76; const zoneX=trackX+Math.round(rng.range(0.25,0.8)*(trackW-zoneW));
+    const track=el("div","track"); track.style.cssText+="left:"+trackX+"px;top:"+trackY+"px;width:"+trackW+"px;";
+    const zone=el("div","zone"); zone.style.cssText+="left:"+zoneX+"px;top:"+trackY+"px;width:"+zoneW+"px;";
+    const knob=el("div","knob"); let kx=trackX-2; knob.style.left=kx+"px"; knob.style.top=(trackY-16)+"px";
+    play.append(track, zone, knob);
+    const st=statusLine(play); let grabs=0, dragging=false, dx=0;
+    knob.addEventListener("pointerdown", e=>{ dragging=true; grabs++; dx=e.clientX-knob.getBoundingClientRect().left;
+      knob.setPointerCapture(e.pointerId); e.preventDefault(); });
+    knob.addEventListener("pointermove", e=>{ if(!dragging) return; const p=play.getBoundingClientRect();
+      kx=Math.max(trackX-2, Math.min(trackX+trackW-44, e.clientX-p.left-dx)); knob.style.left=kx+"px"; });
+    knob.addEventListener("pointerup", ()=>{ if(!dragging) return; dragging=false;
+      const kc=kx+23, zc=zoneX+zoneW/2, err=Math.abs(kc-zc);
+      if(kc>=zoneX&&kc<=zoneX+zoneW){
+        const acc=Math.max(0.25, 1-err/(zoneW*1.4));
+        done({solved:true, accuracy:acc, note:"landed "+Math.round(err)+" px from zone center · "+grabs+" grab"+(grabs>1?"s":"")});
+      } else { st.textContent="Missed the zone by "+Math.round(err-zoneW/2)+" px — grab the knob and adjust."; logEvent("slider-miss",{err:Math.round(err)}); }
+    });
+  }};};}
+
+function clickSeriesFactory(hard){ return function(rng){ return {
+  id: hard?"clicks-hard":"clicks", title: hard?"Click Series — Small & Fast":"Click Series",
+  instruction:"Click each target as it appears. They get smaller. Clicks that miss still count — against you.",
+  timeout: hard?40:45,
+  mount(play, done){
+    const total=hard?8:6; const sizes=hard?[64,54,45,38,32,27,23,20]:[92,76,62,52,43,34];
+    let hits=0, misses=0, cur=null;
+    const spawn=()=>{ if(cur) cur.remove();
+      const size=sizes[hits]; const pad=10;
+      const x=rng.range(pad, Math.max(pad+1,(play.clientWidth||900)-size-pad));
+      const y=rng.range(pad, Math.max(pad+1,(play.clientHeight||420)-size-pad));
+      cur=el("div","target"); cur.style.cssText+="width:"+size+"px;height:"+size+"px;left:"+x+"px;top:"+y+"px;";
+      cur.addEventListener("pointerdown", e=>{ e.stopPropagation(); hits++;
+        logEvent("target-hit",{n:hits,size});
+        if(hits>=total){ const acc=hits/(hits+misses);
+          done({solved:true, accuracy:acc, note:hits+" targets · "+misses+" miss"+(misses===1?"":"es")}); }
+        else spawn(); });
+      play.appendChild(cur); };
+    play.addEventListener("pointerdown", e=>{ if(cur&&e.target!==cur){ misses++; logEvent("target-miss",{}); } });
+    spawn();
+  }};};}
+
+/* chess glyphs */
+const GLYPH={w:{K:"♔",Q:"♕",R:"♖",B:"♗",N:"♘"}, b:{K:"♚",Q:"♛",R:"♜",B:"♝",N:"♞"}};
+function chessFactory(unique){ return function(rng){
+  const puzzle=genMateIn1(rng);
+  return {
+  id: unique?"chess-unique":"chess", title:"Chess — Mate in 1 (6×6)",
+  instruction:"White to move. Find checkmate in one move — drag the piece (or click it, then click its square).",
+  subnote:"No pawns on this little board: K Q R B N only. A legal move that isn't mate is an error and the position resets.",
+  timeout:120,
+  mount(play, done){
+    if(!puzzle){ done({solved:false, accuracy:0, note:"generator failed"}); return; }
+    let board=puzzle.board.slice(); let errors=0; let selected=-1; let dragFrom=-1;
+    const st=statusLine(play);
+    const sqPx=Math.max(46, Math.min(66, Math.floor((play.clientWidth||900)*0.52/6)));
+    const boardEl=el("div","board");
+    boardEl.style.cssText="grid-template-columns:repeat(6,"+sqPx+"px);--sq:"+sqPx+"px;width:"+(sqPx*6)+"px;margin:6px auto;";
+    play.appendChild(boardEl); play.appendChild(st);
+    const render=()=>{ boardEl.innerHTML="";
+      for(let i=0;i<36;i++){ const [r,c]=sqRC(i); const sq=el("div","sq "+(((r+c)%2===0)?"light":"dark"));
+        sq.style.width=sqPx+"px"; sq.style.height=sqPx+"px"; sq.dataset.sq=i;
+        if(i===selected) sq.classList.add("hl");
+        const p=board[i];
+        if(p){ const pc=el("span","pc "+p.c, GLYPH[p.c][p.t]); pc.dataset.sq=i; sq.appendChild(pc); }
+        boardEl.appendChild(sq); } };
+    const attempt=(from,to)=>{ if(from===to||from<0) return;
+      const legal=legalMoves(board,'w').filter(m=>m.from===from&&m.to===to);
+      if(!legal.length){ errors++; st.textContent="That move isn't legal here. ("+errors+" error"+(errors>1?"s":"")+")"; selected=-1; render(); return; }
+      const nb=board.slice(); nb[to]=nb[from]; nb[from]=null;
+      if(isMate(nb,'b')){ done({solved:true, accuracy:Math.max(0.2,1-0.22*errors),
+        note:"mate delivered · "+errors+" wrong move"+(errors===1?"":"s")+" first", extra:{mateIn:1}}); }
+      else { errors++; board=puzzle.board.slice(); selected=-1; render();
+        st.textContent="Legal — but not mate. Position reset. ("+errors+" error"+(errors>1?"s":"")+")"; logEvent("chess-wrongmove",{from,to}); } };
+    boardEl.addEventListener("pointerdown", e=>{
+      const pcEl=e.target.closest(".pc"); const sqEl=e.target.closest(".sq"); if(!sqEl) return;
+      const sq=+sqEl.dataset.sq;
+      if(selected>=0 && sq!==selected){ attempt(selected, sq); return; }
+      if(pcEl && board[sq] && board[sq].c==='w'){ dragFrom=sq; }
+    });
+    boardEl.addEventListener("pointerup", e=>{
+      const sqEl=e.target.closest(".sq");
+      if(dragFrom>=0 && sqEl){ const sq=+sqEl.dataset.sq;
+        if(sq!==dragFrom){ attempt(dragFrom, sq); dragFrom=-1; return; } }
+      if(dragFrom>=0){ selected=(selected===dragFrom)?-1:dragFrom; dragFrom=-1; render(); }
+    });
+    render();
+  }};};}
+
+const STROOP_COLORS=[["RED","#ff5c6c"],["GREEN","#22ff88"],["BLUE","#57b6ff"],["YELLOW","#ffd94d"]];
+function stroopFactory(reverse){ return function(rng){
+  const target=rng.pick(STROOP_COLORS); const tname=target[0], tcol=target[1];
+  // build 4 buttons: exactly one matches the RULE, one is the loud trap, two noise
+  const others=STROOP_COLORS.filter(c=>c[0]!==tname);
+  const trapWord=reverse? rng.pick(others)[0] : tname;      // word that shouts the answer wrongly
+  const trapCol =reverse? tcol : rng.pick(others)[1];
+  let correctBtn, trapBtn;
+  const btns=[];
+  if(!reverse){ correctBtn={word:rng.pick(others)[0], color:tcol}; trapBtn={word:tname, color:trapCol}; }
+  else { correctBtn={word:tname, color:rng.pick(others)[1]}; trapBtn={word:trapWord, color:tcol}; }
+  btns.push(correctBtn, trapBtn);
+  while(btns.length<4){ const w=rng.pick(STROOP_COLORS)[0], c=rng.pick(STROOP_COLORS)[1];
+    if(btns.some(b=>b.word===w&&b.color===c)) continue;
+    if(!reverse && c===tcol) continue; if(reverse && w===tname) continue;
+    btns.push({word:w,color:c}); }
+  return {
+  id: reverse?"stroop-reverse":"stroop", title: reverse?"Trap — Reverse Stroop":"Trap — Stroop",
+  instruction: reverse? ("Click the button that SAYS “"+tname+"” — whatever color it is printed in.")
+                      : ("Click the button whose PRINT COLOR is "+tname.toLowerCase()+" — ignore what the words say."),
+  subnote:"First click is final.",
+  timeout:30,
+  mount(play, done){
+    const field=el("div"); field.style.cssText="position:relative;min-height:46vh;"; play.appendChild(field);
+    const shuffled=shuffleInPlace(btns.slice(), rng);
+    shuffled.forEach((b,i)=>{ const btn=el("button","bigbtn", b.word);
+      btn.style.cssText+="position:absolute;font-size:30px;padding:20px 34px;color:"+b.color+";"+
+        "left:"+(6+ (i%2)*52)+"%"+";top:"+(12+Math.floor(i/2)*46)+"%"+";";
+      btn.addEventListener("click", ()=>{ const ok=(b===correctBtn);
+        done({solved:ok, accuracy:ok?1:0, note: ok?"read the rule, not the shout":"fell for it — the "+(reverse?"color":"word")+" shouted louder than the rule",
+          extra:{trapTaken:!ok}}); });
+      field.appendChild(btn); });
+  }};};}
+
+function notButtonFactory(){ return function(rng){
+  const labels=rng.shuffle(["Delete","DELETE","Delete","Delight","Delete"]);
+  return {
+  id:"not-button", title:"Trap — The Not Button",
+  instruction:"Click the one button that does NOT say “Delete”.",
+  subnote:"First click is final. Read carefully.",
+  timeout:30,
+  mount(play, done){
+    const field=el("div"); field.style.cssText="position:relative;min-height:42vh;"; play.appendChild(field);
+    labels.forEach((lab,i)=>{ const btn=el("button","bigbtn", lab);
+      btn.style.cssText+="position:absolute;left:"+(4+i*19)+"%;top:"+(18+((i*37)%50))+"%;"+(lab==="Delight"?"font-size:19px;":"");
+      btn.addEventListener("click", ()=>{ const ok=lab==="Delight";
+        done({solved:ok, accuracy:ok?1:0, note: ok?"spotted the odd one out":"that one does say Delete"}); });
+      field.appendChild(btn); });
+  }};};}
+</script>
+<script>
+/* =====================================================================
+   Elements B — simon, rule change, word problem, capture, pool tests
+   ===================================================================== */
+function simonFactory(){ return function(rng){
+  const rounds=[]; for(let i=0;i<5;i++) rounds.push({simon: rng.chance(0.6), side: rng.chance(0.5)?"LEFT":"RIGHT"});
+  return {
+  id:"simon-says", title:"Trap — Simon Says",
+  instruction:"Press the named side — but ONLY when Simon says so. On other rounds, press PASS.",
+  subnote:"First click per round is final. A round with no click in 12 seconds counts as wrong.",
+  timeout:100,
+  mount(play, done){
+    let ri=0, correct=0, timer=null; const banner=el("div",null,"");
+    banner.style.cssText="text-align:center;font-size:26px;font-weight:700;padding:18px 8px;min-height:66px;";
+    const row=el("div"); row.style.cssText="display:flex;gap:14px;justify-content:center;margin-top:10px;flex-wrap:wrap;";
+    const mk=(label, key)=>{ const b=el("button","bigbtn",label); b.style.cssText+="font-size:24px;padding:20px 30px;";
+      b.addEventListener("click", ()=>judge(key)); row.appendChild(b); return b; };
+    const bl=mk("◀ LEFT","LEFT"), bp=mk("⏸ PASS","PASS"), br=mk("RIGHT ▶","RIGHT");
+    play.append(banner, row);
+    const show=()=>{ if(ri>=rounds.length){ done({solved:correct>=4, accuracy:correct/rounds.length,
+        note:correct+"/"+rounds.length+" rounds correct"}); return; }
+      const r=rounds[ri];
+      banner.textContent=(r.simon? "Simon says: click the "+r.side+" button." : "Click the "+r.side+" button.");
+      banner.style.color=r.simon?"var(--green)":"var(--dim)";
+      clearTimeout(timer); timer=setTimeout(()=>{ ri++; show(); }, 12000); };
+    const judge=(key)=>{ const r=rounds[ri]; clearTimeout(timer);
+      const ok=(r.simon&&key===r.side)||(!r.simon&&key==="PASS");
+      if(ok) correct++; ri++;
+      if(ri>=rounds.length){ done({solved:correct>=4, accuracy:correct/rounds.length, note:correct+"/"+rounds.length+" rounds correct"}); }
+      else show(); };
+    show();
+  }};};}
+
+function ruleChangeFactory(){ return function(rng){
+  return {
+  id:"rule-change", title:"Trap — The Rule Changed",
+  instruction:"Follow the instruction shown in the box — and keep following it. It will change.",
+  subnote:"First click per round is final.",
+  timeout:75,
+  mount(play, done){
+    const sizes=[30,55,85,120]; let round=0, correct=0;
+    const box=el("div",null,""); box.style.cssText="text-align:center;font-size:24px;font-weight:700;padding:16px;min-height:60px;";
+    const row=el("div"); row.style.cssText="display:flex;gap:22px;justify-content:center;align-items:flex-end;flex-wrap:wrap;padding:20px 0;";
+    play.append(box,row);
+    const show=()=>{ if(round>=6){ done({solved:correct>=5, accuracy:correct/6, note:correct+"/6 rounds"}); return; }
+      const wantLargest=round<3;
+      box.textContent="Round "+(round+1)+" of 6 — Click the "+(wantLargest?"LARGEST":"SMALLEST")+" circle.";
+      row.innerHTML="";
+      const sz=rng.shuffle(sizes.slice());
+      sz.forEach(s=>{ const d=el("div"); d.style.cssText="width:"+s+"px;height:"+s+"px;border-radius:50%;background:radial-gradient(circle at 35% 30%, #8dffc0, var(--green) 60%, #0da854);cursor:pointer;";
+        d.addEventListener("click", ()=>{ const want=wantLargest?Math.max(...sz):Math.min(...sz);
+          if(s===want) correct++; round++; setTimeout(show, 550); });
+        row.appendChild(d); }); };
+    show();
+  }};};}
+
+function wordProblemFactory(hard){ return function(rng){
+  const n1=["bolts","screws","cells","bottles","washers"]; const noun=rng.pick(n1);
+  const A=rng.int(12,48), B=rng.int(13,39), C=rng.int(9,37), D=rng.int(11,33), E=hard?rng.int(15,90):0;
+  const ans=A*B+C*D-(hard?E:0);
+  const text= hard? ("A warehouse has "+A+" crates of "+noun+", each crate holding "+B+" "+noun+", plus "+C+" crates of "+D+" "+noun+" each. A shipment of "+E+" "+noun+" leaves. How many "+noun+" remain?")
+                 : ("A crate holds "+A+" "+noun+". A second crate holds "+C+" "+noun+" per box in "+D+" boxes — wait, simpler: the first bin has "+A+" × "+B+" "+noun+", the second has "+C+" × "+D+" "+noun+". How many "+noun+" in total?");
+  return {
+  id: hard?"word-problem-hard":"word-problem", title:"Word Problem"+(hard?" — Three Steps":""),
+  instruction:"Read it, work it out, type the answer. Wrong answers cost accuracy but the test keeps going.",
+  timeout:90,
+  mount(play, done){
+    const wp=el("div","wp", text); play.appendChild(wp);
+    const row=el("div","answerRow");
+    const input=el("input"); input.id="ansInput"; input.type="text"; input.inputMode="numeric"; input.placeholder="answer";
+    const submit=el("button","bigbtn","Submit"); submit.style.fontSize="20px";
+    let errors=0;
+    const tryIt=()=>{ const v=parseInt(input.value.replace(/[^0-9\-]/g,""),10);
+      if(v===ans){ done({solved:true, accuracy:Math.max(0.3,1-0.2*errors), note:(errors?"after "+errors+" wrong answer"+(errors>1?"s":""):"first try")}); }
+      else { errors++; input.value=""; input.placeholder="not quite — again"; logEvent("word-wrong",{errors}); } };
+    submit.addEventListener("click", tryIt);
+    input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryIt(); });
+    row.append(input, submit); play.appendChild(row); setTimeout(()=>input.focus(), 200);
+  }};};}
+
+const GLYPH_SET=[["▲","#ff5c6c"],["●","#57b6ff"],["■","#22ff88"],["★","#ffd94d"],["◆","#c084fc"],["♥","#ff8fb3"]];
+function captureFactory(hard){ return function(rng){
+  const n=hard?5:4; const seq=[]; const used=new Set();
+  while(seq.length<n){ const g=rng.pick(GLYPH_SET); if(used.has(g[0])) continue; used.add(g[0]); seq.push(g); }
+  const flashMs=hard?1100:1500;
+  return {
+  id: hard?"capture-hard":"capture", title:"Capture — Flash Sequence",
+  instruction:"Memorize the sequence. It will vanish. Then pick the exact one back.",
+  timeout:40,
+  mount(play, done){
+    const stage=el("div"); stage.style.cssText="text-align:center;padding:20px 0;"; play.appendChild(stage);
+    const show=el("div","glyphs");
+    seq.forEach(([ch,col])=>{ const s=el("span","glyph",ch); s.style.color=col; show.appendChild(s); });
+    stage.appendChild(show);
+    setTimeout(()=>{
+      stage.innerHTML=""; const note=el("div",null,"What did you see?"); note.style.cssText="text-align:center;font-size:22px;font-weight:700;margin:14px 0;"; stage.appendChild(note);
+      const mutate=(kind)=>{ const m=seq.map(g=>g.slice());
+        if(kind===1){ const i=rng.int(0,m.length-2); const t=m[i]; m[i]=m[i+1]; m[i+1]=t; }
+        if(kind===2){ const i=rng.int(0,m.length-1); m[i]=[m[i][0], rng.pick(GLYPH_SET.filter(g=>g[1]!==m[i][1]))[1]]; }
+        if(kind===3){ const i=rng.int(0,m.length-1); const alt=GLYPH_SET.filter(g=>g[0]!==m[i][0])[rng.int(0,4)]; m[i]=alt; }
+        return m; };
+      const opts=[seq, mutate(1), mutate(2), mutate(3)];
+      const shuffled=shuffleInPlace(opts, rng);
+      shuffled.forEach(o=>{ const btn=el("button","bigbtn"); btn.style.cssText+="display:block;margin:12px auto;font-size:34px;padding:12px 30px;letter-spacing:.15em;";
+        o.forEach(([ch,col])=>{ const s=el("span",null,ch); s.style.color=col; s.style.margin="0 6px"; btn.appendChild(s); });
+        btn.addEventListener("click", ()=>{ const ok=(o===seq);
+          done({solved:ok, accuracy:ok?1:0, note: ok?"caught it":"sequence misremembered", extra:{flashMs}}); });
+        stage.appendChild(btn); });
+    }, flashMs+500);
+  }};};}
+
+function doubleNegativeFactory(){ return function(rng){
+  const cols=[["green","#22ff88"],["red","#ff5c6c"],["blue","#57b6ff"],["purple","#c084fc"]];
+  const green=cols[0];
+  return {
+  id:"double-negative", title:"Trap — Double Negative",
+  instruction:"Do NOT click the button that is NOT green.",
+  subnote:"First click is final. Parse it twice.",
+  timeout:30,
+  mount(play, done){
+    const field=el("div"); field.style.cssText="position:relative;min-height:44vh;"; play.appendChild(field);
+    const order=rng.shuffle(cols.slice());
+    order.forEach(([name,col],i)=>{ const btn=el("button","bigbtn", name.toUpperCase());
+      btn.style.cssText+="position:absolute;font-size:24px;padding:20px 30px;color:"+col+";left:"+(6+i*23)+"%"+";top:"+(16+((i*53)%60))+"%;";
+      btn.addEventListener("click", ()=>{ const ok=name==="green";
+        done({solved:ok, accuracy:ok?1:0, note: ok?"negation parsed":"two negatives, one wrong button"}); });
+      field.appendChild(btn); });
+  }};};}
+
+function flankerFactory(){ return function(rng){
+  return {
+  id:"flanker", title:"Trap — Flanker Swarm",
+  instruction:"Which way does the CENTER arrow point? Ignore the swarm around it.",
+  subnote:"First click per round is final.",
+  timeout:60,
+  mount(play, done){
+    let round=0, correct=0; const stage=el("div"); stage.style.cssText="text-align:center;padding:26px 0;"; play.appendChild(stage);
+    const show=()=>{ if(round>=3){ done({solved:correct>=2, accuracy:correct/3, note:correct+"/3 rounds"}); return; }
+      stage.innerHTML=""; const dir=rng.chance(0.5)?"◀":"▶"; const fl=rng.chance(0.5)?"◀":"▶";
+      const row=el("div"); row.style.cssText="font-size:64px;letter-spacing:10px;margin-bottom:26px;";
+      const mid=el("span",null,dir); mid.style.cssText="color:var(--green);font-size:92px;";
+      row.innerHTML=""; [fl,fl].forEach(a=>{ const s=el("span",null,a); s.style.color="var(--dim)"; row.appendChild(s); });
+      row.appendChild(mid);
+      [fl,fl].forEach(a=>{ const s=el("span",null,a); s.style.color="var(--dim)"; row.appendChild(s); });
+      stage.appendChild(row);
+      const bL=el("button","bigbtn","◀ LEFT"); bL.style.cssText+="margin:0 10px;";
+      const bR=el("button","bigbtn","RIGHT ▶"); bR.style.cssText+="margin:0 10px;";
+      const judge=(k)=>{ if((k==="L"&&dir==="◀")||(k==="R"&&dir==="▶")) correct++; round++; setTimeout(show,400); };
+      bL.addEventListener("click", ()=>judge("L")); bR.addEventListener("click", ()=>judge("R"));
+      stage.append(bL,bR); };
+    show();
+  }};};}
+
+function fakeDialogFactory(){ return function(rng){
+  return {
+  id:"fake-dialog", title:"Trap — Fake System Dialog",
+  instruction:"Close the pop-up dialog.",
+  subnote:"First click is final. Not everything that looks like a system button is one.",
+  timeout:40,
+  mount(play, done){
+    const dlg=el("div","fakedlg");
+    dlg.style.left=rng.range(8,50)+"%"; dlg.style.top=rng.range(4,28)+"%";
+    dlg.innerHTML="<div class='bar'><span>System Notice</span><button class='x'>✕</button></div>"+
+      "<div class='body'><b>Your test session needs attention.</b><br>Click OK to continue, or dismiss this message.</div>"+
+      "<div class='row'><button class='dismiss'>Dismiss</button><button class='ok'>OK</button></div>";
+    play.appendChild(dlg);
+    dlg.querySelector(".dismiss").addEventListener("click", ()=>done({solved:true, accuracy:1, note:"found the real dismiss"}));
+    dlg.querySelector(".ok").addEventListener("click", ()=>done({solved:false, accuracy:0, note:"took the shiny OK bait"}));
+    dlg.querySelector(".x").addEventListener("click", ()=>done({solved:false, accuracy:0, note:"the big red X was the decoy"}));
+  }};};}
+
+function keyNotShownFactory(){ return function(rng){
+  const SETS=[["A","B","D","F","G"],["J","K","L","M","N"],["Q","W","E","R","T"]];
+  const set=rng.pick(SETS); const missing=rng.pick(set); const shown=set.filter(k=>k!==missing);
+  return {
+  id:"key-not-shown", title:"Trap — The Key You Don't See",
+  instruction:"Press the key you do NOT see. The keys in play are: "+set.join(" ")+".",
+  subnote:"Type it on the keyboard. A shown key is a wrong key.",
+  timeout:40,
+  mount(play, done){
+    const row=el("div"); row.style.cssText="text-align:center;padding:30px 0;";
+    shown.forEach(k=>{ const s=el("span","keycap",k); row.appendChild(s); });
+    play.appendChild(row); let errors=0;
+    const onKey=(e)=>{ const k=e.key.toUpperCase(); if(!set.includes(k)) return;
+      if(k===missing){ document.removeEventListener("keydown", onKey); done({solved:true, accuracy:Math.max(0.3,1-0.25*errors), note:(errors?"after "+errors+" wrong key"+(errors>1?"s":""):"first key")}); }
+      else { errors++; logEvent("key-wrong",{key:k,errors}); } };
+    document.addEventListener("keydown", onKey);
+  }};};}
+
+function countCatsFactory(){ return function(rng){
+  const n=rng.int(3,7);
+  return {
+  id:"count-cats", title:"Trap — Count Under Distraction",
+  instruction:"Count only the cats. The other animals are noise, and the counter in the corner lies.",
+  subnote:"First click is final.",
+  timeout:60,
+  mount(play, done){
+    const field=el("div"); field.style.cssText="position:relative;min-height:56vh;overflow:hidden;"; play.appendChild(field);
+    const badge=el("div",null,"Animals seen: "+(n+rng.int(4,9))); badge.style.cssText="position:absolute;right:14px;top:6px;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:13px;color:var(--dim);z-index:5;";
+    field.appendChild(badge);
+    const others=["🐶","🦊","🐰","🐻"]; const sprites=[];
+    const mk=(em)=>{ const s=el("span",null,em); s.style.cssText="position:absolute;font-size:44px;left:"+rng.range(4,86)+"%;top:"+rng.range(8,80)+"%;"; field.appendChild(s); sprites.push(s); return s; };
+    for(let i=0;i<n;i++) mk("🐱"); for(let i=0;i<rng.int(4,7);i++) mk(rng.pick(others));
+    const move=setInterval(()=>{ sprites.forEach(s=>{ s.style.left=Math.max(0,Math.min(88, parseFloat(s.style.left)+(rng.next()*14-7)))+"%";
+      s.style.top=Math.max(2,Math.min(82, parseFloat(s.style.top)+(rng.next()*10-5)))+"%"; }); }, 500);
+    setTimeout(()=>{ clearInterval(move); field.innerHTML="";
+      const q=el("div",null,"How many cats appeared?"); q.style.cssText="text-align:center;font-size:26px;font-weight:700;padding:24px 0 10px;"; field.appendChild(q);
+      const opts=rng.shuffle([n, n+1, Math.max(1,n-1), n+2]);
+      const row=el("div"); row.style.cssText="display:flex;gap:14px;justify-content:center;";
+      opts.forEach(v=>{ const b=el("button","bigbtn", String(v)); b.addEventListener("click", ()=>{
+        done({solved:v===n, accuracy:v===n?1:0, note: v===n? ("counted "+n) : ("said "+v+" — it was "+n)}); });
+        row.appendChild(b); });
+      field.appendChild(row); }, 6500);
+  }};};}
+
+function confirmshameFactory(){ return function(rng){
+  return {
+  id:"confirmshame", title:"Trap — Confirmshame",
+  instruction:"Decline the upgrade and keep testing. Do not touch the checkbox.",
+  subnote:"First click on a button is final — but touching the checkbox costs accuracy.",
+  timeout:40,
+  mount(play, done){
+    const card=el("div"); card.style.cssText="max-width:520px;margin:20px auto;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px;text-align:center;";
+    card.innerHTML="<div style='font-size:22px;font-weight:700;margin-bottom:8px;'>Your test storage is almost full!</div>"+
+      "<div style='color:var(--dim);margin-bottom:16px;'>Upgrade now to keep your runs safe.</div>"+
+      "<label style='display:block;margin:10px 0;color:var(--dim);font-size:14px;'><input type='checkbox' checked id='csbox'> Also email me offers</label>";
+    const yes=el("button","bigbtn","YES, UPGRADE NOW");
+    yes.style.cssText+="width:100%;background:linear-gradient(180deg,#ffb547,#ff8c1a);color:#1a1005;border:none;margin-top:8px;";
+    const no=el("button"); no.textContent="no, keep testing";
+    no.style.cssText="background:none;border:none;color:var(--dim);font-size:12.5px;text-decoration:underline;margin-top:14px;";
+    card.append(yes,no); play.appendChild(card);
+    let cbErr=0;
+    card.querySelector("#csbox").addEventListener("change", e=>{ if(e.target.checked!==false) { cbErr=0.3; logEvent("checkbox-touched",{}); } });
+    yes.addEventListener("click", ()=>done({solved:false, accuracy:0, note:"took the glowing YES"}));
+    no.addEventListener("click", ()=>done({solved:true, accuracy:1-cbErr, note: cbErr?"declined (checkbox touched)":"declined cleanly"}));
+  }};};}
+
+function sideswipeFactory(){ return function(rng){
+  return {
+  id:"sideswipe", title:"Trap — Sideswipe",
+  instruction:"RED dot → LEFT button. BLUE dot → RIGHT button. The dot's side means nothing.",
+  subnote:"First click per round is final.",
+  timeout:60,
+  mount(play, done){
+    let round=0, correct=0; const stage=el("div"); stage.style.cssText="position:relative;min-height:46vh;"; play.appendChild(stage);
+    const show=()=>{ if(round>=3){ done({solved:correct>=2, accuracy:correct/3, note:correct+"/3 rounds"}); return; }
+      stage.innerHTML="";
+      const color=rng.chance(0.5)?"red":"blue"; const side=rng.chance(0.5)?"left":"right";
+      const dot=el("div"); dot.style.cssText="position:absolute;width:54px;height:54px;border-radius:50%;background:"+(color==="red"?"var(--red)":"var(--blue)")+";"+
+        (side==="left"?"left:12%;":"right:12%;")+"top:26%;box-shadow:0 0 22px rgba(255,255,255,.25);";
+      stage.appendChild(dot);
+      const bL=el("button","bigbtn","◀ LEFT"); bL.style.cssText+="position:absolute;left:10%;bottom:16%;";
+      const bR=el("button","bigbtn","RIGHT ▶"); bR.style.cssText+="position:absolute;right:10%;bottom:16%;";
+      const judge=(k)=>{ const want=color==="red"?"L":"R"; if(k===want) correct++; round++; setTimeout(show,400); };
+      bL.addEventListener("click", ()=>judge("L")); bR.addEventListener("click", ()=>judge("R"));
+      stage.append(bL,bR); };
+    show();
+  }};};}
+
+function typeExactFactory(){ return function(rng){
+  const chars="ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+  let s=""; for(let i=0;i<rng.int(10,14);i++) s+=chars[rng.int(0,chars.length-1)];
+  return {
+  id:"type-exact", title:"Typing — Exact String",
+  instruction:"Type this string exactly, then submit.",
+  timeout:60,
+  mount(play, done){
+    const wp=el("div","wp",""); wp.style.textAlign="center"; wp.style.fontFamily="ui-monospace,Menlo,Consolas,monospace"; wp.style.fontSize="30px"; wp.textContent=s;
+    play.appendChild(wp);
+    const row=el("div","answerRow");
+    const input=el("input"); input.id="ansInput"; input.type="text"; input.placeholder="type it exactly";
+    input.style.width="380px"; input.style.fontFamily="ui-monospace,Menlo,Consolas,monospace";
+    const submit=el("button","bigbtn","Submit"); submit.style.fontSize="20px";
+    let errors=0;
+    const tryIt=()=>{ if(input.value===s){ done({solved:true, accuracy:Math.max(0.3,1-0.2*errors), note:(errors?"after "+errors+" miss"+(errors>1?"es":""):"first try")}); }
+      else { errors++; input.value=""; input.placeholder="not exact — again"; logEvent("type-wrong",{errors}); } };
+    submit.addEventListener("click", tryIt);
+    input.addEventListener("keydown", e=>{ if(e.key==="Enter") tryIt(); });
+    row.append(input, submit); play.appendChild(row); setTimeout(()=>input.focus(),200);
+  }};};}
+
+/* ---------------- roster + pool ---------------- */
+const ROSTER=[ sliderFactory(false), clickSeriesFactory(false), stroopFactory(false), chessFactory(false),
+  notButtonFactory(), simonFactory(), ruleChangeFactory(), stroopFactory(true),
+  wordProblemFactory(false), fakeDialogFactory(), keyNotShownFactory(), captureFactory(false) ];
+const POOL=[ ...ROSTER,
+  sliderFactory(true), clickSeriesFactory(true), chessFactory(true), wordProblemFactory(true), captureFactory(true),
+  doubleNegativeFactory(), flankerFactory(), countCatsFactory(), confirmshameFactory(), sideswipeFactory(), typeExactFactory() ];
+</script>
+</body>
+</html>
