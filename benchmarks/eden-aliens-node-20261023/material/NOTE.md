@@ -47,3 +47,31 @@ Shaded down per my calibration history (my past material MATCH ran about 2 point
 6. **Foot darkening is subtle;** the feet still read flatter than the ref's barky roots.
 
 STOPPED for the full material panel (cats 1–9).
+
+---
+# MATERIALS-FINAL-2 addendum (2026-10-25). Gated target: the micro-surface layer (Cats 6 and 7)
+
+Geometry, horns, massing and colour palette are frozen. Same node tree, **43,584 tris**. Captures are in `captures-final2/`, with identical staging (the FINAL-1 set stays in `captures/`).
+
+## What changed
+1. **Normal map (new, `aliens_node_normal.png`, 2K, tangent space; exported as glTF `normalTexture`, tangents ON).**
+   - Baked on the CPU (Cycles, light job) from a procedural height evaluated at world position. No generated images.
+   - **Flesh:** two-scale round pitting (voronoi F1, 95 and 300 scale) plus a faint grain. Deliberate and sparse, not mottled.
+   - **Feet:** bark fissures. Ridged noise lines run in cylindrical coordinates (angle and height around the body axis), so they follow the roots.
+   - **Horns:** lengthwise bark fissures from Z-stretched ridged noise.
+   - **Pods:** flat (glassy). Gated by an uneroded pod region so the domes take no pits.
+2. **Pore-scale detail in the colour and roughness maps.** The same baked height (`aliens_node_height.png`) darkens the base colour by up to 14% and raises roughness by up to 0.10 in the pits and fissures. It's one coherent pattern shared by the normal, colour and roughness maps.
+3. **UV atlas repacked.** Concave pack with rotation and a 0.002 margin: coverage went from **26% to 46%**, nearly doubling texel density. The base maps were re-rasterised on the new layout.
+4. `aliens_node_region.png` (R = pod, G = horn, B = foot) is shipped as a reproducibility aid. The GLB doesn't use it.
+
+Pod translucency (the Cat 8 watch item) was **not** attempted. The pods are unchanged.
+
+## Self-scores, gated categories (from `captures-final2/`: `mat-base-34`, `mat-horns`, `mat-pods-front`, compare)
+| Cat | MATCH | QUALITY | Evidence |
+|---|---|---|---|
+| 6 Bump/normal | 4.5 | 5.0 | Fine pitting reads on the lit flesh in `mat-pods-front` and `mat-base-34`. The horns carry lengthwise bark fissures. The pods stay glassy. The foot fissures meander like contour lines rather than running strictly along each root, and the pitting gets faint at full-body distance. |
+| 7 Texture maps | 4.5 | 5.0 | Atlas density has nearly doubled. Colour and roughness now carry pore and fissure detail that matches the normal map, with no grime noise. The base colour is still vertex-interpolated at the macro scale, so it carries no hand-painted variation like the ref's speckle. |
+
+Calibrated down per my history (material MATCH used to run high against the panel).
+
+STOPPED for the Cats 6 and 7 spot re-panel.

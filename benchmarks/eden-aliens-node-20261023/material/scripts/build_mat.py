@@ -24,7 +24,7 @@ for o in [x for x in bpy.data.objects if x.type=='MESH']:
     cav=np.clip(-hF/(0.8*el),0,1); cav=lap(cav[:,None],E,deg,8)[:,0]; cav=np.clip(cav*2.6,0,1)**0.8     # smoothed concavity (no AO speckle)
     hL=np.einsum('ij,ij->i',P-lap(P,E,deg,30),N); cvx=np.clip(hL/0.02,0,1)
     up=np.clip(Nw[:,2],-1,1); top=np.clip(0.55*cvx+0.45*np.clip(up,0,1),0,1); under=np.clip(-up*0.8+np.clip((0.25-W[:,2])/0.25,0,1)*0.5,0,1)
-    horn=np.zeros(nv); pod=np.zeros(nv); podc=np.zeros(nv)
+    horn=np.zeros(nv); pod=np.zeros(nv); podc=np.zeros(nv); pod_raw=np.zeros(nv)
     if o.name.startswith('foot'): cav=np.clip(cav*1.4,0,1); under=np.clip(under+0.35*np.clip(-up,0,1)+0.25,0,1)
     if o.name=='body':
         for hx,hy in HAX:
@@ -40,6 +40,7 @@ for o in [x for x in bpy.data.objects if x.type=='MESH']:
             u=q.popleft()
             for w in adj[u]:
                 if pod_v[w] and dist[w]>dist[u]+1: dist[w]=dist[u]+1; q.append(w)
+        pod_raw=lap(pod_v.astype(float)[:,None],E,deg,3)[:,0]
         for _ in range(2):   # erode 2 rings so rims never glow
             b=[i for i in np.where(pod_v)[0] if any(not pod_v[j] for j in adj[i])]; pod_v=pod_v.copy(); pod_v[b]=False
         podc=np.where(pod_v,np.clip(dist/7,0,1),0); podc=lap(podc[:,None],E,deg,6)[:,0]*pod_v
@@ -54,7 +55,7 @@ for o in [x for x in bpy.data.objects if x.type=='MESH']:
     rough=(0.55-0.12*top+0.15*cav)*(1-horn)+0.42*horn; rough=rough*(1-pod)+0.10*pod
     ao=1-0.45*cav; ao=ao*(1-pod)+1.0*pod
     em=C_EM[None]*(pod*(0.15+0.85*podc**1.3))[:,None]
-    fields[o.name]=dict(base=base,orm=np.stack([ao,rough,np.zeros(nv)],1),em=em)
+    fields[o.name]=dict(base=base,orm=np.stack([ao,rough,np.zeros(nv)],1),em=em,reg=np.stack([np.clip(pod_raw*2.5,0,1),horn,np.full(nv,1.0 if o.name.startswith('foot') else 0.0)],1))
     print('FIELDS',o.name,nv,'pod',int(pod_v.sum()) if o.name=='body' else 0,'horn>0.5',int((horn>0.5).sum()))
 # ---- UVs: one shared atlas
 bpy.ops.object.select_all(action='DESELECT')
@@ -63,10 +64,10 @@ for x in ms: x.select_set(True)
 bpy.context.view_layer.objects.active=ms[0]
 bpy.ops.object.mode_set(mode='EDIT'); bpy.ops.mesh.select_all(action='SELECT')
 bpy.ops.uv.smart_project(angle_limit=math.radians(60),island_margin=0.004,area_weight=0.0,scale_to_bounds=False)
-bpy.ops.uv.pack_islands(margin=0.004)
+bpy.ops.uv.pack_islands(rotate=True,shape_method='CONCAVE',margin_method='FRACTION',margin=0.002)
 bpy.ops.object.mode_set(mode='OBJECT')
 # ---- raster per-vertex fields into UV space
-img={k:np.zeros((RES,RES,3)) for k in ('base','orm','em')}; cov=np.zeros((RES,RES),bool)
+img={k:np.zeros((RES,RES,3)) for k in ('base','orm','em','reg')}; cov=np.zeros((RES,RES),bool)
 for o in ms:
     me=o.data; uvl=me.uv_layers.active.data; F=fields[o.name]
     loops=np.empty(len(me.loops),np.int32); me.loops.foreach_get('vertex_index',loops)
@@ -100,7 +101,7 @@ def save(name,arr,srgb):
     px=np.concatenate([l2s(arr) if srgb else np.clip(arr,0,1),np.ones((RES,RES,1))],2)
     im.pixels.foreach_set(px.ravel().astype(np.float32)); im.filepath_raw=OUT+'\\'+name+'.png'; im.file_format='PNG'; im.save()
     im.colorspace_settings.name='sRGB' if srgb else 'Non-Color'; return im
-I_B=save('aliens_node_basecolor',img['base'],True); I_O=save('aliens_node_orm',img['orm'],False); I_E=save('aliens_node_emissive',img['em'],True)
+I_B=save('aliens_node_basecolor',img['base'],True); I_O=save('aliens_node_orm',img['orm'],False); I_E=save('aliens_node_emissive',img['em'],True); I_R=save('aliens_node_region',img['reg'],False)
 # ---- Principled material + glTF occlusion output
 mat=bpy.data.materials.new('aliens_node'); mat.use_nodes=True; nt=mat.node_tree; Nn=nt.nodes; L=nt.links
 bs=Nn['Principled BSDF']
