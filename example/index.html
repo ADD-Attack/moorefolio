@@ -4,14 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Christopher Moore | Websites &amp; Booking for Contractors, Kansas City</title>
-<meta name="description" content="Christopher Moore builds websites and online scheduling for contractors in Kansas City. One fictional lawn-care business, shown in three complete website formats — Classic, Glass, and Swiss. Pick yours.">
+<meta name="description" content="Christopher Moore builds websites, online scheduling, and advertising for contractors in Kansas City. His services, shown in three complete website formats — Classic, Glass, and Swiss. Pick yours.">
 <meta name="theme-color" content="#14161a">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Christopher Moore — Websites &amp; booking for contractors">
-<meta property="og:description" content="One business. Three website formats. Pick yours.">
+<meta property="og:description" content="One service. Three website formats. Pick yours.">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Christopher Moore">
-<meta name="twitter:description" content="Websites and booking for contractors, Kansas City. One business, three formats.">
+<meta name="twitter:description" content="Websites, booking, and ads for contractors, Kansas City. One service, three formats.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
@@ -31,13 +31,13 @@
   },
   "address": { "@type": "PostalAddress", "addressLocality": "Kansas City", "addressRegion": "MO", "addressCountry": "US" },
   "areaServed": ["Kansas City, MO", "Kansas City, KS", "Overland Park, KS", "Shawnee, KS", "Lenexa, KS", "Olathe, KS", "the Kansas City metro"],
-  "description": "One-person website and scheduling production for contractors and trades businesses in Kansas City: contractor websites, online scheduling and booking setup, website redesigns, and ongoing site care and updates.",
+  "description": "One-person website, scheduling, and advertising production for contractors and trades businesses in Kansas City: contractor websites, online scheduling and booking setup, and advertising runs across Nextdoor, Facebook, Instagram, LinkedIn, and TikTok.",
   "makesOffer": [
     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Contractor website design and build" } },
     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online scheduling and booking setup" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website redesigns" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website care and updates" } },
-    { "@type": "Offer", "price": "25", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising management across Nextdoor, Facebook, Instagram, LinkedIn, and TikTok — add-on service, up to 4,000 views per run" } }
+    { "@type": "Offer", "price": "25", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising run — up to 2,000 views, 2D ads" } },
+    { "@type": "Offer", "price": "50", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising run — up to 8,000 views, 2D ads plus free 3D video ads" } },
+    { "@type": "Offer", "price": "100", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising run — up to 16,000 views, 2D ads plus free 3D video ads" } }
   ]
 }
 </script>
@@ -120,6 +120,14 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .cl-stat b{display:block;font-family:var(--fd);font-size:1.45rem;font-weight:600;color:#fff;line-height:1.1}
 .cl-stat span{font-size:.83rem;color:var(--tx-inv-dim)}
 @media(max-width:760px){.cl-stats .cl-in{grid-template-columns:1fr 1fr}}
+.cl-tiersband{background:var(--ink);color:var(--tx-inv);padding:2.2rem 0 2.4rem}
+.cl-tiers-k{font-family:var(--mono);font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);margin-bottom:1.2rem}
+.cl-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+@media(max-width:700px){.cl-tiers{grid-template-columns:1fr;gap:1.2rem}}
+.cl-tier b{display:block;font-family:var(--fd);font-weight:700;font-size:2.1rem;color:#fff;line-height:1}
+.cl-tier .v{display:block;font-family:var(--fd);font-weight:600;font-size:1.02rem;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin-top:.35rem}
+.cl-tier .n{display:block;font-size:.88rem;color:var(--tx-inv-dim);margin-top:.3rem}
+.cl-tier .bdg{display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:var(--amber);color:#1a1305;border-radius:99px;padding:.22rem .6rem;margin-top:.55rem}
 .cl-sec{padding:3.6rem 0}
 .cl-sec.alt{background:var(--paper2)}
 .cl-kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
@@ -166,7 +174,7 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .g-logo small{display:block;font-family:var(--mono);font-weight:500;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:#a7f3c9}
 .g-nav nav{margin-left:auto;display:flex;gap:1.4rem;font-size:.9rem;color:rgba(238,247,238,.85)}
 @media(max-width:700px){.g-nav nav{display:none}}
-.g-call{flex:none;margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.86rem;padding:.45rem 1rem;border-radius:99px}
+.g-call{flex:none;margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.86rem;padding:.45rem 1rem;border-radius:99px;text-decoration:none}
 .g-nav nav + .g-call{margin-left:0}
 .g-hero{position:relative;padding:3.4rem 0 0;min-height:340px}
 .g-orb{position:absolute;right:4%;top:2.4rem;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e4ffb8,#57d977 46%,#1d7a4c 80%);opacity:.92;box-shadow:0 0 90px rgba(87,217,119,.45)}
@@ -247,6 +255,7 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .sw-book .ph{background:#e30613;color:#fff;padding:1.5rem 1.6rem;display:flex;flex-direction:column;justify-content:center;gap:.3rem}
 .sw-book .ph .lbl{font-size:.68rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
 .sw-book .ph .num{font-weight:900;font-size:clamp(1.6rem,4.4vw,2.7rem);line-height:1;white-space:nowrap}
+.sw-book .ph .num.mail{font-size:clamp(1rem,2.4vw,1.5rem);white-space:normal;word-break:break-all;line-height:1.2}
 .sw-book .ph .hrs{font-size:.82rem;font-weight:700;letter-spacing:.08em}
 .sw-steps{grid-column:1/9;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;border-top:2px solid #111;padding-top:.8rem}
 @media(max-width:820px){.sw-steps{grid-column:1/13}}
@@ -271,12 +280,17 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .ads .kicker::before{content:"";width:30px;height:2px;background:currentColor}
 .ads h2{font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;font-size:clamp(1.8rem,4vw,2.6rem);margin:.7rem 0 .8rem}
 .ads .sub{font-family:var(--serif);font-size:1.1rem;color:var(--tx-dim);max-width:62ch}
-.ads-offer{display:flex;flex-wrap:wrap;align-items:center;gap:1.2rem 2.2rem;margin-top:2.2rem;background:var(--card);border:2px solid var(--amber);border-radius:var(--r);padding:1.8rem;box-shadow:var(--sh)}
-.ads-price{font-size:clamp(2.6rem,6vw,3.6rem);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
-.ads-price small{display:block;font-size:.95rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--amber2);margin-top:.4rem}
-.ads-fine{font-size:.86rem;color:var(--tx-dim);margin-top:.45rem}
-.ads-cta{flex:none}
-.ads-logos{flex:1 1 100%;display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:1.1rem}
+.ads-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.2rem}
+@media(max-width:820px){.ads-tiers{grid-template-columns:1fr}}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.7rem 1.5rem;box-shadow:0 8px 22px rgba(20,18,10,.07);display:flex;flex-direction:column}
+.tier.hot{border:2px solid var(--amber);box-shadow:var(--sh)}
+.tier .tp{font-size:clamp(2.4rem,5vw,3.2rem);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.tier .tv{display:block;font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber2);margin-top:.5rem}
+.tier ul{list-style:none;margin:1rem 0 1.4rem;display:grid;gap:.45rem;font-size:.95rem;color:var(--tx-dim)}
+.tier .bdg{display:inline-block;font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--amber);color:#1a1305;border-radius:99px;padding:.24rem .6rem}
+.tier .btn{margin-top:auto;justify-content:center}
+.ads-fine{font-size:.86rem;color:var(--tx-dim);margin-top:1rem}
+.ads-logos{display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:1.6rem;padding-top:1.1rem}
 .ads-logo{display:inline-flex;line-height:0}
 .ads-logo svg{display:block}
 .ads-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2.2rem}
@@ -331,91 +345,96 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
       <span class="fmark" aria-hidden="true">CM</span>
       <span class="fname">Christopher Moore<small>Websites &amp; Booking · Contractors · Kansas City</small></span>
     </a>
-    <p class="ftag">One business. Three formats. Pick yours.</p>
+    <p class="ftag">One service. Three formats. Pick yours.</p>
     <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
   </div>
 </header>
 
 <main>
-<h1 class="sr-only">Christopher Moore — Websites and booking for contractors, Kansas City. One business, three formats.</h1>
+<h1 class="sr-only">Christopher Moore — Websites, booking, and advertising for contractors, Kansas City. One service, three formats.</h1>
 <div id="stage" data-active-format="classic">
 
   <!-- ================= FORMAT 1 · CLASSIC (the original design) ================= -->
   <section class="format fmt-classic active" id="panel-classic" data-format="classic" role="tabpanel" aria-labelledby="tab-classic" tabindex="0">
     <div class="cl-bar">
       <div class="cl-in">
-        <div class="cl-logo">GreenScape<small>Lawn Care · Kansas City</small></div>
-        <nav aria-hidden="true"><span>Services</span><span>Booking</span><span>About</span><span>Contact</span></nav>
-        <a class="btn btn-amber" href="tel:+18165550147">Book a mowing</a>
+        <div class="cl-logo">Christopher Moore<small>Websites &amp; Booking · Kansas City</small></div>
+        <nav aria-hidden="true"><span>Services</span><span>How it works</span><span>Advertising</span><span>Contact</span></nav>
+        <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
       </div>
     </div>
 
     <div class="cl-in cl-hero">
-      <p class="cl-eyebrow">GreenScape Lawn Care · Kansas City</p>
-      <h2 class="cl-h">A yard that handles <em>itself.</em></h2>
-      <p class="cl-lede">Weekly mowing, leaf cleanup, and aeration — booked online in under a minute, confirmed by text, done while you're at work. You come home to stripes.</p>
+      <p class="cl-eyebrow">Christopher Moore · Kansas City</p>
+      <h2 class="cl-h">Websites that book <em>jobs.</em></h2>
+      <p class="cl-lede">I design and build contractor websites, set up online scheduling so customers book themselves in, and run the ads that keep the phone ringing. One person, start to finish — the one who answers is the one who builds.</p>
       <div class="cl-ctas">
-        <a class="btn btn-amber" href="tel:+18165550147">Book a mowing</a>
-        <a class="btn btn-dark" href="tel:+18165550147">Call (816) 555-0147</a>
+        <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+        <a class="btn btn-dark" href="#advertising">See the ad tiers</a>
       </div>
       <figure class="cl-fig">
-        <img src="assets/sites-workbench.jpg" alt="The GreenScape website on a laptop and phone, resting on a workbench" loading="lazy">
-        <figcaption>Booked from the couch, the truck, or the sideline — the site works where you are.</figcaption>
+        <img src="assets/sites-workbench.jpg" alt="A contractor website on a laptop and phone, resting on a workbench" loading="lazy">
+        <figcaption>Your customers book from the couch, the truck, or the job site — the site works where they are.</figcaption>
       </figure>
     </div>
 
     <div class="cl-stats">
       <div class="cl-in">
-        <div class="cl-stat"><b>24/7</b><span>booking — even at midnight</span></div>
-        <div class="cl-stat"><b>60 sec</b><span>to book a mowing, start to finish</span></div>
-        <div class="cl-stat"><b>4</b><span>services on one weekly route</span></div>
-        <div class="cl-stat"><b>KC</b><span>metro — both sides of the river</span></div>
+        <div class="cl-stat"><b>24/7</b><span>online booking — customers book while you work</span></div>
+        <div class="cl-stat"><b>3</b><span>services — website, scheduling, advertising</span></div>
+        <div class="cl-stat"><b>5</b><span>ad platforms — Nextdoor through TikTok</span></div>
+        <div class="cl-stat"><b>1</b><span>person — you deal with the builder directly</span></div>
       </div>
     </div>
 
     <div class="cl-sec">
       <div class="cl-in">
         <p class="cl-kicker">Services</p>
-        <h2 class="cl-h2">The route, covered</h2>
-        <p class="cl-sub">Four services, one small crew, one standing route — the yard stays handled from the first cut of spring to the last leaf of fall.</p>
+        <h2 class="cl-h2">Three services, one builder</h2>
+        <p class="cl-sub">Everything a contractor needs to get found, get booked, and stay booked — built and run by one person.</p>
         <div class="cl-svcs">
           <article class="cl-svc">
-            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21c0-6 1-10 5-14M12 21c-4-1-7-4-7-9 4 0 7 2 8 5M12 21c1-5 4-8 9-9-1 5-4 8-9 9z"/></svg></div>
-            <h3>Weekly Mowing</h3>
-            <p>A standing weekly route — cut, edge, blow-off, same day every week. Your yard never gets away from you.</p>
-            <span class="tag">Every week · Apr–Nov</span>
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
+            <h3>Contractor Websites</h3>
+            <p>A site built for a trade business: your services, your service area, and one clear next step on every page — made to be found by the customers near you.</p>
+            <span class="tag">Designed · Built · Live</span>
           </article>
           <article class="cl-svc">
-            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18c5 0 12-1 16-5-5 0-12 1-16 5zM4 18c2-4 6-8 11-10M6 21h12"/></svg></div>
-            <h3>Leaf Cleanup</h3>
-            <p>Full-yard leaf removal and gutter-line clearing in the fall — curbside or hauled, your call.</p>
-            <span class="tag">Every fall</span>
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 16l2 2 4-4"/></svg></div>
+            <h3>Online Scheduling &amp; Booking</h3>
+            <p>Customers pick a job slot themselves. Confirmations and reminders go out automatically, and every booking lands on your calendar — no phone tag.</p>
+            <span class="tag">Bookings · Reminders · Calendar</span>
           </article>
           <article class="cl-svc">
-            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="17" cy="7" r="1.4"/><circle cx="7" cy="17" r="1.4"/><circle cx="17" cy="17" r="1.4"/><circle cx="12" cy="20" r="1.2"/></svg></div>
-            <h3>Aeration &amp; Seeding</h3>
-            <p>Core aeration pulls the plugs, seed goes down, and thin spots fill in thicker by spring.</p>
-            <span class="tag">Spring + fall</span>
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 16 0M4 11v5a2 2 0 0 0 2 2h1v-9H6a2 2 0 0 0-2 2zM20 11v5a2 2 0 0 1-2 2h-1v-9h1a2 2 0 0 1 2 2zM18 18a4 4 0 0 1-4 3h-2"/></svg></div>
+            <h3>Advertising Runs</h3>
+            <p>Ads on Nextdoor, Facebook, Instagram, LinkedIn, and TikTok — written, placed, and watched by me, in flat-priced runs from $25.</p>
+            <span class="tag">Five platforms</span>
           </article>
-          <article class="cl-svc">
-            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M4 10c3-5 8-7 12-6 0 4-2 7-6 8M4 14c2-3 5-4 8-4M20 20H4"/></svg></div>
-            <h3>Hedge Trimming</h3>
-            <p>Shaped, squared, or just tamed — hedges and shrubs trimmed back to neat, clippings gone.</p>
-            <span class="tag">As needed</span>
-          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-tiersband">
+      <div class="cl-in">
+        <p class="cl-tiers-k">Advertising runs — flat prices</p>
+        <div class="cl-tiers">
+          <div class="cl-tier"><b>$25</b><span class="v">2,000 views</span><span class="n">2D ads, written &amp; placed for you</span></div>
+          <div class="cl-tier"><b>$50</b><span class="v">8,000 views</span><span class="n">2D ads, written &amp; placed for you</span><span class="bdg">Free 3D video ads</span></div>
+          <div class="cl-tier"><b>$100</b><span class="v">16,000 views</span><span class="n">2D ads, written &amp; placed for you</span><span class="bdg">Free 3D video ads</span></div>
         </div>
       </div>
     </div>
 
     <div class="cl-sec alt">
       <div class="cl-in">
-        <p class="cl-kicker">Booking</p>
-        <h2 class="cl-h2">Booked in under a minute</h2>
-        <p class="cl-sub">No phone tag, no waiting on a callback. Three steps and the job is on the route.</p>
+        <p class="cl-kicker">How it works</p>
+        <h2 class="cl-h2">From first email to booked jobs</h2>
+        <p class="cl-sub">No sales team, no ticket queue. Three steps and your customers are booking themselves in.</p>
         <div class="cl-steps">
-          <article class="cl-step"><h3>Pick your day</h3><p>Choose the service and a slot online — no phone tag.</p></article>
-          <article class="cl-step"><h3>Get the text</h3><p>A confirmation lands instantly, with a reminder the day before.</p></article>
-          <article class="cl-step"><h3>We mow</h3><p>The crew shows up on schedule. You don't have to be home.</p></article>
+          <article class="cl-step"><h3>One conversation</h3><p>Tell me your trade, your service area, and what a good week looks like.</p></article>
+          <article class="cl-step"><h3>I build &amp; connect</h3><p>Your website goes live and scheduling is wired straight to your calendar.</p></article>
+          <article class="cl-step"><h3>Jobs book themselves</h3><p>Customers book online, reminders go out on their own, and ads keep new names coming in.</p></article>
         </div>
       </div>
     </div>
@@ -425,33 +444,33 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
         <div class="cl-split">
           <div>
             <p class="cl-kicker">About</p>
-            <h2 class="cl-h2">A small crew, a standing promise</h2>
-            <p class="cl-pull">“Same day, same standard, every week — a route is a promise.”</p>
-            <p class="cl-sub">GreenScape is a small Kansas City crew that treats a route like a promise: same day, same standard, every week. Serving the whole KC metro — free estimates, always.</p>
+            <h2 class="cl-h2">One person, start to finish</h2>
+            <p class="cl-pull">“The one who answers is the one who builds.”</p>
+            <p class="cl-sub">Christopher Moore is a Kansas City builder who works with contractors and trades. His background is precision quality work — the same habit shows up here: measure twice, ship once. When you hire him, you get him.</p>
             <ul class="cl-checks">
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Mon–Sat · 7am–7pm — Sunday the crews rest</span></li>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Free estimates, always — the visit costs nothing</span></li>
-              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>(816) 555-0147 — a person answers, not a phone tree</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Websites designed and built for trade businesses</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Scheduling with confirmations, reminders, and calendar hookup</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Advertising runs on Nextdoor, Facebook, Instagram, LinkedIn, and TikTok</span></li>
             </ul>
           </div>
-          <div class="cl-pic"><img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour — the metro GreenScape serves" loading="lazy"></div>
+          <div class="cl-pic"><img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour — the metro Christopher works in" loading="lazy"></div>
         </div>
       </div>
     </div>
 
     <div class="cl-cta">
       <div class="cl-in">
-        <h2 class="cl-h2">Get on the route.</h2>
-        <p class="pun">Fall cleanups are open — Saturday slots go first.</p>
+        <h2 class="cl-h2">Let&rsquo;s build yours.</h2>
+        <p class="pun">Websites · Scheduling · Advertising — one email starts it.</p>
         <div class="row">
-          <span class="cl-phone">(816) 555-0147</span>
-          <a class="btn btn-amber" href="tel:+18165550147">Book a mowing</a>
+          <span class="cl-phone">Moore.chrisf@gmail.com</span>
+          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
         </div>
       </div>
     </div>
 
     <div class="cl-in">
-      <p class="credit cl-credit">Format № 01 — the original format: this page's own design before the tabs. GreenScape Lawn Care is a fictional business.</p>
+      <p class="credit cl-credit">Format № 01 — the original format: this page's own design before the tabs.</p>
     </div>
   </section>
 
@@ -460,164 +479,164 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     <canvas id="auroraCanvas" aria-hidden="true"></canvas>
     <div class="fin">
       <div class="g-nav glass-panel">
-        <div class="g-logo">GreenScape<small>Lawn Care</small></div>
-        <nav aria-hidden="true"><span>Services</span><span>Booking</span><span>About</span><span>Contact</span></nav>
-        <span class="g-call">Book a mowing</span>
+        <div class="g-logo">Christopher Moore<small>Websites &amp; Booking</small></div>
+        <nav aria-hidden="true"><span>Services</span><span>How it works</span><span>Advertising</span><span>Contact</span></nav>
+        <a class="g-call" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
       </div>
 
       <div class="g-hero">
         <div class="g-orb" aria-hidden="true"></div>
-        <p class="g-eyebrow glass-panel"><span class="dot" aria-hidden="true"></span> GreenScape Lawn Care — Kansas City</p>
-        <h2 class="g-h1">A yard that <span class="l2">handles <b>itself.</b></span></h2>
+        <p class="g-eyebrow glass-panel"><span class="dot" aria-hidden="true"></span> Christopher Moore — Kansas City</p>
+        <h2 class="g-h1">Work that <span class="l2">books <b>itself.</b></span></h2>
         <div class="g-lede glass-panel">
-          <p>Weekly mowing, leaf cleanup, and aeration — booked online in under a minute, confirmed by text, done while you're at work. You come home to stripes.</p>
+          <p>Websites, online scheduling, and advertising for contractors — designed, built, and run by one person in Kansas City. Your customers book while you're on the tools.</p>
           <div class="g-ctas">
-            <a class="g-btn" href="tel:+18165550147">Book a mowing</a>
-            <a class="g-btn2" href="tel:+18165550147">Call (816) 555-0147</a>
+            <a class="g-btn" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+            <a class="g-btn2" href="#advertising">See the ad tiers</a>
           </div>
         </div>
-        <div class="g-legend glass-panel" aria-hidden="true"><b>Now booking</b>Fall cleanups are open — Saturday slots go first.</div>
+        <div class="g-legend glass-panel" aria-hidden="true"><b>Now booking</b>New project slots for this season are open.</div>
       </div>
 
       <div class="g-cards">
         <article class="g-card glass-panel">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21c0-6 1-10 5-14M12 21c-4-1-7-4-7-9 4 0 7 2 8 5M12 21c1-5 4-8 9-9-1 5-4 8-9 9z"/></svg></div>
-          <h3>Weekly Mowing</h3>
-          <p>A standing weekly route — cut, edge, blow-off, same day every week. Your yard never gets away from you.</p>
-          <span class="cad">Every week · Apr–Nov</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
+          <h3>Contractor Websites</h3>
+          <p>A site built for a trade business — your services, your area, one clear next step on every page.</p>
+          <span class="cad">Designed · Built · Live</span>
         </article>
         <article class="g-card glass-panel">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18c5 0 12-1 16-5-5 0-12 1-16 5zM4 18c2-4 6-8 11-10M6 21h12"/></svg></div>
-          <h3>Leaf Cleanup</h3>
-          <p>Full-yard leaf removal and gutter-line clearing in the fall — curbside or hauled, your call.</p>
-          <span class="cad">Every fall</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 16l2 2 4-4"/></svg></div>
+          <h3>Scheduling &amp; Booking</h3>
+          <p>Customers pick a job slot themselves. Confirmations and reminders go out on their own; it lands on your calendar.</p>
+          <span class="cad">Bookings · Reminders · Calendar</span>
         </article>
         <article class="g-card glass-panel">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="17" cy="7" r="1.4"/><circle cx="7" cy="17" r="1.4"/><circle cx="17" cy="17" r="1.4"/><circle cx="12" cy="20" r="1.2"/></svg></div>
-          <h3>Aeration &amp; Seeding</h3>
-          <p>Core aeration pulls the plugs, seed goes down, and thin spots fill in thicker by spring.</p>
-          <span class="cad">Spring + fall</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 16 0M4 11v5a2 2 0 0 0 2 2h1v-9H6a2 2 0 0 0-2 2zM20 11v5a2 2 0 0 1-2 2h-1v-9h1a2 2 0 0 1 2 2zM18 18a4 4 0 0 1-4 3h-2"/></svg></div>
+          <h3>Advertising Runs</h3>
+          <p>Your ads on the platforms your customers actually scroll — written, placed, and watched by me.</p>
+          <span class="cad">Five platforms</span>
         </article>
         <article class="g-card glass-panel">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M4 10c3-5 8-7 12-6 0 4-2 7-6 8M4 14c2-3 5-4 8-4M20 20H4"/></svg></div>
-          <h3>Hedge Trimming</h3>
-          <p>Shaped, squared, or just tamed — hedges and shrubs trimmed back to neat, clippings gone.</p>
-          <span class="cad">As needed</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+          <h3>Ad Tiers, Flat</h3>
+          <p>$25 — 2,000 views, 2D ads. $50 — 8,000 views. $100 — 16,000 views. The $50 and $100 runs include free 3D video ads.</p>
+          <span class="cad">3D video free · $50 + $100</span>
         </article>
       </div>
 
       <div class="g-book glass-panel">
-        <h3>Booked in <b>under a minute.</b></h3>
+        <h3>Working together, <b>in three steps.</b></h3>
         <ol class="g-steps">
-          <li><span class="n" aria-hidden="true">1</span><span><b>Pick your day</b>Choose the service and a slot online — no phone tag.</span></li>
-          <li><span class="n" aria-hidden="true">2</span><span><b>Get the text</b>A confirmation lands instantly, with a reminder the day before.</span></li>
-          <li><span class="n" aria-hidden="true">3</span><span><b>We mow</b>The crew shows up on schedule. You don't have to be home.</span></li>
+          <li><span class="n" aria-hidden="true">1</span><span><b>One conversation</b>Tell me your trade, your area, and what a good week looks like.</span></li>
+          <li><span class="n" aria-hidden="true">2</span><span><b>I build &amp; connect</b>Your website goes live, scheduling wired to your calendar.</span></li>
+          <li><span class="n" aria-hidden="true">3</span><span><b>Jobs book themselves</b>Bookings and reminders run on their own; ads keep names coming in.</span></li>
         </ol>
       </div>
 
       <div class="g-about glass-panel">
-        <p><b>GreenScape is a small Kansas City crew</b> that treats a route like a promise: same day, same standard, every week. Serving the whole KC metro — free estimates, always.</p>
-        <p class="hrs">Mon–Sat · 7am–7pm<br>Sunday · Crews rest<br>(816) 555-0147</p>
+        <p><b>Christopher Moore is a one-person studio in Kansas City.</b> His background is precision quality work — measure twice, ship once. When you hire him, you get him: the one who answers is the one who builds.</p>
+        <p class="hrs">Websites · Scheduling · Ads<br>Kansas City, Missouri<br>Moore.chrisf@gmail.com</p>
       </div>
 
-      <p class="credit g-credit">Format № 02 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Aurora Glass”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</p>
+      <p class="credit g-credit">Format № 02 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Aurora Glass”</a>, from Claude Opus 5.5 · 100 HTML Files.</p>
     </div>
   </section>
 
   <!-- ================= FORMAT 3 · SWISS ================= -->
   <section class="format fmt-swiss" id="panel-swiss" data-format="swiss" role="tabpanel" aria-labelledby="tab-swiss" tabindex="0" hidden>
     <div class="sw">
-      <p class="sw-imprint" aria-hidden="true">Greenscape is a fictional business · Set in Helvetica · Kansas City</p>
+      <p class="sw-imprint" aria-hidden="true">Christopher Moore · Set in Helvetica · Kansas City</p>
       <div class="sw-top" aria-hidden="true">
-        <span>Greenscape Lawn Care</span>
+        <span>Christopher Moore</span>
         <span class="mid">Kansas City, Missouri</span>
         <span>Format <span class="r">№ 03</span> — Edition KC</span>
       </div>
 
       <div class="sw-hero">
-        <p class="sw-vert" aria-hidden="true">Care</p>
-        <h2 class="sw-lawn">Lawn</h2>
+        <p class="sw-vert" aria-hidden="true">Moore</p>
+        <h2 class="sw-lawn">Booked</h2>
         <div class="sw-subrow">
           <div class="sw-sun" aria-hidden="true"></div>
-          <p class="sw-name">GreenScape <span>Lawn Care</span></p>
+          <p class="sw-name">Christopher <span>Moore</span></p>
         </div>
       </div>
 
       <div class="sw-grid">
-        <p class="sw-intro"><b>GreenScape Lawn Care — Kansas City.</b> Weekly mowing, leaf cleanup, aeration &amp; seeding, hedge trimming. Booked online in under a minute, confirmed by text, done while you're at work. Free estimates, always.</p>
+        <p class="sw-intro"><b>Christopher Moore — Kansas City.</b> Websites and online scheduling for contractors, plus advertising runs on the social platforms. Built by one person: the one who answers is the one who builds.</p>
         <div class="sw-lang">
-          <p class="w">Mähen <i>·</i> Tondre <i>·</i> Tagliare</p>
-          <p>“To mow” — in German, French, and Italian. One word, three languages, the same job: a yard that handles itself.</p>
+          <p class="w">Buchen <i>·</i> Réserver <i>·</i> Prenotare</p>
+          <p>“To book” — in German, French, and Italian. One word, three languages, the same idea: your customers book the job themselves.</p>
         </div>
 
         <div class="sw-svcs">
           <article class="sw-svc">
             <p class="num" aria-hidden="true">01</p>
-            <h3>Weekly Mowing</h3>
-            <p>A standing weekly route — cut, edge, blow-off, same day every week.</p>
-            <p class="cad">Weekly · Apr–Nov</p>
+            <h3>Contractor Websites</h3>
+            <p>A site built for a trade business — services, area, one clear next step.</p>
+            <p class="cad">Designed · Built</p>
           </article>
           <article class="sw-svc">
             <p class="num" aria-hidden="true">02</p>
-            <h3>Leaf Cleanup</h3>
-            <p>Full-yard leaf removal in the fall — curbside or hauled, your call.</p>
-            <p class="cad">Fall</p>
+            <h3>Scheduling &amp; Booking</h3>
+            <p>Customers pick a slot; confirmations and reminders send themselves.</p>
+            <p class="cad">Calendar hookup</p>
           </article>
           <article class="sw-svc">
             <p class="num" aria-hidden="true">03</p>
-            <h3>Aeration &amp; Seeding</h3>
-            <p>Core aeration pulls the plugs; seed goes down; thin spots fill in.</p>
-            <p class="cad">Spring + Fall</p>
+            <h3>Advertising Runs</h3>
+            <p>Ads written, placed, and watched — on five social platforms.</p>
+            <p class="cad">Flat prices</p>
           </article>
           <article class="sw-svc">
             <p class="num" aria-hidden="true">04</p>
-            <h3>Hedge Trimming</h3>
-            <p>Hedges and shrubs trimmed back to neat, clippings gone.</p>
-            <p class="cad">As needed</p>
+            <h3>Ad Tiers</h3>
+            <p>$25 — 2,000 views, 2D ads. $50 — 8,000 views. $100 — 16,000 views.</p>
+            <p class="cad">3D video free · $50 + $100</p>
           </article>
         </div>
 
         <div class="sw-book">
           <div class="bk">
-            <p class="big">Book a<br>mowing</p>
-            <p>Pick the service and the day online. A text confirms it. The crew does the rest.</p>
+            <p class="big">Start a<br>project</p>
+            <p>One email starts it. Website, scheduling, and ads — built and run by one person.</p>
           </div>
           <div class="ph">
-            <span class="lbl">Telephone</span>
-            <span class="num">(816) 555-0147</span>
-            <span class="hrs">Mon–Sat · 07:00–19:00</span>
+            <span class="lbl">Email</span>
+            <span class="num mail">Moore.chrisf@gmail.com</span>
+            <span class="hrs">Kansas City, Missouri</span>
           </div>
         </div>
 
         <div class="sw-steps">
           <div class="sw-step">
             <p class="n" aria-hidden="true">1.</p>
-            <h4>Pick your day</h4>
-            <p>Choose the service and a slot online — under a minute, no phone tag.</p>
+            <h4>One conversation</h4>
+            <p>Tell me your trade, your area, and what a good week looks like.</p>
           </div>
           <div class="sw-step">
             <p class="n" aria-hidden="true">2.</p>
-            <h4>Get the text</h4>
-            <p>Confirmation lands instantly, with a reminder the day before.</p>
+            <h4>I build &amp; connect</h4>
+            <p>Your website goes live; scheduling is wired to your calendar.</p>
           </div>
           <div class="sw-step">
             <p class="n" aria-hidden="true">3.</p>
-            <h4>We mow</h4>
-            <p>The crew shows up on schedule. You don't have to be home.</p>
+            <h4>Jobs book themselves</h4>
+            <p>Bookings and reminders run on their own; ads keep names coming in.</p>
           </div>
         </div>
 
         <div class="sw-facts">
           <table>
-            <tr><td>Hours</td><td>Mon–Sat, 7:00–19:00. Sunday closed — crews rest.</td></tr>
+            <tr><td>Services</td><td>Websites, online scheduling, and advertising runs.</td></tr>
+            <tr><td>Builder</td><td>One person — Christopher Moore. You deal with the builder directly.</td></tr>
             <tr><td>Area</td><td>The Kansas City metro, both sides of the river.</td></tr>
-            <tr><td>About</td><td>A small KC crew that treats a route like a promise: same day, same standard, every week.</td></tr>
-            <tr><td>Estimates</td><td>Free. Always.</td></tr>
+            <tr><td>Ads</td><td>$25–$100 runs. Free 3D video ads at $50 and $100.</td></tr>
           </table>
         </div>
       </div>
 
-      <p class="credit sw-credit"><span>Format № 03 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Raster — Swiss Poster Machine”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</span></p>
+      <p class="credit sw-credit"><span>Format № 03 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Raster — Swiss Poster Machine”</a>, from Claude Opus 5.5 · 100 HTML Files.</span></p>
     </div>
   </section>
 
@@ -628,14 +647,38 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     <div class="wrap">
       <p class="kicker">Add-on service</p>
       <h2 id="ads-h">Advertising, run for you</h2>
-      <p class="sub">The website books the jobs; advertising puts your name in front of the neighborhood before they go looking. I run the ads for contractor clients across the platforms below — one flat price, and I front the ad spend myself, so the price you pay is the whole price. No platform bills, no ad accounts to babysit.</p>
+      <p class="sub">The website books the jobs; advertising puts your name in front of the neighborhood before they go looking. I run the ads for contractor clients across the platforms below — pick a run, and I front the ad spend myself, so the price on the card is the whole price. No platform bills, no ad accounts to babysit.</p>
 
-      <div class="ads-offer">
-        <div class="ads-price">$25<small>up to 4,000 views</small></div>
-        <div>
-          <p class="ads-fine">Up to 4,000 views depending on platform and audience — typical runs land 1,250–3,000.</p>
-        </div>
-        <div class="ads-cta"><a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising">Start a run</a></div>
+      <div class="ads-tiers">
+        <article class="tier">
+          <p class="tp">$25</p>
+          <span class="tv">2,000 views</span>
+          <ul>
+            <li>2D ads, written &amp; placed for you</li>
+            <li>One platform, your service area</li>
+          </ul>
+          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising%20run%20%E2%80%94%20%2425">Start a run</a>
+        </article>
+        <article class="tier hot">
+          <p class="tp">$50</p>
+          <span class="tv">8,000 views</span>
+          <ul>
+            <li>2D ads, written &amp; placed for you</li>
+            <li><span class="bdg">Free 3D video ads included</span></li>
+          </ul>
+          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising%20run%20%E2%80%94%20%2450">Start a run</a>
+        </article>
+        <article class="tier">
+          <p class="tp">$100</p>
+          <span class="tv">16,000 views</span>
+          <ul>
+            <li>2D ads, written &amp; placed for you</li>
+            <li><span class="bdg">Free 3D video ads included</span></li>
+          </ul>
+          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising%20run%20%E2%80%94%20%24100">Start a run</a>
+        </article>
+      </div>
+      <p class="ads-fine">View counts are up-to targets — delivery varies by platform and audience.</p>
         <div class="ads-logos" aria-label="Advertising platforms">
           <span class="ads-logo" role="img" aria-label="Nextdoor"><svg viewBox="0 0 24 24" width="26" height="26" fill="#8ED500" aria-hidden="true"><path d="M14.65 9.997a.069.069 0 0 0-.07.069v1.415c-.123-.177-.42-.37-.805-.37-.745 0-1.316.659-1.316 1.445 0 .787.571 1.447 1.316 1.447.386 0 .682-.194.806-.372v.221c0 .05.04.09.09.09h.607a.07.07 0 0 0 .07-.07v-3.806a.069.069 0 0 0-.07-.069zm-3.913.404a.07.07 0 0 0-.069.07c0 .779.064.7-.504.7a.09.09 0 0 0-.09.09v.486c0 .05.04.089.09.089h.504v1.136c0 .676.476 1.003 1.07 1.003.183 0 .32-.017.434-.046a.07.07 0 0 0 .052-.067v-.526a.07.07 0 0 0-.086-.066.984.984 0 0 1-.227.023c-.33 0-.476-.133-.476-.47v-.987h.608a.07.07 0 0 0 .07-.069v-.527a.069.069 0 0 0-.07-.069h-.608v-.701a.069.069 0 0 0-.069-.07zm-8.396.676c-.516 0-.955.236-1.201.598-.02.03-.055.095-.102.095-.226.002-.24-.276-.247-.524a.07.07 0 0 0-.069-.066l-.653-.004a.07.07 0 0 0-.069.07c.014.606.126 1.018.86 1.181.04.01.068.045.068.087v1.36c0 .037.03.068.069.068h.634a.07.07 0 0 0 .069-.07V12.47c0-.312.221-.667.64-.667.4 0 .642.355.642.667v1.404c0 .038.03.069.069.069h.634a.07.07 0 0 0 .069-.07v-1.508c0-.72-.616-1.287-1.413-1.287zm3.207.033c-.851 0-1.472.626-1.472 1.446 0 .876.65 1.431 1.483 1.447.655.012 1.09-.363 1.194-.494a.068.068 0 0 0-.015-.097l-.435-.34c-.047-.047-.084-.021-.112.001-.07.057-.203.22-.626.237-.37.015-.7-.205-.745-.576h2.03a.07.07 0 0 0 .069-.065c.006-.082.006-.142.006-.196 0-.897-.644-1.363-1.377-1.363zm11.652 0c-.812 0-1.472.637-1.472 1.446 0 .81.66 1.447 1.472 1.447.812 0 1.472-.638 1.472-1.447s-.66-1.446-1.472-1.446zm3.229 0c-.812 0-1.472.637-1.472 1.446 0 .81.66 1.447 1.472 1.447.812 0 1.472-.638 1.472-1.447s-.66-1.446-1.472-1.446zm3.314.028a.745.745 0 0 0-.695.476v-.374a.069.069 0 0 0-.069-.069h-.628a.069.069 0 0 0-.07.07v2.632a.07.07 0 0 0 .07.069h.628a.07.07 0 0 0 .07-.07v-1.255c0-.454.24-.737.604-.737.092 0 .175.013.26.035A.069.069 0 0 0 24 11.85v-.624a.07.07 0 0 0-.056-.068.938.938 0 0 0-.201-.02zm-16.666.033a.069.069 0 0 0-.058.108l.88 1.305L7 13.832a.07.07 0 0 0 .056.11h.745a.068.068 0 0 0 .056-.03l.564-.79.563.79a.069.069 0 0 0 .056.03h.74a.069.069 0 0 0 .057-.11l-.899-1.248.88-1.305a.069.069 0 0 0-.058-.108h-.738a.07.07 0 0 0-.058.03l-.548.818-.549-.817a.07.07 0 0 0-.057-.03zm-1.552.565c.286 0 .566.155.633.482h-1.31c.073-.338.392-.482.677-.482zm8.412.067c.42 0 .705.321.705.753 0 .433-.285.754-.705.754s-.705-.321-.705-.754c0-.432.285-.753.705-.753zm3.263.016c.403 0 .694.31.694.737s-.291.737-.694.737c-.403 0-.7-.31-.7-.737 0-.426.297-.737.7-.737zm3.229 0c.403 0 .694.31.694.737s-.291.737-.694.737c-.403 0-.7-.31-.7-.737 0-.426.297-.737.7-.737z"/></svg></span>
           <span class="ads-logo" role="img" aria-label="Facebook"><svg viewBox="0 0 24 24" width="26" height="26" fill="#1877F2" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></span>
@@ -643,43 +686,37 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
           <span class="ads-logo" role="img" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="26" height="26" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>
           <span class="ads-logo" role="img" aria-label="TikTok"><svg viewBox="0 0 24 24" width="26" height="26" fill="#111111" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></span>
         </div>
-      </div>
 
       <div class="ads-grid">
         <article class="ads-card">
-          <h3>Nextdoor <span class="ads-cpm">~$20 CPM</span></h3>
+          <h3>Nextdoor</h3>
           <p class="ads-reach">105M+ verified neighbors<small>1 in 3 U.S. households — targetable by ZIP and neighborhood</small></p>
-          <p class="ads-pv">No published per-view rate</p>
           <p class="ads-note">The closest thing to the streets you already work.</p>
         </article>
         <article class="ads-card">
-          <h3>Facebook <span class="ads-cpm">~$15.50 CPM</span></h3>
+          <h3>Facebook</h3>
           <p class="ads-reach">3.07B monthly users<small>The biggest audience on the list</small></p>
-          <p class="ads-pv">$0.06 per view</p>
-          <p class="ads-note">Bought through Meta&rsquo;s auction, same system as Instagram.</p>
+          <p class="ads-note">Runs through Meta&rsquo;s ad system, same as Instagram.</p>
         </article>
         <article class="ads-card">
-          <h3>Instagram <span class="ads-cpm">~$18.25 CPM</span></h3>
+          <h3>Instagram</h3>
           <p class="ads-reach">3B monthly users<small>Where the before-and-after photos live</small></p>
-          <p class="ads-pv">$0.05 per view</p>
           <p class="ads-note">Finished-work photos and reels do the selling here.</p>
         </article>
         <article class="ads-card">
-          <h3>LinkedIn <span class="ads-cpm">~$63 CPM</span></h3>
+          <h3>LinkedIn</h3>
           <p class="ads-reach">1.2B members<small>~230M in the U.S.</small></p>
-          <p class="ads-pv">$0.51 per view</p>
-          <p class="ads-note">The priciest views in advertising — all business decision-makers. Commercial work lives here.</p>
+          <p class="ads-note">All business decision-makers — commercial work lives here.</p>
         </article>
         <article class="ads-card">
-          <h3>TikTok <span class="ads-cpm">~$4.08 CPM</span></h3>
+          <h3>TikTok</h3>
           <p class="ads-reach">1.59B monthly users<small>170M in the U.S.</small></p>
-          <p class="ads-pv">$0.01–0.07 per view</p>
-          <p class="ads-note">The cheapest views in the set — a placement stretches furthest here.</p>
+          <p class="ads-note">The home of short video — a placement stretches furthest here.</p>
         </article>
       </div>
 
-      <p class="ads-take">Cheapest views on TikTok. The neighborhood on Nextdoor. Decision-makers on LinkedIn. I place your budget where it fits your trade.</p>
-      <p class="ads-src">Reach and cost figures: Nextdoor company reporting; Taradel (2025); Meta disclosures (2025); AdShift (2026); Metadata benchmarks (2025–2026); Abe agency (2025); LinkedIn (2025); DataReportal (2026); Triple Whale (2026). Platform prices move with the auction — figures are recent benchmarks, not quotes from the platforms.</p>
+      <p class="ads-take">The neighborhood on Nextdoor. The biggest audiences on Meta. Decision-makers on LinkedIn. I place your budget where it fits your trade.</p>
+      <p class="ads-src">Reach figures: Nextdoor company reporting; Meta disclosures (2025); LinkedIn (2025); DataReportal (2026).</p>
     </div>
   </section>
 
@@ -694,7 +731,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     </div>
     <div class="fsmall">
       <span>© <span id="yr">2026</span> Christopher Moore — websites &amp; booking for contractors.</span>
-      <span>Glass and Swiss formats sampled from the <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">Claude Opus 5.5 · 100 HTML Files</a> gallery; Classic is this page&rsquo;s original design. GreenScape Lawn Care is a fictional business.</span>
+      <span>Glass and Swiss formats sampled from the <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">Claude Opus 5.5 · 100 HTML Files</a> gallery; Classic is this page&rsquo;s original design.</span>
     </div>
   </div>
 </footer>
