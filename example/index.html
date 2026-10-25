@@ -3,19 +3,450 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="robots" content="noindex">
-<title>Example — In Production | Moorefolio</title>
+<title>Moore Better Software | Custom Software, Kansas City</title>
+<meta name="description" content="Moore Better Software is John Moore's one-craftsman software shop in Kansas City: custom software, small-business websites and demos, practical AI assistants and agent tooling, reverse engineering and rescue work. You talk to the builder.">
+<meta name="theme-color" content="#14161a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Moore Better Software — Software built by the person you talk to">
+<meta property="og:description" content="Custom software, small-business websites, and practical AI tooling from a Kansas City craftsman-engineer. Small shop. Senior hands.">
+<meta property="og:image" content="assets/hero-workspace.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Moore Better Software">
+<meta name="twitter:description" content="Software built by the person you talk to. Kansas City custom software, websites, and AI tooling.">
+<meta name="twitter:image" content="assets/hero-workspace.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Moore Better Software",
+  "url": "https://moorebettersoftware.com",
+  "email": "johnkmoore@gmail.com",
+  "telephone": "+1-913-601-0220",
+  "priceRange": "$$",
+  "founder": { "@type": "Person", "name": "John Moore" },
+  "address": { "@type": "PostalAddress", "addressLocality": "Kansas City", "addressRegion": "MO", "addressCountry": "US" },
+  "areaServed": ["Kansas City, MO", "Kansas City, KS", "Overland Park, KS", "Shawnee, KS", "Lenexa, KS", "Olathe, KS", "the Kansas City metro"],
+  "openingHours": "Mo-Fr 08:00-18:00",
+  "description": "One-craftsman custom software shop: custom software, small-business websites and demos, AI assistants and agent tooling, reverse engineering and software rescue, rapid prototypes.",
+  "makesOffer": [
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom software development" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Small-business websites and demo sites" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI assistant setup and agent workflow tooling" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reverse engineering and software rescue" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rapid prototypes and demos" } }
+  ]
+}
+</script>
 <style>
-  body { margin:0; min-height:100vh; display:grid; place-items:center; background:#101014; color:#e8e4da;
-         font-family: Georgia, 'Times New Roman', serif; text-align:center; padding:2rem; }
-  h1 { font-size:1.6rem; font-weight:normal; letter-spacing:.02em; }
-  p { color:#9a958a; font-family: system-ui, sans-serif; font-size:.95rem; }
+:root{
+  --ink:#14161a; --ink2:#1c1f26; --ink3:#262b35;
+  --paper:#f6f1e7; --paper2:#efe7d8; --card:#fffdf8;
+  --amber:#e19a2f; --amber2:#c97f16; --teal:#177e76; --teal-l:#39b3a8;
+  --tx:#23262c; --tx-dim:#5a5f68; --tx-inv:#f3eee3; --tx-inv-dim:#b9bdc8;
+  --line:#ddd2bd; --line-d:#333947;
+  --fd:'Oswald',sans-serif; --fs:'Source Serif 4',Georgia,serif; --fb:'Inter',system-ui,sans-serif; --fm:'JetBrains Mono',monospace;
+  --r:14px; --sh:0 18px 44px rgba(20,18,10,.16);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--tx);background:var(--paper);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
+img{display:block;max-width:100%}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:0;background:var(--amber);color:#191203;padding:.6rem 1rem;z-index:200;font-weight:600}
+.skip:focus{left:.5rem;top:.5rem}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.25rem}
+section{scroll-margin-top:86px}
+
+/* header */
+header.site{position:fixed;inset:0 0 auto 0;z-index:100;transition:background .3s,box-shadow .3s}
+header.site .bar{display:flex;align-items:center;gap:1.2rem;max-width:1180px;margin:0 auto;padding:.8rem 1.25rem}
+header.site.scrolled{background:rgba(17,19,24,.92);backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,.35)}
+.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--tx-inv)}
+.mark{width:42px;height:42px;flex:none;display:grid;place-items:center;background:var(--amber);color:#1a1305;font-family:var(--fm);font-weight:700;font-size:.86rem;letter-spacing:.02em;border-radius:9px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
+.brand .bname{font-family:var(--fd);font-weight:600;font-size:1.06rem;letter-spacing:.04em;text-transform:uppercase;line-height:1.1}
+.brand .bname small{display:block;font-family:var(--fm);font-weight:500;font-size:.6rem;letter-spacing:.24em;color:var(--amber)}
+nav.main{margin-left:auto;display:flex;gap:1.4rem}
+nav.main a{color:var(--tx-inv);text-decoration:none;font-size:.92rem;font-weight:500}
+nav.main a:hover{color:var(--amber)}
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;text-decoration:none;padding:.72rem 1.3rem;border-radius:10px;border:2px solid transparent;transition:transform .15s,background .15s,color .15s;cursor:pointer}
+.btn:hover{transform:translateY(-2px)}
+.btn-amber{background:var(--amber);color:#1a1305}
+.btn-amber:hover{background:#efa93c}
+.btn-ghost{border-color:rgba(243,238,227,.55);color:var(--tx-inv);background:rgba(20,22,26,.25)}
+.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+.btn-dark{background:var(--ink);color:var(--tx-inv)}
+.btn-dark:hover{background:var(--ink3)}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:#1b8f86}
+header .btn{padding:.55rem 1rem;font-size:.88rem}
+@media(max-width:900px){nav.main{display:none}}
+
+/* hero */
+.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;color:var(--tx-inv);background:var(--ink)}
+.hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,15,19,.62) 0%,rgba(13,15,19,.28) 34%,rgba(13,15,19,.55) 68%,rgba(13,15,19,.93) 100%)}
+.hero .inner{position:relative;padding:9.5rem 0 0;width:100%}
+.eyebrow{font-family:var(--fm);font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:.7rem}
+.eyebrow::before{content:"";width:34px;height:2px;background:var(--amber)}
+.hero h1{font-family:var(--fd);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em;font-size:clamp(2.7rem,7.2vw,5.4rem);max-width:13ch;margin:1rem 0 1.1rem}
+.hero h1 em{font-style:normal;color:var(--amber)}
+.hero .lede{font-family:var(--fs);font-size:clamp(1.12rem,2vw,1.38rem);max-width:56ch;color:#e9e2d2}
+.hero .ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.7rem 0 2.6rem}
+.stats{position:relative;border-top:1px solid rgba(243,238,227,.22);background:rgba(13,15,19,.55);backdrop-filter:blur(6px)}
+.stats .row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:1.15rem 0}
+.stat b{display:block;font-family:var(--fd);font-size:1.45rem;font-weight:600;color:#fff;line-height:1.1}
+.stat span{font-size:.83rem;color:var(--tx-inv-dim)}
+@media(max-width:760px){.stats .row{grid-template-columns:1fr 1fr}}
+
+/* sections */
+.sec{padding:5.2rem 0}
+.sec.alt{background:var(--paper2)}
+.sec.dark{background:var(--ink);color:var(--tx-inv)}
+.kicker{font-family:var(--fm);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.dark .kicker{color:var(--amber)}
+.kicker::before{content:"";width:30px;height:2px;background:currentColor}
+h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing:.015em;line-height:1.04;font-size:clamp(1.9rem,4.2vw,2.9rem);margin:.7rem 0 .9rem}
+.sub{font-family:var(--fs);font-size:1.14rem;color:var(--tx-dim);max-width:62ch}
+.dark .sub{color:var(--tx-inv-dim)}
+
+/* services */
+.svc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.1rem;margin-top:2.6rem}
+.svc{grid-column:span 2;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.6rem 1.4rem;transition:transform .18s,box-shadow .18s}
+.svc:hover{transform:translateY(-5px);box-shadow:var(--sh)}
+.svc.wide{grid-column:span 3}
+.svc .ic{width:48px;height:48px;border-radius:11px;background:var(--ink);display:grid;place-items:center;margin-bottom:1rem}
+.svc .ic svg{width:25px;height:25px;stroke:var(--amber);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.svc h3{font-family:var(--fd);font-weight:600;font-size:1.16rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.45rem}
+.svc p{font-size:.96rem;color:var(--tx-dim)}
+.svc .tag{display:inline-block;font-family:var(--fm);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal);border-radius:99px;padding:.16rem .55rem;margin-bottom:.8rem}
+@media(max-width:900px){.svc,.svc.wide{grid-column:span 3}}
+@media(max-width:600px){.svc,.svc.wide{grid-column:span 6}}
+.figcard{margin-top:1.1rem;border-radius:var(--r);overflow:hidden;position:relative;box-shadow:var(--sh)}
+.figcard img{width:100%;height:340px;object-fit:cover}
+.figcard figcaption{position:absolute;left:0;right:0;bottom:0;padding:2rem 1.4rem .95rem;color:#fff;font-size:.9rem;background:linear-gradient(transparent,rgba(10,11,14,.82))}
+
+/* AI section */
+.split{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
+@media(max-width:900px){.split{grid-template-columns:1fr}}
+.split .pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.split .pic img{width:100%;height:100%;min-height:320px;object-fit:cover}
+.checks{list-style:none;margin-top:1.5rem;display:grid;gap:.8rem}
+.checks li{display:flex;gap:.7rem;align-items:flex-start;font-size:1rem}
+.checks svg{flex:none;width:21px;height:21px;margin-top:.18rem;stroke:var(--teal-l);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.dark .checks li{color:#e6e0d0}
+
+/* process */
+.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-top:2.6rem;counter-reset:step}
+@media(max-width:900px){.steps{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.steps{grid-template-columns:1fr}}
+.step{background:var(--ink);color:var(--tx-inv);border-radius:var(--r);padding:1.7rem 1.4rem;position:relative;overflow:hidden}
+.step::after{content:counter(step,decimal-leading-zero);counter-increment:step;position:absolute;right:.4rem;top:-1.6rem;font-family:var(--fd);font-weight:700;font-size:5.4rem;color:transparent;-webkit-text-stroke:1.5px rgba(225,154,47,.45)}
+.step h3{font-family:var(--fd);font-size:1.25rem;text-transform:uppercase;letter-spacing:.03em;color:var(--amber);margin-bottom:.5rem}
+.step p{font-size:.94rem;color:var(--tx-inv-dim)}
+
+/* work */
+.work-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-top:2.6rem}
+@media(max-width:760px){.work-grid{grid-template-columns:1fr}}
+.work{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .18s,box-shadow .18s}
+.work:hover{transform:translateY(-5px);box-shadow:var(--sh)}
+.work img{width:100%;height:210px;object-fit:cover}
+.work .wb{padding:1.3rem 1.4rem 1.5rem}
+.work .kind{font-family:var(--fm);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber2)}
+.work h3{font-family:var(--fd);font-weight:600;font-size:1.22rem;text-transform:uppercase;margin:.35rem 0 .45rem}
+.work p{font-size:.95rem;color:var(--tx-dim)}
+
+/* about */
+.mono{font-family:var(--fd);font-weight:700;font-size:clamp(4.6rem,10vw,7.5rem);line-height:.9;color:var(--ink)}
+.mono span{color:var(--amber2)}
+.pull{font-family:var(--fs);font-style:italic;font-size:1.35rem;line-height:1.45;border-left:4px solid var(--amber);padding-left:1.1rem;margin:1.6rem 0;color:var(--ink2)}
+.about-pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.about-pic img{width:100%;height:300px;object-fit:cover}
+
+/* contact + footer */
+.cta-band{background:linear-gradient(120deg,#191410,#241a0c 55%,#191410);color:var(--tx-inv);text-align:center;padding:4.6rem 0}
+.cta-band h2{color:#fff}
+.cta-band .pun{font-family:var(--fs);font-style:italic;color:var(--amber);font-size:1.15rem}
+.cta-band .ctas{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.8rem}
+footer{background:#0e1013;color:var(--tx-inv-dim);padding:3rem 0 6.4rem;font-size:.92rem}
+footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2rem}
+@media(max-width:760px){footer .cols{grid-template-columns:1fr}}
+footer h4{font-family:var(--fd);color:#fff;text-transform:uppercase;letter-spacing:.05em;font-size:1rem;margin-bottom:.7rem}
+footer a{color:var(--tx-inv-dim);text-decoration:none}
+footer a:hover{color:var(--amber)}
+footer ul{list-style:none;display:grid;gap:.4rem}
+.copyright{border-top:1px solid var(--line-d);margin-top:2.2rem;padding-top:1.2rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
+.mobilebar{position:fixed;left:0;right:0;bottom:0;z-index:110;display:none;gap:.6rem;padding:.6rem .7rem calc(.6rem + env(safe-area-inset-bottom));background:rgba(14,16,19,.96);backdrop-filter:blur(8px)}
+.mobilebar a{flex:1;text-align:center;padding:.8rem .4rem}
+@media(max-width:760px){.mobilebar{display:flex}}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
+.rv.in{opacity:1;transform:none}
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .btn,.svc,.work{transition:none}
+}
 </style>
 </head>
 <body>
-<main>
-  <h1>This example is being rebuilt.</h1>
-  <p>A new portfolio piece is in production and will appear here shortly.</p>
+<a class="skip" href="#services">Skip to content</a>
+
+<header class="site" id="siteHeader">
+  <div class="bar">
+    <a class="brand" href="#top" aria-label="Moore Better Software — home">
+      <span class="mark" aria-hidden="true">MBS</span>
+      <span class="bname">Moore Better<small>Software · Kansas City</small></span>
+    </a>
+    <nav class="main" aria-label="Main navigation">
+      <a href="#services">Services</a>
+      <a href="#ai">AI Tooling</a>
+      <a href="#process">Process</a>
+      <a href="#work">Work</a>
+      <a href="#about">About John</a>
+    </nav>
+    <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">Start a conversation</a>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero" aria-label="Introduction">
+    <img class="bg" src="assets/hero-workspace.jpg" alt="A craftsman's desk at dusk — ultrawide monitor with code, warm lamp light, and the Kansas City skyline through the window" fetchpriority="high">
+    <div class="shade" aria-hidden="true"></div>
+    <div class="inner">
+      <div class="wrap">
+        <p class="eyebrow">Moore Better Software · Kansas City</p>
+        <h1>Software built by the person <em>you talk to.</em></h1>
+        <p class="lede">Custom software, websites, and practical AI tooling — designed, built, and supported by John Moore, one craftsman deep. No account managers, no handoffs, no telephone game. You describe the problem; the person who hears it writes the code.</p>
+        <div class="ctas">
+          <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">Email John</a>
+          <a class="btn btn-ghost" href="tel:+19136010220">Call (913) 601-0220</a>
+        </div>
+      </div>
+      <div class="stats">
+        <div class="wrap"><div class="row">
+          <div class="stat"><b>1</b><span>craftsman deep — start to finish</span></div>
+          <div class="stat"><b>0</b><span>account managers in the way</span></div>
+          <div class="stat"><b>Demo</b><span>before you commit to a build</span></div>
+          <div class="stat"><b>KC</b><span>based in the Kansas City metro</span></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="sec" id="services">
+    <div class="wrap">
+      <p class="kicker">Services</p>
+      <h2>What John builds</h2>
+      <p class="sub">Five kinds of work, one pair of senior hands. If it runs on a screen and matters to your business, it is probably on this list — and if it isn't, ask anyway.</p>
+      <div class="svc-grid">
+        <article class="svc wide rv">
+          <span class="tag">The core craft</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6M13 4l-2 16"/></svg></div>
+          <h3>Custom Software</h3>
+          <p>Tools and systems built around how your team actually works — internal dashboards, workflow software, integrations, and the unglamorous glue code that saves somebody an hour a day. Built to be maintained, by the person who maintains it.</p>
+        </article>
+        <article class="svc wide rv">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
+          <h3>Websites &amp; Demo Sites</h3>
+          <p>Websites for local small businesses that load fast, read clearly, and turn visitors into phone calls. Demo sites that let you see your idea live on the web before you spend real money on it.</p>
+        </article>
+        <article class="svc rv">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
+          <h3>AI Assistants &amp; Agents</h3>
+          <p>Practical AI tooling for small teams — assistant setups, agent workflows, and automation that does real work under real supervision.</p>
+        </article>
+        <article class="svc rv">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3l7 7-9.5 9.5a2.1 2.1 0 0 1-3 0L6 17a2.1 2.1 0 0 1 0-3L14 3z"/><path d="M12 5l7 7"/></svg></div>
+          <h3>Reverse Engineering &amp; Rescue</h3>
+          <p>Software whose builder vanished, documentation that never existed, systems nobody dares touch. John reads what's there, maps it, and brings it back under control.</p>
+        </article>
+        <article class="svc rv">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
+          <h3>Rapid Prototypes</h3>
+          <p>A working thing beats a slide deck. Quick prototypes and demos that put the idea in your hands — clickable, testable, honest about what the real build takes.</p>
+        </article>
+      </div>
+      <figure class="figcard rv">
+        <img src="assets/sites-workbench.jpg" alt="A small-business website displayed on a laptop and phone resting on a craftsman's workbench" loading="lazy">
+        <figcaption>Small-business websites, built on the bench — designed on real screens, for real customers.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- AI TOOLING -->
+  <section class="sec dark" id="ai">
+    <div class="wrap">
+      <div class="split">
+        <div class="rv">
+          <p class="kicker">Specialty</p>
+          <h2>AI tooling, minus the hype</h2>
+          <p class="sub">John builds and runs his own AI agent setups every day — so the advice is not theoretical. The specialty is practical AI for small teams: assistants that answer to a person, workflows that do defined work, and automation with a human holding the leash.</p>
+          <ul class="checks">
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Assistant setups</strong> — a personal or team AI assistant, configured for your work, your files, your rules.</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Agent workflows</strong> — multi-step jobs broken into agent-sized pieces, with checkpoints where a person decides.</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Automation</strong> — the repetitive digital chores (reports, follow-ups, data wrangling) handed to software that shows its work.</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Plain-English handover</strong> — what it does, what it costs to run, and where its limits are, in writing.</span></li>
+          </ul>
+        </div>
+        <div class="pic rv">
+          <img src="assets/agent-network.jpg" alt="Abstract visual of a small network of glowing agent nodes orchestrated from one bright central hub" loading="lazy">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROCESS -->
+  <section class="sec" id="process">
+    <div class="wrap">
+      <p class="kicker">Process</p>
+      <h2>Talk, demo, build, ship</h2>
+      <p class="sub">A process sized for a one-person shop and a busy client: few meetings, early proof, no surprises at invoice time.</p>
+      <div class="steps">
+        <article class="step rv"><h3>Talk</h3><p>You explain the problem in plain language. John asks the questions a builder asks — what's it for, who uses it, what breaks if it stops — and says honestly whether he's the right tool for the job.</p></article>
+        <article class="step rv"><h3>Demo</h3><p>Before the real build, you get something you can see and click: a demo site, a prototype, a working slice. Decisions get made looking at the thing, not imagining it.</p></article>
+        <article class="step rv"><h3>Build</h3><p>The build proceeds in visible steps, with the same person writing the code who heard the problem. Scope changes get priced in the open, before they happen.</p></article>
+        <article class="step rv"><h3>Ship &amp; Support</h3><p>It ships, it gets documented in plain English, and the person who built it answers when you call. Fixes and follow-ons go to the front of a very short line.</p></article>
+      </div>
+      <figure class="figcard rv">
+        <img src="assets/blueprint-code.jpg" alt="An engineering blueprint beside a tablet of code — the schematic-meets-software detail of a rescue project" loading="lazy">
+        <figcaption>Rescue work starts on paper: map what exists before touching what runs.</figcaption>
+      </figure>
+    </div>
+  </section>
+
+  <!-- WORK -->
+  <section class="sec alt" id="work">
+    <div class="wrap">
+      <p class="kicker">Selected Work</p>
+      <h2>The kinds of things that leave the shop</h2>
+      <p class="sub">Project types, not name-drops — clients' names are their business. What follows is the shape of the work and what it took.</p>
+      <div class="work-grid">
+        <article class="work rv">
+          <img src="assets/craft-keyboard.jpg" alt="Close shot of hands at a backlit mechanical keyboard with code on the screen — custom software being written" loading="lazy">
+          <div class="wb"><p class="kind">Custom Software</p><h3>The internal tool nobody could buy</h3><p>A workflow that lived in spreadsheets and sticky notes became one small system, fitted to the team's habits. Built in stages, each stage useful on its own, until the sticky notes retired.</p></div>
+        </article>
+        <article class="work rv">
+          <img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour" loading="lazy">
+          <div class="wb"><p class="kind">Websites &amp; Demos</p><h3>A local business, properly online</h3><p>Demo-first website work for Kansas City small businesses: see it live, tune the words and photos, then launch. Fast pages, clear services, and a phone number you can't miss.</p></div>
+        </article>
+        <article class="work rv">
+          <img src="assets/agent-network.jpg" alt="Glowing agent nodes around a central hub — an agent workflow made visible" loading="lazy">
+          <div class="wb"><p class="kind">AI Tooling</p><h3>An assistant that earns its keep</h3><p>A small team's AI setup: one hub assistant coordinating narrow helpers for research, drafting, and follow-through — every output reviewed by a person before it goes anywhere.</p></div>
+        </article>
+        <article class="work rv">
+          <img src="assets/blueprint-code.jpg" alt="Blueprint and code side by side during a reverse-engineering project" loading="lazy">
+          <div class="wb"><p class="kind">Rescue &amp; Reverse Engineering</p><h3>The system nobody dared touch</h3><p>Undocumented software, read end to end and mapped like a schematic: what it does, where it's fragile, what it would take to change safely. Then changed — safely.</p></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section class="sec" id="about">
+    <div class="wrap">
+      <div class="split">
+        <div class="rv">
+          <p class="kicker">About</p>
+          <div class="mono" aria-hidden="true">J<span>M</span></div>
+          <h2>John Moore, builder</h2>
+          <p class="sub">Kansas City has been home and workshop for John's whole career in software — decades of craft across the tools of several eras, from the systems nobody documents to the AI agents everybody's suddenly talking about. He builds and runs his own agent setups daily, which is why his AI advice starts with what works on a Tuesday, not what demos well on a stage.</p>
+          <p class="pull">"Small shop. Senior hands. The person who answers is the person who builds."</p>
+          <ul class="checks">
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Clients deal with John directly — every call, every email, every line of code</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Plainspoken estimates, priced in the open, before work starts</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Documentation in plain English, so you're never locked in by obscurity</span></li>
+          </ul>
+        </div>
+        <div class="rv">
+          <div class="about-pic"><img src="assets/kc-skyline.jpg" alt="Kansas City skyline at blue hour — home base for Moore Better Software" loading="lazy"></div>
+          <div class="about-pic" style="margin-top:1.1rem"><img src="assets/hero-workspace.jpg" alt="John Moore's desk at dusk — the workshop where the work gets done" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section class="cta-band" id="contact">
+    <div class="wrap">
+      <p class="kicker" style="justify-content:center">Contact</p>
+      <h2>Have something that needs building?</h2>
+      <p class="pun">The name is the promise — Moore, better.</p>
+      <p class="sub" style="color:var(--tx-inv-dim);margin:0.8rem auto 0">One email starts it. Describe the problem the way you'd describe it to a neighbor; John will take it from there.</p>
+      <div class="ctas">
+        <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">johnkmoore@gmail.com</a>
+        <a class="btn btn-ghost" href="tel:+19136010220">Call (913) 601-0220</a>
+      </div>
+    </div>
+  </section>
 </main>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h4>Moore Better Software</h4>
+        <p>Custom software, small-business websites, and practical AI tooling from a one-craftsman shop in the Kansas City metro. Software built by the person you talk to.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="#services">Custom software</a></li>
+          <li><a href="#services">Websites &amp; demos</a></li>
+          <li><a href="#ai">AI assistants &amp; agents</a></li>
+          <li><a href="#services">Reverse engineering &amp; rescue</a></li>
+          <li><a href="#services">Rapid prototypes</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="mailto:johnkmoore@gmail.com">johnkmoore@gmail.com</a></li>
+          <li><a href="tel:+19136010220">(913) 601-0220</a></li>
+          <li>Kansas City metro</li>
+          <li><a href="https://moorebettersoftware.com">moorebettersoftware.com</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="copyright">
+      <span>© <span id="yr">2026</span> Moore Better Software · John Moore</span>
+      <span>Small shop. Senior hands.</span>
+    </div>
+  </div>
+</footer>
+
+<div class="mobilebar">
+  <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">Email John</a>
+  <a class="btn btn-teal" href="tel:+19136010220">Call</a>
+</div>
+
+<script>
+(function () {
+  var header = document.getElementById('siteHeader');
+  function onScroll() { header.classList.toggle('scrolled', window.scrollY > 24); }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  document.getElementById('yr').textContent = new Date().getFullYear();
+  var reduce = false;
+  if (window.matchMedia) { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+  var items = document.querySelectorAll('.rv');
+  if (reduce || !('IntersectionObserver' in window)) {
+    items.forEach(function (el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12 });
+    items.forEach(function (el) { io.observe(el); });
+  }
+})();
+</script>
 </body>
 </html>
