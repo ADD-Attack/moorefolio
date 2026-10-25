@@ -25,3 +25,11 @@ Feed prep: none. The feed is the full reference frame, byte-identical. CLIPVisio
 | 13 | APPROVE | planar foot split v2 (`build3.py`) | Each root is bisected by a flat plane across its axis, plus a horizontal plane at z 0.24 that limits the flood-fill. Both sides are capped, giving clean flush joint rings instead of jagged triangle-edge seams. The sheath/offset lip is removed. |
 | 14 | APPROVE | feet thickening | +4 mm along the normal with knob modulation, tapering from 0 at the joint ring to full at 5 cm out. Within budget. |
 | 15 | BUILD | budget | The extra cuts cost tris, so the decimation target was lowered to 39.2k. Final 43,648 tris (body + 7 feet). The mound gets slightly fewer tris than at the clay gate (declared trade). |
+
+## HORNS-FIX (spot re-panel: F3 FAIL 3.5/4.0) — run eden-02-hornsfix-20261024
+| # | action | item | reason |
+|---|---|---|---|
+| 16 | BUILD | horns v3 (`detail.py`; the fix-round version is kept as `detail_fix1.py`) | Rebuilt from `clean.blend`. The vein pass is identical to the fix round (same pass statistics), so F5 is unchanged. The horns are deformed using their own vertices, at high res before decimation. Changes: height raised to tips at z 1.34 (left) and 1.27 (right); stepped jagged taper; gnarl knots along the full length; crooked outward lean; the left prong pulled out as a long spur from the outer flank band at 30–50% height. |
+| 17 | DECLINE | horns v3a | The right horn was tall but still smooth. |
+| 18 | APPROVE | horns v3b | Right-horn gnarl ×1.7 and jag 0.40. Both horns now read as tall jagged spikes; the left one has its prong plus the native Hunyuan splinters. |
+| 19 | BUILD | assembly | Same `build3.py` (target 39.2k, feet +4 mm). Final **43,584 tris**. |

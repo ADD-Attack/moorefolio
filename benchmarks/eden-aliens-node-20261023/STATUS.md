@@ -1,1 +1,1 @@
-# STATUS — CLAY-FIX DELIVERED (2026-10-23). STOPPED for spot re-panel (Cat 4 + 1B). Materials HELD.
+# STATUS — HORNS-FIX DELIVERED (2026-10-24). STOPPED for F3 spot re-panel. Materials release after it per Decision 62.

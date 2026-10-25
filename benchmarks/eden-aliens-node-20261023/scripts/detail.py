@@ -28,12 +28,13 @@ for p in range(PASSES):
     print('PASS',p,'mean conc',round(float(conc.mean()),5),'min',round(float(conc.min()),4))
 me.vertices.foreach_set('co',P.ravel()); me.update()
 V=me.vertices
-# (b0) horn thicken (same base-weighted taper as clay delivery, now on high-res mesh)
-SXY,SZ=2.0,1.45
+# (b) HORNS-FIX: taller jagged crooked spikes with real gnarl + defined left prong, deforming the horns' own vertices.
+import random
+CFG={-1:dict(tipz=1.34,Sb=1.9,lean=0.07,ph=0.3,g=1.0,j=0.22),1:dict(tipz=1.27,Sb=2.1,lean=0.06,ph=1.7,g=1.7,j=0.40)}
 for side in (-1,1):
-    cand=[v for v in V if v.co.x*side>0.05]
+    cfg=CFG[side]
+    cand=[v for v in V if v.co.x*side>0.05 and v.co.y>0.0]
     tip=max(cand,key=lambda v:v.co.z).co.copy()
-    # walk down: horn base = height where the slice around the tip axis gets wide
     zb=None; ax=Vector((tip.x,tip.y))
     for k in range(1,60):
         z=tip.z-k*0.005
@@ -42,37 +43,31 @@ for side in (-1,1):
             c=sum((Vector((v.co.x,v.co.y)) for v in sl),Vector((0,0)))/len(sl); w=max((Vector((v.co.x,v.co.y))-c).length for v in sl)
             ax=c
             if w>0.075: zb=z; break
-    print('HORN',side,'tip',tuple(round(x,3) for x in tip),'base z',zb,'axis',tuple(round(x,3) for x in ax))
-    if zb is None: continue
-    for v in V:
-        d=(Vector((v.co.x,v.co.y))-ax).length
-        if v.co.z>zb-0.03 and d<0.10:
-            t=min(1,max(0,(v.co.z-(zb-0.03))/0.05))*(1-min(1,max(0,(d-0.07)/0.03)))
-            off=Vector((v.co.x,v.co.y))-ax
-            h=min(1,max(0,(v.co.z-zb)/(tip.z-zb))); n=ax+off*(1+(SXY-1)*t*(1-h)**0.8); v.co.x,v.co.y=n.x,n.y
-            v.co.z=v.co.z+(v.co.z-zb)*(SZ-1)*t if v.co.z>zb else v.co.z
-me.update()
-TIPS={}
-for side in (-1,1):
-    cand=[v for v in V if v.co.x*side>0.05 and v.co.y>0.0]
-    TIPS[side]=max(cand,key=lambda v:v.co.z).co.copy()
-# (b1) gnarl: low-frequency knots, amplitude scaled to local horn radius; (b2) left secondary prong
-for side in (-1,1):
-    tip=TIPS[side]; zb=0.87; ax=Vector((tip.x,tip.y)); L=tip.z-zb
-    hv=[v for v in V if v.co.z>zb and (Vector((v.co.x,v.co.y))-ax).length<0.12]
+    L=tip.z-zb; S=(cfg['tipz']-zb)/L
+    hv=[v for v in V if v.co.z>zb-0.03 and (Vector((v.co.x,v.co.y))-ax).length<0.10]
     for v in hv:
-        h=(v.co.z-zb)/L; off=Vector((v.co.x-ax.x,v.co.y-ax.y,0)); r=off.length
-        if r<1e-6: continue
-        th=math.atan2(off.y,off.x)
-        knot=r*0.22*(math.sin(h*8.5+th*1.0+side)*0.7+0.5*math.sin(h*13-th*2))*math.sin(min(1,h)*math.pi)
-        v.co+=off.normalized()*knot
+        d=(Vector((v.co.x,v.co.y))-ax).length
+        t=min(1,max(0,(v.co.z-(zb-0.03))/0.05))*(1-min(1,max(0,(d-0.07)/0.03)))
+        if t<=0: continue
+        h=min(1,max(0,(v.co.z-zb)/L))
+        off=Vector((v.co.x-ax.x,v.co.y-ax.y)); th=math.atan2(off.y,off.x)
+        saw=((h*4.5+cfg['ph'])%1.0)                       # jagged stepped taper
+        gn=cfg['g']*0.20*math.sin(h*15+th*2+cfg['ph'])+cfg['g']*0.12*math.sin(h*27-th*3)
+        rad=(1+(cfg['Sb']-1)*(1-h)**1.2)*(1+cfg['j']*(saw-0.5)*math.sin(h*math.pi))*(1+gn*math.sin(min(1,h*1.3)*math.pi))
+        crook=Vector((side*cfg['lean']*h**1.4+0.025*math.sin(h*6+cfg['ph']), 0.03*math.sin(h*5+side), 0))
+        n=ax+off*(1+(rad-1)*t)+crook.xy*t
+        nz=v.co.z if v.co.z<=zb else zb+(v.co.z-zb)*(1+(S-1)*t)
+        v.co.x,v.co.y,v.co.z=n.x,n.y,nz
+    me.update()
     if side==-1:
-        c=Vector((ax.x-0.03,ax.y,zb+0.32*L)); dirv=Vector((-0.6,0.15,0.78)).normalized()
+        # secondary prong: pull the outer-flank band at 30-50% height into a long upward-outward spur
+        H=cfg['tipz']-zb
+        c=Vector((ax.x-0.035,ax.y,zb+0.38*H)); dirv=Vector((-0.55,0.1,0.83)).normalized()
         n=0
         for v in hv:
             dv=v.co-c; r=dv.length
-            if r<0.06 and (v.co.x-ax.x)< 0.0:
-                f=math.exp(-(r/0.026)**2); v.co+=dirv*0.11*f; n+=1
+            if r<0.07 and (v.co.x-ax.x)<-0.005:
+                f=math.exp(-(r/0.022)**2); v.co+=dirv*0.17*f; n+=1
         print('PRONG verts',n)
-    print('HORN',side,'verts',len(hv),'tip',tuple(round(x,3) for x in tip))
+    print('HORN',side,'zb',round(zb,3),'S',round(S,2),'verts',len(hv))
 me.update(); bpy.ops.wm.save_as_mainfile(filepath=out)

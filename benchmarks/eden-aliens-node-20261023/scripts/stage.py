@@ -31,7 +31,7 @@ s.view_settings.view_transform='Standard'; s.render.film_transparent=False
 s.render.resolution_x=1200; s.render.resolution_y=1060
 cam=bpy.data.objects.new('cam',bpy.data.cameras.new('cam')); s.collection.objects.link(cam); s.camera=cam
 ctr=mathutils.Vector((0,-0.06,0.47))
-VIEWS=[('base-34',-30,12,2.6,60,ctr+mathutils.Vector((0,0,-0.2))),('full-front',0,14,4.2,50,ctr),('full-34',-35,18,4.2,50,ctr),('full-side',90,10,4.2,50,ctr),('full-back',180,14,4.2,50,ctr),('pods-front',0,10,3.0,70,ctr+mathutils.Vector((0,0,0.08)))]
+VIEWS=[('horns',-20,14,1.5,70,mathutils.Vector((0,0.14,1.02))),('base-34',-30,12,2.6,60,ctr+mathutils.Vector((0,0,-0.2))),('full-front',0,14,4.2,50,ctr),('full-34',-35,18,4.2,50,ctr),('full-side',90,10,4.2,50,ctr),('full-back',180,14,4.2,50,ctr),('pods-front',0,10,3.0,70,ctr+mathutils.Vector((0,0,0.08)))]
 for name,az,el,dist,lens,tgt in (VIEWS[:2]+VIEWS[-1:] if Q else VIEWS):
     d=mathutils.Vector((math.cos(math.radians(el))*math.sin(math.radians(az)),-math.cos(math.radians(el))*math.cos(math.radians(az)),math.sin(math.radians(el))))
     cam.location=tgt+d*dist; cam.rotation_euler=(tgt-cam.location).to_track_quat('-Z','Y').to_euler(); cam.data.lens=lens

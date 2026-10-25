@@ -64,3 +64,30 @@ Detail-only. **Frozen and unchanged in method:** mound form, pod field, massing/
 - **The back** remains unreferenced (Hunyuan's guess).
 
 STOPPED for the spot re-panel (Cat 4 + Cat 1B). Materials are held.
+
+---
+# HORNS-FIX addendum (2026-10-24, final clay round; spot re-panel had F3 at 3.5/4.0)
+
+Horns only. Everything else is rebuilt with identical code and inputs:
+- The vein pass reproduced the fix round's statistics exactly.
+- Same feet split and thickening, same node tree (`aliens_node` → `body` → `foot_01..07`), one `clay` material, tangents still deferred.
+- **43,584 tris.**
+- Captures are in `captures-horns/`: the same staging set plus `clay-horns.png`, a crown close-up at az −20°. `compare-front-vs-ref` is re-cropped so the taller horns aren't clipped.
+
+**Changes:** both horns are deformed from their own formed-mesh vertices, at high res before decimation.
+- **Taller:** horn length ×2.7 on the left and ×5.2 on the right, measured from the base.
+- **Jagged:** a stepped taper plus knots along the full length, scaled to the horn radius.
+- **Crooked:** a slight outward lean.
+- **Left horn:** a defined secondary prong pulled out as a long spur at 30–50% height, alongside the original Hunyuan splinters.
+
+## F3 self-score (render review: `clay-horns`, `compare-front-vs-ref`, side, 3/4)
+| Item | MATCH | QUALITY | Evidence |
+|---|---|---|---|
+| 1B · F3 horns | 4.5 | 5.0 | Both horns now stand tall above the top pod, with jagged crooked tapers and visible knots, and the left horn has a clear prong. Shading this down for three things. The left horn fans into several splinters and reads a little wing-like, where the ref is one main spike plus one prong. The decimated horn surface shows faceting in the close-up. The horns are slightly taller than the ref's proportion. |
+
+## Gaps
+- Left-horn splinter fan.
+- Horn faceting at this tri budget (the material-phase normal map can carry the micro-gnarl).
+- Same accepted clay-state gaps as before.
+
+STOPPED for the 3-judge F3 spot re-panel.
