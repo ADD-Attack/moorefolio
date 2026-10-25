@@ -33,7 +33,8 @@
     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Contractor website design and build" } },
     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online scheduling and booking setup" } },
     { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website redesigns" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website care and updates" } }
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website care and updates" } },
+    { "@type": "Offer", "price": "25", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising management across Nextdoor, Facebook, Instagram, LinkedIn, and TikTok — add-on service, up to 4,000 views per run" } }
   ]
 }
 </script>
@@ -256,6 +257,30 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .bd-credit{color:#3d3b34;text-align:center;margin-top:.4rem}
 .bd-credit a{color:#000}
 
+
+/* ============ advertising (constant, below the stage) ============ */
+.ads{padding:3.8rem 0 3.4rem}
+.ads .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.ads .kicker::before{content:"";width:30px;height:2px;background:currentColor}
+.ads h2{font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;font-size:clamp(1.8rem,4vw,2.6rem);margin:.7rem 0 .8rem}
+.ads .sub{font-family:var(--serif);font-size:1.1rem;color:var(--tx-dim);max-width:62ch}
+.ads-offer{display:flex;flex-wrap:wrap;align-items:center;gap:1.2rem 2.2rem;margin-top:2.2rem;background:var(--card);border:2px solid var(--amber);border-radius:var(--r);padding:1.8rem;box-shadow:var(--sh)}
+.ads-price{font-size:clamp(2.6rem,6vw,3.6rem);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.ads-price small{display:block;font-size:.95rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--amber2);margin-top:.4rem}
+.ads-offer .ads-mech{flex:1 1 300px;font-size:1.05rem}
+.ads-offer .ads-mech b{color:var(--ink)}
+.ads-fine{font-size:.86rem;color:var(--tx-dim);margin-top:.45rem}
+.ads-cta{flex:none}
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2.2rem}
+.ads-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.25rem 1.2rem;box-shadow:0 8px 22px rgba(20,18,10,.07)}
+.ads-card h3{font-size:1.02rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
+.ads-card h3 .ads-cpm{font-family:var(--mono);font-weight:500;font-size:.68rem;letter-spacing:.08em;color:var(--tx-dim);text-transform:none;white-space:nowrap}
+.ads-reach{font-size:1.45rem;font-weight:800;line-height:1.15;letter-spacing:-.01em;color:var(--ink);margin-top:.55rem}
+.ads-reach small{display:block;font-size:.86rem;font-weight:500;color:var(--tx-dim);letter-spacing:0;margin-top:.2rem}
+.ads-pv{font-family:var(--mono);font-size:.92rem;font-weight:700;color:var(--amber2);margin-top:.7rem}
+.ads-card p.ads-note{font-size:.9rem;color:var(--tx-dim);margin-top:.4rem}
+.ads-take{font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.6vw,1.45rem);line-height:1.45;text-align:center;color:var(--ink2);max-width:56ch;margin:2.4rem auto 0}
+.ads-src{text-align:center;font-size:.78rem;color:var(--tx-dim);max-width:72ch;margin:.9rem auto 0}
 
 /* ============ footer (constant) ============ */
 footer.site{background:#0e1013;color:var(--tx-inv-dim);padding:2.4rem 0 1.6rem;font-size:.92rem}
@@ -545,6 +570,60 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     </div>
   </section>
 </div><!-- /#stage -->
+
+  <!-- ================= ADVERTISING (constant) ================= -->
+  <section class="ads" id="advertising" aria-labelledby="ads-h">
+    <div class="wrap">
+      <p class="kicker">Add-on service</p>
+      <h2 id="ads-h">Advertising, run for you</h2>
+      <p class="sub">The website books the jobs; advertising puts your name in front of the neighborhood before they go looking. I run the ads for contractor clients across the platforms below — one flat price, and I front the ad spend myself, so the price you pay is the whole price. No platform bills, no ad accounts to babysit.</p>
+
+      <div class="ads-offer">
+        <div class="ads-price">$25<small>up to 4,000 views</small></div>
+        <div>
+          <p class="ads-mech"><b>$12.50 of every $25 goes straight into your ad placements.</b> The other half is my fee for building the ad and running the run. Stated openly, because you should know where the money goes.</p>
+          <p class="ads-fine">Up to 4,000 views depending on platform and audience — typical runs land 1,250–3,000.</p>
+        </div>
+        <div class="ads-cta"><a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising">Start a run</a></div>
+      </div>
+
+      <div class="ads-grid">
+        <article class="ads-card">
+          <h3>Nextdoor <span class="ads-cpm">~$20 CPM</span></h3>
+          <p class="ads-reach">105M+ verified neighbors<small>1 in 3 U.S. households — targetable by ZIP and neighborhood</small></p>
+          <p class="ads-pv">No published per-view rate</p>
+          <p class="ads-note">The closest thing to the streets you already work.</p>
+        </article>
+        <article class="ads-card">
+          <h3>Facebook <span class="ads-cpm">~$15.50 CPM</span></h3>
+          <p class="ads-reach">3.07B monthly users<small>The biggest audience on the list</small></p>
+          <p class="ads-pv">$0.06 per view</p>
+          <p class="ads-note">Bought through Meta&rsquo;s auction, same system as Instagram.</p>
+        </article>
+        <article class="ads-card">
+          <h3>Instagram <span class="ads-cpm">~$18.25 CPM</span></h3>
+          <p class="ads-reach">3B monthly users<small>Where the before-and-after photos live</small></p>
+          <p class="ads-pv">$0.05 per view</p>
+          <p class="ads-note">Finished-work photos and reels do the selling here.</p>
+        </article>
+        <article class="ads-card">
+          <h3>LinkedIn <span class="ads-cpm">~$63 CPM</span></h3>
+          <p class="ads-reach">1.2B members<small>~230M in the U.S.</small></p>
+          <p class="ads-pv">$0.51 per view</p>
+          <p class="ads-note">The priciest views in advertising — all business decision-makers. Commercial work lives here.</p>
+        </article>
+        <article class="ads-card">
+          <h3>TikTok <span class="ads-cpm">~$4.08 CPM</span></h3>
+          <p class="ads-reach">1.59B monthly users<small>170M in the U.S.</small></p>
+          <p class="ads-pv">$0.01–0.07 per view</p>
+          <p class="ads-note">The cheapest views in the set — a $12.50 placement stretches furthest here.</p>
+        </article>
+      </div>
+
+      <p class="ads-take">Cheapest views on TikTok. The neighborhood on Nextdoor. Decision-makers on LinkedIn. I place your $12.50 where it fits your trade.</p>
+      <p class="ads-src">Reach and cost figures: Nextdoor company reporting; Taradel (2025); Meta disclosures (2025); AdShift (2026); Metadata benchmarks (2025–2026); Abe agency (2025); LinkedIn (2025); DataReportal (2026); Triple Whale (2026). Platform prices move with the auction — figures are recent benchmarks, not quotes from the platforms.</p>
+    </div>
+  </section>
 
 </main>
 
