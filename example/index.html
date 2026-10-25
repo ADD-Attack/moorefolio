@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Christopher Moore | Websites &amp; Booking for Contractors, Kansas City</title>
-<meta name="description" content="Christopher Moore builds websites and online scheduling for contractors in Kansas City. One fictional lawn-care business, shown in three complete website formats — Glass, Swiss, and Bold. Pick yours.">
+<meta name="description" content="Christopher Moore builds websites and online scheduling for contractors in Kansas City. One fictional lawn-care business, shown in three complete website formats — Classic, Glass, and Swiss. Pick yours.">
 <meta name="theme-color" content="#14161a">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Christopher Moore — Websites &amp; booking for contractors">
@@ -12,6 +12,9 @@
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Christopher Moore">
 <meta name="twitter:description" content="Websites and booking for contractors, Kansas City. One business, three formats.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -49,6 +52,7 @@
   --serif:Georgia,"Times New Roman",serif;
   --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
   --helv:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --fd:'Oswald',sans-serif; --fs:'Source Serif 4',Georgia,serif;
   --r:14px; --sh:0 18px 44px rgba(20,18,10,.16);
   --tabh:66px;
 }
@@ -89,7 +93,70 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .credit{font-size:.78rem;line-height:1.5}
 .credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
-/* ============ FORMAT 1 · GLASS (sampled from "Aurora Glass") ============ */
+/* ============ FORMAT 1 · CLASSIC (the original v2 design language) ============ */
+.fmt-classic{background:var(--paper);color:var(--tx)}
+.cl-in{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
+.cl-bar{background:var(--ink);color:var(--tx-inv)}
+.cl-bar .cl-in{display:flex;align-items:center;gap:1rem;padding-top:.85rem;padding-bottom:.85rem}
+.cl-logo{font-family:var(--fs);font-weight:600;font-size:1.22rem;color:#fff;line-height:1}
+.cl-logo small{display:block;font-family:var(--mono);font-weight:500;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);margin-top:.3rem}
+.cl-bar nav{margin-left:auto;display:flex;gap:1.4rem;font-size:.9rem;color:var(--tx-inv-dim)}
+.cl-bar .btn{flex:none;padding:.5rem 1rem;font-size:.88rem}
+@media(max-width:700px){.cl-bar nav{display:none}.cl-bar .btn{margin-left:auto}}
+.fmt-classic .btn-dark{background:var(--ink);color:var(--tx-inv)}
+.fmt-classic .btn-dark:hover{background:var(--ink3)}
+.cl-hero{padding-top:3.4rem}
+.cl-eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.cl-eyebrow::before{content:"";width:34px;height:2px;background:var(--amber2)}
+.cl-h{font-family:var(--fd);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em;font-size:clamp(2.6rem,6.4vw,4.6rem);max-width:14ch;margin:1rem 0 1.1rem;color:var(--ink)}
+.cl-h em{font-style:normal;color:var(--amber2)}
+.cl-lede{font-family:var(--fs);font-size:clamp(1.1rem,2vw,1.32rem);max-width:56ch;color:#3c4048}
+.cl-ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.6rem 0 2.4rem}
+.cl-fig{border-radius:var(--r);overflow:hidden;position:relative;box-shadow:var(--sh)}
+.cl-fig img{width:100%;height:320px;object-fit:cover;display:block}
+.cl-fig figcaption{position:absolute;left:0;right:0;bottom:0;padding:2rem 1.4rem .95rem;color:#fff;font-size:.9rem;background:linear-gradient(transparent,rgba(10,11,14,.82))}
+.cl-stats{margin-top:2.8rem;background:var(--ink);color:var(--tx-inv)}
+.cl-stats .cl-in{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding-top:1.15rem;padding-bottom:1.15rem}
+.cl-stat b{display:block;font-family:var(--fd);font-size:1.45rem;font-weight:600;color:#fff;line-height:1.1}
+.cl-stat span{font-size:.83rem;color:var(--tx-inv-dim)}
+@media(max-width:760px){.cl-stats .cl-in{grid-template-columns:1fr 1fr}}
+.cl-sec{padding:3.6rem 0}
+.cl-sec.alt{background:var(--paper2)}
+.cl-kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.cl-kicker::before{content:"";width:30px;height:2px;background:currentColor}
+.cl-h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing:.015em;line-height:1.04;font-size:clamp(1.8rem,3.8vw,2.6rem);margin:.7rem 0 .9rem;color:var(--ink)}
+.cl-sub{font-family:var(--fs);font-size:1.1rem;color:var(--tx-dim);max-width:62ch}
+.cl-svcs{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-top:2.4rem}
+@media(max-width:700px){.cl-svcs{grid-template-columns:1fr}}
+.cl-svc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.6rem 1.4rem;transition:transform .18s,box-shadow .18s}
+.cl-svc:hover{transform:translateY(-5px);box-shadow:var(--sh)}
+.cl-svc .ic{width:48px;height:48px;border-radius:11px;background:var(--ink);display:grid;place-items:center;margin-bottom:1rem}
+.cl-svc .ic svg{width:25px;height:25px;stroke:var(--amber);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cl-svc h3{font-family:var(--fd);font-weight:600;font-size:1.16rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.45rem;color:var(--ink)}
+.cl-svc p{font-size:.96rem;color:var(--tx-dim)}
+.cl-svc .tag{display:inline-block;font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal);border-radius:99px;padding:.16rem .55rem;margin-top:.9rem}
+.cl-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.4rem;counter-reset:clstep}
+@media(max-width:820px){.cl-steps{grid-template-columns:1fr}}
+.cl-step{background:var(--ink);color:var(--tx-inv);border-radius:var(--r);padding:1.7rem 1.4rem;position:relative;overflow:hidden}
+.cl-step::after{content:counter(clstep,decimal-leading-zero);counter-increment:clstep;position:absolute;right:.4rem;top:-1.6rem;font-family:var(--fd);font-weight:700;font-size:5.4rem;color:transparent;-webkit-text-stroke:1.5px rgba(225,154,47,.45)}
+.cl-step h3{font-family:var(--fd);font-size:1.25rem;text-transform:uppercase;letter-spacing:.03em;color:var(--amber);margin-bottom:.5rem}
+.cl-step p{font-size:.94rem;color:var(--tx-inv-dim)}
+.cl-split{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
+@media(max-width:900px){.cl-split{grid-template-columns:1fr}}
+.cl-pull{font-family:var(--fs);font-style:italic;font-size:1.3rem;line-height:1.45;border-left:4px solid var(--amber);padding-left:1.1rem;margin:1.4rem 0;color:var(--ink2)}
+.cl-checks{list-style:none;margin-top:1.2rem;display:grid;gap:.8rem}
+.cl-checks li{display:flex;gap:.7rem;align-items:flex-start;font-size:1rem}
+.cl-checks svg{flex:none;width:21px;height:21px;margin-top:.18rem;stroke:var(--teal);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.cl-pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.cl-pic img{width:100%;height:100%;min-height:300px;object-fit:cover;display:block}
+.cl-cta{background:linear-gradient(120deg,#191410,#241a0c 55%,#191410);color:var(--tx-inv);text-align:center;padding:3.8rem 0}
+.cl-cta .cl-h2{color:#fff;margin-top:0}
+.cl-cta .pun{font-family:var(--fs);font-style:italic;color:var(--amber);font-size:1.15rem}
+.cl-cta .row{display:flex;gap:1.2rem;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:1.6rem}
+.cl-phone{font-family:var(--fd);font-weight:600;font-size:clamp(1.5rem,4vw,2.3rem);color:#fff;letter-spacing:.01em;white-space:nowrap}
+.cl-credit{padding-top:1.3rem;padding-bottom:1.5rem;color:var(--tx-dim)}
+
+/* ============ FORMAT 2 · GLASS (sampled from "Aurora Glass") ============ */
 .fmt-glass{background:#04120d;color:#eef7ee;overflow:hidden}
 #auroraCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
 .fmt-glass .fin{z-index:1;padding-top:3rem;padding-bottom:3.2rem}
@@ -144,7 +211,7 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .g-credit{margin-top:1.6rem;color:rgba(238,247,238,.6)}
 .g-credit a{color:#a7f3c9}
 
-/* ============ FORMAT 2 · SWISS (sampled from "Raster — Swiss Poster Machine") ============ */
+/* ============ FORMAT 3 · SWISS (sampled from "Raster — Swiss Poster Machine") ============ */
 .fmt-swiss{background:#f2efe8;color:#111;font-family:var(--helv)}
 .sw{max-width:1180px;margin:0 auto;padding:2.4rem 1.25rem 2.8rem;position:relative}
 .sw-top{display:flex;justify-content:space-between;gap:1rem;border-bottom:3px solid #111;padding-bottom:.55rem;font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
@@ -198,66 +265,6 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .sw-credit::before{content:"";flex:none;width:10px;height:10px;background:#e30613;transform:translateY(1px)}
 .sw-credit a{color:#111}
 
-/* ============ FORMAT 3 · BOLD (sampled from "Loud House Records") ============ */
-.fmt-bold{background:#f7f5f0;color:#000;overflow:hidden}
-.bd{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
-.bd-pad{padding-top:2.4rem;padding-bottom:2.8rem}
-.bd-kick{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
-.bd-mast{padding-top:2.2rem}
-.bd-green{font-weight:900;font-size:clamp(3.8rem,13.5vw,10.5rem);line-height:.84;letter-spacing:-.02em;text-transform:uppercase}
-.bd-row2{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;margin-top:.6rem}
-.bd-scape{display:inline-block;background:#1d3cff;color:#fff;font-weight:900;font-size:clamp(2.3rem,8vw,5.8rem);line-height:1;padding:.04em .2em .1em;transform:rotate(-2deg);border:4px solid #000;box-shadow:8px 8px 0 #000;text-transform:uppercase}
-.bd-lawn{display:inline-block;background:#ffe600;border:4px solid #000;box-shadow:8px 8px 0 #000;font-weight:900;font-size:clamp(1.15rem,3.2vw,2.1rem);padding:.22em .55em;text-transform:uppercase;transform:rotate(1deg)}
-.bd-tagline{font-weight:700;font-size:clamp(1.05rem,2.4vw,1.4rem);max-width:34ch;margin-top:1.5rem;line-height:1.35}
-.bd-roundel{position:absolute;right:1.4rem;top:1.8rem;width:116px;height:116px;animation:bdSpin 16s linear infinite}
-@keyframes bdSpin{to{transform:rotate(360deg)}}
-@media(max-width:760px){.bd-roundel{width:82px;height:82px;top:1.2rem}}
-.bd-sticker{position:absolute;right:8.6rem;top:7.4rem;background:#ff3ea5;color:#000;border:4px solid #000;box-shadow:6px 6px 0 #000;font-weight:900;font-size:1rem;padding:.45em .75em;transform:rotate(6deg);text-transform:uppercase;z-index:2}
-@media(max-width:900px){.bd-sticker{display:none}}
-.bd-mq{background:#000;color:#f7f5f0;border-top:4px solid #000;border-bottom:4px solid #000;overflow:hidden;margin-top:2.4rem}
-.bd-mq-in{display:flex;width:max-content;white-space:nowrap;animation:bdMq 26s linear infinite;font-weight:900;text-transform:uppercase;font-size:1.05rem;letter-spacing:.06em}
-.bd-mq-in span{padding:.55em 0}
-@keyframes bdMq{to{transform:translateX(-50%)}}
-.bd-sec-h{font-weight:900;font-size:clamp(1.9rem,5vw,3.2rem);text-transform:uppercase;line-height:.95;letter-spacing:-.01em}
-.bd-sec-h .hl{background:#ffe600;padding:0 .18em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
-.bd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:1.6rem}
-@media(max-width:980px){.bd-grid{grid-template-columns:1fr 1fr}}
-@media(max-width:540px){.bd-grid{grid-template-columns:1fr}}
-.bd-card{background:#fff;border:4px solid #000;box-shadow:8px 8px 0 #000;transition:transform .12s ease,box-shadow .12s ease}
-.bd-card:hover{transform:translate(4px,4px);box-shadow:4px 4px 0 #000}
-.bd-card:active{transform:translate(8px,8px);box-shadow:0 0 0 #000}
-.bd-art{height:104px;border-bottom:4px solid #000}
-.bd-art svg{width:100%;height:100%;display:block}
-.bd-cb{padding:1.05rem 1.1rem 1.2rem}
-.bd-cb h3{font-weight:900;font-size:1.28rem;text-transform:uppercase;line-height:1.05}
-.bd-cb .meta{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#1d3cff;margin:.45rem 0 .5rem}
-.bd-cb p{font-size:.93rem;line-height:1.5}
-.bd-rows{border:4px solid #000;background:#fff;box-shadow:8px 8px 0 #000;margin-top:1.6rem}
-.bd-rrow{display:flex;gap:1.1rem;align-items:baseline;padding:.95rem 1.15rem;border-bottom:3px solid #000}
-.bd-rrow:last-child{border-bottom:0}
-.bd-rrow .no{font-family:var(--mono);font-weight:700;font-size:.95rem;color:#1d3cff;flex:none}
-.bd-rrow h3{font-weight:900;text-transform:uppercase;font-size:1.08rem;flex:none}
-.bd-rrow p{font-size:.94rem}
-@media(max-width:640px){.bd-rrow{flex-wrap:wrap;gap:.3rem .8rem}.bd-rrow p{flex-basis:100%}}
-.bd-days{background:#ffe600;border:4px solid #000;box-shadow:8px 8px 0 #000;padding:1.5rem 1.6rem;margin-top:1.6rem;position:relative}
-.bd-days h3{font-weight:900;font-size:clamp(1.5rem,3.6vw,2.2rem);text-transform:uppercase;line-height:1}
-.bd-days table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:1rem}
-.bd-days td{padding:.42rem 0;border-bottom:3px solid #000;font-weight:700}
-.bd-days td:last-child{text-align:right;font-family:var(--mono);font-size:.85rem;letter-spacing:.06em}
-.bd-days tr:last-child td{border-bottom:0}
-.bd-stamp{display:inline-block;border:3px solid #c40000;color:#c40000;font-weight:900;text-transform:uppercase;font-size:.78rem;letter-spacing:.1em;padding:.12em .55em;transform:rotate(-7deg);margin-left:.7rem;vertical-align:middle}
-.bd-join{background:#000;color:#f7f5f0;border:4px solid #000;box-shadow:8px 8px 0 #1d3cff;padding:2rem 1.8rem;margin-top:2.2rem}
-.bd-join h3{font-weight:900;font-size:clamp(2rem,6vw,3.8rem);text-transform:uppercase;line-height:.92}
-.bd-join p{margin-top:.8rem;max-width:52ch;color:#d9d6cc}
-.bd-join .row{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;margin-top:1.5rem}
-.bd-phone{font-weight:900;font-size:clamp(1.5rem,4.6vw,2.6rem);letter-spacing:-.01em;white-space:nowrap}
-.bd-btn{display:inline-block;background:#ffe600;color:#000;font-weight:900;text-transform:uppercase;font-size:1.05rem;text-decoration:none;padding:.8em 1.4em;border:4px solid #000;box-shadow:6px 6px 0 #ff3ea5;transition:transform .12s,box-shadow .12s}
-.bd-btn:hover{transform:translate(3px,3px);box-shadow:3px 3px 0 #ff3ea5}
-.bd-backcover{margin-top:2.2rem;border-top:4px solid #000;padding-top:1rem;font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-align:center;line-height:2}
-.bd-credit{color:#3d3b34;text-align:center;margin-top:.4rem}
-.bd-credit a{color:#000}
-
-
 /* ============ advertising (constant, below the stage) ============ */
 .ads{padding:3.8rem 0 3.4rem}
 .ads .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
@@ -300,7 +307,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 .tab .swatch{width:11px;height:11px;border-radius:3px;flex:none}
 .swatch-glass{background:linear-gradient(135deg,#57d977,#2de2c4)}
 .swatch-swiss{background:#e30613;border-radius:0}
-.swatch-bold{background:#ffe600;box-shadow:inset 0 0 0 2px #000,0 0 0 1px rgba(255,255,255,.25)}
+.swatch-classic{background:var(--amber)}
 .tab:hover{color:#fff}
 .tab[aria-selected="true"]{color:#fff}
 .tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--amber);border-radius:0 0 3px 3px}
@@ -309,8 +316,8 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
   .format.active{animation:none}
-  .bd-roundel,.bd-mq-in,.g-orb::after{animation:none}
-  .g-card,.bd-card,.bd-btn,.btn{transition:none}
+  .g-orb::after{animation:none}
+  .g-card,.cl-svc,.btn{transition:none}
 }
 </style>
 </head>
@@ -331,10 +338,125 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 
 <main>
 <h1 class="sr-only">Christopher Moore — Websites and booking for contractors, Kansas City. One business, three formats.</h1>
-<div id="stage" data-active-format="glass">
+<div id="stage" data-active-format="classic">
 
-  <!-- ================= FORMAT 1 · GLASS ================= -->
-  <section class="format fmt-glass active" id="panel-glass" data-format="glass" role="tabpanel" aria-labelledby="tab-glass" tabindex="0">
+  <!-- ================= FORMAT 1 · CLASSIC (the original design) ================= -->
+  <section class="format fmt-classic active" id="panel-classic" data-format="classic" role="tabpanel" aria-labelledby="tab-classic" tabindex="0">
+    <div class="cl-bar">
+      <div class="cl-in">
+        <div class="cl-logo">GreenScape<small>Lawn Care · Kansas City</small></div>
+        <nav aria-hidden="true"><span>Services</span><span>Booking</span><span>About</span><span>Contact</span></nav>
+        <a class="btn btn-amber" href="tel:+18165550147">Book a mowing</a>
+      </div>
+    </div>
+
+    <div class="cl-in cl-hero">
+      <p class="cl-eyebrow">GreenScape Lawn Care · Kansas City</p>
+      <h2 class="cl-h">A yard that handles <em>itself.</em></h2>
+      <p class="cl-lede">Weekly mowing, leaf cleanup, and aeration — booked online in under a minute, confirmed by text, done while you're at work. You come home to stripes.</p>
+      <div class="cl-ctas">
+        <a class="btn btn-amber" href="tel:+18165550147">Book a mowing</a>
+        <a class="btn btn-dark" href="tel:+18165550147">Call (816) 555-0147</a>
+      </div>
+      <figure class="cl-fig">
+        <img src="assets/sites-workbench.jpg" alt="The GreenScape website on a laptop and phone, resting on a workbench" loading="lazy">
+        <figcaption>Booked from the couch, the truck, or the sideline — the site works where you are.</figcaption>
+      </figure>
+    </div>
+
+    <div class="cl-stats">
+      <div class="cl-in">
+        <div class="cl-stat"><b>24/7</b><span>booking — even at midnight</span></div>
+        <div class="cl-stat"><b>60 sec</b><span>to book a mowing, start to finish</span></div>
+        <div class="cl-stat"><b>4</b><span>services on one weekly route</span></div>
+        <div class="cl-stat"><b>KC</b><span>metro — both sides of the river</span></div>
+      </div>
+    </div>
+
+    <div class="cl-sec">
+      <div class="cl-in">
+        <p class="cl-kicker">Services</p>
+        <h2 class="cl-h2">The route, covered</h2>
+        <p class="cl-sub">Four services, one small crew, one standing route — the yard stays handled from the first cut of spring to the last leaf of fall.</p>
+        <div class="cl-svcs">
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21c0-6 1-10 5-14M12 21c-4-1-7-4-7-9 4 0 7 2 8 5M12 21c1-5 4-8 9-9-1 5-4 8-9 9z"/></svg></div>
+            <h3>Weekly Mowing</h3>
+            <p>A standing weekly route — cut, edge, blow-off, same day every week. Your yard never gets away from you.</p>
+            <span class="tag">Every week · Apr–Nov</span>
+          </article>
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18c5 0 12-1 16-5-5 0-12 1-16 5zM4 18c2-4 6-8 11-10M6 21h12"/></svg></div>
+            <h3>Leaf Cleanup</h3>
+            <p>Full-yard leaf removal and gutter-line clearing in the fall — curbside or hauled, your call.</p>
+            <span class="tag">Every fall</span>
+          </article>
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="17" cy="7" r="1.4"/><circle cx="7" cy="17" r="1.4"/><circle cx="17" cy="17" r="1.4"/><circle cx="12" cy="20" r="1.2"/></svg></div>
+            <h3>Aeration &amp; Seeding</h3>
+            <p>Core aeration pulls the plugs, seed goes down, and thin spots fill in thicker by spring.</p>
+            <span class="tag">Spring + fall</span>
+          </article>
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M4 10c3-5 8-7 12-6 0 4-2 7-6 8M4 14c2-3 5-4 8-4M20 20H4"/></svg></div>
+            <h3>Hedge Trimming</h3>
+            <p>Shaped, squared, or just tamed — hedges and shrubs trimmed back to neat, clippings gone.</p>
+            <span class="tag">As needed</span>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-sec alt">
+      <div class="cl-in">
+        <p class="cl-kicker">Booking</p>
+        <h2 class="cl-h2">Booked in under a minute</h2>
+        <p class="cl-sub">No phone tag, no waiting on a callback. Three steps and the job is on the route.</p>
+        <div class="cl-steps">
+          <article class="cl-step"><h3>Pick your day</h3><p>Choose the service and a slot online — no phone tag.</p></article>
+          <article class="cl-step"><h3>Get the text</h3><p>A confirmation lands instantly, with a reminder the day before.</p></article>
+          <article class="cl-step"><h3>We mow</h3><p>The crew shows up on schedule. You don't have to be home.</p></article>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-sec">
+      <div class="cl-in">
+        <div class="cl-split">
+          <div>
+            <p class="cl-kicker">About</p>
+            <h2 class="cl-h2">A small crew, a standing promise</h2>
+            <p class="cl-pull">“Same day, same standard, every week — a route is a promise.”</p>
+            <p class="cl-sub">GreenScape is a small Kansas City crew that treats a route like a promise: same day, same standard, every week. Serving the whole KC metro — free estimates, always.</p>
+            <ul class="cl-checks">
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Mon–Sat · 7am–7pm — Sunday the crews rest</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Free estimates, always — the visit costs nothing</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>(816) 555-0147 — a person answers, not a phone tree</span></li>
+            </ul>
+          </div>
+          <div class="cl-pic"><img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour — the metro GreenScape serves" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-cta">
+      <div class="cl-in">
+        <h2 class="cl-h2">Get on the route.</h2>
+        <p class="pun">Fall cleanups are open — Saturday slots go first.</p>
+        <div class="row">
+          <span class="cl-phone">(816) 555-0147</span>
+          <a class="btn btn-amber" href="tel:+18165550147">Book a mowing</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-in">
+      <p class="credit cl-credit">Format № 01 — the original format: this page's own design before the tabs. GreenScape Lawn Care is a fictional business.</p>
+    </div>
+  </section>
+
+  <!-- ================= FORMAT 2 · GLASS ================= -->
+  <section class="format fmt-glass" id="panel-glass" data-format="glass" role="tabpanel" aria-labelledby="tab-glass" tabindex="0" hidden>
     <canvas id="auroraCanvas" aria-hidden="true"></canvas>
     <div class="fin">
       <div class="g-nav glass-panel">
@@ -398,18 +520,18 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
         <p class="hrs">Mon–Sat · 7am–7pm<br>Sunday · Crews rest<br>(816) 555-0147</p>
       </div>
 
-      <p class="credit g-credit">Format № 01 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Aurora Glass”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</p>
+      <p class="credit g-credit">Format № 02 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Aurora Glass”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</p>
     </div>
   </section>
 
-  <!-- ================= FORMAT 2 · SWISS ================= -->
+  <!-- ================= FORMAT 3 · SWISS ================= -->
   <section class="format fmt-swiss" id="panel-swiss" data-format="swiss" role="tabpanel" aria-labelledby="tab-swiss" tabindex="0" hidden>
     <div class="sw">
       <p class="sw-imprint" aria-hidden="true">Greenscape is a fictional business · Set in Helvetica · Kansas City</p>
       <div class="sw-top" aria-hidden="true">
         <span>Greenscape Lawn Care</span>
         <span class="mid">Kansas City, Missouri</span>
-        <span>Format <span class="r">№ 02</span> — Edition KC</span>
+        <span>Format <span class="r">№ 03</span> — Edition KC</span>
       </div>
 
       <div class="sw-hero">
@@ -495,81 +617,10 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
         </div>
       </div>
 
-      <p class="credit sw-credit"><span>Format № 02 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Raster — Swiss Poster Machine”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</span></p>
+      <p class="credit sw-credit"><span>Format № 03 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Raster — Swiss Poster Machine”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</span></p>
     </div>
   </section>
 
-  <!-- ================= FORMAT 3 · BOLD ================= -->
-  <section class="format fmt-bold" id="panel-bold" data-format="bold" role="tabpanel" aria-labelledby="tab-bold" tabindex="0" hidden>
-    <div class="bd bd-mast">
-      <svg class="bd-roundel" viewBox="0 0 120 120" aria-hidden="true">
-        <defs><path id="bdCirc" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
-        <circle cx="60" cy="60" r="57" fill="#ffe600" stroke="#000" stroke-width="4"/>
-        <text font-size="12" font-weight="900" letter-spacing="2" fill="#000"><textPath href="#bdCirc">GREENSCAPE ★ KANSAS CITY ★</textPath></text>
-        <text x="60" y="71" text-anchor="middle" font-size="27" font-weight="900" fill="#000">★</text>
-      </svg>
-      <div class="bd-sticker" aria-hidden="true">Free estimates!</div>
-      <p class="bd-kick">Greenscape Lawn Care ★ Kansas City ★ Mon–Sat 7–7</p>
-      <h2 class="bd-green">Green</h2>
-      <div class="bd-row2"><span class="bd-scape">Scape</span><span class="bd-lawn">Lawn Care</span></div>
-      <p class="bd-tagline">Weekly mowing, leaf cleanup, aeration &amp; seeding, hedge trimming — booked online in under a minute, confirmed by text, done while you're at work.</p>
-    </div>
-
-    <div class="bd-mq" aria-hidden="true"><div class="bd-mq-in"><span>Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★ Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★&nbsp;</span><span>Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★ Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★&nbsp;</span></div></div>
-
-    <div class="bd bd-pad">
-      <p class="bd-kick">The Services — Four Singles</p>
-      <h3 class="bd-sec-h">The <span class="hl">Lineup</span></h3>
-      <div class="bd-grid">
-        <article class="bd-card">
-          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><rect width="200" height="104" fill="#ffe600"/><circle cx="164" cy="16" r="36" fill="#000"/><rect y="66" width="200" height="9" fill="#000" opacity=".85"/><rect y="84" width="200" height="9" fill="#000" opacity=".55"/><rect y="97" width="200" height="7" fill="#000" opacity=".3"/></svg></div>
-          <div class="bd-cb"><h3>Weekly Mowing</h3><p class="meta">Every week · Apr–Nov</p><p>Cut, edge, blow-off — same day every week. The route never misses you.</p></div>
-        </article>
-        <article class="bd-card">
-          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><rect width="200" height="104" fill="#1d3cff"/><g stroke="#f7f5f0" stroke-width="7"><path d="M-10 90 L70 -14M30 104 L110 -2M76 110 L156 4M122 112 L202 8"/></g><circle cx="160" cy="72" r="17" fill="#000"/></svg></div>
-          <div class="bd-cb"><h3>Leaf Cleanup</h3><p class="meta">Every fall · Full yard</p><p>Every leaf, gone. Curbside or hauled away — your call, our backs.</p></div>
-        </article>
-        <article class="bd-card">
-          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><defs><pattern id="bdDots" width="27" height="26" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="5.5" fill="#000"/></pattern></defs><rect width="200" height="104" fill="#f7f5f0"/><rect width="200" height="104" fill="url(#bdDots)"/><circle cx="168" cy="26" r="15" fill="#ff3ea5" stroke="#000" stroke-width="4"/></svg></div>
-          <div class="bd-cb"><h3>Aeration &amp; Seeding</h3><p class="meta">Spring + fall</p><p>Plugs pulled, seed down, thin spots filled. Thicker by spring.</p></div>
-        </article>
-        <article class="bd-card">
-          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><rect width="200" height="104" fill="#ff3ea5"/><path d="M0 68 L25 40 L50 68 L75 40 L100 68 L125 40 L150 68 L175 40 L200 68" fill="none" stroke="#000" stroke-width="9"/><circle cx="34" cy="24" r="11" fill="#ffe600" stroke="#000" stroke-width="4"/></svg></div>
-          <div class="bd-cb"><h3>Hedge Trimming</h3><p class="meta">As needed · Shaped or tamed</p><p>Hedges and shrubs cut back to neat. Clippings leave with us.</p></div>
-        </article>
-      </div>
-
-      <p class="bd-kick" style="margin-top:2.8rem">How Booking Works — The Tracklist</p>
-      <h3 class="bd-sec-h">Booked in <span class="hl">60 seconds</span></h3>
-      <div class="bd-rows">
-        <div class="bd-rrow"><span class="no">01</span><h3>Pick your day</h3><p>Choose the service and a slot online. Under a minute, no phone tag.</p></div>
-        <div class="bd-rrow"><span class="no">02</span><h3>Get the text</h3><p>Confirmation lands instantly, with a reminder the day before.</p></div>
-        <div class="bd-rrow"><span class="no">03</span><h3>We mow</h3><p>The crew shows up on schedule. You don't have to be home.</p></div>
-        <div class="bd-rrow"><span class="no">04</span><h3>Come home to stripes</h3><p>That's the whole review. Every week, all season.</p></div>
-      </div>
-
-      <div class="bd-days">
-        <h3>Service Days</h3>
-        <table>
-          <tr><td>Monday — Friday</td><td>7:00 AM – 7:00 PM · Booking open</td></tr>
-          <tr><td>Saturday</td><td>7:00 AM – 7:00 PM · Goes first</td></tr>
-          <tr><td>Sunday <span class="bd-stamp">Crews rest</span></td><td>Closed</td></tr>
-        </table>
-      </div>
-
-      <div class="bd-join">
-        <h3>Get on<br>the route.</h3>
-        <p>GreenScape is a small Kansas City crew that treats a route like a promise: same day, same standard, every week — serving the whole KC metro.</p>
-        <div class="row">
-          <span class="bd-phone">(816) 555-0147</span>
-          <a class="bd-btn" href="tel:+18165550147">Book a mowing</a>
-        </div>
-      </div>
-
-      <p class="bd-backcover">Greenscape Lawn Care ★ A fictional business ★ Kansas City ★ (816) 555-0147 ★ Mon–Sat 7–7</p>
-      <p class="credit bd-credit">Format № 03 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Loud House Records”</a>, from Claude Opus 5.5 · 100 HTML Files.</p>
-    </div>
-  </section>
 </div><!-- /#stage -->
 
   <!-- ================= ADVERTISING (constant) ================= -->
@@ -643,7 +694,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     </div>
     <div class="fsmall">
       <span>© <span id="yr">2026</span> Christopher Moore — websites &amp; booking for contractors.</span>
-      <span>Formats sampled from the <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">Claude Opus 5.5 · 100 HTML Files</a> gallery. GreenScape Lawn Care is a fictional business.</span>
+      <span>Glass and Swiss formats sampled from the <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">Claude Opus 5.5 · 100 HTML Files</a> gallery; Classic is this page&rsquo;s original design. GreenScape Lawn Care is a fictional business.</span>
     </div>
   </div>
 </footer>
@@ -651,17 +702,17 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 
 <div class="tabbar">
   <div class="tabs" role="tablist" aria-label="Website formats">
-    <button type="button" class="tab" role="tab" id="tab-glass" data-format="glass" aria-selected="true" aria-controls="panel-glass">
+    <button type="button" class="tab" role="tab" id="tab-classic" data-format="classic" aria-selected="true" aria-controls="panel-classic">
       <span class="tnum">01</span>
+      <span class="tname"><span class="swatch swatch-classic" aria-hidden="true"></span>Classic</span>
+    </button>
+    <button type="button" class="tab" role="tab" id="tab-glass" data-format="glass" aria-selected="false" aria-controls="panel-glass" tabindex="-1">
+      <span class="tnum">02</span>
       <span class="tname"><span class="swatch swatch-glass" aria-hidden="true"></span>Glass</span>
     </button>
     <button type="button" class="tab" role="tab" id="tab-swiss" data-format="swiss" aria-selected="false" aria-controls="panel-swiss" tabindex="-1">
-      <span class="tnum">02</span>
-      <span class="tname"><span class="swatch swatch-swiss" aria-hidden="true"></span>Swiss</span>
-    </button>
-    <button type="button" class="tab" role="tab" id="tab-bold" data-format="bold" aria-selected="false" aria-controls="panel-bold" tabindex="-1">
       <span class="tnum">03</span>
-      <span class="tname"><span class="swatch swatch-bold" aria-hidden="true"></span>Bold</span>
+      <span class="tname"><span class="swatch swatch-swiss" aria-hidden="true"></span>Swiss</span>
     </button>
   </div>
 </div>
@@ -673,8 +724,8 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
   var yr = document.getElementById('yr');
   if (yr) { yr.textContent = new Date().getFullYear(); }
 
-  var formats = ['glass', 'swiss', 'bold'];
-  var labels = { glass: 'Glass', swiss: 'Swiss', bold: 'Bold' };
+  var formats = ['classic', 'glass', 'swiss'];
+  var labels = { classic: 'Classic', glass: 'Glass', swiss: 'Swiss' };
   var stage = document.getElementById('stage');
   var announcer = document.getElementById('fmtLive');
   var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
@@ -823,7 +874,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     });
   }
 
-  activate(fromHash() || 'glass', { push: false, announce: false });
+  activate(fromHash() || 'classic', { push: false, announce: false });
 })();
 </script>
 </body>
