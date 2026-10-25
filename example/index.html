@@ -159,7 +159,7 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .cl-phone{font-family:var(--fd);font-weight:600;font-size:clamp(1.5rem,4vw,2.3rem);color:#fff;letter-spacing:.01em;white-space:nowrap}
 .cl-credit{padding-top:1.3rem;padding-bottom:1.5rem;color:var(--tx-dim)}
 
-/* ============ FORMAT 2 · GLASS (sampled from "Aurora Glass") ============ */
+/* ============ FORMAT 2 · GLASS ============ */
 .fmt-glass{background:#04120d;color:#eef7ee;overflow:hidden}
 #auroraCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
 .fmt-glass .fin{z-index:1;padding-top:3rem;padding-bottom:3.2rem}
@@ -214,7 +214,7 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 .g-credit{margin-top:1.6rem;color:rgba(238,247,238,.6)}
 .g-credit a{color:#a7f3c9}
 
-/* ============ FORMAT 3 · SWISS (sampled from "Raster — Swiss Poster Machine") ============ */
+/* ============ FORMAT 3 · SWISS ============ */
 .fmt-swiss{background:#f2efe8;color:#111;font-family:var(--helv)}
 .sw{max-width:1180px;margin:0 auto;padding:2.4rem 1.25rem 2.8rem;position:relative}
 .sw-top{display:flex;justify-content:space-between;gap:1rem;border-bottom:3px solid #111;padding-bottom:.55rem;font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
@@ -549,8 +549,6 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
         <p><b>Christopher Moore is a one-person studio in Kansas City.</b> His background is precision quality work — measure twice, ship once. When you hire him, you get him: the one who answers is the one who builds.</p>
         <p class="hrs">Websites · Scheduling · Ads<br>Kansas City, Missouri<br>Moore.chrisf@gmail.com</p>
       </div>
-
-      <p class="credit g-credit">Format № 02 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Aurora Glass”</a>, from Claude Opus 5.5 · 100 HTML Files.</p>
     </div>
   </section>
 
@@ -645,8 +643,6 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
           </table>
         </div>
       </div>
-
-      <p class="credit sw-credit"><span>Format № 03 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Raster — Swiss Poster Machine”</a>, from Claude Opus 5.5 · 100 HTML Files.</span></p>
     </div>
   </section>
 
@@ -742,7 +738,6 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     </div>
     <div class="fsmall">
       <span>© <span id="yr">2026</span> Christopher Moore — websites &amp; booking for contractors.</span>
-      <span>Glass and Swiss formats sampled from the <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">Claude Opus 5.5 · 100 HTML Files</a> gallery; Classic is this page&rsquo;s original design.</span>
     </div>
   </div>
 </footer>
@@ -959,7 +954,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
     if (n && n !== current) { activate(n, { push: false }); }
   });
 
-  /* ---- glass card tilt (sampled delight from "Aurora Glass") ---- */
+  /* ---- glass card tilt ---- */
   var fine = false;
   try { fine = window.matchMedia('(pointer: fine)').matches; } catch (e) {}
   if (!reduce && fine) {
