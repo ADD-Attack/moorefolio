@@ -4,19 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Christopher Moore | Websites &amp; Booking for Contractors, Kansas City</title>
-<meta name="description" content="Christopher Moore builds websites and online scheduling for contractors in the Kansas City metro: sites that turn searches into calls, booking that fills the calendar while you're on a job, redesigns, and ongoing care. One person, end-to-end.">
+<meta name="description" content="Christopher Moore builds websites and online scheduling for contractors in Kansas City. One fictional lawn-care business, shown in three complete website formats — Glass, Swiss, and Bold. Pick yours.">
 <meta name="theme-color" content="#14161a">
 <meta property="og:type" content="website">
 <meta property="og:title" content="Christopher Moore — Websites &amp; booking for contractors">
-<meta property="og:description" content="Contractor websites and online scheduling, built by one person in Kansas City. Plus a standing offer: trade your trade for a website.">
-<meta property="og:image" content="assets/hero-workspace.jpg">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:description" content="One business. Three website formats. Pick yours. Plus a standing offer: trade your trade for a website.">
+<meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Christopher Moore">
-<meta name="twitter:description" content="Websites and booking that work as hard as your crew. Kansas City contractor websites &amp; scheduling.">
-<meta name="twitter:image" content="assets/hero-workspace.jpg">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
+<meta name="twitter:description" content="Websites and booking for contractors, Kansas City. One business, three formats.">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -46,423 +41,540 @@
 :root{
   --ink:#14161a; --ink2:#1c1f26; --ink3:#262b35;
   --paper:#f6f1e7; --paper2:#efe7d8; --card:#fffdf8;
-  --amber:#e19a2f; --amber2:#c97f16; --teal:#177e76; --teal-l:#39b3a8;
+  --amber:#e19a2f; --amber2:#c97f16; --teal:#177e76;
   --tx:#23262c; --tx-dim:#5a5f68; --tx-inv:#f3eee3; --tx-inv-dim:#b9bdc8;
   --line:#ddd2bd; --line-d:#333947;
-  --fd:'Oswald',sans-serif; --fs:'Source Serif 4',Georgia,serif; --fb:'Inter',system-ui,sans-serif; --fm:'JetBrains Mono',monospace;
+  --fb:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --helv:"Helvetica Neue",Helvetica,Arial,sans-serif;
   --r:14px; --sh:0 18px 44px rgba(20,18,10,.16);
+  --tabh:66px;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{font-family:var(--fb);color:var(--tx);background:var(--paper);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased}
-img{display:block;max-width:100%}
+body{font-family:var(--fb);color:var(--tx);background:var(--paper);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom))}
+.page{overflow-x:clip}
 a{color:var(--teal)}
 :focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:4px}
-.skip{position:absolute;left:-999px;top:0;background:var(--amber);color:#191203;padding:.6rem 1rem;z-index:200;font-weight:600}
+.skip{position:absolute;left:-999px;top:0;background:var(--amber);color:#191203;padding:.6rem 1rem;z-index:400;font-weight:600}
 .skip:focus{left:.5rem;top:.5rem}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 .wrap{max-width:1180px;margin:0 auto;padding:0 1.25rem}
-section{scroll-margin-top:86px}
-
-/* header */
-header.site{position:fixed;inset:0 0 auto 0;z-index:100;transition:background .3s,box-shadow .3s}
-header.site .bar{display:flex;align-items:center;gap:1.2rem;max-width:1180px;margin:0 auto;padding:.8rem 1.25rem}
-header.site.scrolled{background:rgba(17,19,24,.92);backdrop-filter:blur(10px);box-shadow:0 6px 24px rgba(0,0,0,.35)}
-.brand{display:flex;align-items:center;gap:.7rem;text-decoration:none;color:var(--tx-inv)}
-.mark{width:42px;height:42px;flex:none;display:grid;place-items:center;background:var(--amber);color:#1a1305;font-family:var(--fm);font-weight:700;font-size:.86rem;letter-spacing:.02em;border-radius:9px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
-.brand .bname{font-family:var(--fd);font-weight:600;font-size:1.06rem;letter-spacing:.04em;text-transform:uppercase;line-height:1.1}
-.brand .bname small{display:block;font-family:var(--fm);font-weight:500;font-size:.6rem;letter-spacing:.24em;color:var(--amber)}
-nav.main{margin-left:auto;display:flex;gap:1.4rem}
-nav.main a{color:var(--tx-inv);text-decoration:none;font-size:.92rem;font-weight:500}
-nav.main a:hover{color:var(--amber)}
 .btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;text-decoration:none;padding:.72rem 1.3rem;border-radius:10px;border:2px solid transparent;transition:transform .15s,background .15s,color .15s;cursor:pointer}
 .btn:hover{transform:translateY(-2px)}
 .btn-amber{background:var(--amber);color:#1a1305}
 .btn-amber:hover{background:#efa93c}
-.btn-ghost{border-color:rgba(243,238,227,.55);color:var(--tx-inv);background:rgba(20,22,26,.25)}
-.btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
-.btn-dark{background:var(--ink);color:var(--tx-inv)}
-.btn-dark:hover{background:var(--ink3)}
-.btn-teal{background:var(--teal);color:#fff}
-.btn-teal:hover{background:#1b8f86}
-header .btn{padding:.55rem 1rem;font-size:.88rem}
-@media(max-width:900px){nav.main{display:none}}
 
-/* hero */
-.hero{position:relative;min-height:100svh;display:flex;flex-direction:column;justify-content:flex-end;color:var(--tx-inv);background:var(--ink)}
-.hero .bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center}
-.hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(13,15,19,.62) 0%,rgba(13,15,19,.28) 34%,rgba(13,15,19,.55) 68%,rgba(13,15,19,.93) 100%)}
-.hero .inner{position:relative;padding:9.5rem 0 0;width:100%}
-.eyebrow{font-family:var(--fm);font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:.7rem}
-.eyebrow::before{content:"";width:34px;height:2px;background:var(--amber)}
-.hero h1{font-family:var(--fd);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em;font-size:clamp(2.7rem,7.2vw,5.4rem);max-width:15ch;margin:1rem 0 1.1rem}
-.hero h1 em{font-style:normal;color:var(--amber)}
-.hero .lede{font-family:var(--fs);font-size:clamp(1.12rem,2vw,1.38rem);max-width:56ch;color:#e9e2d2}
-.hero .ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.7rem 0 2.6rem}
-.stats{position:relative;border-top:1px solid rgba(243,238,227,.22);background:rgba(13,15,19,.55);backdrop-filter:blur(6px)}
-.stats .row{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding:1.15rem 0}
-.stat b{display:block;font-family:var(--fd);font-size:1.45rem;font-weight:600;color:#fff;line-height:1.1}
-.stat span{font-size:.83rem;color:var(--tx-inv-dim)}
-@media(max-width:760px){.stats .row{grid-template-columns:1fr 1fr}}
+/* ============ constant top frame ============ */
+header.frame{position:sticky;top:0;z-index:200;background:rgba(15,17,21,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--tx-inv);border-bottom:1px solid var(--line-d)}
+header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;margin:0 auto;padding:.55rem 1.25rem}
+.fbrand{display:flex;align-items:center;gap:.65rem;text-decoration:none;color:var(--tx-inv);min-width:0}
+.fmark{width:36px;height:36px;flex:none;display:grid;place-items:center;background:var(--amber);color:#1a1305;font-family:var(--mono);font-weight:700;font-size:.78rem;border-radius:8px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
+.fbrand .fname{font-weight:700;font-size:1.02rem;letter-spacing:.02em;line-height:1.12;white-space:nowrap}
+.fbrand .fname small{display:block;font-family:var(--mono);font-weight:500;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
+.frame .ftag{font-family:var(--serif);font-style:italic;font-size:.98rem;color:var(--tx-inv-dim);margin-left:auto;white-space:nowrap}
+.frame .btn{padding:.52rem 1rem;font-size:.88rem;flex:none}
+@media(max-width:820px){.frame .ftag{display:none}.frame .btn{margin-left:auto}}
+@media(max-width:480px){.fbrand .fname small{display:none}.fbrand .fname{font-size:.94rem}}
 
-/* sections */
-.sec{padding:5.2rem 0}
-.sec.alt{background:var(--paper2)}
-.sec.dark{background:var(--ink);color:var(--tx-inv)}
-.kicker{font-family:var(--fm);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
-.dark .kicker{color:var(--amber)}
-.kicker::before{content:"";width:30px;height:2px;background:currentColor}
-h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing:.015em;line-height:1.04;font-size:clamp(1.9rem,4.2vw,2.9rem);margin:.7rem 0 .9rem}
-.sub{font-family:var(--fs);font-size:1.14rem;color:var(--tx-dim);max-width:62ch}
-.dark .sub{color:var(--tx-inv-dim)}
+/* ============ stage + format switching ============ */
+#stage{background:#0b0e11}
+.format{position:relative}
+.format[hidden]{display:none}
+@keyframes fmtIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.format.active{animation:fmtIn .5s ease both}
+.fin{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
+.credit{font-size:.78rem;line-height:1.5}
+.credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
 
-/* services */
-.svc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:1.1rem;margin-top:2.6rem}
-.svc{grid-column:span 2;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.6rem 1.4rem;transition:transform .18s,box-shadow .18s}
-.svc:hover{transform:translateY(-5px);box-shadow:var(--sh)}
-.svc.wide{grid-column:span 3}
-.svc .ic{width:48px;height:48px;border-radius:11px;background:var(--ink);display:grid;place-items:center;margin-bottom:1rem}
-.svc .ic svg{width:25px;height:25px;stroke:var(--amber);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
-.svc h3{font-family:var(--fd);font-weight:600;font-size:1.16rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.45rem}
-.svc p{font-size:.96rem;color:var(--tx-dim)}
-.svc .tag{display:inline-block;font-family:var(--fm);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal);border-radius:99px;padding:.16rem .55rem;margin-bottom:.8rem}
-@media(max-width:900px){.svc,.svc.wide{grid-column:span 3}}
-@media(max-width:600px){.svc,.svc.wide{grid-column:span 6}}
-.figcard{margin-top:1.1rem;border-radius:var(--r);overflow:hidden;position:relative;box-shadow:var(--sh)}
-.figcard img{width:100%;height:340px;object-fit:cover}
-.figcard figcaption{position:absolute;left:0;right:0;bottom:0;padding:2rem 1.4rem .95rem;color:#fff;font-size:.9rem;background:linear-gradient(transparent,rgba(10,11,14,.82))}
+/* ============ FORMAT 1 · GLASS (sampled from "Aurora Glass") ============ */
+.fmt-glass{background:#04120d;color:#eef7ee;overflow:hidden}
+#auroraCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.fmt-glass .fin{z-index:1;padding-top:3rem;padding-bottom:3.2rem}
+.glass-panel{background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.28);border-radius:20px;backdrop-filter:blur(14px) saturate(1.35);-webkit-backdrop-filter:blur(14px) saturate(1.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 24px 50px rgba(0,0,0,.35)}
+.g-nav{display:flex;align-items:center;gap:1rem;padding:.8rem 1.2rem;border-radius:99px}
+.g-logo{font-weight:600;font-size:1.08rem;letter-spacing:.01em;line-height:1.05}
+.g-logo small{display:block;font-family:var(--mono);font-weight:500;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:#a7f3c9}
+.g-nav nav{margin-left:auto;display:flex;gap:1.4rem;font-size:.9rem;color:rgba(238,247,238,.85)}
+@media(max-width:700px){.g-nav nav{display:none}}
+.g-call{flex:none;margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.86rem;padding:.45rem 1rem;border-radius:99px}
+.g-nav nav + .g-call{margin-left:0}
+.g-hero{position:relative;padding:3.4rem 0 0;min-height:340px}
+.g-orb{position:absolute;right:4%;top:2.4rem;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e4ffb8,#57d977 46%,#1d7a4c 80%);opacity:.92;box-shadow:0 0 90px rgba(87,217,119,.45)}
+.g-orb::after{content:"";position:absolute;inset:-16px;border-radius:50%;border:1px solid rgba(167,243,201,.5);animation:gPulse 3.6s ease-out infinite}
+@keyframes gPulse{0%{transform:scale(.82);opacity:.9}70%{transform:scale(1.12);opacity:0}100%{transform:scale(1.12);opacity:0}}
+@media(max-width:760px){.g-orb{width:104px;height:104px;right:0;top:1.2rem}}
+.g-eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:#c9f7d9;padding:.42rem .9rem;border-radius:99px}
+.g-eyebrow .dot{width:8px;height:8px;border-radius:50%;background:#57d977;box-shadow:0 0 10px #57d977}
+.g-h1{font-weight:200;font-size:clamp(2.9rem,7.4vw,5.5rem);line-height:1.02;letter-spacing:-.015em;margin:1.4rem 0 0;color:#fff;max-width:12ch}
+.g-h1 .l2{display:block;margin-left:14%}
+.g-h1 b{font-weight:600;background:linear-gradient(92deg,#a7f3c9,#2de2c4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.g-lede{margin-top:1.6rem;max-width:560px;padding:1.25rem 1.4rem;font-size:1.06rem;color:rgba(238,247,238,.92)}
+.g-ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
+.g-btn{display:inline-flex;align-items:center;font-weight:700;font-size:.98rem;text-decoration:none;padding:.85rem 1.7rem;border-radius:99px;background:linear-gradient(135deg,#57d977,#2de2c4);color:#04231a;box-shadow:0 12px 30px rgba(45,226,196,.28);transition:transform .15s}
+.g-btn:hover{transform:translateY(-2px)}
+.g-btn2{display:inline-flex;align-items:center;font-weight:600;font-size:.98rem;text-decoration:none;padding:.85rem 1.5rem;border-radius:99px;color:#fff;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.g-legend{position:absolute;right:0;top:15.5rem;padding:.85rem 1.1rem;font-size:.86rem;color:rgba(238,247,238,.92);max-width:250px}
+.g-legend b{color:#fff;display:block;font-size:.92rem}
+@media(max-width:900px){.g-legend{display:none}}
+.g-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.6rem}
+@media(max-width:980px){.g-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.g-cards{grid-template-columns:1fr}}
+.g-card{padding:1.35rem 1.25rem;transition:transform .25s ease;will-change:transform}
+.g-card .ic{width:44px;height:44px;border-radius:12px;background:rgba(87,217,119,.16);border:1px solid rgba(167,243,201,.35);display:grid;place-items:center;margin-bottom:.9rem}
+.g-card .ic svg{width:23px;height:23px;stroke:#a7f3c9;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.g-card h3{font-size:1.08rem;font-weight:600;color:#fff;margin-bottom:.35rem}
+.g-card p{font-size:.93rem;color:rgba(238,247,238,.82)}
+.g-card .cad{display:block;margin-top:.7rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#8fe3ae}
+.g-book{margin-top:1rem;padding:1.5rem 1.6rem;display:grid;grid-template-columns:auto 1fr;gap:1.6rem;align-items:center}
+@media(max-width:760px){.g-book{grid-template-columns:1fr}}
+.g-book h3{font-weight:300;font-size:1.7rem;color:#fff;line-height:1.15}
+.g-book h3 b{font-weight:600}
+.g-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;list-style:none}
+@media(max-width:640px){.g-steps{grid-template-columns:1fr}}
+.g-steps li{display:flex;gap:.75rem;font-size:.93rem;color:rgba(238,247,238,.88)}
+.g-steps .n{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#57d977,#2de2c4);color:#04231a;font-weight:700;font-size:.9rem;display:grid;place-items:center}
+.g-steps b{color:#fff;display:block;font-size:.98rem}
+.g-about{margin-top:1rem;padding:1.5rem 1.6rem;display:flex;gap:1.6rem;align-items:center;flex-wrap:wrap}
+.g-about p{flex:1 1 320px;font-size:1rem;color:rgba(238,247,238,.9)}
+.g-about p b{color:#fff}
+.g-about .hrs{flex:none;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#a7f3c9;line-height:2}
+.g-credit{margin-top:1.6rem;color:rgba(238,247,238,.6)}
+.g-credit a{color:#a7f3c9}
 
-/* split + checks (about) */
-.split{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
-@media(max-width:900px){.split{grid-template-columns:1fr}}
-.split .pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.split .pic img{width:100%;height:100%;min-height:320px;object-fit:cover}
-.checks{list-style:none;margin-top:1.5rem;display:grid;gap:.8rem}
-.checks li{display:flex;gap:.7rem;align-items:flex-start;font-size:1rem}
-.checks svg{flex:none;width:21px;height:21px;margin-top:.18rem;stroke:var(--teal-l);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
-.dark .checks li{color:#e6e0d0}
+/* ============ FORMAT 2 · SWISS (sampled from "Raster — Swiss Poster Machine") ============ */
+.fmt-swiss{background:#f2efe8;color:#111;font-family:var(--helv)}
+.sw{max-width:1180px;margin:0 auto;padding:2.4rem 1.25rem 2.8rem;position:relative}
+.sw-top{display:flex;justify-content:space-between;gap:1rem;border-bottom:3px solid #111;padding-bottom:.55rem;font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase}
+.sw-top .r{color:#e30613}
+@media(max-width:560px){.sw-top .mid{display:none}}
+.sw-hero{position:relative;margin-top:1.6rem;padding-right:3.2rem}
+.sw-lawn{font-weight:900;font-size:clamp(4.6rem,16.5vw,14.5rem);line-height:.82;letter-spacing:-.02em;text-transform:uppercase}
+.sw-subrow{display:flex;align-items:flex-start;gap:1.4rem;margin-top:1.1rem;flex-wrap:wrap}
+.sw-sun{flex:none;width:clamp(64px,9vw,110px);height:clamp(64px,9vw,110px);border-radius:50%;background:#e30613}
+.sw-name{font-weight:900;font-size:clamp(1.5rem,3.6vw,2.6rem);line-height:1;text-transform:uppercase;letter-spacing:-.01em}
+.sw-name span{display:block;color:#e30613}
+.sw-vert{position:absolute;right:0;top:.2rem;writing-mode:vertical-rl;font-weight:900;font-size:clamp(1.1rem,2.4vw,1.7rem);letter-spacing:.42em;text-transform:uppercase}
+@media(max-width:640px){.sw-vert{display:none}.sw-hero{padding-right:0}}
+.sw-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:1.4rem 1.2rem;margin-top:2.6rem}
+.sw-intro{grid-column:1/6;font-size:1rem;line-height:1.55}
+.sw-intro b{font-weight:700}
+.sw-lang{grid-column:7/13;font-size:.86rem;line-height:1.5;border-top:2px solid #111;padding-top:.6rem}
+.sw-lang .w{font-weight:900;font-size:1.5rem;text-transform:uppercase;line-height:1.15;letter-spacing:-.01em}
+.sw-lang .w i{font-style:normal;color:#e30613}
+@media(max-width:820px){.sw-intro{grid-column:1/13}.sw-lang{grid-column:1/13}}
+.sw-svcs{grid-column:1/13;display:grid;grid-template-columns:repeat(4,1fr);gap:1.2rem;border-top:3px solid #111;padding-top:1rem}
+@media(max-width:820px){.sw-svcs{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.sw-svcs{grid-template-columns:1fr}}
+.sw-svc .num{font-weight:900;font-size:1.9rem;color:#e30613;line-height:1}
+.sw-svc h3{font-size:1.02rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin:.45rem 0 .35rem}
+.sw-svc p{font-size:.88rem;line-height:1.5;color:#333}
+.sw-svc .cad{font-size:.68rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;margin-top:.5rem}
+.sw-book{grid-column:1/13;display:grid;grid-template-columns:1.25fr .75fr;margin-top:.6rem}
+@media(max-width:700px){.sw-book{grid-template-columns:1fr}}
+.sw-book .bk{background:#111;color:#fff;padding:1.5rem 1.6rem}
+.sw-book .bk .big{font-weight:900;font-size:clamp(2rem,5.4vw,3.6rem);line-height:.95;text-transform:uppercase;letter-spacing:-.01em}
+.sw-book .bk p{font-size:.9rem;color:#d8d4c8;margin-top:.6rem;max-width:38ch}
+.sw-book .ph{background:#e30613;color:#fff;padding:1.5rem 1.6rem;display:flex;flex-direction:column;justify-content:center;gap:.3rem}
+.sw-book .ph .lbl{font-size:.68rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
+.sw-book .ph .num{font-weight:900;font-size:clamp(1.6rem,4.4vw,2.7rem);line-height:1;white-space:nowrap}
+.sw-book .ph .hrs{font-size:.82rem;font-weight:700;letter-spacing:.08em}
+.sw-steps{grid-column:1/9;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;border-top:2px solid #111;padding-top:.8rem}
+@media(max-width:820px){.sw-steps{grid-column:1/13}}
+@media(max-width:560px){.sw-steps{grid-template-columns:1fr}}
+.sw-step .n{font-weight:900;font-size:1.15rem}
+.sw-step h4{font-size:.9rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin:.25rem 0 .3rem}
+.sw-step p{font-size:.86rem;line-height:1.5;color:#333}
+.sw-facts{grid-column:9/13;font-size:.86rem;line-height:1.5;border-top:2px solid #111;padding-top:.8rem}
+@media(max-width:820px){.sw-facts{grid-column:1/13}}
+.sw-facts table{width:100%;border-collapse:collapse;font-size:.86rem}
+.sw-facts td{padding:.34rem 0;border-bottom:1px solid #c9c4b4;vertical-align:top}
+.sw-facts td:first-child{font-weight:700;letter-spacing:.12em;text-transform:uppercase;font-size:.7rem;padding-right:.8rem;white-space:nowrap}
+.sw-imprint{position:absolute;right:.4rem;top:46%;transform:rotate(90deg) translateX(50%);transform-origin:right center;font-size:.6rem;font-weight:700;letter-spacing:.32em;text-transform:uppercase;color:#55534a;white-space:nowrap}
+@media(max-width:900px){.sw-imprint{display:none}}
+.sw-credit{margin-top:2.4rem;border-top:2px solid #111;padding-top:.7rem;color:#3c3a33;display:flex;gap:.55rem;align-items:baseline}
+.sw-credit::before{content:"";flex:none;width:10px;height:10px;background:#e30613;transform:translateY(1px)}
+.sw-credit a{color:#111}
 
-/* trade */
-.trade-card{position:relative;margin-top:2.6rem;background:var(--card);border:2px dashed var(--amber2);border-radius:var(--r);padding:2.2rem 2rem;box-shadow:var(--sh)}
-.trade-stamp{position:absolute;top:-15px;right:22px;background:var(--amber);color:#1a1305;font-family:var(--fm);font-weight:700;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;padding:.42rem .8rem;border-radius:6px;transform:rotate(2.5deg);box-shadow:0 6px 16px rgba(20,18,10,.25)}
-.trade-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem}
+/* ============ FORMAT 3 · BOLD (sampled from "Loud House Records") ============ */
+.fmt-bold{background:#f7f5f0;color:#000;overflow:hidden}
+.bd{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
+.bd-pad{padding-top:2.4rem;padding-bottom:2.8rem}
+.bd-kick{font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.24em;text-transform:uppercase}
+.bd-mast{padding-top:2.2rem}
+.bd-green{font-weight:900;font-size:clamp(3.8rem,13.5vw,10.5rem);line-height:.84;letter-spacing:-.02em;text-transform:uppercase}
+.bd-row2{display:flex;align-items:center;gap:1.1rem;flex-wrap:wrap;margin-top:.6rem}
+.bd-scape{display:inline-block;background:#1d3cff;color:#fff;font-weight:900;font-size:clamp(2.3rem,8vw,5.8rem);line-height:1;padding:.04em .2em .1em;transform:rotate(-2deg);border:4px solid #000;box-shadow:8px 8px 0 #000;text-transform:uppercase}
+.bd-lawn{display:inline-block;background:#ffe600;border:4px solid #000;box-shadow:8px 8px 0 #000;font-weight:900;font-size:clamp(1.15rem,3.2vw,2.1rem);padding:.22em .55em;text-transform:uppercase;transform:rotate(1deg)}
+.bd-tagline{font-weight:700;font-size:clamp(1.05rem,2.4vw,1.4rem);max-width:34ch;margin-top:1.5rem;line-height:1.35}
+.bd-roundel{position:absolute;right:1.4rem;top:1.8rem;width:116px;height:116px;animation:bdSpin 16s linear infinite}
+@keyframes bdSpin{to{transform:rotate(360deg)}}
+@media(max-width:760px){.bd-roundel{width:82px;height:82px;top:1.2rem}}
+.bd-sticker{position:absolute;right:8.6rem;top:7.4rem;background:#ff3ea5;color:#000;border:4px solid #000;box-shadow:6px 6px 0 #000;font-weight:900;font-size:1rem;padding:.45em .75em;transform:rotate(6deg);text-transform:uppercase;z-index:2}
+@media(max-width:900px){.bd-sticker{display:none}}
+.bd-mq{background:#000;color:#f7f5f0;border-top:4px solid #000;border-bottom:4px solid #000;overflow:hidden;margin-top:2.4rem}
+.bd-mq-in{display:flex;width:max-content;white-space:nowrap;animation:bdMq 26s linear infinite;font-weight:900;text-transform:uppercase;font-size:1.05rem;letter-spacing:.06em}
+.bd-mq-in span{padding:.55em 0}
+@keyframes bdMq{to{transform:translateX(-50%)}}
+.bd-sec-h{font-weight:900;font-size:clamp(1.9rem,5vw,3.2rem);text-transform:uppercase;line-height:.95;letter-spacing:-.01em}
+.bd-sec-h .hl{background:#ffe600;padding:0 .18em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
+.bd-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1.25rem;margin-top:1.6rem}
+@media(max-width:980px){.bd-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.bd-grid{grid-template-columns:1fr}}
+.bd-card{background:#fff;border:4px solid #000;box-shadow:8px 8px 0 #000;transition:transform .12s ease,box-shadow .12s ease}
+.bd-card:hover{transform:translate(4px,4px);box-shadow:4px 4px 0 #000}
+.bd-card:active{transform:translate(8px,8px);box-shadow:0 0 0 #000}
+.bd-art{height:104px;border-bottom:4px solid #000}
+.bd-art svg{width:100%;height:100%;display:block}
+.bd-cb{padding:1.05rem 1.1rem 1.2rem}
+.bd-cb h3{font-weight:900;font-size:1.28rem;text-transform:uppercase;line-height:1.05}
+.bd-cb .meta{font-family:var(--mono);font-size:.66rem;font-weight:700;letter-spacing:.2em;text-transform:uppercase;color:#1d3cff;margin:.45rem 0 .5rem}
+.bd-cb p{font-size:.93rem;line-height:1.5}
+.bd-rows{border:4px solid #000;background:#fff;box-shadow:8px 8px 0 #000;margin-top:1.6rem}
+.bd-rrow{display:flex;gap:1.1rem;align-items:baseline;padding:.95rem 1.15rem;border-bottom:3px solid #000}
+.bd-rrow:last-child{border-bottom:0}
+.bd-rrow .no{font-family:var(--mono);font-weight:700;font-size:.95rem;color:#1d3cff;flex:none}
+.bd-rrow h3{font-weight:900;text-transform:uppercase;font-size:1.08rem;flex:none}
+.bd-rrow p{font-size:.94rem}
+@media(max-width:640px){.bd-rrow{flex-wrap:wrap;gap:.3rem .8rem}.bd-rrow p{flex-basis:100%}}
+.bd-days{background:#ffe600;border:4px solid #000;box-shadow:8px 8px 0 #000;padding:1.5rem 1.6rem;margin-top:1.6rem;position:relative}
+.bd-days h3{font-weight:900;font-size:clamp(1.5rem,3.6vw,2.2rem);text-transform:uppercase;line-height:1}
+.bd-days table{width:100%;border-collapse:collapse;margin-top:1rem;font-size:1rem}
+.bd-days td{padding:.42rem 0;border-bottom:3px solid #000;font-weight:700}
+.bd-days td:last-child{text-align:right;font-family:var(--mono);font-size:.85rem;letter-spacing:.06em}
+.bd-days tr:last-child td{border-bottom:0}
+.bd-stamp{display:inline-block;border:3px solid #c40000;color:#c40000;font-weight:900;text-transform:uppercase;font-size:.78rem;letter-spacing:.1em;padding:.12em .55em;transform:rotate(-7deg);margin-left:.7rem;vertical-align:middle}
+.bd-join{background:#000;color:#f7f5f0;border:4px solid #000;box-shadow:8px 8px 0 #1d3cff;padding:2rem 1.8rem;margin-top:2.2rem}
+.bd-join h3{font-weight:900;font-size:clamp(2rem,6vw,3.8rem);text-transform:uppercase;line-height:.92}
+.bd-join p{margin-top:.8rem;max-width:52ch;color:#d9d6cc}
+.bd-join .row{display:flex;flex-wrap:wrap;gap:1.2rem;align-items:center;margin-top:1.5rem}
+.bd-phone{font-weight:900;font-size:clamp(1.5rem,4.6vw,2.6rem);letter-spacing:-.01em;white-space:nowrap}
+.bd-btn{display:inline-block;background:#ffe600;color:#000;font-weight:900;text-transform:uppercase;font-size:1.05rem;text-decoration:none;padding:.8em 1.4em;border:4px solid #000;box-shadow:6px 6px 0 #ff3ea5;transition:transform .12s,box-shadow .12s}
+.bd-btn:hover{transform:translate(3px,3px);box-shadow:3px 3px 0 #ff3ea5}
+.bd-backcover{margin-top:2.2rem;border-top:4px solid #000;padding-top:1rem;font-family:var(--mono);font-size:.7rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;text-align:center;line-height:2}
+.bd-credit{color:#3d3b34;text-align:center;margin-top:.4rem}
+.bd-credit a{color:#000}
+
+/* ============ trade band (constant, below the stage) ============ */
+.trade{padding:3.6rem 0 3.2rem}
+.trade .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.trade .kicker::before{content:"";width:30px;height:2px;background:currentColor}
+.trade h2{font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;font-size:clamp(1.8rem,4vw,2.6rem);margin:.7rem 0 .8rem}
+.trade .sub{font-family:var(--serif);font-size:1.1rem;color:var(--tx-dim);max-width:62ch}
+.trade-card{position:relative;margin-top:2.2rem;background:var(--card);border:2px dashed var(--amber2);border-radius:var(--r);padding:2rem 1.8rem;box-shadow:var(--sh)}
+.trade-stamp2{position:absolute;top:-15px;right:22px;background:var(--amber);color:#1a1305;font-family:var(--mono);font-weight:700;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;padding:.42rem .8rem;border-radius:6px;transform:rotate(2.5deg);box-shadow:0 6px 16px rgba(20,18,10,.25)}
+.trade-cols{display:grid;grid-template-columns:1fr 1fr;gap:2rem}
 @media(max-width:760px){.trade-cols{grid-template-columns:1fr}}
-.trade-col h3{font-family:var(--fd);font-weight:600;font-size:1.3rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.4rem}
-.trade-col h3 .tc-k{display:block;font-family:var(--fm);font-weight:500;font-size:.64rem;letter-spacing:.24em;color:var(--amber2);margin-bottom:.35rem}
-.trade-col>p{font-size:.95rem;color:var(--tx-dim);margin-bottom:.9rem}
-.trade-list{list-style:none;display:grid;gap:.55rem}
-.trade-list li{display:flex;gap:.65rem;align-items:flex-start;font-size:1rem}
+.trade-col h3{font-weight:700;font-size:1.18rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.5rem}
+.trade-col h3 .tc-k{display:block;font-family:var(--mono);font-weight:500;font-size:.62rem;letter-spacing:.24em;color:var(--amber2);margin-bottom:.35rem;text-transform:uppercase}
+.trade-list{list-style:none;display:grid;gap:.5rem}
+.trade-list li{display:flex;gap:.65rem;align-items:flex-start;font-size:.99rem}
 .trade-list li::before{content:"";flex:none;width:9px;height:9px;margin-top:.5em;background:var(--amber);border-radius:2px;transform:rotate(45deg)}
-.trade-list li b{font-weight:600}
-.trade-line{font-family:var(--fs);font-style:italic;font-size:clamp(1.2rem,2.6vw,1.55rem);line-height:1.4;text-align:center;color:var(--ink2);border-top:1px solid var(--line);margin-top:2rem;padding-top:1.6rem}
-.trade-note{text-align:center;font-size:.92rem;color:var(--tx-dim);max-width:56ch;margin:.7rem auto 0}
-.trade-cta{text-align:center;margin-top:1.4rem}
+.trade-line{font-family:var(--serif);font-style:italic;font-size:clamp(1.18rem,2.6vw,1.5rem);line-height:1.4;text-align:center;color:var(--ink2);border-top:1px solid var(--line);margin-top:1.8rem;padding-top:1.4rem}
+.trade-note{text-align:center;font-size:.92rem;color:var(--tx-dim);max-width:56ch;margin:.6rem auto 0}
+.trade-cta{text-align:center;margin-top:1.3rem}
 
-/* process */
-.steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-top:2.6rem;counter-reset:step}
-@media(max-width:900px){.steps{grid-template-columns:1fr 1fr}}
-@media(max-width:540px){.steps{grid-template-columns:1fr}}
-.step{background:var(--ink);color:var(--tx-inv);border-radius:var(--r);padding:1.7rem 1.4rem;position:relative;overflow:hidden}
-.step::after{content:counter(step,decimal-leading-zero);counter-increment:step;position:absolute;right:.4rem;top:-1.6rem;font-family:var(--fd);font-weight:700;font-size:5.4rem;color:transparent;-webkit-text-stroke:1.5px rgba(225,154,47,.45)}
-.step h3{font-family:var(--fd);font-size:1.25rem;text-transform:uppercase;letter-spacing:.03em;color:var(--amber);margin-bottom:.5rem}
-.step p{font-size:.94rem;color:var(--tx-inv-dim)}
+/* ============ footer (constant) ============ */
+footer.site{background:#0e1013;color:var(--tx-inv-dim);padding:2.4rem 0 1.6rem;font-size:.92rem}
+footer.site .frow{display:flex;flex-wrap:wrap;gap:.6rem 2rem;align-items:baseline;justify-content:space-between}
+footer.site .fname2{font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em}
+footer.site a{color:var(--tx-inv-dim)}
+footer.site a:hover{color:var(--amber)}
+footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding-top:1rem;display:flex;flex-wrap:wrap;gap:.4rem 2rem;justify-content:space-between;font-size:.82rem}
 
-/* work */
-.work-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-top:2.6rem}
-@media(max-width:760px){.work-grid{grid-template-columns:1fr}}
-.work{background:var(--card);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;transition:transform .18s,box-shadow .18s}
-.work:hover{transform:translateY(-5px);box-shadow:var(--sh)}
-.work img{width:100%;height:210px;object-fit:cover}
-.work .wb{padding:1.3rem 1.4rem 1.5rem}
-.work .kind{font-family:var(--fm);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--amber2)}
-.work h3{font-family:var(--fd);font-weight:600;font-size:1.22rem;text-transform:uppercase;margin:.35rem 0 .45rem}
-.work p{font-size:.95rem;color:var(--tx-dim)}
+/* ============ bottom tab bar ============ */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:300;background:rgba(12,14,17,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line-d);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar .tabs{max-width:620px;margin:0 auto;display:flex}
+.tab{flex:1;background:none;border:0;color:var(--tx-inv-dim);font:inherit;cursor:pointer;min-height:var(--tabh);padding:.55rem .4rem .6rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.16rem;position:relative;-webkit-tap-highlight-color:transparent}
+.tab .tnum{font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.26em}
+.tab .tname{font-weight:700;font-size:1rem;letter-spacing:.02em;display:flex;align-items:center;gap:.5rem}
+.tab .swatch{width:11px;height:11px;border-radius:3px;flex:none}
+.swatch-glass{background:linear-gradient(135deg,#57d977,#2de2c4)}
+.swatch-swiss{background:#e30613;border-radius:0}
+.swatch-bold{background:#ffe600;box-shadow:inset 0 0 0 2px #000,0 0 0 1px rgba(255,255,255,.25)}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{color:#fff}
+.tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--amber);border-radius:0 0 3px 3px}
+.tab:focus-visible{outline:3px solid var(--amber);outline-offset:-3px;border-radius:0}
 
-/* about */
-.mono{font-family:var(--fd);font-weight:700;font-size:clamp(4.6rem,10vw,7.5rem);line-height:.9;color:var(--ink)}
-.mono span{color:var(--amber2)}
-.pull{font-family:var(--fs);font-style:italic;font-size:1.35rem;line-height:1.45;border-left:4px solid var(--amber);padding-left:1.1rem;margin:1.6rem 0;color:var(--ink2)}
-.about-pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
-.about-pic img{width:100%;height:300px;object-fit:cover}
-
-/* ============ before / after slider ============ */
-.ba-wrap{margin-top:2.6rem}
-.ba{position:relative;height:560px;border-radius:var(--r);overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);container-type:inline-size;--pos:50%;cursor:ew-resize;user-select:none;-webkit-user-select:none;touch-action:none;background:#fff}
-@media(max-width:820px){.ba{height:500px}}
-@media(max-width:520px){.ba{height:470px}}
-.ba-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
-.ba-after{z-index:1}
-.ba-before{z-index:2;clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
-.ba-tag{position:absolute;top:14px;z-index:4;font-family:var(--fm);font-size:.66rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.36rem .62rem;border-radius:6px;pointer-events:none}
-.ba-tag-b{left:14px;background:#000080;color:#ffff00;border:1px solid #ffffff;box-shadow:2px 2px 0 rgba(0,0,0,.45)}
-.ba-tag-a{right:14px;background:var(--ink);color:var(--amber);border:1px solid rgba(225,154,47,.5)}
-.ba-handle{position:absolute;top:0;bottom:0;left:var(--pos);width:0;z-index:5}
-.ba-handle::before{content:"";position:absolute;top:0;bottom:0;left:-2px;width:4px;background:var(--amber);box-shadow:0 0 0 1px rgba(0,0,0,.28),0 0 16px rgba(0,0,0,.35)}
-.ba-grip{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:var(--amber);border:3px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,.42);display:grid;place-items:center}
-.ba-grip svg{width:26px;height:26px;stroke:#1a1305;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-.ba-handle:focus-visible{outline:none}
-.ba-handle:focus-visible .ba-grip{box-shadow:0 0 0 3px var(--ink),0 0 0 7px var(--amber)}
-.ba-wrap figcaption{margin-top:1.05rem;text-align:center;color:var(--tx-inv-dim);font-family:var(--fs);font-style:italic;font-size:1.02rem}
-.ba-wrap figcaption b{color:var(--amber);font-style:normal}
-
-/* --- BEFORE panel: a lovingly awful early-2000s contractor site --- */
-.old{height:100%;background:#ffffcc;font-family:'Times New Roman',Times,serif;color:#000;padding:2cqw;font-size:16px;font-size:1.85cqw;line-height:1.35}
-.old .o-box{position:relative;height:100%;background:#fff;border:3px ridge #c9c9c9;padding:1.6cqw 2cqw;overflow:hidden}
-.old .o-head{text-align:center}
-.old .o-name{font-size:30px;font-size:4.6cqw;font-weight:bold;color:#1d5c1d;letter-spacing:.01em}
-.old .o-sub{font-style:italic;font-size:15px;font-size:1.9cqw;color:#333}
-.old .o-nav{text-align:center;margin:.7em 0 .5em;font-size:15px;font-size:1.85cqw}
-.old .o-nav span{color:#0000ee;text-decoration:underline;margin:0 .35em;cursor:pointer}
-.old .o-rainbow{height:5px;background:linear-gradient(90deg,#f00,#ff7f00,#ff0,#0a0,#00f,#4b0082,#9400d3);margin:.4em 0}
-.old .o-marquee{background:#000080;color:#fff;font-weight:bold;overflow:hidden;white-space:nowrap;padding:.18em 0;font-size:15px;font-size:1.85cqw}
-.old .o-marquee span{display:inline-block;padding-left:100%;animation:oScroll 14s linear infinite}
-@keyframes oScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
-.old .o-welcome{text-align:center;font-size:22px;font-size:3.2cqw;font-weight:bold;margin:.55em 0 .3em}
-.old .o-table{width:100%;border-collapse:collapse;margin-top:.5em}
-.old .o-table td{border:2px groove #bdbdbd;padding:.55em .7em;vertical-align:top;background:#fff}
-.old .o-table h4{font-size:17px;font-size:2.1cqw;margin-bottom:.3em;text-decoration:underline}
-.old .o-table ul{margin-left:1.2em}
-.old .o-big{font-size:19px;font-size:2.4cqw;font-weight:bold}
-.old .o-badges{text-align:center;margin-top:.8em;font-family:Verdana,Geneva,sans-serif}
-.old .o-badge{display:inline-block;border:2px outset #d4d4d4;background:#ececec;color:#000;font-size:11px;font-size:1.35cqw;padding:.3em .6em;margin:.15em}
-.old .o-counter{display:inline-block;background:#000;color:#33ff33;font-family:'Courier New',monospace;font-weight:bold;letter-spacing:.35em;font-size:13px;font-size:1.6cqw;padding:.25em .5em .25em .85em;margin:.15em}
-.old .o-foot{text-align:center;font-size:13px;font-size:1.55cqw;color:#444;margin-top:.7em}
-.old .o-burst{position:absolute;top:64px;right:16px;width:96px;height:96px;background:#ffff00;border:3px dashed #d40000;border-radius:50%;transform:rotate(14deg);display:grid;place-items:center;text-align:center;color:#c00000;font-weight:bold;font-size:14px;line-height:1.15;padding:8px;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
-@media(max-width:640px){.old .o-burst{display:none}}
-
-/* --- AFTER panel: the modern redesign --- */
-.new{height:100%;position:relative;background:linear-gradient(155deg,#f4fbf0 0%,#e4f0d8 58%,#cfe3b4 100%);font-family:var(--fb);color:#1f2a18;display:flex;flex-direction:column;overflow:hidden}
-.new .n-sun{position:absolute;right:7%;top:21%;width:120px;height:120px;width:13cqw;height:13cqw;border-radius:50%;background:radial-gradient(circle at 36% 34%,#ffe1a0,#e19a2f 72%);box-shadow:0 0 0 14px rgba(225,154,47,.16),0 0 60px rgba(225,154,47,.35)}
-.new .n-bar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1em;padding:2.2cqw 4cqw;border-bottom:1px solid rgba(46,84,32,.16)}
-.new .n-logo{font-family:var(--fs);font-weight:600;font-size:21px;font-size:2.9cqw;color:#22401c;line-height:1}
-.new .n-logo small{display:block;font-family:var(--fm);font-weight:500;font-size:9px;font-size:1.15cqw;letter-spacing:.3em;color:#5c7a3a;margin-top:.35em}
-.new .n-nav{display:flex;gap:1.6em;font-size:13px;font-size:1.6cqw;font-weight:500;color:#4d603c}
-.new .n-call{flex:none;background:#22401c;color:#ffe1a0;font-weight:600;font-size:13px;font-size:1.6cqw;padding:.55em 1.1em;border-radius:99px}
-@media(max-width:640px){.new .n-nav{display:none}}
-.new .n-hero{position:relative;padding:3.4cqw 4cqw 2cqw;max-width:74%}
-.new .n-eyebrow{font-family:var(--fm);font-size:10px;font-size:1.3cqw;letter-spacing:.26em;color:#5c7a3a;text-transform:uppercase}
-.new .n-h{font-family:var(--fs);font-weight:600;font-size:34px;font-size:6cqw;line-height:1.04;color:#1c3315;margin:.28em 0 .3em}
-.new .n-lede{font-size:14px;font-size:1.95cqw;color:#43552f;max-width:44ch;line-height:1.5}
-.new .n-ctas{display:flex;gap:.7em;margin-top:1.1em;flex-wrap:wrap}
-.new .n-btn{background:#2e5420;color:#fff;font-weight:700;font-size:13px;font-size:1.7cqw;padding:.6em 1.25em;border-radius:99px}
-.new .n-btn2{border:1.5px solid #5c7a3a;color:#33501f;font-weight:600;font-size:13px;font-size:1.7cqw;padding:.6em 1.15em;border-radius:99px}
-.new .n-strip{position:relative;margin-top:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2em;border-top:1px solid rgba(46,84,32,.18);background:rgba(255,255,255,.6);padding:2cqw 4cqw}
-.new .n-strip h5{font-family:var(--fm);font-weight:500;font-size:9px;font-size:1.15cqw;letter-spacing:.24em;color:#5c7a3a;text-transform:uppercase;margin-bottom:.35em}
-.new .n-strip p{font-size:12.5px;font-size:1.6cqw;color:#3c4f2a;line-height:1.45}
-@container (max-width:560px){
-  .new .n-hero{max-width:100%}
-  .new .n-strip{grid-template-columns:1fr 1fr}
-  .new .n-sun{display:none}
-}
-
-/* contact + footer */
-.cta-band{background:linear-gradient(120deg,#191410,#241a0c 55%,#191410);color:var(--tx-inv);text-align:center;padding:4.6rem 0}
-.cta-band h2{color:#fff}
-.cta-band .pun{font-family:var(--fs);font-style:italic;color:var(--amber);font-size:1.15rem}
-.cta-band .ctas{display:flex;gap:.8rem;justify-content:center;flex-wrap:wrap;margin-top:1.8rem}
-footer{background:#0e1013;color:var(--tx-inv-dim);padding:3rem 0 6.4rem;font-size:.92rem}
-footer .cols{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:2rem}
-@media(max-width:760px){footer .cols{grid-template-columns:1fr}}
-footer h4{font-family:var(--fd);color:#fff;text-transform:uppercase;letter-spacing:.05em;font-size:1rem;margin-bottom:.7rem}
-footer a{color:var(--tx-inv-dim);text-decoration:none}
-footer a:hover{color:var(--amber)}
-footer ul{list-style:none;display:grid;gap:.4rem}
-.copyright{border-top:1px solid var(--line-d);margin-top:2.2rem;padding-top:1.2rem;display:flex;justify-content:space-between;flex-wrap:wrap;gap:.6rem}
-.mobilebar{position:fixed;left:0;right:0;bottom:0;z-index:110;display:none;gap:.6rem;padding:.6rem .7rem calc(.6rem + env(safe-area-inset-bottom));background:rgba(14,16,19,.96);backdrop-filter:blur(8px)}
-.mobilebar a{flex:1;text-align:center;padding:.8rem .4rem}
-@media(max-width:760px){.mobilebar{display:flex}}
-
-/* reveal */
-.rv{opacity:0;transform:translateY(22px);transition:opacity .6s ease,transform .6s ease}
-.rv.in{opacity:1;transform:none}
 @media (prefers-reduced-motion: reduce){
   html{scroll-behavior:auto}
-  .rv{opacity:1;transform:none;transition:none}
-  .btn,.svc,.work{transition:none}
-  .old .o-marquee span{animation:none;padding-left:0}
+  .format.active{animation:none}
+  .bd-roundel,.bd-mq-in,.g-orb::after{animation:none}
+  .g-card,.bd-card,.bd-btn,.btn{transition:none}
 }
 </style>
 </head>
 <body>
-<a class="skip" href="#redesign">Skip to content</a>
+<a class="skip" href="#stage">Skip to the formats</a>
+<div class="page">
 
-<header class="site" id="siteHeader">
+<header class="frame">
   <div class="bar">
-    <a class="brand" href="#top" aria-label="Christopher Moore — home">
-      <span class="mark" aria-hidden="true">CM</span>
-      <span class="bname">Christopher Moore<small>Websites · Booking · Kansas City</small></span>
+    <a class="fbrand" href="#stage" aria-label="Christopher Moore — formats">
+      <span class="fmark" aria-hidden="true">CM</span>
+      <span class="fname">Christopher Moore<small>Websites &amp; Booking · Contractors · Kansas City</small></span>
     </a>
-    <nav class="main" aria-label="Main navigation">
-      <a href="#redesign">The Redesign</a>
-      <a href="#services">Services</a>
-      <a href="#trade">The Trade</a>
-      <a href="#process">Process</a>
-      <a href="#about">About</a>
-    </nav>
+    <p class="ftag">One business. Three formats. Pick yours.</p>
     <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
   </div>
 </header>
 
-<main id="top">
-  <!-- HERO -->
-  <section class="hero" aria-label="Introduction">
-    <img class="bg" src="assets/hero-workspace.jpg" alt="A builder's desk at dusk — ultrawide monitor, warm lamp light, and a city skyline through the window" fetchpriority="high">
-    <div class="shade" aria-hidden="true"></div>
-    <div class="inner">
-      <div class="wrap">
-        <p class="eyebrow">Christopher Moore · Kansas City</p>
-        <h1>Websites &amp; booking that work as hard as <em>your crew.</em></h1>
-        <p class="lede">I'm Christopher Moore. I build websites and online scheduling for contractors and tradespeople in the Kansas City metro — so customers can find you, trust you, and book the job while you're still finishing the last one. One person, end-to-end: you talk to the builder.</p>
-        <div class="ctas">
-          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
-          <a class="btn btn-ghost" href="#redesign">See the difference</a>
-        </div>
-      </div>
-      <div class="stats">
-        <div class="wrap"><div class="row">
-          <div class="stat"><b>1</b><span>person, end-to-end — design to launch</span></div>
-          <div class="stat"><b>24/7</b><span>booking — customers schedule while you're on a job</span></div>
-          <div class="stat"><b>Preview</b><span>see it working before it's final</span></div>
-          <div class="stat"><b>KC</b><span>based in the Kansas City metro</span></div>
-        </div></div>
-      </div>
-    </div>
-  </section>
+<main>
+<h1 class="sr-only">Christopher Moore — Websites and booking for contractors, Kansas City. One business, three formats.</h1>
+<div id="stage" data-active-format="glass">
 
-  <!-- THE REDESIGN (before / after slider) -->
-  <section class="sec dark" id="redesign">
-    <div class="wrap">
-      <p class="kicker">The Redesign</p>
-      <h2>Old website. New website. Same crew.</h2>
-      <p class="sub">GreenScape Lawn Care is fictional — the problem isn't. Same name, same phone number, same services, same hours. The only thing that changes is the design — plus one thing the old site never had: a way to book. Drag the handle.</p>
-      <figure class="ba-wrap rv">
-        <div class="ba" id="baBox" style="--pos:50%">
-          <!-- AFTER (base layer) -->
-          <div class="ba-layer ba-after" aria-hidden="true">
-            <div class="new">
-              <div class="n-sun"></div>
-              <div class="n-bar">
-                <div class="n-logo">GreenScape<small>Lawn Care</small></div>
-                <div class="n-nav"><span>Services</span><span>Pricing</span><span>Service Area</span><span>Contact</span></div>
-                <span class="n-call">Book a mowing</span>
-              </div>
-              <div class="n-hero">
-                <p class="n-eyebrow">Kansas City · Lawn Care</p>
-                <p class="n-h">A yard that handles itself.</p>
-                <p class="n-lede">Weekly mowing, leaf cleanup, and aeration — booked online in under a minute, confirmed by text, done while you're at work.</p>
-                <div class="n-ctas">
-                  <span class="n-btn">Book a mowing</span>
-                  <span class="n-btn2">Call (816) 555-0147</span>
-                </div>
-              </div>
-              <div class="n-strip">
-                <div><h5>Services</h5><p>Weekly mowing · Leaf cleanup<br>Aeration &amp; seeding · Hedge trimming</p></div>
-                <div><h5>Hours</h5><p>Mon–Sat · 7am–7pm<br>Sunday · crews rest</p></div>
-                <div><h5>Area</h5><p>Serving the KC metro<br>Free estimates, always</p></div>
-              </div>
-            </div>
-          </div>
-          <!-- BEFORE (clipped top layer) -->
-          <div class="ba-layer ba-before" aria-hidden="true">
-            <div class="old">
-              <div class="o-box">
-                <div class="o-burst">FREE ESTIMATES!</div>
-                <div class="o-head">
-                  <div class="o-name">★ GreenScape Lawn Care ★</div>
-                  <div class="o-sub">"You grow it, we mow it!!"</div>
-                </div>
-                <div class="o-nav"><span>Home</span>|<span>Services</span>|<span>About Us</span>|<span>Directions</span>|<span>Guestbook</span></div>
-                <div class="o-rainbow"></div>
-                <div class="o-marquee"><span>*** NOW BOOKING FALL CLEANUPS *** CALL NOW — WEEKEND SLOTS FILL FAST ***</span></div>
-                <div class="o-welcome">Welcome to our Web Site!!</div>
-                <table class="o-table">
-                  <tr>
-                    <td style="width:52%">
-                      <h4>Our Services</h4>
-                      <ul>
-                        <li>Weekly Mowing</li>
-                        <li>Leaf Cleanup</li>
-                        <li>Aeration &amp; Seeding</li>
-                        <li>Hedge Trimming</li>
-                      </ul>
-                      <p style="margin-top:.5em">Please <u>call to schedule</u> — no emails please!!</p>
-                    </td>
-                    <td>
-                      <h4>Service Area</h4>
-                      <p>Serving the whole<br>KC metro area!</p>
-                      <p class="o-big">Call: (816) 555-0147</p>
-                      <p style="margin-top:.4em"><b>Hours:</b><br>Mon–Sat 7am–7pm<br>Sun CLOSED</p>
-                    </td>
-                  </tr>
-                </table>
-                <div class="o-badges">
-                  <span class="o-counter">00137</span>
-                  <span class="o-badge">You are visitor #137 — thanks for stopping by!</span>
-                  <span class="o-badge">★ UNDER CONSTRUCTION ★</span>
-                  <span class="o-badge">Best viewed at 800x600</span>
-                </div>
-                <p class="o-foot">© 2004 GreenScape Lawn Care · This page last updated April 2, 2004 · Sign our guestbook!</p>
-              </div>
-            </div>
-          </div>
-          <span class="ba-tag ba-tag-b">Before</span>
-          <span class="ba-tag ba-tag-a">After</span>
-          <div class="ba-handle" id="baHandle" tabindex="0" role="slider" aria-label="Before and after comparison" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% old website, 50% new website">
-            <span class="ba-grip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 5L3 12l5.5 7M15.5 5L21 12l-5.5 7"/></svg></span>
+  <!-- ================= FORMAT 1 · GLASS ================= -->
+  <section class="format fmt-glass active" id="panel-glass" data-format="glass" role="tabpanel" aria-labelledby="tab-glass" tabindex="0">
+    <canvas id="auroraCanvas" aria-hidden="true"></canvas>
+    <div class="fin">
+      <div class="g-nav glass-panel">
+        <div class="g-logo">GreenScape<small>Lawn Care</small></div>
+        <nav aria-hidden="true"><span>Services</span><span>Booking</span><span>About</span><span>Contact</span></nav>
+        <span class="g-call">Book a mowing</span>
+      </div>
+
+      <div class="g-hero">
+        <div class="g-orb" aria-hidden="true"></div>
+        <p class="g-eyebrow glass-panel"><span class="dot" aria-hidden="true"></span> GreenScape Lawn Care — Kansas City</p>
+        <h2 class="g-h1">A yard that <span class="l2">handles <b>itself.</b></span></h2>
+        <div class="g-lede glass-panel">
+          <p>Weekly mowing, leaf cleanup, and aeration — booked online in under a minute, confirmed by text, done while you're at work. You come home to stripes.</p>
+          <div class="g-ctas">
+            <a class="g-btn" href="tel:+18165550147">Book a mowing</a>
+            <a class="g-btn2" href="tel:+18165550147">Call (816) 555-0147</a>
           </div>
         </div>
-        <figcaption><b>Same business. Same words. New design.</b> — drag the handle, or focus it and use the arrow keys.</figcaption>
-      </figure>
-    </div>
-  </section>
+        <div class="g-legend glass-panel" aria-hidden="true"><b>Now booking</b>Fall cleanups are open — Saturday slots go first.</div>
+      </div>
 
-  <!-- SERVICES -->
-  <section class="sec" id="services">
-    <div class="wrap">
-      <p class="kicker">Services</p>
-      <h2>Built for the trades</h2>
-      <p class="sub">Roofers, lawn crews, auto shops, gutter and handyman outfits — if your customers find you on a phone and hire you on trust, this is the production side of that. Four services, one builder.</p>
-      <div class="svc-grid">
-        <article class="svc wide rv">
-          <span class="tag">The core offer</span>
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
-          <h3>Contractor Websites</h3>
-          <p>Designed and built for trades businesses: your services, your service area, your number big enough to tap from a truck cab. Fast pages, plain words, proof that you're real — built to turn a search into a phone call.</p>
+      <div class="g-cards">
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 21c0-6 1-10 5-14M12 21c-4-1-7-4-7-9 4 0 7 2 8 5M12 21c1-5 4-8 9-9-1 5-4 8-9 9z"/></svg></div>
+          <h3>Weekly Mowing</h3>
+          <p>A standing weekly route — cut, edge, blow-off, same day every week. Your yard never gets away from you.</p>
+          <span class="cad">Every week · Apr–Nov</span>
         </article>
-        <article class="svc wide rv">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"/></svg></div>
-          <h3>Online Scheduling &amp; Booking</h3>
-          <p>Let customers book the job themselves. They pick the slot, get a confirmation and a reminder, and it lands on your calendar — no phone tag, no double-booking, no missed call while you were under a house or up a ladder.</p>
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 18c5 0 12-1 16-5-5 0-12 1-16 5zM4 18c2-4 6-8 11-10M6 21h12"/></svg></div>
+          <h3>Leaf Cleanup</h3>
+          <p>Full-yard leaf removal and gutter-line clearing in the fall — curbside or hauled, your call.</p>
+          <span class="cad">Every fall</span>
         </article>
-        <article class="svc wide rv">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
-          <h3>Website Redesigns</h3>
-          <p>Already have a site? If it looks like the left side of that slider, it's costing you jobs. Same business, same words — rebuilt modern, mobile-first, with booking added so the new one earns its keep.</p>
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="7" cy="7" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="17" cy="7" r="1.4"/><circle cx="7" cy="17" r="1.4"/><circle cx="17" cy="17" r="1.4"/><circle cx="12" cy="20" r="1.2"/></svg></div>
+          <h3>Aeration &amp; Seeding</h3>
+          <p>Core aeration pulls the plugs, seed goes down, and thin spots fill in thicker by spring.</p>
+          <span class="cad">Spring + fall</span>
         </article>
-        <article class="svc wide rv">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 11.5l2.2 2.2L15.5 9"/></svg></div>
-          <h3>Care &amp; Updates</h3>
-          <p>Hosting looked after, pages kept current, changes made for you. New service, new hours, new photos — send them over and they get handled. Your site stays an asset, not an artifact.</p>
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 20V10M4 10c3-5 8-7 12-6 0 4-2 7-6 8M4 14c2-3 5-4 8-4M20 20H4"/></svg></div>
+          <h3>Hedge Trimming</h3>
+          <p>Shaped, squared, or just tamed — hedges and shrubs trimmed back to neat, clippings gone.</p>
+          <span class="cad">As needed</span>
         </article>
       </div>
-      <figure class="figcard rv">
-        <img src="assets/sites-workbench.jpg" alt="A contractor website displayed on a laptop and phone resting on a workbench" loading="lazy">
-        <figcaption>Built on the bench, checked where customers actually look — on a phone, mid-job, in bright light.</figcaption>
-      </figure>
+
+      <div class="g-book glass-panel">
+        <h3>Booked in <b>under a minute.</b></h3>
+        <ol class="g-steps">
+          <li><span class="n" aria-hidden="true">1</span><span><b>Pick your day</b>Choose the service and a slot online — no phone tag.</span></li>
+          <li><span class="n" aria-hidden="true">2</span><span><b>Get the text</b>A confirmation lands instantly, with a reminder the day before.</span></li>
+          <li><span class="n" aria-hidden="true">3</span><span><b>We mow</b>The crew shows up on schedule. You don't have to be home.</span></li>
+        </ol>
+      </div>
+
+      <div class="g-about glass-panel">
+        <p><b>GreenScape is a small Kansas City crew</b> that treats a route like a promise: same day, same standard, every week. Serving the whole KC metro — free estimates, always.</p>
+        <p class="hrs">Mon–Sat · 7am–7pm<br>Sunday · Crews rest<br>(816) 555-0147</p>
+      </div>
+
+      <p class="credit g-credit">Format № 01 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Aurora Glass”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</p>
     </div>
   </section>
 
-  <!-- THE TRADE -->
-  <section class="sec alt" id="trade">
+  <!-- ================= FORMAT 2 · SWISS ================= -->
+  <section class="format fmt-swiss" id="panel-swiss" data-format="swiss" role="tabpanel" aria-labelledby="tab-swiss" tabindex="0" hidden>
+    <div class="sw">
+      <p class="sw-imprint" aria-hidden="true">Greenscape is a fictional business · Set in Helvetica · Kansas City</p>
+      <div class="sw-top" aria-hidden="true">
+        <span>Greenscape Lawn Care</span>
+        <span class="mid">Kansas City, Missouri</span>
+        <span>Format <span class="r">№ 02</span> — Edition KC</span>
+      </div>
+
+      <div class="sw-hero">
+        <p class="sw-vert" aria-hidden="true">Care</p>
+        <h2 class="sw-lawn">Lawn</h2>
+        <div class="sw-subrow">
+          <div class="sw-sun" aria-hidden="true"></div>
+          <p class="sw-name">GreenScape <span>Lawn Care</span></p>
+        </div>
+      </div>
+
+      <div class="sw-grid">
+        <p class="sw-intro"><b>GreenScape Lawn Care — Kansas City.</b> Weekly mowing, leaf cleanup, aeration &amp; seeding, hedge trimming. Booked online in under a minute, confirmed by text, done while you're at work. Free estimates, always.</p>
+        <div class="sw-lang">
+          <p class="w">Mähen <i>·</i> Tondre <i>·</i> Tagliare</p>
+          <p>“To mow” — in German, French, and Italian. One word, three languages, the same job: a yard that handles itself.</p>
+        </div>
+
+        <div class="sw-svcs">
+          <article class="sw-svc">
+            <p class="num" aria-hidden="true">01</p>
+            <h3>Weekly Mowing</h3>
+            <p>A standing weekly route — cut, edge, blow-off, same day every week.</p>
+            <p class="cad">Weekly · Apr–Nov</p>
+          </article>
+          <article class="sw-svc">
+            <p class="num" aria-hidden="true">02</p>
+            <h3>Leaf Cleanup</h3>
+            <p>Full-yard leaf removal in the fall — curbside or hauled, your call.</p>
+            <p class="cad">Fall</p>
+          </article>
+          <article class="sw-svc">
+            <p class="num" aria-hidden="true">03</p>
+            <h3>Aeration &amp; Seeding</h3>
+            <p>Core aeration pulls the plugs; seed goes down; thin spots fill in.</p>
+            <p class="cad">Spring + Fall</p>
+          </article>
+          <article class="sw-svc">
+            <p class="num" aria-hidden="true">04</p>
+            <h3>Hedge Trimming</h3>
+            <p>Hedges and shrubs trimmed back to neat, clippings gone.</p>
+            <p class="cad">As needed</p>
+          </article>
+        </div>
+
+        <div class="sw-book">
+          <div class="bk">
+            <p class="big">Book a<br>mowing</p>
+            <p>Pick the service and the day online. A text confirms it. The crew does the rest.</p>
+          </div>
+          <div class="ph">
+            <span class="lbl">Telephone</span>
+            <span class="num">(816) 555-0147</span>
+            <span class="hrs">Mon–Sat · 07:00–19:00</span>
+          </div>
+        </div>
+
+        <div class="sw-steps">
+          <div class="sw-step">
+            <p class="n" aria-hidden="true">1.</p>
+            <h4>Pick your day</h4>
+            <p>Choose the service and a slot online — under a minute, no phone tag.</p>
+          </div>
+          <div class="sw-step">
+            <p class="n" aria-hidden="true">2.</p>
+            <h4>Get the text</h4>
+            <p>Confirmation lands instantly, with a reminder the day before.</p>
+          </div>
+          <div class="sw-step">
+            <p class="n" aria-hidden="true">3.</p>
+            <h4>We mow</h4>
+            <p>The crew shows up on schedule. You don't have to be home.</p>
+          </div>
+        </div>
+
+        <div class="sw-facts">
+          <table>
+            <tr><td>Hours</td><td>Mon–Sat, 7:00–19:00. Sunday closed — crews rest.</td></tr>
+            <tr><td>Area</td><td>The Kansas City metro, both sides of the river.</td></tr>
+            <tr><td>About</td><td>A small KC crew that treats a route like a promise: same day, same standard, every week.</td></tr>
+            <tr><td>Estimates</td><td>Free. Always.</td></tr>
+          </table>
+        </div>
+      </div>
+
+      <p class="credit sw-credit"><span>Format № 02 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Raster — Swiss Poster Machine”</a>, from Claude Opus 5.5 · 100 HTML Files. GreenScape Lawn Care is a fictional business.</span></p>
+    </div>
+  </section>
+
+  <!-- ================= FORMAT 3 · BOLD ================= -->
+  <section class="format fmt-bold" id="panel-bold" data-format="bold" role="tabpanel" aria-labelledby="tab-bold" tabindex="0" hidden>
+    <div class="bd bd-mast">
+      <svg class="bd-roundel" viewBox="0 0 120 120" aria-hidden="true">
+        <defs><path id="bdCirc" d="M60,60 m-46,0 a46,46 0 1,1 92,0 a46,46 0 1,1 -92,0"/></defs>
+        <circle cx="60" cy="60" r="57" fill="#ffe600" stroke="#000" stroke-width="4"/>
+        <text font-size="12" font-weight="900" letter-spacing="2" fill="#000"><textPath href="#bdCirc">GREENSCAPE ★ KANSAS CITY ★</textPath></text>
+        <text x="60" y="71" text-anchor="middle" font-size="27" font-weight="900" fill="#000">★</text>
+      </svg>
+      <div class="bd-sticker" aria-hidden="true">Free estimates!</div>
+      <p class="bd-kick">Greenscape Lawn Care ★ Kansas City ★ Mon–Sat 7–7</p>
+      <h2 class="bd-green">Green</h2>
+      <div class="bd-row2"><span class="bd-scape">Scape</span><span class="bd-lawn">Lawn Care</span></div>
+      <p class="bd-tagline">Weekly mowing, leaf cleanup, aeration &amp; seeding, hedge trimming — booked online in under a minute, confirmed by text, done while you're at work.</p>
+    </div>
+
+    <div class="bd-mq" aria-hidden="true"><div class="bd-mq-in"><span>Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★ Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★&nbsp;</span><span>Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★ Weekly Mowing ★ Leaf Cleanup ★ Aeration &amp; Seeding ★ Hedge Trimming ★ Free Estimates ★ Book Online ★&nbsp;</span></div></div>
+
+    <div class="bd bd-pad">
+      <p class="bd-kick">The Services — Four Singles</p>
+      <h3 class="bd-sec-h">The <span class="hl">Lineup</span></h3>
+      <div class="bd-grid">
+        <article class="bd-card">
+          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><rect width="200" height="104" fill="#ffe600"/><circle cx="164" cy="16" r="36" fill="#000"/><rect y="66" width="200" height="9" fill="#000" opacity=".85"/><rect y="84" width="200" height="9" fill="#000" opacity=".55"/><rect y="97" width="200" height="7" fill="#000" opacity=".3"/></svg></div>
+          <div class="bd-cb"><h3>Weekly Mowing</h3><p class="meta">Every week · Apr–Nov</p><p>Cut, edge, blow-off — same day every week. The route never misses you.</p></div>
+        </article>
+        <article class="bd-card">
+          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><rect width="200" height="104" fill="#1d3cff"/><g stroke="#f7f5f0" stroke-width="7"><path d="M-10 90 L70 -14M30 104 L110 -2M76 110 L156 4M122 112 L202 8"/></g><circle cx="160" cy="72" r="17" fill="#000"/></svg></div>
+          <div class="bd-cb"><h3>Leaf Cleanup</h3><p class="meta">Every fall · Full yard</p><p>Every leaf, gone. Curbside or hauled away — your call, our backs.</p></div>
+        </article>
+        <article class="bd-card">
+          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><defs><pattern id="bdDots" width="27" height="26" patternUnits="userSpaceOnUse"><circle cx="8" cy="8" r="5.5" fill="#000"/></pattern></defs><rect width="200" height="104" fill="#f7f5f0"/><rect width="200" height="104" fill="url(#bdDots)"/><circle cx="168" cy="26" r="15" fill="#ff3ea5" stroke="#000" stroke-width="4"/></svg></div>
+          <div class="bd-cb"><h3>Aeration &amp; Seeding</h3><p class="meta">Spring + fall</p><p>Plugs pulled, seed down, thin spots filled. Thicker by spring.</p></div>
+        </article>
+        <article class="bd-card">
+          <div class="bd-art" aria-hidden="true"><svg viewBox="0 0 200 104" preserveAspectRatio="none"><rect width="200" height="104" fill="#ff3ea5"/><path d="M0 68 L25 40 L50 68 L75 40 L100 68 L125 40 L150 68 L175 40 L200 68" fill="none" stroke="#000" stroke-width="9"/><circle cx="34" cy="24" r="11" fill="#ffe600" stroke="#000" stroke-width="4"/></svg></div>
+          <div class="bd-cb"><h3>Hedge Trimming</h3><p class="meta">As needed · Shaped or tamed</p><p>Hedges and shrubs cut back to neat. Clippings leave with us.</p></div>
+        </article>
+      </div>
+
+      <p class="bd-kick" style="margin-top:2.8rem">How Booking Works — The Tracklist</p>
+      <h3 class="bd-sec-h">Booked in <span class="hl">60 seconds</span></h3>
+      <div class="bd-rows">
+        <div class="bd-rrow"><span class="no">01</span><h3>Pick your day</h3><p>Choose the service and a slot online. Under a minute, no phone tag.</p></div>
+        <div class="bd-rrow"><span class="no">02</span><h3>Get the text</h3><p>Confirmation lands instantly, with a reminder the day before.</p></div>
+        <div class="bd-rrow"><span class="no">03</span><h3>We mow</h3><p>The crew shows up on schedule. You don't have to be home.</p></div>
+        <div class="bd-rrow"><span class="no">04</span><h3>Come home to stripes</h3><p>That's the whole review. Every week, all season.</p></div>
+      </div>
+
+      <div class="bd-days">
+        <h3>Service Days</h3>
+        <table>
+          <tr><td>Monday — Friday</td><td>7:00 AM – 7:00 PM · Booking open</td></tr>
+          <tr><td>Saturday</td><td>7:00 AM – 7:00 PM · Goes first</td></tr>
+          <tr><td>Sunday <span class="bd-stamp">Crews rest</span></td><td>Closed</td></tr>
+        </table>
+      </div>
+
+      <div class="bd-join">
+        <h3>Get on<br>the route.</h3>
+        <p>GreenScape is a small Kansas City crew that treats a route like a promise: same day, same standard, every week — serving the whole KC metro.</p>
+        <div class="row">
+          <span class="bd-phone">(816) 555-0147</span>
+          <a class="bd-btn" href="tel:+18165550147">Book a mowing</a>
+        </div>
+      </div>
+
+      <p class="bd-backcover">Greenscape Lawn Care ★ A fictional business ★ Kansas City ★ (816) 555-0147 ★ Mon–Sat 7–7</p>
+      <p class="credit bd-credit">Format № 03 — sampled from <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">“Loud House Records”</a>, from Claude Opus 5.5 · 100 HTML Files.</p>
+    </div>
+  </section>
+</div><!-- /#stage -->
+
+  <!-- ================= THE TRADE (constant) ================= -->
+  <section class="trade" id="trade">
     <div class="wrap">
       <p class="kicker">The Trade</p>
       <h2>Let's trade: your trade for mine</h2>
-      <p class="sub">Posted on Nextdoor, meant seriously. Christopher's place needs work he doesn't do; your business needs a website and booking you'd rather not pay cash for. Neighbor to neighbor, one-for-one.</p>
-      <div class="trade-card rv">
-        <span class="trade-stamp">One-for-one</span>
+      <p class="sub">The formats above are the showcase. This is Christopher's real offer, posted on Nextdoor and meant seriously: his place needs work he doesn't do; your business needs a website and booking you'd rather not pay cash for. Neighbor to neighbor, one-for-one.</p>
+      <div class="trade-card">
+        <span class="trade-stamp2">One-for-one</span>
         <div class="trade-cols">
           <div class="trade-col">
             <h3><span class="tc-k">Wanted — for my home</span>Work my place needs</h3>
-            <p>The jobs on Christopher's own list, waiting on the right tradesperson:</p>
             <ul class="trade-list">
               <li><span><b>Lawn mowing</b> — the home yard, kept up through the season</span></li>
               <li><span><b>Roof repair</b> — real repair work, done right</span></li>
@@ -472,16 +584,15 @@ footer ul{list-style:none;display:grid;gap:.4rem}
           </div>
           <div class="trade-col">
             <h3><span class="tc-k">Offered — in exchange</span>What your business gets</h3>
-            <p>The full build, the same as a paying job — no cut-down trade version:</p>
             <ul class="trade-list">
-              <li><span><b>A contractor website</b> — designed and built for your business</span></li>
+              <li><span><b>A contractor website</b> — in any of the three formats above</span></li>
               <li><span><b>Online scheduling</b> — customers book the slot themselves</span></li>
               <li><span><b>Confirmations &amp; reminders</b> — wired to your calendar</span></li>
               <li><span><b>Hosting &amp; care set up</b> — so it keeps working after launch</span></li>
             </ul>
           </div>
         </div>
-        <p class="trade-line">"You fix my roof, I build the site that books your next ten roofs."</p>
+        <p class="trade-line">“You fix my roof, I build the site that books your next ten roofs.”</p>
         <p class="trade-note">Fair swap, scoped in writing before either of us starts — you know exactly what you're getting, I know exactly what I'm getting, and no cash changes hands.</p>
         <div class="trade-cta">
           <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Trade%20proposal">Propose a trade</a>
@@ -489,195 +600,198 @@ footer ul{list-style:none;display:grid;gap:.4rem}
       </div>
     </div>
   </section>
-
-  <!-- PROCESS -->
-  <section class="sec" id="process">
-    <div class="wrap">
-      <p class="kicker">Process</p>
-      <h2>Talk, see it, build, ship</h2>
-      <p class="sub">A process sized for one builder and a busy contractor: few meetings, an early look at the real thing, no surprises at the end.</p>
-      <div class="steps">
-        <article class="step rv"><h3>Talk</h3><p>A real conversation about your trade, your service area, and the jobs you want more of. Christopher says plainly if he's not the right fit — and what the job would take if he is.</p></article>
-        <article class="step rv"><h3>See It</h3><p>Before the full build, you get a working preview — a live page with the booking flow running, opened on your own phone. Decisions get made looking at the thing.</p></article>
-        <article class="step rv"><h3>Build</h3><p>The site and the scheduling get built in visible stages, wired to your calendar. You see progress as it happens, and changes get discussed while they're still cheap.</p></article>
-        <article class="step rv"><h3>Ship</h3><p>It launches with a plain-English note on what was built and how to ask for changes. The person who built it is the person you email.</p></article>
-      </div>
-      <figure class="figcard rv">
-        <img src="assets/blueprint-code.jpg" alt="An engineering blueprint beside a screen of code — planning before building" loading="lazy">
-        <figcaption>Precision habits: sketch it, measure twice, then build once.</figcaption>
-      </figure>
-    </div>
-  </section>
-
-  <!-- WORK -->
-  <section class="sec alt" id="work">
-    <div class="wrap">
-      <p class="kicker">Selected Work</p>
-      <h2>The kinds of jobs that leave the bench</h2>
-      <p class="sub">Project types, not name-drops — other people's names are their business. What follows is the shape of the work.</p>
-      <div class="work-grid">
-        <article class="work rv">
-          <img src="assets/kc-skyline.jpg" alt="A city skyline at blue hour" loading="lazy">
-          <div class="wb"><p class="kind">Website Redesign</p><h3>A dated site, rebuilt modern</h3><p>The full before-and-after treatment: same business, same words, new design — clearer services, a number you can't miss, and booking the old site never offered.</p></div>
-        </article>
-        <article class="work rv">
-          <img src="assets/sites-workbench.jpg" alt="A business website on a laptop and phone on a workbench" loading="lazy">
-          <div class="wb"><p class="kind">Scheduling &amp; Booking</p><h3>The phone tag, retired</h3><p>Customers pick a slot, get confirmed and reminded, and the job lands on the calendar — set up once, and the calendar starts filling while the crew is out working.</p></div>
-        </article>
-        <article class="work rv">
-          <img src="assets/craft-keyboard.jpg" alt="A backlit mechanical keyboard with blank keycaps on a dark desk, code blurred on the monitor behind it" loading="lazy">
-          <div class="wb"><p class="kind">Contractor Website</p><h3>Built for the trades</h3><p>Services, service area, and a tap-to-call number up front; photos of real work; pages that load fast on a job-site connection. A site that reads like the crew works.</p></div>
-        </article>
-        <article class="work rv">
-          <img src="assets/hero-workspace.jpg" alt="A desk at dusk with an ultrawide monitor — the bench where sites get built and kept up" loading="lazy">
-          <div class="wb"><p class="kind">Care &amp; Updates</p><h3>Looked after, not left behind</h3><p>Hosting watched, seasonal offers swapped in, new photos posted, hours kept honest. The site keeps earning instead of slowly going stale.</p></div>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <!-- ABOUT -->
-  <section class="sec" id="about">
-    <div class="wrap">
-      <div class="split">
-        <div class="rv">
-          <p class="kicker">About</p>
-          <div class="mono" aria-hidden="true">C<span>M</span></div>
-          <h2>Christopher Moore, builder</h2>
-          <p class="sub">Christopher is a Kansas City builder who makes websites and scheduling systems for contractors. By day he works in manufacturing quality — a world where you measure twice, verify everything, and write it down. Those habits carry straight into the sites: tested on real phones, honest about what they do, documented in plain English.</p>
-          <p class="pull">"One person, start to finish. The one who answers is the one who builds."</p>
-          <ul class="checks">
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>You deal with Christopher directly — every email, every decision, every page that ships</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>A working preview before the full build, so you're reacting to a site, not a promise</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Precision habits included: verified before launch, changes scoped in writing</span></li>
-          </ul>
-        </div>
-        <div class="rv">
-          <div class="about-pic"><img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour — home base" loading="lazy"></div>
-          <div class="about-pic" style="margin-top:1.1rem"><img src="assets/hero-workspace.jpg" alt="Christopher's desk at dusk — where the sites get built" loading="lazy"></div>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- CONTACT -->
-  <section class="cta-band" id="contact">
-    <div class="wrap">
-      <p class="kicker" style="justify-content:center">Contact</p>
-      <h2>Need a site that books jobs?</h2>
-      <p class="pun">One person, start to finish.</p>
-      <p class="sub" style="color:var(--tx-inv-dim);margin:0.8rem auto 0">One email starts it. Tell Christopher what trade you're in and what your current site situation is — or ask about the trade. He'll take it from there.</p>
-      <div class="ctas">
-        <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a>
-        <a class="btn btn-ghost" href="#trade">See the trade offer</a>
-      </div>
-    </div>
-  </section>
 </main>
 
-<footer>
+<footer class="site">
   <div class="wrap">
-    <div class="cols">
-      <div>
-        <h4>Christopher Moore</h4>
-        <p>Websites and online scheduling for contractors in the Kansas City metro — designed, built, and looked after by one person.</p>
-      </div>
-      <div>
-        <h4>Services</h4>
-        <ul>
-          <li><a href="#services">Contractor websites</a></li>
-          <li><a href="#services">Scheduling &amp; booking</a></li>
-          <li><a href="#services">Website redesigns</a></li>
-          <li><a href="#services">Care &amp; updates</a></li>
-        </ul>
-      </div>
-      <div>
-        <h4>Contact</h4>
-        <ul>
-          <li><a href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a></li>
-          <li>Kansas City metro</li>
-          <li><a href="#trade">The trade offer</a></li>
-          <li><a href="#redesign">The before / after slider</a></li>
-        </ul>
-      </div>
+    <div class="frow">
+      <span class="fname2">Christopher Moore</span>
+      <span>Kansas City, Missouri</span>
+      <a href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a>
     </div>
-    <div class="copyright">
-      <span>© <span id="yr">2026</span> Christopher Moore</span>
-      <span>Designed &amp; built by Christopher Moore.</span>
+    <div class="fsmall">
+      <span>© <span id="yr">2026</span> Christopher Moore — websites &amp; booking for contractors.</span>
+      <span>Formats sampled from the <a href="https://miaai-lab.github.io/Claude-Opus-5.5-100-HTML-Files/">Claude Opus 5.5 · 100 HTML Files</a> gallery. GreenScape Lawn Care is a fictional business.</span>
     </div>
   </div>
 </footer>
+</div><!-- /.page -->
 
-<div class="mobilebar">
-  <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Email Christopher</a>
-  <a class="btn btn-teal" href="#trade">The Trade</a>
+<div class="tabbar">
+  <div class="tabs" role="tablist" aria-label="Website formats">
+    <button type="button" class="tab" role="tab" id="tab-glass" data-format="glass" aria-selected="true" aria-controls="panel-glass">
+      <span class="tnum">01</span>
+      <span class="tname"><span class="swatch swatch-glass" aria-hidden="true"></span>Glass</span>
+    </button>
+    <button type="button" class="tab" role="tab" id="tab-swiss" data-format="swiss" aria-selected="false" aria-controls="panel-swiss" tabindex="-1">
+      <span class="tnum">02</span>
+      <span class="tname"><span class="swatch swatch-swiss" aria-hidden="true"></span>Swiss</span>
+    </button>
+    <button type="button" class="tab" role="tab" id="tab-bold" data-format="bold" aria-selected="false" aria-controls="panel-bold" tabindex="-1">
+      <span class="tnum">03</span>
+      <span class="tname"><span class="swatch swatch-bold" aria-hidden="true"></span>Bold</span>
+    </button>
+  </div>
 </div>
+<div class="sr-only" aria-live="polite" id="fmtLive"></div>
 
 <script>
 (function () {
-  var header = document.getElementById('siteHeader');
-  function onScroll() { header.classList.toggle('scrolled', window.scrollY > 24); }
-  window.addEventListener('scroll', onScroll, { passive: true });
-  onScroll();
-  document.getElementById('yr').textContent = new Date().getFullYear();
+  'use strict';
+  var yr = document.getElementById('yr');
+  if (yr) { yr.textContent = new Date().getFullYear(); }
 
-  /* before / after slider */
-  var ba = document.getElementById('baBox');
-  var handle = document.getElementById('baHandle');
-  if (ba && handle) {
-    var pos = 50;
-    function setPos(p) {
-      pos = Math.max(0, Math.min(100, p));
-      var r = Math.round(pos);
-      ba.style.setProperty('--pos', pos + '%');
-      handle.setAttribute('aria-valuenow', r);
-      handle.setAttribute('aria-valuetext', r + '% old website, ' + (100 - r) + '% new website');
-    }
-    function fromEvent(e) {
-      var rect = ba.getBoundingClientRect();
-      if (!rect.width) { return pos; }
-      return (e.clientX - rect.left) / rect.width * 100;
-    }
-    var dragging = false;
-    ba.addEventListener('pointerdown', function (e) {
-      dragging = true;
-      if (ba.setPointerCapture && e.pointerId !== undefined) {
-        try { ba.setPointerCapture(e.pointerId); } catch (err) {}
-      }
-      setPos(fromEvent(e));
-      e.preventDefault();
-    });
-    ba.addEventListener('pointermove', function (e) { if (dragging) { setPos(fromEvent(e)); } });
-    ['pointerup', 'pointercancel'].forEach(function (t) {
-      ba.addEventListener(t, function () { dragging = false; });
-    });
-    handle.addEventListener('keydown', function (e) {
-      var step = e.shiftKey ? 10 : 2, used = true;
-      switch (e.key) {
-        case 'ArrowLeft': case 'ArrowDown': setPos(pos - step); break;
-        case 'ArrowRight': case 'ArrowUp': setPos(pos + step); break;
-        case 'Home': setPos(0); break;
-        case 'End': setPos(100); break;
-        default: used = false;
-      }
-      if (used) { e.preventDefault(); }
-    });
-    setPos(50);
-  }
+  var formats = ['glass', 'swiss', 'bold'];
+  var labels = { glass: 'Glass', swiss: 'Swiss', bold: 'Bold' };
+  var stage = document.getElementById('stage');
+  var announcer = document.getElementById('fmtLive');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = {};
+  formats.forEach(function (f) { panels[f] = document.getElementById('panel-' + f); });
 
   var reduce = false;
-  if (window.matchMedia) { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
-  var items = document.querySelectorAll('.rv');
-  if (reduce || !('IntersectionObserver' in window)) {
-    items.forEach(function (el) { el.classList.add('in'); });
-  } else {
-    var io = new IntersectionObserver(function (entries) {
-      entries.forEach(function (e) {
-        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
-      });
-    }, { threshold: 0.12 });
-    items.forEach(function (el) { io.observe(el); });
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  var current = null;
+
+  /* ---- aurora canvas (Glass background) ---- */
+  var cv = document.getElementById('auroraCanvas');
+  var ctx = null;
+  try { ctx = cv ? cv.getContext('2d') : null; } catch (e) { ctx = null; }
+  var rafId = null, glassOn = false, specks = [], W = 0, H = 0;
+
+  function sizeCanvas() {
+    if (!ctx) { return; }
+    var r = cv.parentElement.getBoundingClientRect();
+    var d = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * d); cv.height = Math.round(H * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    specks = [];
+    for (var i = 0; i < 70; i++) {
+      specks.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.5 + 0.4, p: Math.random() * 6.283 });
+    }
   }
+  function drawAurora(t) {
+    if (!ctx || !W) { return; }
+    var bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#08382b'); bg.addColorStop(0.55, '#052219'); bg.addColorStop(1, '#03120c');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    var bands = [
+      { c: '87,217,119', a: 0.16, y: H * 0.16, sp: 0.9, ph: 0.0 },
+      { c: '45,226,196', a: 0.13, y: H * 0.30, sp: 0.7, ph: 2.1 },
+      { c: '178,255,140', a: 0.10, y: H * 0.46, sp: 0.5, ph: 4.2 }
+    ];
+    ctx.globalCompositeOperation = 'lighter';
+    bands.forEach(function (b) {
+      ctx.beginPath(); ctx.moveTo(0, H);
+      for (var x = 0; x <= W; x += 14) {
+        var y = b.y + Math.sin(x * 0.006 + t * 0.00022 * b.sp + b.ph) * 26 + Math.sin(x * 0.017 + t * 0.00035 * b.sp) * 10;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H); ctx.closePath();
+      var g = ctx.createLinearGradient(0, b.y - 80, 0, b.y + 200);
+      g.addColorStop(0, 'rgba(' + b.c + ',0)');
+      g.addColorStop(0.5, 'rgba(' + b.c + ',' + b.a + ')');
+      g.addColorStop(1, 'rgba(' + b.c + ',0)');
+      ctx.fillStyle = g; ctx.fill();
+    });
+    ctx.globalCompositeOperation = 'source-over';
+    for (var i = 0; i < specks.length; i++) {
+      var s = specks[i];
+      var a = 0.2 + 0.55 * Math.abs(Math.sin(t * 0.001 + s.p));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.2832);
+      ctx.fillStyle = 'rgba(220,255,220,' + a.toFixed(3) + ')'; ctx.fill();
+    }
+  }
+  function loop(ts) {
+    if (!glassOn) { rafId = null; return; }
+    drawAurora(ts || 0);
+    rafId = requestAnimationFrame(loop);
+  }
+  function startAurora() {
+    if (!ctx) { return; }
+    sizeCanvas();
+    glassOn = true;
+    if (reduce) { drawAurora(1400); return; }
+    if (!rafId) { rafId = requestAnimationFrame(loop); }
+  }
+  function stopAurora() {
+    glassOn = false;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+  var rszT = null;
+  window.addEventListener('resize', function () {
+    if (current !== 'glass' || !ctx) { return; }
+    if (rszT) { clearTimeout(rszT); }
+    rszT = setTimeout(function () { sizeCanvas(); if (reduce) { drawAurora(1400); } }, 150);
+  });
+
+  /* ---- format switching ---- */
+  function fromHash() {
+    var h = (window.location.hash || '').replace('#', '');
+    return formats.indexOf(h) > -1 ? h : null;
+  }
+  function activate(name, opts) {
+    opts = opts || {};
+    if (!panels[name]) { return; }
+    formats.forEach(function (f) {
+      var on = f === name;
+      panels[f].hidden = !on;
+      panels[f].classList.toggle('active', on);
+    });
+    tabs.forEach(function (tab) {
+      var on = tab.getAttribute('data-format') === name;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+      if (on && opts.focus) { tab.focus(); }
+    });
+    if (stage) { stage.setAttribute('data-active-format', name); }
+    document.body.setAttribute('data-format', name);
+    current = name;
+    if (name === 'glass') { startAurora(); } else { stopAurora(); }
+    if (opts.push) {
+      try { window.history.pushState(null, '', '#' + name); } catch (e) {}
+    }
+    if (announcer && opts.announce !== false) {
+      announcer.textContent = labels[name] + ' website format shown';
+    }
+  }
+  tabs.forEach(function (tab, idx) {
+    tab.addEventListener('click', function () {
+      activate(tab.getAttribute('data-format'), { push: true });
+    });
+    tab.addEventListener('keydown', function (e) {
+      var n = null;
+      if (e.key === 'ArrowRight') { n = formats[(idx + 1) % formats.length]; }
+      else if (e.key === 'ArrowLeft') { n = formats[(idx + formats.length - 1) % formats.length]; }
+      else if (e.key === 'Home') { n = formats[0]; }
+      else if (e.key === 'End') { n = formats[formats.length - 1]; }
+      if (n) { e.preventDefault(); activate(n, { focus: true, push: true }); }
+    });
+  });
+  window.addEventListener('hashchange', function () {
+    var n = fromHash();
+    if (n && n !== current) { activate(n, { push: false }); }
+  });
+
+  /* ---- glass card tilt (sampled delight from "Aurora Glass") ---- */
+  var fine = false;
+  try { fine = window.matchMedia('(pointer: fine)').matches; } catch (e) {}
+  if (!reduce && fine) {
+    Array.prototype.forEach.call(document.querySelectorAll('.g-card'), function (card) {
+      card.addEventListener('pointermove', function (e) {
+        var r = card.getBoundingClientRect();
+        if (!r.width) { return; }
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = 'perspective(700px) rotateX(' + (-py * 7).toFixed(2) + 'deg) rotateY(' + (px * 9).toFixed(2) + 'deg)';
+      });
+      card.addEventListener('pointerleave', function () { card.style.transform = ''; });
+    });
+  }
+
+  activate(fromHash() || 'glass', { push: false, announce: false });
 })();
 </script>
 </body>
