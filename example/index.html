@@ -96,13 +96,8 @@ header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;ma
 /* ============ FORMAT 1 · CLASSIC (the original v2 design language) ============ */
 .fmt-classic{background:var(--paper);color:var(--tx)}
 .cl-in{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
-.cl-bar{background:var(--ink);color:var(--tx-inv)}
-.cl-bar .cl-in{display:flex;align-items:center;gap:1rem;padding-top:.85rem;padding-bottom:.85rem}
 .cl-logo{font-family:var(--fs);font-weight:600;font-size:1.22rem;color:#fff;line-height:1}
 .cl-logo small{display:block;font-family:var(--mono);font-weight:500;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);margin-top:.3rem}
-.cl-bar nav{margin-left:auto;display:flex;gap:1.4rem;font-size:.9rem;color:var(--tx-inv-dim)}
-.cl-bar .btn{flex:none;padding:.5rem 1rem;font-size:.88rem}
-@media(max-width:700px){.cl-bar nav{display:none}.cl-bar .btn{margin-left:auto}}
 .fmt-classic .btn-dark{background:var(--ink);color:var(--tx-inv)}
 .fmt-classic .btn-dark:hover{background:var(--ink3)}
 .cl-hero{padding-top:3.4rem}
@@ -314,8 +309,8 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 
 /* ============ bottom tab bar ============ */
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:300;background:rgba(12,14,17,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line-d);padding-bottom:env(safe-area-inset-bottom)}
-.tabbar .tabs{max-width:620px;margin:0 auto;display:flex}
-.tab{flex:1;background:none;border:0;color:var(--tx-inv-dim);font:inherit;cursor:pointer;min-height:var(--tabh);padding:.55rem .4rem .6rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.16rem;position:relative;-webkit-tap-highlight-color:transparent}
+.tabbar .tabs{max-width:620px;margin:0 auto;display:flex;gap:.55rem;padding:.55rem .6rem}
+.tab{flex:1;background:#1d2026;border:2px solid #454b55;border-radius:14px;color:var(--tx-inv-dim);font:inherit;cursor:pointer;min-height:calc(var(--tabh) - 1.1rem);padding:.5rem .4rem .55rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.16rem;position:relative;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 #000;transition:transform .08s, box-shadow .08s, background .15s, color .15s}
 .tab .tnum{font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.26em}
 .tab .tname{font-weight:700;font-size:1rem;letter-spacing:.02em;display:flex;align-items:center;gap:.5rem}
 .tab .swatch{width:11px;height:11px;border-radius:3px;flex:none}
@@ -323,8 +318,10 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 .swatch-swiss{background:#e30613;border-radius:0}
 .swatch-classic{background:var(--amber)}
 .tab:hover{color:#fff}
-.tab[aria-selected="true"]{color:#fff}
-.tab[aria-selected="true"]::before{content:"";position:absolute;top:0;left:20%;right:20%;height:3px;background:var(--amber);border-radius:0 0 3px 3px}
+.tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:#171106;box-shadow:0 4px 0 #7a5410}
+.tab[aria-selected="true"] .tnum{color:#171106}
+.tab:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.tab[aria-selected="true"]:active{box-shadow:0 1px 0 #7a5410}
 .tab:focus-visible{outline:3px solid var(--amber);outline-offset:-3px;border-radius:0}
 
 @media (prefers-reduced-motion: reduce){
@@ -333,6 +330,28 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
   .g-orb::after{animation:none}
   .g-card,.cl-svc,.btn{transition:none}
 }
+
+/* ============ project form modal ============ */
+.pf-overlay{position:fixed;inset:0;z-index:400;background:rgba(10,11,14,.66);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.pf-overlay.open{display:flex}
+.pf{background:var(--paper);color:var(--tx);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:1.6rem 1.4rem calc(1.4rem + env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(0,0,0,.4)}
+@media(min-width:640px){.pf-overlay{align-items:center;padding:1rem}.pf{border-radius:18px}}
+.pf h2{font-size:1.5rem;line-height:1.15;margin:.2rem 0 .3rem}
+.pf .pf-sub{color:var(--tx-dim);font-size:.98rem;margin-bottom:1.1rem}
+.pf-x{float:right;background:#1d2026;color:#fff;border:2px solid #454b55;width:40px;height:40px;border-radius:11px;font-size:1.05rem;cursor:pointer;box-shadow:0 3px 0 #000}
+.pf-x:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.pf label{display:block;font-weight:600;font-size:.92rem;margin:.85rem 0 .3rem}
+.pf input[type=text],.pf input[type=email],.pf input[type=tel],.pf select,.pf textarea{width:100%;font:inherit;padding:.68rem .8rem;border:2px solid var(--line);border-radius:11px;background:#fff;color:var(--ink)}
+.pf input:focus,.pf select:focus,.pf textarea:focus{outline:3px solid var(--amber);outline-offset:1px;border-color:var(--amber)}
+.pf .pf-checks{display:grid;gap:.45rem;margin-top:.3rem}
+.pf .pf-checks label{display:flex;gap:.6rem;align-items:center;font-weight:500;margin:0;background:#fff;border:2px solid var(--line);border-radius:11px;padding:.6rem .8rem;cursor:pointer}
+.pf .pf-checks input{width:1.15rem;height:1.15rem;accent-color:var(--amber2)}
+.pf-send{width:100%;margin-top:1.2rem;background:var(--amber);color:#171106;border:2px solid var(--amber);border-radius:13px;font:inherit;font-weight:800;font-size:1.05rem;padding:.85rem;cursor:pointer;box-shadow:0 4px 0 #7a5410}
+.pf-send:active{transform:translateY(2px);box-shadow:0 1px 0 #7a5410}
+.pf-send[disabled]{opacity:.6;cursor:wait}
+.pf-err{display:none;margin-top:.9rem;background:#fdecec;border:2px solid #d64545;color:#7c1d1d;border-radius:11px;padding:.7rem .9rem;font-size:.94rem}
+.pf-done{display:none;text-align:center;padding:1.4rem 0 .6rem}
+.pf-done .pf-tick{width:58px;height:58px;margin:0 auto .8rem;border-radius:50%;background:var(--amber);display:grid;place-items:center;font-size:1.7rem;color:#171106;font-weight:800}
 </style>
 </head>
 <body>
@@ -346,7 +365,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
       <span class="fname">Christopher Moore<small>Websites &amp; Booking · Contractors · Kansas City</small></span>
     </a>
     <p class="ftag">One service. Three formats. Pick yours.</p>
-    <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+    <button type="button" class="btn btn-amber js-start">Start a project</button>
   </div>
 </header>
 
@@ -356,20 +375,12 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 
   <!-- ================= FORMAT 1 · CLASSIC (the original design) ================= -->
   <section class="format fmt-classic active" id="panel-classic" data-format="classic" role="tabpanel" aria-labelledby="tab-classic" tabindex="0">
-    <div class="cl-bar">
-      <div class="cl-in">
-        <div class="cl-logo">Christopher Moore<small>Websites &amp; Booking · Kansas City</small></div>
-        <nav aria-hidden="true"><span>Services</span><span>How it works</span><span>Advertising</span><span>Contact</span></nav>
-        <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
-      </div>
-    </div>
-
     <div class="cl-in cl-hero">
       <p class="cl-eyebrow">Christopher Moore · Kansas City</p>
       <h2 class="cl-h">Websites that book <em>jobs.</em></h2>
       <p class="cl-lede">I design and build contractor websites, set up online scheduling so customers book themselves in, and run the ads that keep the phone ringing. One person, start to finish — the one who answers is the one who builds.</p>
       <div class="cl-ctas">
-        <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+        <button type="button" class="btn btn-amber js-start">Start a project</button>
         <a class="btn btn-dark" href="#advertising">See the ad tiers</a>
       </div>
       <figure class="cl-fig">
@@ -464,7 +475,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
         <p class="pun">Websites · Scheduling · Advertising — one email starts it.</p>
         <div class="row">
           <span class="cl-phone">Moore.chrisf@gmail.com</span>
-          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+          <button type="button" class="btn btn-amber js-start">Start a project</button>
         </div>
       </div>
     </div>
@@ -481,7 +492,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
       <div class="g-nav glass-panel">
         <div class="g-logo">Christopher Moore<small>Websites &amp; Booking</small></div>
         <nav aria-hidden="true"><span>Services</span><span>How it works</span><span>Advertising</span><span>Contact</span></nav>
-        <a class="g-call" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+        <button type="button" class="g-call js-start">Start a project</button>
       </div>
 
       <div class="g-hero">
@@ -491,7 +502,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
         <div class="g-lede glass-panel">
           <p>Websites, online scheduling, and advertising for contractors — designed, built, and run by one person in Kansas City. Your customers book while you're on the tools.</p>
           <div class="g-ctas">
-            <a class="g-btn" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+            <button type="button" class="g-btn js-start">Start a project</button>
             <a class="g-btn2" href="#advertising">See the ad tiers</a>
           </div>
         </div>
@@ -655,7 +666,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
             <li>2D ads, written &amp; placed for you</li>
             <li>One platform, your service area</li>
           </ul>
-          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising%20run%20%E2%80%94%20%2425">Start a run</a>
+          <button type="button" class="btn btn-amber js-start" data-interest="advertising" data-tier="25">Start a run</button>
         </article>
         <article class="tier hot">
           <p class="tp">$50</p>
@@ -663,7 +674,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
           <ul>
             <li>2D + 3D video ads, written &amp; placed for you — 3D free</li>
           </ul>
-          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising%20run%20%E2%80%94%20%2450">Start a run</a>
+          <button type="button" class="btn btn-amber js-start" data-interest="advertising" data-tier="50">Start a run</button>
         </article>
         <article class="tier">
           <p class="tp">$100</p>
@@ -671,7 +682,7 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
           <ul>
             <li>2D + 3D video ads, written &amp; placed for you — 3D free</li>
           </ul>
-          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Advertising%20run%20%E2%80%94%20%24100">Start a run</a>
+          <button type="button" class="btn btn-amber js-start" data-interest="advertising" data-tier="100">Start a run</button>
         </article>
       </div>
       <p class="ads-fine">View counts are up-to targets — delivery varies by platform and audience.</p>
@@ -733,6 +744,59 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
 </footer>
 </div><!-- /.page -->
 
+
+<div class="pf-overlay" id="pfOverlay" role="dialog" aria-modal="true" aria-labelledby="pfTitle" hidden>
+  <div class="pf">
+    <button type="button" class="pf-x" id="pfClose" aria-label="Close form">✕</button>
+    <p class="kicker">Start a project</p>
+    <h2 id="pfTitle">Tell me what you need</h2>
+    <p class="pf-sub">Two minutes, no obligation. I read every one myself and reply personally.</p>
+    <form id="pfForm" novalidate>
+      <label for="pfName">Your name *</label>
+      <input type="text" id="pfName" name="Name" autocomplete="name" required>
+      <label for="pfBiz">Business name</label>
+      <input type="text" id="pfBiz" name="Business" autocomplete="organization">
+      <label for="pfTrade">Your trade</label>
+      <select id="pfTrade" name="Trade">
+        <option value="">Pick one…</option>
+        <option>Roofing</option><option>Lawn care &amp; landscaping</option><option>Auto repair</option>
+        <option>Gutters</option><option>Remodeling</option><option>Handyman</option>
+        <option>Cleaning</option><option>Other trade</option>
+      </select>
+      <label for="pfPhone">Phone</label>
+      <input type="tel" id="pfPhone" name="Phone" autocomplete="tel">
+      <label for="pfEmail">Email *</label>
+      <input type="email" id="pfEmail" name="Email" autocomplete="email" required>
+      <label>I'm interested in</label>
+      <div class="pf-checks">
+        <label><input type="checkbox" name="Interest" value="Website" id="pfIntWeb"> A contractor website</label>
+        <label><input type="checkbox" name="Interest" value="Scheduling &amp; booking" id="pfIntSched"> Online scheduling &amp; booking</label>
+        <label><input type="checkbox" name="Interest" value="Advertising run" id="pfIntAds"> An advertising run</label>
+      </div>
+      <div id="pfTierWrap" hidden>
+        <label for="pfTier">Ad tier</label>
+        <select id="pfTier" name="Ad tier">
+          <option value="Not sure yet">Not sure yet</option>
+          <option value="$25 — 2,000 views, 2D ads">$25 — 2,000 views, 2D ads</option>
+          <option value="$50 — 8,000 views, 2D + free 3D video ads">$50 — 8,000 views, 2D + free 3D video ads</option>
+          <option value="$100 — 16,000 views, 2D + free 3D video ads">$100 — 16,000 views, 2D + free 3D video ads</option>
+        </select>
+      </div>
+      <label for="pfMsg">Anything I should know?</label>
+      <textarea id="pfMsg" name="Details" rows="4" placeholder="What you do, where you work, what you're hoping this does for you…"></textarea>
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <input type="hidden" name="Format viewed" id="pfFormat" value="classic">
+      <button type="submit" class="pf-send" id="pfSend">Send it to Christopher</button>
+      <p class="pf-err" id="pfErr">That didn't go through — the form service may need a one-time activation on my end. Email me directly at <a href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a> and I'll take it from there.</p>
+    </form>
+    <div class="pf-done" id="pfDone">
+      <div class="pf-tick">✓</div>
+      <h2>Got it.</h2>
+      <p class="pf-sub">Your project is in my inbox. I reply personally — usually within one business day.</p>
+      <button type="button" class="pf-send" id="pfDoneClose">Done</button>
+    </div>
+  </div>
+</div>
 <div class="tabbar">
   <div class="tabs" role="tablist" aria-label="Website formats">
     <button type="button" class="tab" role="tab" id="tab-classic" data-format="classic" aria-selected="true" aria-controls="panel-classic">
@@ -908,6 +972,86 @@ footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding
   }
 
   activate(fromHash() || 'classic', { push: false, announce: false });
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var overlay = document.getElementById('pfOverlay');
+  if (!overlay) return;
+  var form = document.getElementById('pfForm');
+  var done = document.getElementById('pfDone');
+  var err = document.getElementById('pfErr');
+  var send = document.getElementById('pfSend');
+  var tierWrap = document.getElementById('pfTierWrap');
+  var intAds = document.getElementById('pfIntAds');
+  var tier = document.getElementById('pfTier');
+  var lastFocus = null;
+
+  function syncTier() { tierWrap.hidden = !intAds.checked; }
+  intAds.addEventListener('change', syncTier);
+
+  function openForm(trigger) {
+    lastFocus = document.activeElement;
+    document.getElementById('pfFormat').value =
+      (document.body && document.body.getAttribute('data-active-format')) || 'classic';
+    if (trigger) {
+      var interest = trigger.getAttribute('data-interest');
+      var t = trigger.getAttribute('data-tier');
+      if (interest === 'advertising') {
+        intAds.checked = true;
+        if (t) {
+          for (var i = 0; i < tier.options.length; i++) {
+            if (tier.options[i].value.indexOf('$' + t) === 0) { tier.selectedIndex = i; break; }
+          }
+        }
+      }
+    }
+    syncTier();
+    form.style.display = ''; done.style.display = 'none'; err.style.display = 'none';
+    overlay.hidden = false;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { document.getElementById('pfName').focus(); }, 60);
+  }
+  function closeForm() {
+    overlay.classList.remove('open'); overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.js-start'), function (b) {
+    b.addEventListener('click', function () { openForm(b); });
+  });
+  document.getElementById('pfClose').addEventListener('click', closeForm);
+  document.getElementById('pfDoneClose').addEventListener('click', closeForm);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeForm(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closeForm(); });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    send.disabled = true; send.textContent = 'Sending…'; err.style.display = 'none';
+    var data = {};
+    new FormData(form).forEach(function (v, k) {
+      if (data[k]) { data[k] = data[k] + ', ' + v; } else { data[k] = v; }
+    });
+    data._subject = 'New project inquiry — moorefolio.com/example';
+    data._template = 'table';
+    data._captcha = 'false';
+    fetch('https://formsubmit.co/ajax/Moore.chrisf@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('send failed');
+      form.style.display = 'none'; done.style.display = 'block';
+      send.disabled = false; send.textContent = 'Send it to Christopher';
+    }).catch(function () {
+      err.style.display = 'block';
+      send.disabled = false; send.textContent = 'Send it to Christopher';
+    });
+  });
 })();
 </script>
 </body>
