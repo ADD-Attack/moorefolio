@@ -5,7 +5,7 @@ from collections import deque
 a=sys.argv[sys.argv.index('--')+1:]; OUT=a[0]; RES=int(a[1]); EMS=float(a[2])
 pod_v=np.load(OUT+'\\pod.npy')
 def s2l(c): c=np.asarray(c,float)/255; return np.where(c<=0.04045,c/12.92,((c+0.055)/1.055)**2.4)
-C_BODY=s2l((176,70,22)); C_TOP=s2l((214,106,38)); C_TROUGH=s2l((92,26,12)); C_UNDER=s2l((124,40,18))
+C_BODY=s2l((186,84,32)); C_TOP=s2l((224,118,48)); C_TROUGH=s2l((92,26,12)); C_UNDER=s2l((124,40,18))
 C_HORN=s2l((44,27,21)); C_HORN_HI=s2l((78,50,38)); C_POD=s2l((250,150,26)); C_POD_EDGE=s2l((196,78,10)); C_EM=s2l((255,118,12))
 def lap(V,E,deg,it):
     S=V.copy()
@@ -25,6 +25,7 @@ for o in [x for x in bpy.data.objects if x.type=='MESH']:
     hL=np.einsum('ij,ij->i',P-lap(P,E,deg,30),N); cvx=np.clip(hL/0.02,0,1)
     up=np.clip(Nw[:,2],-1,1); top=np.clip(0.55*cvx+0.45*np.clip(up,0,1),0,1); under=np.clip(-up*0.8+np.clip((0.25-W[:,2])/0.25,0,1)*0.5,0,1)
     horn=np.zeros(nv); pod=np.zeros(nv); podc=np.zeros(nv)
+    if o.name.startswith('foot'): cav=np.clip(cav*1.4,0,1); under=np.clip(under+0.35*np.clip(-up,0,1)+0.25,0,1)
     if o.name=='body':
         for hx,hy in HAX:
             d=np.hypot(W[:,0]-hx,W[:,1]-hy); horn=np.maximum(horn,np.clip((W[:,2]-0.875)/0.04,0,1)*np.clip((0.14-d)/0.03,0,1))
