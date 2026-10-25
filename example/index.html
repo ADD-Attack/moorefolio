@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moore Better Software | Custom Software, Kansas City</title>
-<meta name="description" content="Moore Better Software is John Moore's one-craftsman software shop in Kansas City: custom software, small-business websites and demos, practical AI assistants and agent tooling, reverse engineering and rescue work. You talk to the builder.">
+<title>Christopher Moore | Websites &amp; Booking for Contractors, Kansas City</title>
+<meta name="description" content="Christopher Moore builds websites and online scheduling for contractors in the Kansas City metro: sites that turn searches into calls, booking that fills the calendar while you're on a job, redesigns, and ongoing care. One person, end-to-end.">
 <meta name="theme-color" content="#14161a">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Moore Better Software — Software built by the person you talk to">
-<meta property="og:description" content="Custom software, small-business websites, and practical AI tooling from a Kansas City craftsman-engineer. Small shop. Senior hands.">
+<meta property="og:title" content="Christopher Moore — Websites &amp; booking for contractors">
+<meta property="og:description" content="Contractor websites and online scheduling, built by one person in Kansas City. Plus a standing offer: trade your trade for a website.">
 <meta property="og:image" content="assets/hero-workspace.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Moore Better Software">
-<meta name="twitter:description" content="Software built by the person you talk to. Kansas City custom software, websites, and AI tooling.">
+<meta name="twitter:title" content="Christopher Moore">
+<meta name="twitter:description" content="Websites and booking that work as hard as your crew. Kansas City contractor websites &amp; scheduling.">
 <meta name="twitter:image" content="assets/hero-workspace.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,22 +21,24 @@
 {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
-  "name": "Moore Better Software",
-  "url": "https://moorebettersoftware.com",
-  "email": "johnkmoore@gmail.com",
-  "telephone": "+1-913-601-0220",
+  "name": "Christopher Moore — Websites & Booking for Contractors",
+  "email": "Moore.chrisf@gmail.com",
   "priceRange": "$$",
-  "founder": { "@type": "Person", "name": "John Moore" },
+  "founder": {
+    "@type": "Person",
+    "name": "Christopher Moore",
+    "jobTitle": "Website and scheduling builder for contractors",
+    "email": "Moore.chrisf@gmail.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Kansas City", "addressRegion": "MO", "addressCountry": "US" }
+  },
   "address": { "@type": "PostalAddress", "addressLocality": "Kansas City", "addressRegion": "MO", "addressCountry": "US" },
   "areaServed": ["Kansas City, MO", "Kansas City, KS", "Overland Park, KS", "Shawnee, KS", "Lenexa, KS", "Olathe, KS", "the Kansas City metro"],
-  "openingHours": "Mo-Fr 08:00-18:00",
-  "description": "One-craftsman custom software shop: custom software, small-business websites and demos, AI assistants and agent tooling, reverse engineering and software rescue, rapid prototypes.",
+  "description": "One-person website and scheduling production for contractors and trades businesses in Kansas City: contractor websites, online scheduling and booking setup, website redesigns, and ongoing site care and updates.",
   "makesOffer": [
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom software development" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Small-business websites and demo sites" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "AI assistant setup and agent workflow tooling" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Reverse engineering and software rescue" } },
-    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Rapid prototypes and demos" } }
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Contractor website design and build" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online scheduling and booking setup" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website redesigns" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Website care and updates" } }
   ]
 }
 </script>
@@ -92,7 +94,7 @@ header .btn{padding:.55rem 1rem;font-size:.88rem}
 .hero .inner{position:relative;padding:9.5rem 0 0;width:100%}
 .eyebrow{font-family:var(--fm);font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);display:flex;align-items:center;gap:.7rem}
 .eyebrow::before{content:"";width:34px;height:2px;background:var(--amber)}
-.hero h1{font-family:var(--fd);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em;font-size:clamp(2.7rem,7.2vw,5.4rem);max-width:13ch;margin:1rem 0 1.1rem}
+.hero h1{font-family:var(--fd);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em;font-size:clamp(2.7rem,7.2vw,5.4rem);max-width:15ch;margin:1rem 0 1.1rem}
 .hero h1 em{font-style:normal;color:var(--amber)}
 .hero .lede{font-family:var(--fs);font-size:clamp(1.12rem,2vw,1.38rem);max-width:56ch;color:#e9e2d2}
 .hero .ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.7rem 0 2.6rem}
@@ -129,7 +131,7 @@ h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing
 .figcard img{width:100%;height:340px;object-fit:cover}
 .figcard figcaption{position:absolute;left:0;right:0;bottom:0;padding:2rem 1.4rem .95rem;color:#fff;font-size:.9rem;background:linear-gradient(transparent,rgba(10,11,14,.82))}
 
-/* AI section */
+/* split + checks (about) */
 .split{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
 @media(max-width:900px){.split{grid-template-columns:1fr}}
 .split .pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
@@ -138,6 +140,22 @@ h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing
 .checks li{display:flex;gap:.7rem;align-items:flex-start;font-size:1rem}
 .checks svg{flex:none;width:21px;height:21px;margin-top:.18rem;stroke:var(--teal-l);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .dark .checks li{color:#e6e0d0}
+
+/* trade */
+.trade-card{position:relative;margin-top:2.6rem;background:var(--card);border:2px dashed var(--amber2);border-radius:var(--r);padding:2.2rem 2rem;box-shadow:var(--sh)}
+.trade-stamp{position:absolute;top:-15px;right:22px;background:var(--amber);color:#1a1305;font-family:var(--fm);font-weight:700;font-size:.68rem;letter-spacing:.18em;text-transform:uppercase;padding:.42rem .8rem;border-radius:6px;transform:rotate(2.5deg);box-shadow:0 6px 16px rgba(20,18,10,.25)}
+.trade-cols{display:grid;grid-template-columns:1fr 1fr;gap:2.2rem}
+@media(max-width:760px){.trade-cols{grid-template-columns:1fr}}
+.trade-col h3{font-family:var(--fd);font-weight:600;font-size:1.3rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.4rem}
+.trade-col h3 .tc-k{display:block;font-family:var(--fm);font-weight:500;font-size:.64rem;letter-spacing:.24em;color:var(--amber2);margin-bottom:.35rem}
+.trade-col>p{font-size:.95rem;color:var(--tx-dim);margin-bottom:.9rem}
+.trade-list{list-style:none;display:grid;gap:.55rem}
+.trade-list li{display:flex;gap:.65rem;align-items:flex-start;font-size:1rem}
+.trade-list li::before{content:"";flex:none;width:9px;height:9px;margin-top:.5em;background:var(--amber);border-radius:2px;transform:rotate(45deg)}
+.trade-list li b{font-weight:600}
+.trade-line{font-family:var(--fs);font-style:italic;font-size:clamp(1.2rem,2.6vw,1.55rem);line-height:1.4;text-align:center;color:var(--ink2);border-top:1px solid var(--line);margin-top:2rem;padding-top:1.6rem}
+.trade-note{text-align:center;font-size:.92rem;color:var(--tx-dim);max-width:56ch;margin:.7rem auto 0}
+.trade-cta{text-align:center;margin-top:1.4rem}
 
 /* process */
 .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:1.1rem;margin-top:2.6rem;counter-reset:step}
@@ -166,6 +184,76 @@ h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing
 .about-pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
 .about-pic img{width:100%;height:300px;object-fit:cover}
 
+/* ============ before / after slider ============ */
+.ba-wrap{margin-top:2.6rem}
+.ba{position:relative;height:560px;border-radius:var(--r);overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.45);container-type:inline-size;--pos:50%;cursor:ew-resize;user-select:none;-webkit-user-select:none;touch-action:none;background:#fff}
+@media(max-width:820px){.ba{height:500px}}
+@media(max-width:520px){.ba{height:470px}}
+.ba-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.ba-after{z-index:1}
+.ba-before{z-index:2;clip-path:inset(0 calc(100% - var(--pos)) 0 0)}
+.ba-tag{position:absolute;top:14px;z-index:4;font-family:var(--fm);font-size:.66rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;padding:.36rem .62rem;border-radius:6px;pointer-events:none}
+.ba-tag-b{left:14px;background:#000080;color:#ffff00;border:1px solid #ffffff;box-shadow:2px 2px 0 rgba(0,0,0,.45)}
+.ba-tag-a{right:14px;background:var(--ink);color:var(--amber);border:1px solid rgba(225,154,47,.5)}
+.ba-handle{position:absolute;top:0;bottom:0;left:var(--pos);width:0;z-index:5}
+.ba-handle::before{content:"";position:absolute;top:0;bottom:0;left:-2px;width:4px;background:var(--amber);box-shadow:0 0 0 1px rgba(0,0,0,.28),0 0 16px rgba(0,0,0,.35)}
+.ba-grip{position:absolute;top:50%;left:0;transform:translate(-50%,-50%);width:48px;height:48px;border-radius:50%;background:var(--amber);border:3px solid #fff;box-shadow:0 6px 18px rgba(0,0,0,.42);display:grid;place-items:center}
+.ba-grip svg{width:26px;height:26px;stroke:#1a1305;fill:none;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+.ba-handle:focus-visible{outline:none}
+.ba-handle:focus-visible .ba-grip{box-shadow:0 0 0 3px var(--ink),0 0 0 7px var(--amber)}
+.ba-wrap figcaption{margin-top:1.05rem;text-align:center;color:var(--tx-inv-dim);font-family:var(--fs);font-style:italic;font-size:1.02rem}
+.ba-wrap figcaption b{color:var(--amber);font-style:normal}
+
+/* --- BEFORE panel: a lovingly awful early-2000s contractor site --- */
+.old{height:100%;background:#ffffcc;font-family:'Times New Roman',Times,serif;color:#000;padding:2cqw;font-size:16px;font-size:1.85cqw;line-height:1.35}
+.old .o-box{position:relative;height:100%;background:#fff;border:3px ridge #c9c9c9;padding:1.6cqw 2cqw;overflow:hidden}
+.old .o-head{text-align:center}
+.old .o-name{font-size:30px;font-size:4.6cqw;font-weight:bold;color:#1d5c1d;letter-spacing:.01em}
+.old .o-sub{font-style:italic;font-size:15px;font-size:1.9cqw;color:#333}
+.old .o-nav{text-align:center;margin:.7em 0 .5em;font-size:15px;font-size:1.85cqw}
+.old .o-nav span{color:#0000ee;text-decoration:underline;margin:0 .35em;cursor:pointer}
+.old .o-rainbow{height:5px;background:linear-gradient(90deg,#f00,#ff7f00,#ff0,#0a0,#00f,#4b0082,#9400d3);margin:.4em 0}
+.old .o-marquee{background:#000080;color:#fff;font-weight:bold;overflow:hidden;white-space:nowrap;padding:.18em 0;font-size:15px;font-size:1.85cqw}
+.old .o-marquee span{display:inline-block;padding-left:100%;animation:oScroll 14s linear infinite}
+@keyframes oScroll{from{transform:translateX(0)}to{transform:translateX(-100%)}}
+.old .o-welcome{text-align:center;font-size:22px;font-size:3.2cqw;font-weight:bold;margin:.55em 0 .3em}
+.old .o-table{width:100%;border-collapse:collapse;margin-top:.5em}
+.old .o-table td{border:2px groove #bdbdbd;padding:.55em .7em;vertical-align:top;background:#fff}
+.old .o-table h4{font-size:17px;font-size:2.1cqw;margin-bottom:.3em;text-decoration:underline}
+.old .o-table ul{margin-left:1.2em}
+.old .o-big{font-size:19px;font-size:2.4cqw;font-weight:bold}
+.old .o-badges{text-align:center;margin-top:.8em;font-family:Verdana,Geneva,sans-serif}
+.old .o-badge{display:inline-block;border:2px outset #d4d4d4;background:#ececec;color:#000;font-size:11px;font-size:1.35cqw;padding:.3em .6em;margin:.15em}
+.old .o-counter{display:inline-block;background:#000;color:#33ff33;font-family:'Courier New',monospace;font-weight:bold;letter-spacing:.35em;font-size:13px;font-size:1.6cqw;padding:.25em .5em .25em .85em;margin:.15em}
+.old .o-foot{text-align:center;font-size:13px;font-size:1.55cqw;color:#444;margin-top:.7em}
+.old .o-burst{position:absolute;top:64px;right:16px;width:96px;height:96px;background:#ffff00;border:3px dashed #d40000;border-radius:50%;transform:rotate(14deg);display:grid;place-items:center;text-align:center;color:#c00000;font-weight:bold;font-size:14px;line-height:1.15;padding:8px;box-shadow:3px 3px 0 rgba(0,0,0,.25)}
+@media(max-width:640px){.old .o-burst{display:none}}
+
+/* --- AFTER panel: the modern redesign --- */
+.new{height:100%;position:relative;background:linear-gradient(155deg,#f4fbf0 0%,#e4f0d8 58%,#cfe3b4 100%);font-family:var(--fb);color:#1f2a18;display:flex;flex-direction:column;overflow:hidden}
+.new .n-sun{position:absolute;right:7%;top:21%;width:120px;height:120px;width:13cqw;height:13cqw;border-radius:50%;background:radial-gradient(circle at 36% 34%,#ffe1a0,#e19a2f 72%);box-shadow:0 0 0 14px rgba(225,154,47,.16),0 0 60px rgba(225,154,47,.35)}
+.new .n-bar{position:relative;display:flex;align-items:center;justify-content:space-between;gap:1em;padding:2.2cqw 4cqw;border-bottom:1px solid rgba(46,84,32,.16)}
+.new .n-logo{font-family:var(--fs);font-weight:600;font-size:21px;font-size:2.9cqw;color:#22401c;line-height:1}
+.new .n-logo small{display:block;font-family:var(--fm);font-weight:500;font-size:9px;font-size:1.15cqw;letter-spacing:.3em;color:#5c7a3a;margin-top:.35em}
+.new .n-nav{display:flex;gap:1.6em;font-size:13px;font-size:1.6cqw;font-weight:500;color:#4d603c}
+.new .n-call{flex:none;background:#22401c;color:#ffe1a0;font-weight:600;font-size:13px;font-size:1.6cqw;padding:.55em 1.1em;border-radius:99px}
+@media(max-width:640px){.new .n-nav{display:none}}
+.new .n-hero{position:relative;padding:3.4cqw 4cqw 2cqw;max-width:74%}
+.new .n-eyebrow{font-family:var(--fm);font-size:10px;font-size:1.3cqw;letter-spacing:.26em;color:#5c7a3a;text-transform:uppercase}
+.new .n-h{font-family:var(--fs);font-weight:600;font-size:34px;font-size:6cqw;line-height:1.04;color:#1c3315;margin:.28em 0 .3em}
+.new .n-lede{font-size:14px;font-size:1.95cqw;color:#43552f;max-width:44ch;line-height:1.5}
+.new .n-ctas{display:flex;gap:.7em;margin-top:1.1em;flex-wrap:wrap}
+.new .n-btn{background:#2e5420;color:#fff;font-weight:700;font-size:13px;font-size:1.7cqw;padding:.6em 1.25em;border-radius:99px}
+.new .n-btn2{border:1.5px solid #5c7a3a;color:#33501f;font-weight:600;font-size:13px;font-size:1.7cqw;padding:.6em 1.15em;border-radius:99px}
+.new .n-strip{position:relative;margin-top:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:1.2em;border-top:1px solid rgba(46,84,32,.18);background:rgba(255,255,255,.6);padding:2cqw 4cqw}
+.new .n-strip h5{font-family:var(--fm);font-weight:500;font-size:9px;font-size:1.15cqw;letter-spacing:.24em;color:#5c7a3a;text-transform:uppercase;margin-bottom:.35em}
+.new .n-strip p{font-size:12.5px;font-size:1.6cqw;color:#3c4f2a;line-height:1.45}
+@container (max-width:560px){
+  .new .n-hero{max-width:100%}
+  .new .n-strip{grid-template-columns:1fr 1fr}
+  .new .n-sun{display:none}
+}
+
 /* contact + footer */
 .cta-band{background:linear-gradient(120deg,#191410,#241a0c 55%,#191410);color:var(--tx-inv);text-align:center;padding:4.6rem 0}
 .cta-band h2{color:#fff}
@@ -190,52 +278,140 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   html{scroll-behavior:auto}
   .rv{opacity:1;transform:none;transition:none}
   .btn,.svc,.work{transition:none}
+  .old .o-marquee span{animation:none;padding-left:0}
 }
 </style>
 </head>
 <body>
-<a class="skip" href="#services">Skip to content</a>
+<a class="skip" href="#redesign">Skip to content</a>
 
 <header class="site" id="siteHeader">
   <div class="bar">
-    <a class="brand" href="#top" aria-label="Moore Better Software — home">
-      <span class="mark" aria-hidden="true">MBS</span>
-      <span class="bname">Moore Better<small>Software · Kansas City</small></span>
+    <a class="brand" href="#top" aria-label="Christopher Moore — home">
+      <span class="mark" aria-hidden="true">CM</span>
+      <span class="bname">Christopher Moore<small>Websites · Booking · Kansas City</small></span>
     </a>
     <nav class="main" aria-label="Main navigation">
+      <a href="#redesign">The Redesign</a>
       <a href="#services">Services</a>
-      <a href="#ai">AI Tooling</a>
+      <a href="#trade">The Trade</a>
       <a href="#process">Process</a>
-      <a href="#work">Work</a>
-      <a href="#about">About John</a>
+      <a href="#about">About</a>
     </nav>
-    <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">Start a conversation</a>
+    <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
   </div>
 </header>
 
 <main id="top">
   <!-- HERO -->
   <section class="hero" aria-label="Introduction">
-    <img class="bg" src="assets/hero-workspace.jpg" alt="A craftsman's desk at dusk — ultrawide monitor with code, warm lamp light, and the Kansas City skyline through the window" fetchpriority="high">
+    <img class="bg" src="assets/hero-workspace.jpg" alt="A builder's desk at dusk — ultrawide monitor, warm lamp light, and a city skyline through the window" fetchpriority="high">
     <div class="shade" aria-hidden="true"></div>
     <div class="inner">
       <div class="wrap">
-        <p class="eyebrow">Moore Better Software · Kansas City</p>
-        <h1>Software built by the person <em>you talk to.</em></h1>
-        <p class="lede">Custom software, websites, and practical AI tooling — designed, built, and supported by John Moore, one craftsman deep. No account managers, no handoffs, no telephone game. You describe the problem; the person who hears it writes the code.</p>
+        <p class="eyebrow">Christopher Moore · Kansas City</p>
+        <h1>Websites &amp; booking that work as hard as <em>your crew.</em></h1>
+        <p class="lede">I'm Christopher Moore. I build websites and online scheduling for contractors and tradespeople in the Kansas City metro — so customers can find you, trust you, and book the job while you're still finishing the last one. One person, end-to-end: you talk to the builder.</p>
         <div class="ctas">
-          <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">Email John</a>
-          <a class="btn btn-ghost" href="tel:+19136010220">Call (913) 601-0220</a>
+          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Start a project</a>
+          <a class="btn btn-ghost" href="#redesign">See the difference</a>
         </div>
       </div>
       <div class="stats">
         <div class="wrap"><div class="row">
-          <div class="stat"><b>1</b><span>craftsman deep — start to finish</span></div>
-          <div class="stat"><b>0</b><span>account managers in the way</span></div>
-          <div class="stat"><b>Demo</b><span>before you commit to a build</span></div>
+          <div class="stat"><b>1</b><span>person, end-to-end — design to launch</span></div>
+          <div class="stat"><b>24/7</b><span>booking — customers schedule while you're on a job</span></div>
+          <div class="stat"><b>Preview</b><span>see it working before it's final</span></div>
           <div class="stat"><b>KC</b><span>based in the Kansas City metro</span></div>
         </div></div>
       </div>
+    </div>
+  </section>
+
+  <!-- THE REDESIGN (before / after slider) -->
+  <section class="sec dark" id="redesign">
+    <div class="wrap">
+      <p class="kicker">The Redesign</p>
+      <h2>Old website. New website. Same crew.</h2>
+      <p class="sub">GreenScape Lawn Care is fictional — the problem isn't. Same name, same phone number, same services, same hours. The only thing that changes is the design — plus one thing the old site never had: a way to book. Drag the handle.</p>
+      <figure class="ba-wrap rv">
+        <div class="ba" id="baBox" style="--pos:50%">
+          <!-- AFTER (base layer) -->
+          <div class="ba-layer ba-after" aria-hidden="true">
+            <div class="new">
+              <div class="n-sun"></div>
+              <div class="n-bar">
+                <div class="n-logo">GreenScape<small>Lawn Care</small></div>
+                <div class="n-nav"><span>Services</span><span>Pricing</span><span>Service Area</span><span>Contact</span></div>
+                <span class="n-call">Book a mowing</span>
+              </div>
+              <div class="n-hero">
+                <p class="n-eyebrow">Kansas City · Lawn Care</p>
+                <p class="n-h">A yard that handles itself.</p>
+                <p class="n-lede">Weekly mowing, leaf cleanup, and aeration — booked online in under a minute, confirmed by text, done while you're at work.</p>
+                <div class="n-ctas">
+                  <span class="n-btn">Book a mowing</span>
+                  <span class="n-btn2">Call (816) 555-0147</span>
+                </div>
+              </div>
+              <div class="n-strip">
+                <div><h5>Services</h5><p>Weekly mowing · Leaf cleanup<br>Aeration &amp; seeding · Hedge trimming</p></div>
+                <div><h5>Hours</h5><p>Mon–Sat · 7am–7pm<br>Sunday · crews rest</p></div>
+                <div><h5>Area</h5><p>Serving the KC metro<br>Free estimates, always</p></div>
+              </div>
+            </div>
+          </div>
+          <!-- BEFORE (clipped top layer) -->
+          <div class="ba-layer ba-before" aria-hidden="true">
+            <div class="old">
+              <div class="o-box">
+                <div class="o-burst">FREE ESTIMATES!</div>
+                <div class="o-head">
+                  <div class="o-name">★ GreenScape Lawn Care ★</div>
+                  <div class="o-sub">"You grow it, we mow it!!"</div>
+                </div>
+                <div class="o-nav"><span>Home</span>|<span>Services</span>|<span>About Us</span>|<span>Directions</span>|<span>Guestbook</span></div>
+                <div class="o-rainbow"></div>
+                <div class="o-marquee"><span>*** NOW BOOKING FALL CLEANUPS *** CALL NOW — WEEKEND SLOTS FILL FAST ***</span></div>
+                <div class="o-welcome">Welcome to our Web Site!!</div>
+                <table class="o-table">
+                  <tr>
+                    <td style="width:52%">
+                      <h4>Our Services</h4>
+                      <ul>
+                        <li>Weekly Mowing</li>
+                        <li>Leaf Cleanup</li>
+                        <li>Aeration &amp; Seeding</li>
+                        <li>Hedge Trimming</li>
+                      </ul>
+                      <p style="margin-top:.5em">Please <u>call to schedule</u> — no emails please!!</p>
+                    </td>
+                    <td>
+                      <h4>Service Area</h4>
+                      <p>Serving the whole<br>KC metro area!</p>
+                      <p class="o-big">Call: (816) 555-0147</p>
+                      <p style="margin-top:.4em"><b>Hours:</b><br>Mon–Sat 7am–7pm<br>Sun CLOSED</p>
+                    </td>
+                  </tr>
+                </table>
+                <div class="o-badges">
+                  <span class="o-counter">00137</span>
+                  <span class="o-badge">You are visitor #137 — thanks for stopping by!</span>
+                  <span class="o-badge">★ UNDER CONSTRUCTION ★</span>
+                  <span class="o-badge">Best viewed at 800x600</span>
+                </div>
+                <p class="o-foot">© 2004 GreenScape Lawn Care · This page last updated April 2, 2004 · Sign our guestbook!</p>
+              </div>
+            </div>
+          </div>
+          <span class="ba-tag ba-tag-b">Before</span>
+          <span class="ba-tag ba-tag-a">After</span>
+          <div class="ba-handle" id="baHandle" tabindex="0" role="slider" aria-label="Before and after comparison" aria-valuemin="0" aria-valuemax="100" aria-valuenow="50" aria-valuetext="50% old website, 50% new website">
+            <span class="ba-grip" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8.5 5L3 12l5.5 7M15.5 5L21 12l-5.5 7"/></svg></span>
+          </div>
+        </div>
+        <figcaption><b>Same business. Same words. New design.</b> — drag the handle, or focus it and use the arrow keys.</figcaption>
+      </figure>
     </div>
   </section>
 
@@ -243,60 +419,72 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   <section class="sec" id="services">
     <div class="wrap">
       <p class="kicker">Services</p>
-      <h2>What John builds</h2>
-      <p class="sub">Five kinds of work, one pair of senior hands. If it runs on a screen and matters to your business, it is probably on this list — and if it isn't, ask anyway.</p>
+      <h2>Built for the trades</h2>
+      <p class="sub">Roofers, lawn crews, auto shops, gutter and handyman outfits — if your customers find you on a phone and hire you on trust, this is the production side of that. Four services, one builder.</p>
       <div class="svc-grid">
         <article class="svc wide rv">
-          <span class="tag">The core craft</span>
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 6l-6 6 6 6M16 6l6 6-6 6M13 4l-2 16"/></svg></div>
-          <h3>Custom Software</h3>
-          <p>Tools and systems built around how your team actually works — internal dashboards, workflow software, integrations, and the unglamorous glue code that saves somebody an hour a day. Built to be maintained, by the person who maintains it.</p>
+          <span class="tag">The core offer</span>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
+          <h3>Contractor Websites</h3>
+          <p>Designed and built for trades businesses: your services, your service area, your number big enough to tap from a truck cab. Fast pages, plain words, proof that you're real — built to turn a search into a phone call.</p>
         </article>
         <article class="svc wide rv">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
-          <h3>Websites &amp; Demo Sites</h3>
-          <p>Websites for local small businesses that load fast, read clearly, and turn visitors into phone calls. Demo sites that let you see your idea live on the web before you spend real money on it.</p>
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 15.5l2 2 4-4"/></svg></div>
+          <h3>Online Scheduling &amp; Booking</h3>
+          <p>Let customers book the job themselves. They pick the slot, get a confirmation and a reminder, and it lands on your calendar — no phone tag, no double-booking, no missed call while you were under a house or up a ladder.</p>
         </article>
-        <article class="svc rv">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M19 5l-2 2M7 17l-2 2"/></svg></div>
-          <h3>AI Assistants &amp; Agents</h3>
-          <p>Practical AI tooling for small teams — assistant setups, agent workflows, and automation that does real work under real supervision.</p>
-        </article>
-        <article class="svc rv">
-          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M14 3l7 7-9.5 9.5a2.1 2.1 0 0 1-3 0L6 17a2.1 2.1 0 0 1 0-3L14 3z"/><path d="M12 5l7 7"/></svg></div>
-          <h3>Reverse Engineering &amp; Rescue</h3>
-          <p>Software whose builder vanished, documentation that never existed, systems nobody dares touch. John reads what's there, maps it, and brings it back under control.</p>
-        </article>
-        <article class="svc rv">
+        <article class="svc wide rv">
           <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M13 2L4 14h6l-1 8 9-12h-6l1-8z"/></svg></div>
-          <h3>Rapid Prototypes</h3>
-          <p>A working thing beats a slide deck. Quick prototypes and demos that put the idea in your hands — clickable, testable, honest about what the real build takes.</p>
+          <h3>Website Redesigns</h3>
+          <p>Already have a site? If it looks like the left side of that slider, it's costing you jobs. Same business, same words — rebuilt modern, mobile-first, with booking added so the new one earns its keep.</p>
+        </article>
+        <article class="svc wide rv">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3l7 3v5c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z"/><path d="M9 11.5l2.2 2.2L15.5 9"/></svg></div>
+          <h3>Care &amp; Updates</h3>
+          <p>Hosting looked after, pages kept current, changes made for you. New service, new hours, new photos — send them over and they get handled. Your site stays an asset, not an artifact.</p>
         </article>
       </div>
       <figure class="figcard rv">
-        <img src="assets/sites-workbench.jpg" alt="A small-business website displayed on a laptop and phone resting on a craftsman's workbench" loading="lazy">
-        <figcaption>Small-business websites, built on the bench — designed on real screens, for real customers.</figcaption>
+        <img src="assets/sites-workbench.jpg" alt="A contractor website displayed on a laptop and phone resting on a workbench" loading="lazy">
+        <figcaption>Built on the bench, checked where customers actually look — on a phone, mid-job, in bright light.</figcaption>
       </figure>
     </div>
   </section>
 
-  <!-- AI TOOLING -->
-  <section class="sec dark" id="ai">
+  <!-- THE TRADE -->
+  <section class="sec alt" id="trade">
     <div class="wrap">
-      <div class="split">
-        <div class="rv">
-          <p class="kicker">Specialty</p>
-          <h2>AI tooling, minus the hype</h2>
-          <p class="sub">John builds and runs his own AI agent setups every day — so the advice is not theoretical. The specialty is practical AI for small teams: assistants that answer to a person, workflows that do defined work, and automation with a human holding the leash.</p>
-          <ul class="checks">
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Assistant setups</strong> — a personal or team AI assistant, configured for your work, your files, your rules.</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Agent workflows</strong> — multi-step jobs broken into agent-sized pieces, with checkpoints where a person decides.</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Automation</strong> — the repetitive digital chores (reports, follow-ups, data wrangling) handed to software that shows its work.</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span><strong>Plain-English handover</strong> — what it does, what it costs to run, and where its limits are, in writing.</span></li>
-          </ul>
+      <p class="kicker">The Trade</p>
+      <h2>Let's trade: your trade for mine</h2>
+      <p class="sub">Posted on Nextdoor, meant seriously. Christopher's place needs work he doesn't do; your business needs a website and booking you'd rather not pay cash for. Neighbor to neighbor, one-for-one.</p>
+      <div class="trade-card rv">
+        <span class="trade-stamp">One-for-one</span>
+        <div class="trade-cols">
+          <div class="trade-col">
+            <h3><span class="tc-k">Wanted — for my home</span>Work my place needs</h3>
+            <p>The jobs on Christopher's own list, waiting on the right tradesperson:</p>
+            <ul class="trade-list">
+              <li><span><b>Lawn mowing</b> — the home yard, kept up through the season</span></li>
+              <li><span><b>Roof repair</b> — real repair work, done right</span></li>
+              <li><span><b>Car repair</b> — honest mechanic work</span></li>
+              <li><span><b>Gutter cleaning</b> — leaves out of the gutters, water flowing again</span></li>
+            </ul>
+          </div>
+          <div class="trade-col">
+            <h3><span class="tc-k">Offered — in exchange</span>What your business gets</h3>
+            <p>The full build, the same as a paying job — no cut-down trade version:</p>
+            <ul class="trade-list">
+              <li><span><b>A contractor website</b> — designed and built for your business</span></li>
+              <li><span><b>Online scheduling</b> — customers book the slot themselves</span></li>
+              <li><span><b>Confirmations &amp; reminders</b> — wired to your calendar</span></li>
+              <li><span><b>Hosting &amp; care set up</b> — so it keeps working after launch</span></li>
+            </ul>
+          </div>
         </div>
-        <div class="pic rv">
-          <img src="assets/agent-network.jpg" alt="Abstract visual of a small network of glowing agent nodes orchestrated from one bright central hub" loading="lazy">
+        <p class="trade-line">"You fix my roof, I build the site that books your next ten roofs."</p>
+        <p class="trade-note">Fair swap, scoped in writing before either of us starts — you know exactly what you're getting, I know exactly what I'm getting, and no cash changes hands.</p>
+        <div class="trade-cta">
+          <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com?subject=Trade%20proposal">Propose a trade</a>
         </div>
       </div>
     </div>
@@ -306,17 +494,17 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   <section class="sec" id="process">
     <div class="wrap">
       <p class="kicker">Process</p>
-      <h2>Talk, demo, build, ship</h2>
-      <p class="sub">A process sized for a one-person shop and a busy client: few meetings, early proof, no surprises at invoice time.</p>
+      <h2>Talk, see it, build, ship</h2>
+      <p class="sub">A process sized for one builder and a busy contractor: few meetings, an early look at the real thing, no surprises at the end.</p>
       <div class="steps">
-        <article class="step rv"><h3>Talk</h3><p>You explain the problem in plain language. John asks the questions a builder asks — what's it for, who uses it, what breaks if it stops — and says honestly whether he's the right tool for the job.</p></article>
-        <article class="step rv"><h3>Demo</h3><p>Before the real build, you get something you can see and click: a demo site, a prototype, a working slice. Decisions get made looking at the thing, not imagining it.</p></article>
-        <article class="step rv"><h3>Build</h3><p>The build proceeds in visible steps, with the same person writing the code who heard the problem. Scope changes get priced in the open, before they happen.</p></article>
-        <article class="step rv"><h3>Ship &amp; Support</h3><p>It ships, it gets documented in plain English, and the person who built it answers when you call. Fixes and follow-ons go to the front of a very short line.</p></article>
+        <article class="step rv"><h3>Talk</h3><p>A real conversation about your trade, your service area, and the jobs you want more of. Christopher says plainly if he's not the right fit — and what the job would take if he is.</p></article>
+        <article class="step rv"><h3>See It</h3><p>Before the full build, you get a working preview — a live page with the booking flow running, opened on your own phone. Decisions get made looking at the thing.</p></article>
+        <article class="step rv"><h3>Build</h3><p>The site and the scheduling get built in visible stages, wired to your calendar. You see progress as it happens, and changes get discussed while they're still cheap.</p></article>
+        <article class="step rv"><h3>Ship</h3><p>It launches with a plain-English note on what was built and how to ask for changes. The person who built it is the person you email.</p></article>
       </div>
       <figure class="figcard rv">
-        <img src="assets/blueprint-code.jpg" alt="An engineering blueprint beside a tablet of code — the schematic-meets-software detail of a rescue project" loading="lazy">
-        <figcaption>Rescue work starts on paper: map what exists before touching what runs.</figcaption>
+        <img src="assets/blueprint-code.jpg" alt="An engineering blueprint beside a screen of code — planning before building" loading="lazy">
+        <figcaption>Precision habits: sketch it, measure twice, then build once.</figcaption>
       </figure>
     </div>
   </section>
@@ -325,24 +513,24 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   <section class="sec alt" id="work">
     <div class="wrap">
       <p class="kicker">Selected Work</p>
-      <h2>The kinds of things that leave the shop</h2>
-      <p class="sub">Project types, not name-drops — clients' names are their business. What follows is the shape of the work and what it took.</p>
+      <h2>The kinds of jobs that leave the bench</h2>
+      <p class="sub">Project types, not name-drops — other people's names are their business. What follows is the shape of the work.</p>
       <div class="work-grid">
         <article class="work rv">
-          <img src="assets/craft-keyboard.jpg" alt="Close shot of hands at a backlit mechanical keyboard with code on the screen — custom software being written" loading="lazy">
-          <div class="wb"><p class="kind">Custom Software</p><h3>The internal tool nobody could buy</h3><p>A workflow that lived in spreadsheets and sticky notes became one small system, fitted to the team's habits. Built in stages, each stage useful on its own, until the sticky notes retired.</p></div>
+          <img src="assets/kc-skyline.jpg" alt="A city skyline at blue hour" loading="lazy">
+          <div class="wb"><p class="kind">Website Redesign</p><h3>A dated site, rebuilt modern</h3><p>The full before-and-after treatment: same business, same words, new design — clearer services, a number you can't miss, and booking the old site never offered.</p></div>
         </article>
         <article class="work rv">
-          <img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour" loading="lazy">
-          <div class="wb"><p class="kind">Websites &amp; Demos</p><h3>A local business, properly online</h3><p>Demo-first website work for Kansas City small businesses: see it live, tune the words and photos, then launch. Fast pages, clear services, and a phone number you can't miss.</p></div>
+          <img src="assets/sites-workbench.jpg" alt="A business website on a laptop and phone on a workbench" loading="lazy">
+          <div class="wb"><p class="kind">Scheduling &amp; Booking</p><h3>The phone tag, retired</h3><p>Customers pick a slot, get confirmed and reminded, and the job lands on the calendar — set up once, and the calendar starts filling while the crew is out working.</p></div>
         </article>
         <article class="work rv">
-          <img src="assets/agent-network.jpg" alt="Glowing agent nodes around a central hub — an agent workflow made visible" loading="lazy">
-          <div class="wb"><p class="kind">AI Tooling</p><h3>An assistant that earns its keep</h3><p>A small team's AI setup: one hub assistant coordinating narrow helpers for research, drafting, and follow-through — every output reviewed by a person before it goes anywhere.</p></div>
+          <img src="assets/craft-keyboard.jpg" alt="A backlit mechanical keyboard with blank keycaps on a dark desk, code blurred on the monitor behind it" loading="lazy">
+          <div class="wb"><p class="kind">Contractor Website</p><h3>Built for the trades</h3><p>Services, service area, and a tap-to-call number up front; photos of real work; pages that load fast on a job-site connection. A site that reads like the crew works.</p></div>
         </article>
         <article class="work rv">
-          <img src="assets/blueprint-code.jpg" alt="Blueprint and code side by side during a reverse-engineering project" loading="lazy">
-          <div class="wb"><p class="kind">Rescue &amp; Reverse Engineering</p><h3>The system nobody dared touch</h3><p>Undocumented software, read end to end and mapped like a schematic: what it does, where it's fragile, what it would take to change safely. Then changed — safely.</p></div>
+          <img src="assets/hero-workspace.jpg" alt="A desk at dusk with an ultrawide monitor — the bench where sites get built and kept up" loading="lazy">
+          <div class="wb"><p class="kind">Care &amp; Updates</p><h3>Looked after, not left behind</h3><p>Hosting watched, seasonal offers swapped in, new photos posted, hours kept honest. The site keeps earning instead of slowly going stale.</p></div>
         </article>
       </div>
     </div>
@@ -354,19 +542,19 @@ footer ul{list-style:none;display:grid;gap:.4rem}
       <div class="split">
         <div class="rv">
           <p class="kicker">About</p>
-          <div class="mono" aria-hidden="true">J<span>M</span></div>
-          <h2>John Moore, builder</h2>
-          <p class="sub">Kansas City has been home and workshop for John's whole career in software — decades of craft across the tools of several eras, from the systems nobody documents to the AI agents everybody's suddenly talking about. He builds and runs his own agent setups daily, which is why his AI advice starts with what works on a Tuesday, not what demos well on a stage.</p>
-          <p class="pull">"Small shop. Senior hands. The person who answers is the person who builds."</p>
+          <div class="mono" aria-hidden="true">C<span>M</span></div>
+          <h2>Christopher Moore, builder</h2>
+          <p class="sub">Christopher is a Kansas City builder who makes websites and scheduling systems for contractors. By day he works in manufacturing quality — a world where you measure twice, verify everything, and write it down. Those habits carry straight into the sites: tested on real phones, honest about what they do, documented in plain English.</p>
+          <p class="pull">"One person, start to finish. The one who answers is the one who builds."</p>
           <ul class="checks">
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Clients deal with John directly — every call, every email, every line of code</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Plainspoken estimates, priced in the open, before work starts</span></li>
-            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Documentation in plain English, so you're never locked in by obscurity</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>You deal with Christopher directly — every email, every decision, every page that ships</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>A working preview before the full build, so you're reacting to a site, not a promise</span></li>
+            <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Precision habits included: verified before launch, changes scoped in writing</span></li>
           </ul>
         </div>
         <div class="rv">
-          <div class="about-pic"><img src="assets/kc-skyline.jpg" alt="Kansas City skyline at blue hour — home base for Moore Better Software" loading="lazy"></div>
-          <div class="about-pic" style="margin-top:1.1rem"><img src="assets/hero-workspace.jpg" alt="John Moore's desk at dusk — the workshop where the work gets done" loading="lazy"></div>
+          <div class="about-pic"><img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour — home base" loading="lazy"></div>
+          <div class="about-pic" style="margin-top:1.1rem"><img src="assets/hero-workspace.jpg" alt="Christopher's desk at dusk — where the sites get built" loading="lazy"></div>
         </div>
       </div>
     </div>
@@ -376,12 +564,12 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   <section class="cta-band" id="contact">
     <div class="wrap">
       <p class="kicker" style="justify-content:center">Contact</p>
-      <h2>Have something that needs building?</h2>
-      <p class="pun">The name is the promise — Moore, better.</p>
-      <p class="sub" style="color:var(--tx-inv-dim);margin:0.8rem auto 0">One email starts it. Describe the problem the way you'd describe it to a neighbor; John will take it from there.</p>
+      <h2>Need a site that books jobs?</h2>
+      <p class="pun">One person, start to finish.</p>
+      <p class="sub" style="color:var(--tx-inv-dim);margin:0.8rem auto 0">One email starts it. Tell Christopher what trade you're in and what your current site situation is — or ask about the trade. He'll take it from there.</p>
       <div class="ctas">
-        <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">johnkmoore@gmail.com</a>
-        <a class="btn btn-ghost" href="tel:+19136010220">Call (913) 601-0220</a>
+        <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a>
+        <a class="btn btn-ghost" href="#trade">See the trade offer</a>
       </div>
     </div>
   </section>
@@ -391,39 +579,38 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   <div class="wrap">
     <div class="cols">
       <div>
-        <h4>Moore Better Software</h4>
-        <p>Custom software, small-business websites, and practical AI tooling from a one-craftsman shop in the Kansas City metro. Software built by the person you talk to.</p>
+        <h4>Christopher Moore</h4>
+        <p>Websites and online scheduling for contractors in the Kansas City metro — designed, built, and looked after by one person.</p>
       </div>
       <div>
         <h4>Services</h4>
         <ul>
-          <li><a href="#services">Custom software</a></li>
-          <li><a href="#services">Websites &amp; demos</a></li>
-          <li><a href="#ai">AI assistants &amp; agents</a></li>
-          <li><a href="#services">Reverse engineering &amp; rescue</a></li>
-          <li><a href="#services">Rapid prototypes</a></li>
+          <li><a href="#services">Contractor websites</a></li>
+          <li><a href="#services">Scheduling &amp; booking</a></li>
+          <li><a href="#services">Website redesigns</a></li>
+          <li><a href="#services">Care &amp; updates</a></li>
         </ul>
       </div>
       <div>
         <h4>Contact</h4>
         <ul>
-          <li><a href="mailto:johnkmoore@gmail.com">johnkmoore@gmail.com</a></li>
-          <li><a href="tel:+19136010220">(913) 601-0220</a></li>
+          <li><a href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a></li>
           <li>Kansas City metro</li>
-          <li><a href="https://moorebettersoftware.com">moorebettersoftware.com</a></li>
+          <li><a href="#trade">The trade offer</a></li>
+          <li><a href="#redesign">The before / after slider</a></li>
         </ul>
       </div>
     </div>
     <div class="copyright">
-      <span>© <span id="yr">2026</span> Moore Better Software · John Moore</span>
-      <span>Small shop. Senior hands.</span>
+      <span>© <span id="yr">2026</span> Christopher Moore</span>
+      <span>Designed &amp; built by Christopher Moore.</span>
     </div>
   </div>
 </footer>
 
 <div class="mobilebar">
-  <a class="btn btn-amber" href="mailto:johnkmoore@gmail.com">Email John</a>
-  <a class="btn btn-teal" href="tel:+19136010220">Call</a>
+  <a class="btn btn-amber" href="mailto:Moore.chrisf@gmail.com">Email Christopher</a>
+  <a class="btn btn-teal" href="#trade">The Trade</a>
 </div>
 
 <script>
@@ -433,6 +620,51 @@ footer ul{list-style:none;display:grid;gap:.4rem}
   window.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
   document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* before / after slider */
+  var ba = document.getElementById('baBox');
+  var handle = document.getElementById('baHandle');
+  if (ba && handle) {
+    var pos = 50;
+    function setPos(p) {
+      pos = Math.max(0, Math.min(100, p));
+      var r = Math.round(pos);
+      ba.style.setProperty('--pos', pos + '%');
+      handle.setAttribute('aria-valuenow', r);
+      handle.setAttribute('aria-valuetext', r + '% old website, ' + (100 - r) + '% new website');
+    }
+    function fromEvent(e) {
+      var rect = ba.getBoundingClientRect();
+      if (!rect.width) { return pos; }
+      return (e.clientX - rect.left) / rect.width * 100;
+    }
+    var dragging = false;
+    ba.addEventListener('pointerdown', function (e) {
+      dragging = true;
+      if (ba.setPointerCapture && e.pointerId !== undefined) {
+        try { ba.setPointerCapture(e.pointerId); } catch (err) {}
+      }
+      setPos(fromEvent(e));
+      e.preventDefault();
+    });
+    ba.addEventListener('pointermove', function (e) { if (dragging) { setPos(fromEvent(e)); } });
+    ['pointerup', 'pointercancel'].forEach(function (t) {
+      ba.addEventListener(t, function () { dragging = false; });
+    });
+    handle.addEventListener('keydown', function (e) {
+      var step = e.shiftKey ? 10 : 2, used = true;
+      switch (e.key) {
+        case 'ArrowLeft': case 'ArrowDown': setPos(pos - step); break;
+        case 'ArrowRight': case 'ArrowUp': setPos(pos + step); break;
+        case 'Home': setPos(0); break;
+        case 'End': setPos(100); break;
+        default: used = false;
+      }
+      if (used) { e.preventDefault(); }
+    });
+    setPos(50);
+  }
+
   var reduce = false;
   if (window.matchMedia) { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
   var items = document.querySelectorAll('.rv');
