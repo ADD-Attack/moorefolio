@@ -497,6 +497,7 @@ async function accountAuth(kind) { // "login" | "signup"
     await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
     if (msg) msg.textContent = "";
     if (pw) pw.value = "";
+    await refreshPasskeys();
     renderAccount(); renderWallet();
   } catch (e) {
     if (msg) msg.textContent = e && e.status === 401 ? "Wrong email or password."
@@ -508,6 +509,7 @@ async function accountAuth(kind) { // "login" | "signup"
 async function accountSignOut() {
   try { await acctApi("/v1/logout", { method: "POST", headers: acctAuthHeaders() }); } catch (_) {}
   clearAccount();
+  passkeyList = [];
   profilesState = loadProfilesState(); // signed out again -> the local list
   activeProfileId = profilesState.activeId;
   DOSSIER_KEY = profileDossierKey(activeProfileId);
@@ -516,6 +518,140 @@ async function accountSignOut() {
   reset();
   renderDossier(); renderProfiles(); renderWallet(); renderAccount();
   closeOptions();
+}
+// ---------- passkeys (Ticket 006 Phase 2b) ----------
+// WebAuthn on top of the Phase 2a accounts: the gate holds the
+// credentials, the password stays as the fallback, and a passkey
+// sign-in lands in exactly the same session state as a password
+// sign-in. Everything here feature-detects: no WebAuthn, no buttons,
+// just the fallback note.
+function waSupported() {
+  try {
+    return typeof navigator !== "undefined" && !!navigator.credentials &&
+      typeof navigator.credentials.create === "function" &&
+      typeof navigator.credentials.get === "function" &&
+      typeof window !== "undefined" && !!window.PublicKeyCredential;
+  } catch (_) { return false; }
+}
+function b64uEncode(buf) {
+  const bytes = new Uint8Array(buf);
+  let s = "";
+  for (const b of bytes) s += String.fromCharCode(b);
+  return btoa(s).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+}
+function b64uDecode(str) {
+  let s = String(str).replace(/-/g, "+").replace(/_/g, "/");
+  while (s.length % 4) s += "=";
+  const bin = atob(s);
+  const out = new Uint8Array(bin.length);
+  for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+  return out.buffer;
+}
+let passkeyList = [];
+function renderPasskeys() {
+  const list = $("optPasskeyList");
+  if (list) {
+    list.textContent = "";
+    if (!passkeyList.length) list.textContent = "None yet";
+    for (const pk of passkeyList) {
+      const span = document.createElement("span");
+      const when = pk.created_at ? String(pk.created_at).slice(0, 10) : "";
+      span.textContent = "Passkey" + (when ? " · added " + when : "") + " ";
+      const btn = document.createElement("button");
+      btn.type = "button"; btn.className = "ghost"; btn.textContent = "Remove";
+      btn.addEventListener("click", () => { removePasskey(pk.id); });
+      span.appendChild(btn);
+      list.appendChild(span);
+    }
+  }
+  const mg = $("optPasskeyManage");
+  if (mg) mg.style.display = accountState && waSupported() ? "" : "none";
+}
+async function refreshPasskeys() {
+  if (!accountState) { passkeyList = []; renderPasskeys(); return; }
+  try {
+    const data = await acctApi("/v1/passkeys", { headers: acctAuthHeaders() });
+    passkeyList = Array.isArray(data.passkeys) ? data.passkeys : [];
+  } catch (_) { /* keep the last known list */ }
+  renderPasskeys();
+}
+async function addPasskey() {
+  const msg = $("optAcctMsg");
+  if (!accountState) return;
+  if (!waSupported()) { if (msg) msg.textContent = "Passkeys aren't available in this browser."; return; }
+  if (msg) msg.textContent = "Follow your device's prompt to save a passkey…";
+  try {
+    const opts = await acctApi("/v1/passkeys/register/options", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
+    const cred = await navigator.credentials.create({ publicKey: {
+      challenge: b64uDecode(opts.challenge),
+      rp: opts.rp,
+      user: { id: b64uDecode(opts.user.id), name: opts.user.name, displayName: opts.user.displayName },
+      pubKeyCredParams: opts.pubKeyCredParams,
+      timeout: opts.timeout,
+      attestation: opts.attestation,
+      authenticatorSelection: opts.authenticatorSelection,
+      excludeCredentials: (opts.excludeCredentials || []).map((c) => ({ type: c.type, id: b64uDecode(c.id), transports: c.transports })),
+    } });
+    if (!cred) throw new Error("no credential");
+    const data = await acctApi("/v1/passkeys/register/verify", { method: "POST", headers: acctAuthHeaders(), body: JSON.stringify({
+      id: cred.id, rawId: b64uEncode(cred.rawId), type: cred.type,
+      response: { clientDataJSON: b64uEncode(cred.response.clientDataJSON),
+                  attestationObject: b64uEncode(cred.response.attestationObject) },
+      transports: (cred.response.getTransports ? cred.response.getTransports() : []),
+    }) });
+    passkeyList = Array.isArray(data.passkeys) ? data.passkeys : passkeyList;
+    renderPasskeys();
+    if (msg) msg.textContent = "Passkey added.";
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status ? "The relay couldn't add that passkey — try again."
+      : "Passkey setup was cancelled or didn't finish.";
+  }
+}
+async function removePasskey(credId) {
+  const msg = $("optAcctMsg");
+  try {
+    const data = await acctApi("/v1/passkeys/remove", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ credential_id: credId }) });
+    passkeyList = Array.isArray(data.passkeys) ? data.passkeys : [];
+    renderPasskeys();
+    if (msg) msg.textContent = "Passkey removed.";
+  } catch (_) { if (msg) msg.textContent = "Couldn't remove that passkey — try again."; }
+}
+async function passkeySignIn() {
+  const em = $("optAcctEmail"), msg = $("optAcctMsg");
+  if (!waSupported()) { if (msg) msg.textContent = "Passkeys aren't available in this browser."; return; }
+  const email = em ? String(em.value || "").trim() : "";
+  if (msg) msg.textContent = "Waiting for your passkey…";
+  try {
+    const opts = await acctApi("/v1/passkeys/auth/options", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(email ? { email } : {}) });
+    const cred = await navigator.credentials.get({ publicKey: {
+      challenge: b64uDecode(opts.challenge),
+      rpId: opts.rpId,
+      timeout: opts.timeout,
+      userVerification: opts.userVerification,
+      allowCredentials: (opts.allowCredentials || []).map((c) => ({ type: c.type, id: b64uDecode(c.id), transports: c.transports })),
+    } });
+    if (!cred) throw new Error("no credential");
+    const data = await acctApi("/v1/passkeys/auth/verify", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({
+      id: cred.id, rawId: b64uEncode(cred.rawId), type: cred.type,
+      response: { clientDataJSON: b64uEncode(cred.response.clientDataJSON),
+                  authenticatorData: b64uEncode(cred.response.authenticatorData),
+                  signature: b64uEncode(cred.response.signature),
+                  userHandle: cred.response.userHandle ? b64uEncode(cred.response.userHandle) : null },
+    }) });
+    accountState = { token: data.token, exp: data.exp, email: data.account.email, plan: data.account.plan };
+    storeAccount();
+    serverCaps = data.caps || null;
+    await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
+    if (msg) msg.textContent = "";
+    await refreshPasskeys();
+    renderAccount(); renderWallet();
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status === 401 ? "That passkey didn't sign you in."
+      : e && e.status === 429 ? "Too many tries — wait a bit and try again."
+      : "Passkey sign-in was cancelled or didn't finish.";
+  }
 }
 async function bootAccountSync() {
   // A tab that restored a signed-in account re-reads the server's
@@ -554,6 +690,14 @@ function renderAccount() {
   const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
   const pl = $("optPlanLine");
   if (pl) pl.textContent = accountState ? "Plan: Coach · " + accountState.email : PLAN_LINE_SIGNED_OUT;
+  // Phase 2b: passkey controls appear only when this browser can do
+  // WebAuthn; otherwise one plain line explains why, and the password
+  // form carries on alone.
+  const supported = waSupported();
+  const note = $("optPasskeyNote");
+  if (note) note.textContent = supported ? "" : "Passkeys aren't available in this browser — your password still works.";
+  const psb = $("optPasskeySignInBtn"); if (psb) psb.style.display = supported ? "" : "none";
+  renderPasskeys();
 }
 // ---------- relay: turn / review ----------
 async function fetchWithTimeout(url, opts, ms) {
@@ -972,8 +1116,10 @@ function init(opts) {
     const sib = $("optSignInBtn"); if (sib) sib.addEventListener("click", () => { accountAuth("login"); });
     const sub = $("optSignUpBtn"); if (sub) sub.addEventListener("click", () => { accountAuth("signup"); });
     const sob = $("optSignOutBtn"); if (sob) sob.addEventListener("click", () => { accountSignOut(); });
+    const pkb = $("optPasskeySignInBtn"); if (pkb) pkb.addEventListener("click", () => { passkeySignIn(); });
+    const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
     renderAccount();
-    if (accountState) bootAccountSync();
+    if (accountState) { bootAccountSync(); refreshPasskeys(); }
     const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
     const lk = $("optLockBtn"); if (lk) lk.addEventListener("click", lockDevice);
     const rc = $("optRecalibrate"); if (rc) rc.addEventListener("click", () => { closeOptions(); startGame("practice"); });
@@ -1001,7 +1147,9 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   getProfiles: () => profilesState, getActiveProfileId: () => activeProfileId,
   switchProfile, addProfile,
   getAccount: () => accountState, getServerCaps: () => serverCaps,
-  accountAuth, accountSignOut, signedIn } };
+  accountAuth, accountSignOut, signedIn,
+  passkeySignIn, addPasskey, removePasskey, waSupported,
+  getPasskeys: () => passkeyList } };
 })();
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
