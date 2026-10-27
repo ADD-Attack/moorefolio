@@ -1,5 +1,5 @@
-// Chess Coach — Plans page (Ticket 006 Phase 3).
-// Standalone script: price toggle, mini demo board, checkout, redeem note.
+// Chess Coach — Plans page (Ticket 006 Phase 3; redeem wired Phase 4).
+// Standalone script: price toggle, mini demo board, checkout, test-code redeem.
 // DOM surface is kept small so the page suite can load this file headlessly.
 (function () {
   "use strict";
@@ -16,7 +16,11 @@
   var CREATE_ACCOUNT_NOTE = "Create your account first — open a coach page and use Options → Account.";
   var BILLING_NOT_OPEN_NOTE = "Billing isn't open yet — plans launch soon. Your beta access keeps working.";
   var ERROR_NOTE = "Something went wrong — try again in a moment.";
-  var REDEEM_NOTE = "Test codes aren't live yet — this is where they'll go.";
+  var REDEEM_URL = "https://abraham-1.tail629694.ts.net/v1/redeem";
+  var REDEEM_OK_NOTE = "Test code accepted — you're in for 7 days.";
+  var REDEEM_BAD_NOTE = "That code wasn't recognized — check it and try again.";
+  var REDEEM_EMPTY_NOTE = "Enter your test code first.";
+  var REDEEM_SLOW_NOTE = "Too many tries — wait a bit and try again.";
 
   var annual = false;
 
@@ -190,9 +194,63 @@
     }
   }
 
+  // ---- test-code redemption (Phase 4) ----
+  // A redeemed code returns a guest session. The blob is stored
+  // under EVERY coach page's account key, so whichever coach page
+  // the guest opens next (same tab) restores it from sessionStorage
+  // and the banner + claim flow are waiting there.
+  function redeem() {
+    var input = el("testCodeInput");
+    var code = input && typeof input.value === "string" ? input.value.trim() : "";
+    if (!code) { setText("redeemNote", REDEEM_EMPTY_NOTE); return Promise.resolve(false); }
+    if (typeof fetch !== "function") { setText("redeemNote", ERROR_NOTE); return Promise.resolve(false); }
+    setText("redeemNote", "Checking your code…");
+    var request;
+    try {
+      request = fetch(REDEEM_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: code })
+      });
+    } catch (e) {
+      setText("redeemNote", ERROR_NOTE);
+      return Promise.resolve(false);
+    }
+    return Promise.resolve(request).then(function (res) {
+      var status = res && typeof res.status === "number" ? res.status : 0;
+      var readJson = res && typeof res.json === "function"
+        ? Promise.resolve(res.json()).catch(function () { return null; })
+        : Promise.resolve(null);
+      return readJson.then(function (data) {
+        if (status === 200 && data && data.token && data.account) {
+          var blob = JSON.stringify({ token: data.token, exp: data.exp,
+            email: data.account.email || null, plan: data.account.plan,
+            guest: !!data.account.guest,
+            guest_days_left: typeof data.account.guest_days_left === "number" ? data.account.guest_days_left : null,
+            guest_expires_at: data.account.guest_expires_at || null });
+          if (typeof sessionStorage !== "undefined" && sessionStorage && typeof sessionStorage.setItem === "function") {
+            for (var i = 0; i < ACCOUNT_KEYS.length; i++) {
+              try { sessionStorage.setItem(ACCOUNT_KEYS[i], blob); } catch (e) { /* one key failing must not lose the rest */ }
+            }
+          }
+          var note = el("redeemNote");
+          if (note) note.innerHTML = REDEEM_OK_NOTE + ' <a href="/coach-you/">Open the coach and play</a>';
+          return true;
+        }
+        if (status === 401) { setText("redeemNote", REDEEM_BAD_NOTE); return false; }
+        if (status === 429) { setText("redeemNote", REDEEM_SLOW_NOTE); return false; }
+        setText("redeemNote", ERROR_NOTE);
+        return false;
+      });
+    }).catch(function () {
+      setText("redeemNote", ERROR_NOTE);
+      return false;
+    });
+  }
+
   var redeemBtn = el("redeemBtn");
   if (redeemBtn && typeof redeemBtn.addEventListener === "function") {
-    redeemBtn.addEventListener("click", function () { setText("redeemNote", REDEEM_NOTE); });
+    redeemBtn.addEventListener("click", function () { return redeem(); });
   }
 
   setAnnual(false);
