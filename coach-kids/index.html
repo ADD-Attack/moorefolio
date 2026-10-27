@@ -137,6 +137,7 @@
   <div class="headerChips"><button id="gamesChip" class="chipBtn" type="button">3 games</button><button id="profileChip" class="chipBtn" type="button">Player</button></div>
   <div id="gamesInfo" style="display:none"></div>
 </header>
+<div id="guestBanner" style="display:none;max-width:1060px;margin:8px auto 0;padding:8px 14px;background:#fdf3e0;border:1px solid #d9b96a;border-radius:10px;font-size:14px;text-align:center"><span id="guestBannerText"></span> <button id="guestKeepBtn" type="button" class="ghost">Keep my progress</button></div>
 
 <div class="layout">
   <div class="side">
@@ -581,11 +582,21 @@ reset();
   <div class="optRow"><label for="optAcctPw">Password</label><input id="optAcctPw" type="password" autocomplete="current-password"></div>
   <div class="optRow"><span></span><span><button id="optSignInBtn" type="button" class="ghost">Sign in</button> <button id="optSignUpBtn" type="button" class="ghost">Create account</button></span></div>
   <div class="optRow"><span></span><button id="optPasskeySignInBtn" type="button" class="ghost">Sign in with a passkey</button></div>
+  <div class="optRow"><label for="optRedeemCode">Test code</label><input id="optRedeemCode" type="text" autocomplete="off" placeholder="Have a test code?"></div>
+  <div class="optRow"><span></span><button id="optRedeemBtn" type="button" class="ghost">Use test code</button></div>
   <div class="optRow"><span id="optAcctMsg"></span></div>
+  </div>
+  <div id="optGuestClaim" style="display:none">
+  <div class="optRow"><span>Test account</span><span id="optGuestDays"></span></div>
+  <div class="optRow"><label for="optClaimEmail">Email</label><input id="optClaimEmail" type="email" autocomplete="email"></div>
+  <div class="optRow"><label for="optClaimPw">Password</label><input id="optClaimPw" type="password" autocomplete="new-password"></div>
+  <div class="optRow"><span></span><button id="optClaimBtn" type="button" class="ghost">Keep my progress</button></div>
+  <div class="optRow"><span id="optClaimMsg"></span></div>
   </div>
   <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost" style="display:none">Sign out</button></div>
   <div class="optRow"><span></span><button id="optManageBilling" type="button" class="ghost" style="display:none">Manage billing</button></div>
   <div class="optRow"><span id="optBillingNote"></span></div>
+  <div class="optRow"><span id="optByokNpLine">New Player always plays with the built-in coach.</span></div>
   <div id="optPasskeyManage" style="display:none">
   <div class="optRow"><span>Passkeys</span><span id="optPasskeyList">None yet</span></div>
   <div class="optRow"><span></span><button id="optAddPasskeyBtn" type="button" class="ghost">Add a passkey</button></div>

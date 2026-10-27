@@ -50,7 +50,7 @@ const ACCOUNT_KEY = "chessCoachAccount." + BRANCH;
 let accountState = null; // {token, exp, email, plan}
 try {
   const rawAcct = sessionStorage.getItem(ACCOUNT_KEY);
-  if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && d.email) accountState = d; }
+  if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && (d.email || d.guest)) accountState = d; }
 } catch (_) {}
 let serverCaps = null;     // last caps view from the gate (signed in only)
 // Phase 3: plan display names for the Options account block — plain
@@ -534,6 +534,17 @@ function clearAccount() {
   accountState = null; serverCaps = null; acctBillingNote = "";
   try { sessionStorage.removeItem(ACCOUNT_KEY); } catch (_) {}
 }
+// Phase 4: one adoption path for every way an account session
+// arrives — password, passkey, test-code redemption, guest claim.
+// The gate's payload is the same shape for all of them.
+function adoptAccount(data) {
+  const a = data.account || {};
+  accountState = { token: data.token, exp: data.exp, email: a.email || null, plan: a.plan,
+    guest: !!a.guest, guest_days_left: (typeof a.guest_days_left === "number" ? a.guest_days_left : null),
+    guest_expires_at: a.guest_expires_at || null };
+  storeAccount();
+  serverCaps = data.caps || null;
+}
 async function refreshCaps() {
   if (!accountState) return;
   try { serverCaps = await acctApi("/v1/games", { headers: acctAuthHeaders() }); renderWallet(); }
@@ -595,9 +606,7 @@ async function accountAuth(kind) { // "login" | "signup"
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    accountState = { token: data.token, exp: data.exp, email: data.account.email, plan: data.account.plan };
-    storeAccount();
-    serverCaps = data.caps || null;
+    adoptAccount(data);
     await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
     if (msg) msg.textContent = "";
     if (pw) pw.value = "";
@@ -744,9 +753,7 @@ async function passkeySignIn() {
                   signature: b64uEncode(cred.response.signature),
                   userHandle: cred.response.userHandle ? b64uEncode(cred.response.userHandle) : null },
     }) });
-    accountState = { token: data.token, exp: data.exp, email: data.account.email, plan: data.account.plan };
-    storeAccount();
-    serverCaps = data.caps || null;
+    adoptAccount(data);
     await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
     if (msg) msg.textContent = "";
     await refreshPasskeys();
@@ -774,6 +781,17 @@ async function bootAccountSync() {
       dossier = loadDossier();
       renderDossier(); renderProfiles(); renderWallet();
     }
+    // Phase 4: refresh the guest countdown from the account record
+    // (the stored blob's days-left is only as fresh as sign-in).
+    try {
+      const me = await acctApi("/v1/account", { headers: acctAuthHeaders() });
+      if (me && accountState) {
+        accountState.guest = !!me.guest;
+        accountState.guest_days_left = (typeof me.guest_days_left === "number" ? me.guest_days_left : null);
+        accountState.guest_expires_at = me.guest_expires_at || null;
+        storeAccount();
+      }
+    } catch (_) {}
     renderAccount();
   } catch (e) {
     if (e && e.status === 401) {
@@ -787,15 +805,35 @@ async function bootAccountSync() {
   }
 }
 const PLAN_LINE_SIGNED_OUT = "Plan: Beta — accounts and billing arrive with the full launch.";
+function guestDaysText() {
+  const n = accountState && typeof accountState.guest_days_left === "number" ? accountState.guest_days_left : null;
+  if (n === null) return "";
+  return n <= 0 ? "last day" : n === 1 ? "1 day left" : n + " days left";
+}
 function renderAccount() {
   const line = $("optAccountLine");
-  if (line) line.textContent = accountState ? "Signed in as " + accountState.email : "Not signed in";
+  if (line) line.textContent = !accountState ? "Not signed in"
+    : accountState.guest ? "Test account — " + guestDaysText()
+    : "Signed in as " + accountState.email;
   const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
   const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
   const pl = $("optPlanLine");
-  if (pl) pl.textContent = accountState ? "Plan: " + planName(accountState.plan) + " · " + accountState.email : PLAN_LINE_SIGNED_OUT;
-  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState ? "" : "none";
+  if (pl) pl.textContent = !accountState ? PLAN_LINE_SIGNED_OUT
+    : accountState.guest ? "Plan: " + planName(accountState.plan) + " (test code) · " + guestDaysText()
+    : "Plan: " + planName(accountState.plan) + " · " + accountState.email;
+  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState && !accountState.guest ? "" : "none";
   const bn = $("optBillingNote"); if (bn) bn.textContent = acctBillingNote;
+  // Phase 4 guest surfaces: the banner over the board and the claim
+  // form in this drawer. Both exist only while the account is a guest.
+  const banner = $("guestBanner");
+  if (banner) {
+    banner.style.display = accountState && accountState.guest ? "" : "none";
+    const bt = $("guestBannerText");
+    if (bt && accountState && accountState.guest)
+      bt.textContent = "You're on a test account — " + guestDaysText() + ". Keep your progress to make it yours.";
+  }
+  const claim = $("optGuestClaim"); if (claim) claim.style.display = accountState && accountState.guest ? "" : "none";
+  const gd = $("optGuestDays"); if (gd) gd.textContent = accountState && accountState.guest ? guestDaysText() : "";
   // Phase 2b: passkey controls appear only when this browser can do
   // WebAuthn; otherwise one plain line explains why, and the password
   // form carries on alone.
@@ -819,6 +857,52 @@ async function manageBilling() {
       : "Billing didn't open just now — try again in a bit.";
   }
   renderAccount();
+}
+// ---------- Phase 4: test-code redemption + guest claim ----------
+// New Player pages carry NO key field by design: a New Player
+// profile always plays with the built-in coach, whatever keys the
+// account holds (the gate enforces it server-side too). What these
+// pages do carry is the guest flow — the banner, the claim form,
+// and the redemption entry.
+async function redeemTestCode() {
+  const codeEl = $("optRedeemCode"), msg = $("optAcctMsg");
+  const code = codeEl ? String(codeEl.value || "").trim() : "";
+  if (!code) { if (msg) msg.textContent = "Enter your test code first."; return; }
+  if (msg) msg.textContent = "Checking your code…";
+  try {
+    const data = await acctApi("/v1/redeem", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }) });
+    adoptAccount(data);
+    await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
+    if (codeEl) codeEl.value = "";
+    if (msg) msg.textContent = "You're in — this test account lasts 7 days. Use “Keep my progress” any time to make it yours.";
+    renderAccount(); renderWallet();
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status === 401 ? "That code wasn't recognized — check it and try again."
+      : e && e.status === 429 ? "Too many tries — wait a bit and try again."
+      : "Can't reach the coach relay right now.";
+  }
+}
+async function claimGuestAccount() {
+  const em = $("optClaimEmail"), pw = $("optClaimPw"), msg = $("optClaimMsg");
+  const email = em ? String(em.value || "").trim() : "";
+  const password = pw ? String(pw.value || "") : "";
+  if (!email || !password) { if (msg) msg.textContent = "Enter an email and a password."; return; }
+  if (msg) msg.textContent = "Saving your account…";
+  try {
+    const data = await acctApi("/v1/guest/claim", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ email, password }) });
+    adoptAccount(data);
+    if (pw) pw.value = "";
+    if (msg) msg.textContent = "";
+    const note = $("optAcctMsg");
+    if (note) note.textContent = "Done — this account is yours now, progress and all.";
+    renderAccount(); renderWallet();
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status === 409 ? "That email already has an account — sign in with it instead."
+      : e && e.status === 400 ? "Use a valid email and a password of 8+ characters."
+      : "Couldn't save the account just now — try again in a bit.";
+  }
 }
 // ---------- relay: turn / review ----------
 async function fetchWithTimeout(url, opts, ms) {
@@ -888,6 +972,13 @@ function prepareConnection() {
       catch (e) {
         if (e && e.data && e.data.caps) { serverCaps = e.data.caps; renderWallet(); }
         if (e && e.status === 409) { onAccountNoGames(); return; }
+        if (e && e.status === 403 && e.data && e.data.guest_expired) {
+          // The 7 days ran out; the claim window is still open, and
+          // the drawer carries the form. Say it plainly.
+          coachLine("Your test account's 7 days are up. Open Options and choose “Keep my progress” to keep playing with your coach — this game runs on Stockfish only.");
+          enterOfflineMode("your test account ended");
+          return;
+        }
         if (!(e && e.status === 401)) { enterOfflineMode("the account session could not be opened"); return; }
         clearAccount(); renderAccount(); // dead account token: fall through to the branch session
       }
@@ -1766,6 +1857,9 @@ function init(opts) {
     const mbb = $("optManageBilling"); if (mbb) mbb.addEventListener("click", () => { manageBilling(); });
     const pkb = $("optPasskeySignInBtn"); if (pkb) pkb.addEventListener("click", () => { passkeySignIn(); });
     const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
+    const rdb = $("optRedeemBtn"); if (rdb) rdb.addEventListener("click", () => { redeemTestCode(); });
+    const clb = $("optClaimBtn"); if (clb) clb.addEventListener("click", () => { claimGuestAccount(); });
+    const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => { openOptions(); });
     renderAccount();
     if (accountState) { bootAccountSync(); refreshPasskeys(); }
     const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
