@@ -1,0 +1,44 @@
+# Chess Coach CI (Ticket 006, spec section 14).
+#
+# Runs the full page-side suite battery on every pull request and on
+# every push to main / staging. Branch protection on main + staging
+# requires the "chess-suites" check to be green before a pull request
+# can merge (owner/admin direct pushes bypass, per the protection
+# config — see chess-coach-product/PIPELINE.md).
+#
+# The GATE suite (test-gate.mjs) is deliberately NOT run here: the
+# gate code lives with the relay on Abraham
+# (~/chess-coach-relay, not in this repo). It runs on Abraham in the
+# deploy step instead — the pull-based deployer
+# (chess-coach-relay/deploy/deploy.sh, chess-deploy.timer) executes
+# it against every staged gate release before installing, and
+# refuses the release if it is red. See PIPELINE.md for the full
+# mechanics.
+name: chess-coach
+
+on:
+  pull_request:
+  push:
+    branches: [main, staging]
+
+jobs:
+  chess-suites:
+    name: chess-suites
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Standard page suite
+        run: node coach-tests/test-gate-page.mjs
+      - name: New Player suite (coach-kids)
+        run: node coach-kids/test-kids-page.mjs
+      - name: New Player suite (coach-beginnertest)
+        run: node coach-beginnertest/test-kids-page.mjs
+      - name: Purchase page suite
+        run: node coach-plans/test-plans-page.mjs
+      - name: Core suite (legacy)
+        run: node coach-tests/legacy/test-core.mjs
+      - name: Legacy page suite
+        run: node coach-tests/legacy/test-page.mjs
