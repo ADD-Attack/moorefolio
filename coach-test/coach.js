@@ -43,10 +43,12 @@ const TOKEN_KEY = "chessCoachToken." + BRANCH;
 // session against the active server profile instead of a branch
 // session. The account token lives in sessionStorage only.
 const ACCOUNT_KEY = "chessCoachAccount." + BRANCH;
-let accountState = null; // {token, exp, email, plan}
+let accountState = null; // {token, exp, email, plan, guest?, guest_days_left?, guest_expires_at?}
 try {
   const rawAcct = sessionStorage.getItem(ACCOUNT_KEY);
-  if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && d.email) accountState = d; }
+  // Guests (Phase 4 temp accounts) have no email; the token + guest
+  // flag is what restores them (e.g. arriving from the plans page).
+  if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && (d.email || d.guest)) accountState = d; }
 } catch (_) {}
 let serverCaps = null;     // last caps view from the gate (signed in only)
 // Phase 3: plan display names for the Options account block. The
@@ -55,7 +57,9 @@ let serverCaps = null;     // last caps view from the gate (signed in only)
 const PLAN_NAMES = { coach: "Coach", pro: "Pro", byok_weekly: "BYOK", lapsed: "Paused", none: "No plan" };
 function planName(id) { return PLAN_NAMES[id] || "Coach"; }
 let acctBillingNote = "";  // last billing action's plain-language result
-let acctCoachSeat = null;  // seat of the current account game ("sol"|"astra"|"kids"), from /v1/account/session
+let acctCoachSeat = null;  // seat of the current account game ("sol"|"astra"|"kids"|"byok"), from /v1/account/session
+let byokState = null;      // BYOK summary from the gate (never the key itself)
+let byokModels = null;     // curated model lists from the gate
 let pendingCharge = false; // the next account session spends a game
 function signedIn() { return !!accountState; }
 // ---------- local profiles (Ticket 006 Phase 1) ----------
@@ -271,7 +275,7 @@ function renderWallet() {
                      " · Next " + DAILY_NEW + " at midnight · Shared by this account."; }
 }
 function updateGameInfo() {
-  const t = $("gameInfoTitle"); if (t) t.textContent = "You vs. the Coach (" + (acctCoachSeat === "astra" ? "Astra" : "Sol") + ")";
+  const t = $("gameInfoTitle"); if (t) t.textContent = "You vs. the Coach (" + (acctCoachSeat === "astra" ? "Astra" : acctCoachSeat === "byok" ? "your model" : "Sol") + ")";
   const k = $("gameInfoKind");
   if (k) k.textContent = mode === "practice" ? "Calibration game" : mode === "rated" ? "Rated game"
     : (dossier.calibrated ? "Rated game" : "Calibration game");
@@ -448,7 +452,19 @@ function acctAuthHeaders() { return { "Content-Type": "application/json", "Autho
 function storeAccount() { try { sessionStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountState)); } catch (_) {} }
 function clearAccount() {
   accountState = null; serverCaps = null; acctBillingNote = ""; acctCoachSeat = null;
+  byokState = null; byokModels = null;
   try { sessionStorage.removeItem(ACCOUNT_KEY); } catch (_) {}
+}
+// Phase 4: one adoption path for every way an account session
+// arrives — password, passkey, test-code redemption, guest claim.
+// The gate's payload is the same shape for all of them.
+function adoptAccount(data) {
+  const a = data.account || {};
+  accountState = { token: data.token, exp: data.exp, email: a.email || null, plan: a.plan,
+    guest: !!a.guest, guest_days_left: (typeof a.guest_days_left === "number" ? a.guest_days_left : null),
+    guest_expires_at: a.guest_expires_at || null };
+  storeAccount();
+  serverCaps = data.caps || null;
 }
 async function refreshCaps() {
   if (!accountState) return;
@@ -518,9 +534,7 @@ async function accountAuth(kind) { // "login" | "signup"
       method: "POST", headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
     });
-    accountState = { token: data.token, exp: data.exp, email: data.account.email, plan: data.account.plan };
-    storeAccount();
-    serverCaps = data.caps || null;
+    adoptAccount(data);
     await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
     if (msg) msg.textContent = "";
     if (pw) pw.value = "";
@@ -667,9 +681,7 @@ async function passkeySignIn() {
                   signature: b64uEncode(cred.response.signature),
                   userHandle: cred.response.userHandle ? b64uEncode(cred.response.userHandle) : null },
     }) });
-    accountState = { token: data.token, exp: data.exp, email: data.account.email, plan: data.account.plan };
-    storeAccount();
-    serverCaps = data.caps || null;
+    adoptAccount(data);
     await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
     if (msg) msg.textContent = "";
     await refreshPasskeys();
@@ -697,6 +709,17 @@ async function bootAccountSync() {
       dossier = loadDossier();
       renderDossier(); renderProfiles(); renderWallet();
     }
+    // Phase 4: refresh the guest countdown from the account record
+    // (the stored blob's days-left is only as fresh as sign-in).
+    try {
+      const me = await acctApi("/v1/account", { headers: acctAuthHeaders() });
+      if (me && accountState) {
+        accountState.guest = !!me.guest;
+        accountState.guest_days_left = (typeof me.guest_days_left === "number" ? me.guest_days_left : null);
+        accountState.guest_expires_at = me.guest_expires_at || null;
+        storeAccount();
+      }
+    } catch (_) {}
     renderAccount();
   } catch (e) {
     if (e && e.status === 401) {
@@ -710,16 +733,37 @@ async function bootAccountSync() {
   }
 }
 const PLAN_LINE_SIGNED_OUT = "Plan: Beta — accounts and billing arrive with the full launch.";
+function guestDaysText() {
+  const n = accountState && typeof accountState.guest_days_left === "number" ? accountState.guest_days_left : null;
+  if (n === null) return "";
+  return n <= 0 ? "last day" : n === 1 ? "1 day left" : n + " days left";
+}
 function renderAccount() {
   const line = $("optAccountLine");
-  if (line) line.textContent = accountState ? "Signed in as " + accountState.email : "Not signed in";
+  if (line) line.textContent = !accountState ? "Not signed in"
+    : accountState.guest ? "Test account — " + guestDaysText()
+    : "Signed in as " + accountState.email;
   const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
   const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
   const pl = $("optPlanLine");
-  if (pl) pl.textContent = accountState ? "Plan: " + planName(accountState.plan) + " · " + accountState.email : PLAN_LINE_SIGNED_OUT;
-  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState ? "" : "none";
+  if (pl) pl.textContent = !accountState ? PLAN_LINE_SIGNED_OUT
+    : accountState.guest ? "Plan: " + planName(accountState.plan) + " (test code) · " + guestDaysText()
+    : "Plan: " + planName(accountState.plan) + " · " + accountState.email;
+  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState && !accountState.guest ? "" : "none";
   const bn = $("optBillingNote"); if (bn) bn.textContent = acctBillingNote;
+  // Phase 4 guest surfaces: the banner over the board and the claim
+  // form in this drawer. Both exist only while the account is a guest.
+  const banner = $("guestBanner");
+  if (banner) {
+    banner.style.display = accountState && accountState.guest ? "" : "none";
+    const bt = $("guestBannerText");
+    if (bt && accountState && accountState.guest)
+      bt.textContent = "You're on a test account — " + guestDaysText() + ". Keep your progress to make it yours.";
+  }
+  const claim = $("optGuestClaim"); if (claim) claim.style.display = accountState && accountState.guest ? "" : "none";
+  const gd = $("optGuestDays"); if (gd) gd.textContent = accountState && accountState.guest ? guestDaysText() : "";
   renderCoachPicker();
+  refreshByok();
   // Phase 2b: passkey controls appear only when this browser can do
   // WebAuthn; otherwise one plain line explains why, and the password
   // form carries on alone.
@@ -767,6 +811,125 @@ async function manageBilling() {
   }
   renderAccount();
 }
+// ---------- Phase 4: BYOK key + test-code redemption + guest claim ----------
+// The key field is write-only in both directions: the page sends a
+// key once and never reads one back; the gate answers with a summary
+// (provider, model, last-4 tail, added date) and nothing more.
+const BYOK_MODELS_FALLBACK = {
+  openai: [{ id: "gpt-6-sol", label: "GPT-6 Sol" }, { id: "gpt-6-luna", label: "GPT-6 Luna" }],
+  anthropic: [{ id: "claude-opus-5-5", label: "Claude Opus 5.5" }, { id: "claude-sonnet-5", label: "Claude Sonnet 5" }],
+};
+function byokNote(text) { const n = $("optByokNote"); if (n) n.textContent = text; }
+function renderByok() {
+  const state = $("optByokState");
+  if (state) state.textContent = byokState
+    ? "····" + String(byokState.tail || "").replace(/^·+/, "") + " · added " + String(byokState.added_at || "").slice(0, 10)
+    : "No key saved";
+  const rm = $("optByokRemoveBtn"); if (rm) rm.style.display = byokState ? "" : "none";
+  const prov = $("optByokProvider");
+  const model = $("optByokModel");
+  if (prov && byokState && byokState.provider) prov.value = byokState.provider;
+  if (prov && !prov.value) prov.value = "openai"; // the picker's first option, stated explicitly
+  if (model) {
+    const lists = byokModels || BYOK_MODELS_FALLBACK;
+    const list = lists[prov ? prov.value : "openai"] || [];
+    model.innerHTML = "";
+    for (const m of list) {
+      const o = document.createElement("option");
+      o.value = m.id; o.textContent = m.label || m.id;
+      model.appendChild(o);
+    }
+    if (byokState && byokState.model && list.some((m) => m.id === byokState.model)) model.value = byokState.model;
+    else if (!list.some((m) => m.id === model.value)) model.value = list.length ? list[0].id : "";
+  }
+}
+async function refreshByok() {
+  if (!accountState) { byokState = null; renderByok(); return; }
+  try {
+    const data = await acctApi("/v1/byok", { headers: acctAuthHeaders() });
+    byokState = data.byok || null;
+    if (data.models) byokModels = data.models;
+  } catch (_) { /* keep the last known summary */ }
+  renderByok();
+}
+async function saveByokKey() {
+  const prov = $("optByokProvider"), model = $("optByokModel"), keyEl = $("optByokKey");
+  const key = keyEl ? String(keyEl.value || "").trim() : "";
+  if (!accountState) { byokNote("Sign in first — the key is stored on your account."); return; }
+  if (!key) { byokNote("Paste your key first — the field is never filled back in for you."); return; }
+  byokNote("Saving…");
+  try {
+    const data = await acctApi("/v1/byok", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ provider: prov ? prov.value : "openai", model: model ? model.value : "", key }) });
+    byokState = data.byok || null;
+    if (keyEl) keyEl.value = "";
+    renderByok();
+    byokNote("Key saved. Your games now run on your own model — they don't use your plan's games.");
+    refreshCaps();
+  } catch (e) {
+    byokNote(e && e.status === 400 ? "That key or model pick didn't look right — check and try again."
+      : "Couldn't save the key just now — try again in a bit.");
+  }
+}
+async function testByokKey() {
+  if (!accountState || !byokState) { byokNote("Save a key first, then test it."); return; }
+  byokNote("Testing — one small call to your provider…");
+  try {
+    const data = await acctApi("/v1/byok/test", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
+    byokNote(data && data.ok ? "Your key works — " + byokState.provider + " answered."
+      : "Your provider rejected that key. Check it on your provider account, then save it again.");
+  } catch (_) { byokNote("Couldn't reach your provider just now — try again in a bit."); }
+}
+async function removeByokKey() {
+  if (!accountState) return;
+  try {
+    await acctApi("/v1/byok/remove", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
+    byokState = null;
+    renderByok();
+    byokNote("Key removed. Your games use your plan again.");
+    refreshCaps();
+  } catch (_) { byokNote("Couldn't remove the key just now — try again in a bit."); }
+}
+async function redeemTestCode() {
+  const codeEl = $("optRedeemCode"), msg = $("optAcctMsg");
+  const code = codeEl ? String(codeEl.value || "").trim() : "";
+  if (!code) { if (msg) msg.textContent = "Enter your test code first."; return; }
+  if (msg) msg.textContent = "Checking your code…";
+  try {
+    const data = await acctApi("/v1/redeem", { method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code }) });
+    adoptAccount(data);
+    await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
+    if (codeEl) codeEl.value = "";
+    if (msg) msg.textContent = "You're in — this test account lasts 7 days. Use “Keep my progress” any time to make it yours.";
+    renderAccount(); renderWallet();
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status === 401 ? "That code wasn't recognized — check it and try again."
+      : e && e.status === 429 ? "Too many tries — wait a bit and try again."
+      : "Can't reach the coach relay right now.";
+  }
+}
+async function claimGuestAccount() {
+  const em = $("optClaimEmail"), pw = $("optClaimPw"), msg = $("optClaimMsg");
+  const email = em ? String(em.value || "").trim() : "";
+  const password = pw ? String(pw.value || "") : "";
+  if (!email || !password) { if (msg) msg.textContent = "Enter an email and a password."; return; }
+  if (msg) msg.textContent = "Saving your account…";
+  try {
+    const data = await acctApi("/v1/guest/claim", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ email, password }) });
+    adoptAccount(data);
+    if (pw) pw.value = "";
+    if (msg) msg.textContent = "";
+    const note = $("optAcctMsg");
+    if (note) note.textContent = "Done — this account is yours now, progress and all.";
+    renderAccount(); renderWallet();
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status === 409 ? "That email already has an account — sign in with it instead."
+      : e && e.status === 400 ? "Use a valid email and a password of 8+ characters."
+      : "Couldn't save the account just now — try again in a bit.";
+  }
+}
 // ---------- relay: turn / review ----------
 async function fetchWithTimeout(url, opts, ms) {
   const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
@@ -793,7 +956,11 @@ async function relayTurn(packet, _note) {
       continue;
     }
     if (!r.ok) { // 429 exhausted, 503 kill switch/coach down, 504 timeout, 400 packet fault
-      const err = new Error("relay HTTP " + r.status); err.offline = true; err.status = r.status; throw err;
+      const err = new Error("relay HTTP " + r.status); err.offline = true; err.status = r.status;
+      // Phase 4 honesty: a rejected BYOK key is its own failure, not
+      // a generic outage — coachTurn names it plainly.
+      try { const d = await r.json(); if (d && d.error === "byok_key_rejected") err.byokRejected = true; } catch (_) {}
+      throw err;
     }
     return await r.json();
   }
@@ -809,7 +976,11 @@ async function relayReview(body) {
     }, 70000);
   } catch (e) { const err = new Error("relay unreachable"); err.offline = true; throw err; }
   if (r.status === 401) { handleRegate(); const e = new Error("session rejected"); e.regate = true; throw e; }
-  if (!r.ok) { const err = new Error("relay HTTP " + r.status); err.status = r.status; throw err; }
+  if (!r.ok) {
+    const err = new Error("relay HTTP " + r.status); err.status = r.status;
+    try { const d = await r.json(); if (d && d.error === "byok_key_rejected") err.byokRejected = true; } catch (_) {}
+    throw err;
+  }
   return await r.json();
 }
 // Per-game connection setup: health check first (A1: a failed health
@@ -829,6 +1000,13 @@ function prepareConnection() {
       catch (e) {
         if (e && e.data && e.data.caps) { serverCaps = e.data.caps; renderWallet(); }
         if (e && e.status === 409) { onAccountNoGames(); return; }
+        if (e && e.status === 403 && e.data && e.data.guest_expired) {
+          // The 7 days ran out; the claim window is still open, and
+          // the drawer carries the form. Say it plainly.
+          coachLine("Your test account's 7 days are up. Open Options and choose “Keep my progress” to keep playing with your coach — this game runs on Stockfish only.");
+          enterOfflineMode("your test account ended");
+          return;
+        }
         if (!(e && e.status === 401)) { enterOfflineMode("the account session could not be opened"); return; }
         clearAccount(); renderAccount(); // dead account token: fall through to the branch session
       }
@@ -986,6 +1164,15 @@ async function coachTurn() {
     await handleCoachResponse(resp, packet, false);
   } catch (e) {
     if (e && e.regate) { /* gate is showing again; the game waits for re-entry */ }
+    else if (e && e.byokRejected && !offlineMode) {
+      // The customer's own key was rejected: say exactly that, then
+      // finish THIS game on Stockfish (visibly offline). The relay
+      // never falls back to a platform seat behind the key's back.
+      coachLine("Your API key was rejected by your provider, so your coach couldn't move. This game continues with Stockfish only — check the key in Options → Settings.");
+      enterOfflineMode("your API key was rejected");
+      try { await offlineCoachMove(replayState()); }
+      catch (_) { pauseGame("the coach and the offline engine are both unavailable."); }
+    }
     else if (!offlineMode) {
       // A1 coach-down fallback: switch this game to Stockfish-only.
       enterOfflineMode("the coach could not be reached (" + (e.message || e) + ")");
@@ -1057,7 +1244,7 @@ async function onHint() {
 function renderReview(review, opts) {
   const rp = $("reviewPanel"), rb = $("reviewBody");
   if (!rp || !rb) return;
-  const hb = $("reviewByLine"); if (hb) hb.textContent = "Review by " + (acctCoachSeat === "astra" ? "Astra" : "Sol");
+  const hb = $("reviewByLine"); if (hb) hb.textContent = "Review by " + (acctCoachSeat === "astra" ? "Astra" : acctCoachSeat === "byok" ? "your model" : "Sol");
   const cc = $("centerCol"); if (cc && cc.appendChild) cc.appendChild(rp);
   if (rp.classList && rp.classList.add) rp.classList.add("takeover");
   rp.style.display = "";
@@ -1116,10 +1303,13 @@ async function finishGame() {
                    key_moments: prelim.moments.map((mm) => ({ ply: mm.ply, san: mm.san,
                      swing_cp: mm.swingCp, reason_class: mm.reasonClass })),
                    elo_before: gameStartElo };
+    let byokReviewRejected = false;
     try { onlineReview = await relayReview(body); }
-    catch (e) { if (e && e.regate) { /* re-gate shown; local review still renders below */ } onlineReview = null; }
+    catch (e) { if (e && e.regate) { /* re-gate shown; local review still renders below */ } if (e && e.byokRejected) byokReviewRejected = true; onlineReview = null; }
     if (onlineReview) eloAfter = onlineReview.elo_after;
-    else { eloAfter = C.eloUpdate(dossier.elo, targetElo, score); reviewNote = "Relay review unavailable — this review was computed on this page."; }
+    else { eloAfter = C.eloUpdate(dossier.elo, targetElo, score); reviewNote = byokReviewRejected
+      ? "Your API key was rejected by your provider, so this review was computed on this page. Check the key in Options → Settings."
+      : "Relay review unavailable — this review was computed on this page."; }
   } else if (mode === "rated") {
     eloAfter = C.eloUpdate(dossier.elo, targetElo, score);
   }
@@ -1194,6 +1384,13 @@ function init(opts) {
     const cab = $("optCoachAstraBtn"); if (cab) cab.addEventListener("click", () => { setProfileCoach("astra"); });
     const pkb = $("optPasskeySignInBtn"); if (pkb) pkb.addEventListener("click", () => { passkeySignIn(); });
     const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
+    const rdb = $("optRedeemBtn"); if (rdb) rdb.addEventListener("click", () => { redeemTestCode(); });
+    const clb = $("optClaimBtn"); if (clb) clb.addEventListener("click", () => { claimGuestAccount(); });
+    const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => { openOptions(); });
+    const bsv = $("optByokSaveBtn"); if (bsv) bsv.addEventListener("click", () => { saveByokKey(); });
+    const bte = $("optByokTestBtn"); if (bte) bte.addEventListener("click", () => { testByokKey(); });
+    const brm = $("optByokRemoveBtn"); if (brm) brm.addEventListener("click", () => { removeByokKey(); });
+    const bpv = $("optByokProvider"); if (bpv) bpv.addEventListener("change", () => { renderByok(); });
     renderAccount();
     if (accountState) { bootAccountSync(); refreshPasskeys(); }
     const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
@@ -1227,7 +1424,8 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   passkeySignIn, addPasskey, removePasskey, waSupported,
   getPasskeys: () => passkeyList,
   getAcctPlan: () => (accountState ? accountState.plan : null), getAcctCoachSeat: () => acctCoachSeat,
-  getBillingNote: () => acctBillingNote } };
+  getBillingNote: () => acctBillingNote,
+  getByok: () => byokState } };
 })();
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
