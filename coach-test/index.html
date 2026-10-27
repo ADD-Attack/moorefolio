@@ -538,6 +538,14 @@ reset();
   <h4>Settings</h4>
   <div class="optRow"><span id="optPlanLine">Plan: Beta — accounts and billing arrive with the full launch.</span></div>
   <div class="optRow"><span id="optPrivacyLine"></span></div>
+  <div class="optRow"><span>Account</span><span id="optAccountLine">Not signed in</span></div>
+  <div id="optAcctForm">
+  <div class="optRow"><label for="optAcctEmail">Email</label><input id="optAcctEmail" type="email" autocomplete="email"></div>
+  <div class="optRow"><label for="optAcctPw">Password</label><input id="optAcctPw" type="password" autocomplete="current-password"></div>
+  <div class="optRow"><span></span><span><button id="optSignInBtn" type="button" class="ghost">Sign in</button> <button id="optSignUpBtn" type="button" class="ghost">Create account</button></span></div>
+  <div class="optRow"><span id="optAcctMsg"></span></div>
+  </div>
+  <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost" style="display:none">Sign out</button></div>
   <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
 </div></div>
 <div id="gate"><div class="card">

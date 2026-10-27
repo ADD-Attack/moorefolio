@@ -35,6 +35,22 @@ const SF_URL = (typeof window !== "undefined" && window.COACH_SF_URL) || "stockf
 const PRUNE_DEPTH = 10, SCORE_DEPTH = 10;
 const PLAYER = "w", COACH = "b";
 const TOKEN_KEY = "chessCoachToken." + BRANCH;
+// ---------- accounts (Ticket 006 Phase 2a) ----------
+// DUAL-MODE: signed OUT, this page behaves exactly as it always has —
+// branch password at the gate, local profiles, local games wallet.
+// Signed IN (Options → Account), profiles and the games counter come
+// from the gate's account store, and each game opens an account
+// session against the active server profile instead of a branch
+// session. The account token lives in sessionStorage only.
+const ACCOUNT_KEY = "chessCoachAccount." + BRANCH;
+let accountState = null; // {token, exp, email, plan}
+try {
+  const rawAcct = sessionStorage.getItem(ACCOUNT_KEY);
+  if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && d.email) accountState = d; }
+} catch (_) {}
+let serverCaps = null;     // last caps view from the gate (signed in only)
+let pendingCharge = false; // the next account session spends a game
+function signedIn() { return !!accountState; }
 // ---------- local profiles (Ticket 006 Phase 1) ----------
 // Profiles are LOCAL this phase: a per-branch profile list in
 // localStorage; each profile's dossier lives under its own key (the
@@ -45,19 +61,23 @@ const TOKEN_KEY = "chessCoachToken." + BRANCH;
 const MODE_LABEL = "Standard";
 const DEFAULT_PROFILE_NAME = { you: "You", ben: "Ben", test: "Test" }[BRANCH] || "Player";
 const PROFILES_KEY = "chessCoachProfiles." + BRANCH;
+const SERVER_PROFILES_KEY = "chessCoachServerProfiles." + BRANCH;
+// Signed in, the profile list is the server's; it is cached under its
+// own key so the signed-out local list is never overwritten.
+function profilesStorageKey() { return signedIn() ? SERVER_PROFILES_KEY : PROFILES_KEY; }
 function profileDossierKey(id) {
   return id === "default" ? "chessCoachDossier." + BRANCH
                           : "chessCoachDossier." + BRANCH + "." + id;
 }
 function loadProfilesState() {
   let s = null;
-  try { s = JSON.parse(localStorage.getItem(PROFILES_KEY) || "null"); } catch (_) {}
+  try { s = JSON.parse(localStorage.getItem(profilesStorageKey()) || "null"); } catch (_) {}
   if (!s || !Array.isArray(s.profiles) || !s.profiles.length)
     s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }] };
   if (!s.profiles.some((p) => p.id === s.activeId)) s.activeId = s.profiles[0].id;
   return s;
 }
-function saveProfilesState() { try { localStorage.setItem(PROFILES_KEY, JSON.stringify(profilesState)); } catch (_) {} }
+function saveProfilesState() { try { localStorage.setItem(profilesStorageKey(), JSON.stringify(profilesState)); } catch (_) {} }
 let profilesState = loadProfilesState();
 let activeProfileId = profilesState.activeId;
 let DOSSIER_KEY = profileDossierKey(activeProfileId);
@@ -102,18 +122,33 @@ function switchProfile(id) {
   gameActive = false;
   reset();
   renderDossier(); renderProfiles(); renderWallet();
+  if (signedIn()) {
+    acctApi("/v1/profiles/switch", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ profile_id: id }) }).catch(() => {});
+  }
   closeOptions();
 }
 function addProfile() {
+  if (signedIn()) { addProfileSignedIn(); return; }
   const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL };
   profilesState.profiles.push(p); saveProfilesState();
   switchProfile(p.id);
+}
+async function addProfileSignedIn() {
+  try {
+    const made = await acctApi("/v1/profiles", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL }) });
+    profilesState.profiles = made.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
+    saveProfilesState();
+    switchProfile(made.profile.id);
+  } catch (_) { /* stay on the current profile; a later sync repairs the list */ }
 }
 function deleteProfile() {
   if (profilesState.profiles.length <= 1) return;
   const okc = (typeof confirm === "function")
     ? confirm("Delete this profile? Its progress on this device is removed.") : true;
   if (!okc) return;
+  if (signedIn()) { deleteProfileSignedIn(); return; }
   try { localStorage.removeItem(profileDossierKey(activeProfileId)); } catch (_) {}
   profilesState.profiles = profilesState.profiles.filter((p) => p.id !== activeProfileId);
   activeProfileId = profilesState.profiles[0].id; profilesState.activeId = activeProfileId;
@@ -124,6 +159,24 @@ function deleteProfile() {
   reset();
   renderDossier(); renderProfiles(); renderWallet();
   closeOptions();
+}
+async function deleteProfileSignedIn() {
+  const victim = activeProfileId;
+  try {
+    const data = await acctApi("/v1/profiles/delete", { method: "POST", headers: acctAuthHeaders(),
+      body: JSON.stringify({ profile_id: victim }) });
+    try { localStorage.removeItem(profileDossierKey(victim)); } catch (_) {}
+    profilesState.profiles = data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
+    activeProfileId = data.active_profile_id || (profilesState.profiles[0] && profilesState.profiles[0].id);
+    profilesState.activeId = activeProfileId;
+    saveProfilesState();
+    DOSSIER_KEY = profileDossierKey(activeProfileId);
+    dossier = loadDossier();
+    gameActive = false;
+    reset();
+    renderDossier(); renderProfiles(); renderWallet();
+    closeOptions();
+  } catch (_) { /* keep the profile locally on failure */ }
 }
 function lockDevice() {
   sessionToken = null;
@@ -153,7 +206,16 @@ function loadWallet() {
   }
   return w;
 }
-function gamesLeft() { const w = loadWallet(); return Math.max(0, Math.min(READY_CAP, (w.saved || 0) + ((w.credited || 0) - (w.used || 0)))); }
+function gamesLeft() {
+  if (signedIn() && serverCaps) return serverCaps.left; // server caps engine (Phase 2a)
+  const w = loadWallet(); return Math.max(0, Math.min(READY_CAP, (w.saved || 0) + ((w.credited || 0) - (w.used || 0))));
+}
+function fmtNextCredit() {
+  if (!serverCaps || !serverCaps.next_credit_at) return "midnight";
+  try {
+    return new Date(serverCaps.next_credit_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  } catch (_) { return "midnight"; }
+}
 function walletBreakdown() { const w = loadWallet(); return { todayNew: Math.max(0, (w.credited || 0) - (w.used || 0)), saved: w.saved || 0, left: gamesLeft() }; }
 function consumeGame() {
   const w = loadWallet();
@@ -163,6 +225,19 @@ function consumeGame() {
   return true;
 }
 function renderWallet() {
+  if (signedIn() && serverCaps) {
+    const left = serverCaps.left;
+    const chipS = $("gamesChip"); if (chipS) chipS.textContent = left + " games";
+    const clS = $("gameCostLine");
+    if (clS) clS.textContent = !dossier.calibrated ? "First game is calibration · free"
+      : left > 0 ? "Uses 1 game · " + left + " left" : "No games left — more arrive at " + fmtNextCredit() + ".";
+    const nbS = $("newGameBtn"); if (nbS) nbS.disabled = dossier.calibrated ? left <= 0 : false;
+    const giS = $("gamesInfo");
+    if (giS) giS.textContent = "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
+      " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
+      fmtNextCredit() + " · Shared by this account.";
+    return;
+  }
   const left = gamesLeft();
   const chip = $("gamesChip"); if (chip) chip.textContent = left + " games";
   const cl = $("gameCostLine");
@@ -340,6 +415,146 @@ function enterOfflineFromGate() {
   const ml = $("modeLine"); if (ml) ml.textContent = "Coach offline — playing Stockfish at your level";
   coachLine("Coach offline — playing Stockfish at your level. Start a game whenever you're ready.");
 }
+// ---------- accounts: API + sign-in state (Phase 2a) ----------
+async function acctApi(path, opts) {
+  const r = await fetch(RELAY_URL + path, opts || {});
+  let data = null;
+  try { data = await r.json(); } catch (_) {}
+  if (!r.ok) { const e = new Error("account HTTP " + r.status); e.status = r.status; e.data = data; throw e; }
+  return data;
+}
+function acctAuthHeaders() { return { "Content-Type": "application/json", "Authorization": "Bearer " + accountState.token }; }
+function storeAccount() { try { sessionStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountState)); } catch (_) {} }
+function clearAccount() {
+  accountState = null; serverCaps = null;
+  try { sessionStorage.removeItem(ACCOUNT_KEY); } catch (_) {}
+}
+async function refreshCaps() {
+  if (!accountState) return;
+  try { serverCaps = await acctApi("/v1/games", { headers: acctAuthHeaders() }); renderWallet(); }
+  catch (_) { /* keep the last known numbers */ }
+}
+async function requestAccountSession(gid, charge) {
+  const data = await acctApi("/v1/account/session", {
+    method: "POST", headers: acctAuthHeaders(),
+    body: JSON.stringify({ profile_id: activeProfileId, game_id: gid, charge: !!charge }),
+  });
+  if (data.caps) { serverCaps = data.caps; renderWallet(); }
+  storeToken(data.token, data.exp, gid);
+  return data;
+}
+function onAccountNoGames() {
+  // Race-only backstop: the pre-start check uses the same server
+  // numbers, so a 409 here means another tab spent the last game.
+  coachLine("That's all the games for today — more arrive at " + fmtNextCredit() + ".");
+  setCoachState("No games left today.");
+  gameActive = false;
+}
+async function syncProfilesOnSignIn(serverProfiles, activeId) {
+  let list = Array.isArray(serverProfiles) ? serverProfiles.slice() : [];
+  if (!list.length) {
+    // First sign-in on this account: lift this device's local
+    // profiles up to the server, carrying each profile's on-device
+    // progress over to its new dossier key.
+    for (const lp of profilesState.profiles) {
+      try {
+        const made = await acctApi("/v1/profiles", { method: "POST", headers: acctAuthHeaders(),
+          body: JSON.stringify({ name: lp.name, mode: lp.mode || MODE_LABEL }) });
+        try {
+          const rawD = localStorage.getItem(profileDossierKey(lp.id));
+          if (rawD && !localStorage.getItem(profileDossierKey(made.profile.id)))
+            localStorage.setItem(profileDossierKey(made.profile.id), rawD);
+        } catch (_) {}
+        list.push(made.profile);
+      } catch (_) {}
+    }
+  }
+  if (!list.length) list = [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }];
+  const keep = list.some((p) => p.id === activeProfileId) ? activeProfileId
+    : (activeId && list.some((p) => p.id === activeId) ? activeId : list[0].id);
+  profilesState = { activeId: keep, profiles: list.map((p) => ({ id: p.id, name: p.name, mode: p.mode })) };
+  activeProfileId = keep;
+  saveProfilesState();
+  DOSSIER_KEY = profileDossierKey(keep);
+  dossier = loadDossier();
+  gameActive = false;
+  renderDossier(); renderProfiles(); renderWallet();
+}
+async function accountAuth(kind) { // "login" | "signup"
+  const em = $("optAcctEmail"), pw = $("optAcctPw"), msg = $("optAcctMsg");
+  const email = em ? String(em.value || "").trim() : "";
+  const password = pw ? String(pw.value || "") : "";
+  if (!email || !password) { if (msg) msg.textContent = "Enter an email and a password."; return; }
+  if (msg) msg.textContent = "Checking…";
+  try {
+    const data = await acctApi(kind === "signup" ? "/v1/signup" : "/v1/login", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    });
+    accountState = { token: data.token, exp: data.exp, email: data.account.email, plan: data.account.plan };
+    storeAccount();
+    serverCaps = data.caps || null;
+    await syncProfilesOnSignIn(data.profiles || [], data.active_profile_id);
+    if (msg) msg.textContent = "";
+    if (pw) pw.value = "";
+    renderAccount(); renderWallet();
+  } catch (e) {
+    if (msg) msg.textContent = e && e.status === 401 ? "Wrong email or password."
+      : e && e.status === 409 ? "That email already has an account — sign in instead."
+      : e && e.status === 400 ? "Use a valid email and a password of 8+ characters."
+      : "Can't reach the coach relay right now.";
+  }
+}
+async function accountSignOut() {
+  try { await acctApi("/v1/logout", { method: "POST", headers: acctAuthHeaders() }); } catch (_) {}
+  clearAccount();
+  profilesState = loadProfilesState(); // signed out again -> the local list
+  activeProfileId = profilesState.activeId;
+  DOSSIER_KEY = profileDossierKey(activeProfileId);
+  dossier = loadDossier();
+  gameActive = false;
+  reset();
+  renderDossier(); renderProfiles(); renderWallet(); renderAccount();
+  closeOptions();
+}
+async function bootAccountSync() {
+  // A tab that restored a signed-in account re-reads the server's
+  // profile list + caps; a dead token quietly reverts to local mode.
+  try {
+    const data = await acctApi("/v1/profiles", { headers: acctAuthHeaders() });
+    serverCaps = data.caps || serverCaps;
+    if (Array.isArray(data.profiles) && data.profiles.length) {
+      profilesState = { activeId: data.active_profile_id || data.profiles[0].id,
+        profiles: data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode })) };
+      if (!profilesState.profiles.some((p) => p.id === profilesState.activeId))
+        profilesState.activeId = profilesState.profiles[0].id;
+      activeProfileId = profilesState.activeId;
+      saveProfilesState();
+      DOSSIER_KEY = profileDossierKey(activeProfileId);
+      dossier = loadDossier();
+      renderDossier(); renderProfiles(); renderWallet();
+    }
+    renderAccount();
+  } catch (e) {
+    if (e && e.status === 401) {
+      clearAccount();
+      profilesState = loadProfilesState();
+      activeProfileId = profilesState.activeId;
+      DOSSIER_KEY = profileDossierKey(activeProfileId);
+      dossier = loadDossier();
+      renderDossier(); renderProfiles(); renderWallet(); renderAccount();
+    }
+  }
+}
+const PLAN_LINE_SIGNED_OUT = "Plan: Beta — accounts and billing arrive with the full launch.";
+function renderAccount() {
+  const line = $("optAccountLine");
+  if (line) line.textContent = accountState ? "Signed in as " + accountState.email : "Not signed in";
+  const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
+  const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
+  const pl = $("optPlanLine");
+  if (pl) pl.textContent = accountState ? "Plan: Coach · " + accountState.email : PLAN_LINE_SIGNED_OUT;
+}
 // ---------- relay: turn / review ----------
 async function fetchWithTimeout(url, opts, ms) {
   const ctl = typeof AbortController !== "undefined" ? new AbortController() : null;
@@ -396,6 +611,16 @@ function prepareConnection() {
       const r = await fetchWithTimeout(RELAY_URL + "/v1/health", { method: "GET" }, 10000);
       if (!r.ok) throw new Error("health HTTP " + r.status);
     } catch (e) { enterOfflineMode("the relay health check failed"); return; }
+    if (accountState) {
+      const charge = pendingCharge; pendingCharge = false;
+      try { await requestAccountSession(gameId, charge); return; }
+      catch (e) {
+        if (e && e.data && e.data.caps) { serverCaps = e.data.caps; renderWallet(); }
+        if (e && e.status === 409) { onAccountNoGames(); return; }
+        if (!(e && e.status === 401)) { enterOfflineMode("the account session could not be opened"); return; }
+        clearAccount(); renderAccount(); // dead account token: fall through to the branch session
+      }
+    }
     if (gatePassword) {
       try { await requestSession(gatePassword, gameId); }
       catch (e) {
@@ -419,7 +644,12 @@ function startGame(kind) {
     setCoachState("No games left today.");
     return;
   }
-  if (kind === "rated") consumeGame();
+  if (kind === "rated") {
+    // Signed in, the server charges the account when this game's
+    // account session opens (see prepareConnection) — the local
+    // wallet is not touched. Signed out, the local wallet spends.
+    if (signedIn()) pendingCharge = true; else consumeGame();
+  }
   reset(); // base page reset
   scoreLog = []; evalTrail = []; lastEval = null; stepMarks = 0;
   lastPlySeen = 0; paused = false; gameActive = true; coachBusy = false;
@@ -737,7 +967,13 @@ function init(opts) {
     const oc = $("optionsClose"); if (oc) oc.addEventListener("click", closeOptions);
     const ps = $("optProfileSelect"); if (ps) ps.addEventListener("change", () => switchProfile(ps.value));
     const ap = $("optAddProfile"); if (ap) ap.addEventListener("click", addProfile);
-    const pn = $("optProfileName"); if (pn) pn.addEventListener("change", () => { const p = activeProfile(); const v = String(pn.value || "").trim(); if (p && v) { p.name = v; saveProfilesState(); renderProfiles(); } });
+    const pn = $("optProfileName"); if (pn) pn.addEventListener("change", () => { const p = activeProfile(); const v = String(pn.value || "").trim(); if (p && v) { p.name = v; saveProfilesState(); renderProfiles();
+      if (signedIn()) acctApi("/v1/profiles/update", { method: "POST", headers: acctAuthHeaders(), body: JSON.stringify({ profile_id: p.id, name: v }) }).catch(() => {}); } });
+    const sib = $("optSignInBtn"); if (sib) sib.addEventListener("click", () => { accountAuth("login"); });
+    const sub = $("optSignUpBtn"); if (sub) sub.addEventListener("click", () => { accountAuth("signup"); });
+    const sob = $("optSignOutBtn"); if (sob) sob.addEventListener("click", () => { accountSignOut(); });
+    renderAccount();
+    if (accountState) bootAccountSync();
     const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
     const lk = $("optLockBtn"); if (lk) lk.addEventListener("click", lockDevice);
     const rc = $("optRecalibrate"); if (rc) rc.addEventListener("click", () => { closeOptions(); startGame("practice"); });
@@ -763,7 +999,9 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   finishGame, replayState,
   getWallet: () => loadWallet(), gamesLeft, renderWallet,
   getProfiles: () => profilesState, getActiveProfileId: () => activeProfileId,
-  switchProfile, addProfile } };
+  switchProfile, addProfile,
+  getAccount: () => accountState, getServerCaps: () => serverCaps,
+  accountAuth, accountSignOut, signedIn } };
 })();
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
