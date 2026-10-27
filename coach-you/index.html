@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Chess Coach — MooreFolio (beta)</title>
-<meta name="description" content="Play chess on the same computer and same browser — Human vs. Human, single client. A MooreFolio branch of the classic same-computer chess page.">
+<meta name="description" content="Play chess against a coach that plays you, talks you through it, and remembers your games. A MooreFolio branch of the classic same-computer chess page.">
 <style>
   :root{
     --ink:#1d1710; --paper:#f6efe3; --panel:#fffaf0; --line:#d8c9a8;
@@ -13,21 +13,21 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:Georgia,'Times New Roman',serif;}
+    font-family:Georgia,'Times New Roman',serif;font-size:16px}
   header{max-width:1060px;margin:0 auto;padding:22px 16px 4px;text-align:center}
   header h1{margin:0;font-size:34px;letter-spacing:.5px}
   header h1 .rust{color:var(--rust)}
   header p{margin:6px 0 0;font-style:italic;color:#5c4c36}
-  .layout{max-width:1060px;margin:10px auto 30px;padding:0 16px;
+  .layout{max-width:1100px;margin:10px auto 30px;padding:0 16px;
     display:flex;gap:18px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
-  .side{width:230px;display:flex;flex-direction:column;gap:14px}
+  .side{width:360px;display:flex;flex-direction:column;gap:14px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;
     box-shadow:0 2px 8px rgba(60,40,10,.08)}
   .panel h3{margin:0;padding:8px 12px;font-size:15px;letter-spacing:.4px;
     border-bottom:1px solid var(--line);color:var(--rust);text-align:center}
   .panel .body{padding:10px 12px;min-height:44px;font-size:22px;line-height:1.25;word-break:break-all}
   .panel .body.small{font-size:14px;word-break:normal}
-  #movesBody{font-size:14px;max-height:300px;overflow:auto;word-break:normal}
+  #movesBody{font-size:14px;max-height:300px;overflow:auto;word-break:normal;font-variant-numeric:tabular-nums}
   #movesBody table{border-collapse:collapse;width:100%}
   #movesBody td{padding:2px 6px}
   #movesBody td:first-child{color:#8a7757;width:30px;text-align:right}
@@ -71,16 +71,16 @@
   #promoModal .card h4{margin:0 0 10px}
   #promoModal .choices{display:flex;gap:8px}
   #promoModal .choices button{font-size:38px;padding:4px 14px}
-  #coachBody{font-size:14px;word-break:normal;max-height:220px;overflow:auto}
+  #coachBody{font-size:16px;word-break:normal;max-height:220px;overflow:auto}
   #coachBody .cline{margin:0 0 8px}
-  #alertBody{font-size:12px;word-break:normal;max-height:140px;overflow:auto;color:#8a2f23}
-  #reviewBody{font-size:14px;word-break:normal}
+  #alertBody{font-size:14px;word-break:normal;max-height:140px;overflow:auto;color:#8a2f23}
+  #reviewBody{font-size:16px;word-break:normal}
   #reviewBody li{margin-bottom:6px}
   .coachstate{font-style:italic;color:#5c4c36}
   #coachTicker{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;
     text-align:center;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--rust);
     border-radius:10px;box-shadow:0 2px 8px rgba(60,40,10,.08);padding:7px 12px;
-    font-size:14px;line-height:1.3}
+    font-size:16px;line-height:1.4}
   .center .panel{width:100%}
   #dossierBody{white-space:pre-line}
   #modeLine{font-size:14px;font-style:italic;color:#5c4c36;min-height:18px}
@@ -91,57 +91,70 @@
     #board{grid-template-columns:repeat(8,11.5vw);grid-template-rows:repeat(8,11.5vw)}
     .sq{font-size:8.5vw} .side{width:100%;order:2}
   }
+
+  .betaPill{font-size:13px;background:var(--rust);color:#fff;border-radius:999px;padding:2px 10px;vertical-align:middle}
+  header{position:relative}
+  .headerChips{position:absolute;top:8px;right:10px;display:flex;gap:8px;z-index:5}
+  .chipBtn{font-family:inherit;font-size:14px;padding:6px 12px;border-radius:999px}
+  #gamesInfo{position:absolute;top:54px;right:10px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;font-size:14px;z-index:6;max-width:330px;text-align:left}
+  .capStrip{min-height:32px;font-size:28px;line-height:1.1;text-align:center;width:100%}
+  #gameCostLine{font-size:13px;color:#5c4c36;min-height:16px;text-align:center}
+  #coachHistToggle{margin:6px auto;display:block}
+  #reviewPanel.takeover{box-shadow:0 10px 40px rgba(60,40,10,.35);border:2px solid var(--rust)}
+  .reviewBy{padding:6px 12px 0;font-size:14px;color:#5c4c36}
+  #optionsDrawer{position:fixed;inset:0;background:rgba(20,12,4,.45);z-index:45;align-items:stretch;justify-content:flex-end}
+  .optSheet{background:var(--panel);width:400px;max-width:100%;height:100%;overflow:auto;padding:18px;text-align:left}
+  .optSheet h3{margin:0} .optSheet h4{margin:18px 0 6px;color:var(--rust)}
+  .optHead{display:flex;justify-content:space-between;align-items:center}
+  .optRow{margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:15px}
+  .optRow select,.optRow input{font-size:15px;padding:6px;max-width:60%}
+  @media (max-width:760px){ .optSheet{width:100%} }
 </style>
 </head>
 <body>
 <header>
-  <h1><span class="rust">♞</span> Chess Coach <span style="font-size:15px">(beta)</span></h1>
+  <h1><span class="rust">♞</span> Chess Coach <span class="betaPill">beta</span></h1>
   <p>You vs. the Coach — it plays, it teaches, it remembers. <span id="branchLine"></span></p>
+  <div class="headerChips"><button id="gamesChip" class="chipBtn" type="button">3 games</button><button id="profileChip" class="chipBtn" type="button">Player</button></div>
+  <div id="gamesInfo" style="display:none"></div>
 </header>
 
 <div class="layout">
-  <div class="side">
-    <div class="panel"><h3>Captured Pieces</h3>
-      <div class="body" id="capturedByWhite" title="Captured by White"></div>
-      <div class="body" id="capturedByBlack" title="Captured by Black"></div>
-    </div>
-    <div class="panel"><h3>Game Information</h3>
-      <div class="body small">Human vs. Human<br>Single client (same browser)<br><br>
-      Click a piece, then a highlighted square — or drag the piece.</div>
-    </div>
-  </div>
-
-  <div class="center">
+  <div class="center" id="centerCol">
     <div class="versus">♔ <b id="whiteName">White</b> vs. <b id="blackName">Black</b> ♚</div>
     <div id="turnLine"></div>
+    <div id="capStripTop" class="capStrip" title="Captured by Black"></div>
     <div id="boardWrap"><div id="board"></div></div>
+    <div id="capStripBottom" class="capStrip" title="Captured by White"></div>
     <div id="coachTicker" aria-live="polite">Coach is getting ready…</div>
     <div class="controls">
       <button id="newGameBtn">New Game vs Coach</button>
-      <button id="practiceBtn" class="ghost">Practice Game (calibration)</button>
+      <button id="practiceBtn" class="ghost">Calibration game (sets your starting rating)</button>
       <button id="hintBtn" class="ghost">Hint</button>
     </div>
+    <div id="gameCostLine"></div>
     <div class="controls">
-      <button id="resetBtn">Reset Game</button>
       <button id="flipBtn" class="ghost">Flip Board</button>
       <button id="soundBtn" class="ghost">Sound: On</button>
+      <button id="resetBtn" class="ghost">Reset Game</button>
     </div>
-    <div class="panel"><h3>Coach</h3><div class="body" id="coachBody"><span class="coachstate" id="coachState">Coach is getting ready…</span></div></div>
+    <div class="panel"><h3>Coach</h3><button id="coachHistToggle" type="button" class="ghost">Coach history (0)</button><div class="body" id="coachBody" style="display:none"><span class="coachstate" id="coachState">Coach is getting ready…</span></div></div>
     <div id="modeLine"></div>
   </div>
 
   <div class="side">
+    <div class="panel"><h3>Game Information</h3>
+      <div class="body small"><span id="gameInfoTitle">You vs. the Coach (Sol)</span><br><span id="gameInfoKind">Calibration game</span><br><span id="gameInfoProfile"></span><br><br>
+      Click a piece, then a highlighted square — or drag the piece.</div>
+    </div>
     <div class="panel"><h3>Moves</h3><div class="body" id="movesBody"></div></div>
-    <div class="panel" id="reviewPanel" style="display:none"><h3>Review Session</h3><div class="body" id="reviewBody"></div></div>
-  </div>
-
-  <div class="side">
+    <div class="panel" id="reviewPanel" style="display:none"><h3>Review Session</h3><div id="reviewByLine" class="reviewBy"></div><div class="body" id="reviewBody"></div></div>
     <div class="panel"><h3>Your Dossier</h3><div class="body small" id="dossierBody"></div></div>
-    <div class="panel"><h3>Failsafe Log (testing)</h3><div class="body" id="alertBody">No alerts.</div></div>
+    <div class="panel" id="failsafePanel"><h3>Failsafe Log (testing)</h3><div class="body" id="alertBody">No alerts.</div></div>
   </div>
 </div>
 
-<footer>A same-computer chess board in the spirit of the classic Brasee single-client page — rebuilt as a single self-contained file for moorefolio.com. Game state lives only in this browser tab.</footer>
 
 <div id="promoModal"><div class="card">
   <h4>Promote to:</h4>
@@ -422,8 +435,9 @@ function render(inCheck){
   // captured
   const capW=capturedBy.w.slice().sort((a,b)=>VAL[b]-VAL[a]).map(t=>glyphFor(t,'b')).join('');
   const capB=capturedBy.b.slice().sort((a,b)=>VAL[b]-VAL[a]).map(t=>glyphFor(t,'w')).join('');
-  document.getElementById('capturedByWhite').innerHTML = capW?('<span style="font-size:13px;font-family:Arial">White captured:</span><br>'+capW):'';
-  document.getElementById('capturedByBlack').innerHTML = capB?('<span style="font-size:13px;font-family:Arial">Black captured:</span><br>'+capB):'';
+  const stripT=document.getElementById('capStripTop'), stripB=document.getElementById('capStripBottom');
+  if(stripT) stripT.innerHTML = capB?('<span style="font-size:13px;font-family:Arial">Black captured:</span> '+capB):'';
+  if(stripB) stripB.innerHTML = capW?('<span style="font-size:13px;font-family:Arial">White captured:</span> '+capW):'';
   // moves
   let rows='';
   for(let n=0;n<history.length;n+=2) rows+='<tr><td>'+(n/2+1)+'.</td><td>'+history[n]+'</td><td>'+(history[n+1]||'')+'</td></tr>';
@@ -504,7 +518,7 @@ function playThock(capture){
     src.start();
   }catch(_){ }
 }
-document.getElementById('resetBtn').addEventListener('click',reset);
+document.getElementById('resetBtn').addEventListener('click',()=>{ if(window.__coachReset) window.__coachReset(); else reset(); });
 document.getElementById('flipBtn').addEventListener('click',()=>{ flipped=!flipped; render(); });
 document.getElementById('soundBtn').addEventListener('click',function(){
   soundOn=!soundOn;
@@ -513,6 +527,19 @@ document.getElementById('soundBtn').addEventListener('click',function(){
 });
 reset();
 </script>
+<div id="optionsDrawer" style="display:none"><div class="optSheet">
+  <div class="optHead"><h3>Options</h3><button id="optionsClose" type="button">✕</button></div>
+  <div class="optRow"><label for="optProfileSelect">Profile</label><select id="optProfileSelect"></select></div>
+  <div class="optRow"><span></span><button id="optAddProfile" type="button" class="ghost">+ Add profile</button></div>
+  <div class="optRow"><label for="optProfileName">Name</label><input id="optProfileName" type="text"></div>
+  <div class="optRow"><span>Mode</span><span id="optModeTag"></span></div>
+  <div class="optRow"><span>Coach strength</span><button id="optRecalibrate" type="button" class="ghost">Recalibrate</button></div>
+  <div class="optRow"><span>Sound</span><button id="optSoundBtn" type="button" class="ghost">Sound: On</button></div>
+  <h4>Settings</h4>
+  <div class="optRow"><span id="optPlanLine">Plan: Beta — accounts and billing arrive with the full launch.</span></div>
+  <div class="optRow"><span id="optPrivacyLine"></span></div>
+  <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
+</div></div>
 <div id="gate"><div class="card">
   <h3 style="margin:0;color:var(--rust)">♞ Chess Coach — private beta</h3>
   <p style="font-size:14px">This branch is unlisted; the password is checked by the coach relay.</p>

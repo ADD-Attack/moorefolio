@@ -35,6 +35,154 @@ const SF_URL = (typeof window !== "undefined" && window.COACH_SF_URL) || "stockf
 const PRUNE_DEPTH = 10, SCORE_DEPTH = 10;
 const PLAYER = "w", COACH = "b";
 const TOKEN_KEY = "chessCoachToken." + BRANCH;
+// ---------- local profiles (Ticket 006 Phase 1) ----------
+// Profiles are LOCAL this phase: a per-branch profile list in
+// localStorage; each profile's dossier lives under its own key (the
+// seeded default profile keeps the legacy key, so existing progress
+// is untouched). Modes are per-page this phase (this page is
+// Standard); the merged shell is Phase 2. The games wallet is
+// account-level (shared by every profile on this branch).
+const MODE_LABEL = "Standard";
+const DEFAULT_PROFILE_NAME = { you: "You", ben: "Ben", test: "Test" }[BRANCH] || "Player";
+const PROFILES_KEY = "chessCoachProfiles." + BRANCH;
+function profileDossierKey(id) {
+  return id === "default" ? "chessCoachDossier." + BRANCH
+                          : "chessCoachDossier." + BRANCH + "." + id;
+}
+function loadProfilesState() {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(PROFILES_KEY) || "null"); } catch (_) {}
+  if (!s || !Array.isArray(s.profiles) || !s.profiles.length)
+    s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }] };
+  if (!s.profiles.some((p) => p.id === s.activeId)) s.activeId = s.profiles[0].id;
+  return s;
+}
+function saveProfilesState() { try { localStorage.setItem(PROFILES_KEY, JSON.stringify(profilesState)); } catch (_) {} }
+let profilesState = loadProfilesState();
+let activeProfileId = profilesState.activeId;
+let DOSSIER_KEY = profileDossierKey(activeProfileId);
+function activeProfile() { return profilesState.profiles.find((p) => p.id === activeProfileId) || profilesState.profiles[0]; }
+function renderProfiles() {
+  const p = activeProfile(); if (!p) return;
+  const chip = $("profileChip");
+  if (chip) chip.textContent = (p.name || "P").slice(0, 1).toUpperCase() + " " + p.name;
+  const sel = $("optProfileSelect");
+  if (sel) {
+    sel.innerHTML = "";
+    for (const pr of profilesState.profiles) {
+      const o = document.createElement("option");
+      o.value = pr.id; o.textContent = pr.name + " · " + (pr.mode || MODE_LABEL);
+      sel.appendChild(o);
+    }
+    sel.value = activeProfileId;
+  }
+  const nm = $("optProfileName"); if (nm) nm.value = p.name;
+  const mt = $("optModeTag"); if (mt) mt.textContent = p.mode || MODE_LABEL;
+  const pv = $("optPrivacyLine"); if (pv) pv.textContent = p.name + "'s profile stores: display name only";
+}
+function openOptions() { renderProfiles(); const d = $("optionsDrawer"); if (d) d.style.display = "flex"; }
+function closeOptions() { const d = $("optionsDrawer"); if (d) d.style.display = "none"; }
+function saveCurrentGameRecord() {
+  try { localStorage.setItem("chessCoachPaused." + BRANCH + "." + activeProfileId,
+    JSON.stringify({ history: history.slice(), mode, targetElo, at: new Date().toISOString(), why: "profile switch" })); } catch (_) {}
+}
+function switchProfile(id) {
+  if (!id || id === activeProfileId) { renderProfiles(); return; }
+  if (gameActive && !gameOver) {
+    const target = profilesState.profiles.find((p) => p.id === id);
+    const okc = (typeof confirm === "function")
+      ? confirm("Switch to " + (target ? target.name : "the other profile") + "? Your current game is saved.") : true;
+    if (!okc) { renderProfiles(); return; }
+    saveCurrentGameRecord();
+  }
+  saveDossier();
+  activeProfileId = id; profilesState.activeId = id; saveProfilesState();
+  DOSSIER_KEY = profileDossierKey(id);
+  dossier = loadDossier();
+  gameActive = false;
+  reset();
+  renderDossier(); renderProfiles(); renderWallet();
+  closeOptions();
+}
+function addProfile() {
+  const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL };
+  profilesState.profiles.push(p); saveProfilesState();
+  switchProfile(p.id);
+}
+function deleteProfile() {
+  if (profilesState.profiles.length <= 1) return;
+  const okc = (typeof confirm === "function")
+    ? confirm("Delete this profile? Its progress on this device is removed.") : true;
+  if (!okc) return;
+  try { localStorage.removeItem(profileDossierKey(activeProfileId)); } catch (_) {}
+  profilesState.profiles = profilesState.profiles.filter((p) => p.id !== activeProfileId);
+  activeProfileId = profilesState.profiles[0].id; profilesState.activeId = activeProfileId;
+  saveProfilesState();
+  DOSSIER_KEY = profileDossierKey(activeProfileId);
+  dossier = loadDossier();
+  gameActive = false;
+  reset();
+  renderDossier(); renderProfiles(); renderWallet();
+  closeOptions();
+}
+function lockDevice() {
+  sessionToken = null;
+  try { sessionStorage.removeItem(TOKEN_KEY); } catch (_) {}
+  closeOptions();
+  const gate = $("gate"); if (gate) gate.style.display = "";
+}
+function clickEl(el) {
+  if (!el) return;
+  if (typeof el.click === "function") { el.click(); return; }
+  for (const f of (el.listeners && el.listeners.click) || []) f.call(el);
+}
+// ---------- games wallet (local counters; server caps engine is Phase 2) ----------
+const WALLET_KEY = "chessCoachWallet." + BRANCH;
+const DAILY_NEW = 3, SAVE_CAP = 5, READY_CAP = 8;
+function todayStr() { const d = new Date(); return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"); }
+function saveWallet(w) { try { localStorage.setItem(WALLET_KEY, JSON.stringify(w)); } catch (_) {} }
+function loadWallet() {
+  let w = null;
+  try { w = JSON.parse(localStorage.getItem(WALLET_KEY) || "null"); } catch (_) {}
+  if (!w || typeof w !== "object") w = { day: todayStr(), credited: DAILY_NEW, used: 0, saved: 0 };
+  if (w.day !== todayStr()) { // a new day: unspent games roll into the saved pile
+    const leftover = Math.max(0, (w.credited || 0) - (w.used || 0));
+    w.saved = Math.min(SAVE_CAP, (w.saved || 0) + leftover);
+    w.credited = DAILY_NEW; w.used = 0; w.day = todayStr();
+    saveWallet(w);
+  }
+  return w;
+}
+function gamesLeft() { const w = loadWallet(); return Math.max(0, Math.min(READY_CAP, (w.saved || 0) + ((w.credited || 0) - (w.used || 0)))); }
+function walletBreakdown() { const w = loadWallet(); return { todayNew: Math.max(0, (w.credited || 0) - (w.used || 0)), saved: w.saved || 0, left: gamesLeft() }; }
+function consumeGame() {
+  const w = loadWallet();
+  if (gamesLeft() <= 0) return false;
+  if ((w.used || 0) < (w.credited || 0)) w.used = (w.used || 0) + 1; else w.saved = (w.saved || 0) - 1;
+  saveWallet(w); renderWallet();
+  return true;
+}
+function renderWallet() {
+  const left = gamesLeft();
+  const chip = $("gamesChip"); if (chip) chip.textContent = left + " games";
+  const cl = $("gameCostLine");
+  if (cl) cl.textContent = !dossier.calibrated ? "First game is calibration · free"
+    : left > 0 ? "Uses 1 game · " + left + " left" : "Next games arrive at midnight.";
+  const nb = $("newGameBtn"); if (nb) nb.disabled = dossier.calibrated ? left <= 0 : false;
+  const gi = $("gamesInfo");
+  if (gi) { const b = walletBreakdown();
+    gi.textContent = "Today: " + b.todayNew + " new · Saved: " + b.saved + " · Ready: up to " + READY_CAP +
+                     " · Next " + DAILY_NEW + " at midnight · Shared by this account."; }
+}
+function updateGameInfo() {
+  const t = $("gameInfoTitle"); if (t) t.textContent = "You vs. the Coach (Sol)";
+  const k = $("gameInfoKind");
+  if (k) k.textContent = mode === "practice" ? "Calibration game" : mode === "rated" ? "Rated game"
+    : (dossier.calibrated ? "Rated game" : "Calibration game");
+  const p = $("gameInfoProfile"); if (p) { const pr = activeProfile(); p.textContent = pr ? pr.name : ""; }
+}
+let coachLineCount = 0;
+
 
 let sf = SF;                 // injectable for tests
 let responder = null;        // injectable for tests; default = relay fetch
@@ -59,13 +207,13 @@ function newGameId() {
 }
 function loadDossier() {
   try {
-    const raw = localStorage.getItem("chessCoachDossier." + BRANCH);
+    const raw = localStorage.getItem(DOSSIER_KEY);
     if (raw) return JSON.parse(raw);
   } catch (_) {}
   return { elo: 800, calibrated: false, games: 0, eloHistory: [800], openings: {},
            mistake_patterns: [], weak_phases: [], focus_lesson: "", focus_class: "", lastResult: "" };
 }
-function saveDossier() { try { localStorage.setItem("chessCoachDossier." + BRANCH, JSON.stringify(dossier)); } catch (_) {} }
+function saveDossier() { try { localStorage.setItem(DOSSIER_KEY, JSON.stringify(dossier)); } catch (_) {} }
 function replayState() { return C.stateFromSans(history.slice()); }
 // All coach text reaches the DOM through textContent only — never innerHTML.
 // Mirror the latest coach text beside the board so it stays readable
@@ -78,6 +226,8 @@ function setTicker(text) {
 }
 function coachLine(text) {
   setTicker(text);
+  coachLineCount++;
+  const tg = $("coachHistToggle"); if (tg) tg.textContent = "Coach history (" + coachLineCount + ")";
   const b = $("coachBody"); if (!b) return;
   const stateEl = $("coachState"); if (stateEl) stateEl.remove();
   const p = document.createElement("p"); p.className = "cline";
@@ -119,6 +269,9 @@ function renderDossier() {
   if (dossier.focus_lesson) lines.push("Focus lesson: " + dossier.focus_lesson);
   if (dossier.mistake_patterns.length) lines.push("Patterns seen: " + dossier.mistake_patterns.join(", "));
   b.textContent = lines.join("\n");
+  const pb = $("practiceBtn"); if (pb) pb.style.display = dossier.calibrated ? "none" : "";
+  updateGameInfo();
+  renderWallet();
 }
 // ---------- relay gate: session ----------
 function expIsFuture(exp) {
@@ -261,6 +414,12 @@ function enterOfflineMode(why) {
 }
 // ---------- game flow ----------
 function startGame(kind) {
+  if (kind === "rated" && gamesLeft() <= 0) {
+    coachLine("That's all the games for today — next games arrive at midnight.");
+    setCoachState("No games left today.");
+    return;
+  }
+  if (kind === "rated") consumeGame();
   reset(); // base page reset
   scoreLog = []; evalTrail = []; lastEval = null; stepMarks = 0;
   lastPlySeen = 0; paused = false; gameActive = true; coachBusy = false;
@@ -274,7 +433,7 @@ function startGame(kind) {
   sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode, gameId,
                     targetStart: targetElo, alerts: [], flagged: false, moves: [], offline: false };
   $("reviewPanel").style.display = "none";
-  $("alertBody").textContent = "No alerts.";
+  const ab = $("alertBody"); if (ab) ab.textContent = "No alerts.";
   coachLine(kind === "practice"
     ? "Practice game. I'll adjust my strength as we play to find your level. Good luck!"
     : "New game. I'm playing at about " + targetElo + " for this one. Your move.");
@@ -451,6 +610,9 @@ async function onHint() {
 function renderReview(review, opts) {
   const rp = $("reviewPanel"), rb = $("reviewBody");
   if (!rp || !rb) return;
+  const hb = $("reviewByLine"); if (hb) hb.textContent = "Review by Sol";
+  const cc = $("centerCol"); if (cc && cc.appendChild) cc.appendChild(rp);
+  if (rp.classList && rp.classList.add) rp.classList.add("takeover");
   rp.style.display = "";
   rb.innerHTML = "";
   const addP = (text) => { const p = document.createElement("p"); p.textContent = text; rb.appendChild(p); return p; };
@@ -556,6 +718,32 @@ function init(opts) {
     const nb = $("newGameBtn"); if (nb) nb.addEventListener("click", () => startGame(dossier.calibrated ? "rated" : "practice"));
     const pb = $("practiceBtn"); if (pb) pb.addEventListener("click", () => startGame("practice"));
     const hb = $("hintBtn"); if (hb) hb.addEventListener("click", onHint);
+    const fp = $("failsafePanel");
+    if (fp && fp.remove) {
+      let dbg = false;
+      try { dbg = new URLSearchParams((window.location && window.location.search) || "").get("debug") === "1"; } catch (_) {}
+      if (!dbg) fp.remove();
+    }
+    if (typeof window !== "undefined") window.__coachReset = () => {
+      if (gameActive && !gameOver) {
+        const okc = (typeof confirm === "function") ? confirm("Abandon this game? It still counts as used.") : true;
+        if (!okc) return;
+      }
+      gameActive = false; reset(); renderDossier();
+    };
+    const cht = $("coachHistToggle");
+    if (cht) cht.addEventListener("click", () => { const cb = $("coachBody"); if (cb) cb.style.display = cb.style.display === "none" ? "" : "none"; });
+    const pc = $("profileChip"); if (pc) pc.addEventListener("click", openOptions);
+    const oc = $("optionsClose"); if (oc) oc.addEventListener("click", closeOptions);
+    const ps = $("optProfileSelect"); if (ps) ps.addEventListener("change", () => switchProfile(ps.value));
+    const ap = $("optAddProfile"); if (ap) ap.addEventListener("click", addProfile);
+    const pn = $("optProfileName"); if (pn) pn.addEventListener("change", () => { const p = activeProfile(); const v = String(pn.value || "").trim(); if (p && v) { p.name = v; saveProfilesState(); renderProfiles(); } });
+    const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
+    const lk = $("optLockBtn"); if (lk) lk.addEventListener("click", lockDevice);
+    const rc = $("optRecalibrate"); if (rc) rc.addEventListener("click", () => { closeOptions(); startGame("practice"); });
+    const osb = $("optSoundBtn"); if (osb) osb.addEventListener("click", () => { clickEl($("soundBtn")); const sb2 = $("soundBtn"); if (sb2) osb.textContent = sb2.textContent; });
+    const gc = $("gamesChip"); if (gc) gc.addEventListener("click", () => { const gi = $("gamesInfo"); if (gi) { renderWallet(); gi.style.display = gi.style.display === "none" ? "" : "none"; } });
+    renderProfiles();
     const gate = $("gate");
     if (gate) {
       if (loadStoredToken()) gate.style.display = "none";
@@ -572,7 +760,10 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   getDossier: () => dossier, getScoreLog: () => scoreLog, getSession: () => sessionRecord,
   getTarget: () => targetElo, setScoreLog: (s) => { scoreLog = s; },
   getOffline: () => offlineMode, getGameId: () => gameId, hasToken: () => !!sessionToken,
-  finishGame, replayState } };
+  finishGame, replayState,
+  getWallet: () => loadWallet(), gamesLeft, renderWallet,
+  getProfiles: () => profilesState, getActiveProfileId: () => activeProfileId,
+  switchProfile, addProfile } };
 })();
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
