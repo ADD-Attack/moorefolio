@@ -49,6 +49,13 @@ try {
   if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && d.email) accountState = d; }
 } catch (_) {}
 let serverCaps = null;     // last caps view from the gate (signed in only)
+// Phase 3: plan display names for the Options account block. The
+// account holder manages billing; the names stay plain (no signage
+// about who a plan is "for").
+const PLAN_NAMES = { coach: "Coach", pro: "Pro", byok_weekly: "BYOK", lapsed: "Paused", none: "No plan" };
+function planName(id) { return PLAN_NAMES[id] || "Coach"; }
+let acctBillingNote = "";  // last billing action's plain-language result
+let acctCoachSeat = null;  // seat of the current account game ("sol"|"astra"|"kids"), from /v1/account/session
 let pendingCharge = false; // the next account session spends a game
 function signedIn() { return !!accountState; }
 // ---------- local profiles (Ticket 006 Phase 1) ----------
@@ -73,7 +80,7 @@ function loadProfilesState() {
   let s = null;
   try { s = JSON.parse(localStorage.getItem(profilesStorageKey()) || "null"); } catch (_) {}
   if (!s || !Array.isArray(s.profiles) || !s.profiles.length)
-    s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }] };
+    s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL, coach: "sol" }] };
   if (!s.profiles.some((p) => p.id === s.activeId)) s.activeId = s.profiles[0].id;
   return s;
 }
@@ -130,7 +137,7 @@ function switchProfile(id) {
 }
 function addProfile() {
   if (signedIn()) { addProfileSignedIn(); return; }
-  const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL };
+  const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL, coach: "sol" };
   profilesState.profiles.push(p); saveProfilesState();
   switchProfile(p.id);
 }
@@ -138,7 +145,7 @@ async function addProfileSignedIn() {
   try {
     const made = await acctApi("/v1/profiles", { method: "POST", headers: acctAuthHeaders(),
       body: JSON.stringify({ name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL }) });
-    profilesState.profiles = made.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
+    profilesState.profiles = made.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" }));
     saveProfilesState();
     switchProfile(made.profile.id);
   } catch (_) { /* stay on the current profile; a later sync repairs the list */ }
@@ -166,7 +173,7 @@ async function deleteProfileSignedIn() {
     const data = await acctApi("/v1/profiles/delete", { method: "POST", headers: acctAuthHeaders(),
       body: JSON.stringify({ profile_id: victim }) });
     try { localStorage.removeItem(profileDossierKey(victim)); } catch (_) {}
-    profilesState.profiles = data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
+    profilesState.profiles = data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" }));
     activeProfileId = data.active_profile_id || (profilesState.profiles[0] && profilesState.profiles[0].id);
     profilesState.activeId = activeProfileId;
     saveProfilesState();
@@ -226,16 +233,30 @@ function consumeGame() {
 }
 function renderWallet() {
   if (signedIn() && serverCaps) {
+    const chipS = $("gamesChip"), clS = $("gameCostLine"), giS = $("gamesInfo"), nbS = $("newGameBtn");
+    if (serverCaps.unlimited) {
+      // BYOK posture (Phase 3): games run on the account's own key —
+      // no daily counter at all. (Key handling itself is Phase 4.)
+      if (chipS) chipS.textContent = "∞ your key";
+      if (clS) clS.textContent = !dossier.calibrated ? "First game is calibration · free" : "Your key · no daily limit";
+      if (nbS) nbS.disabled = false;
+      if (giS) giS.textContent = "Games on this account run on your own key — no daily limit. " +
+        "Platform safety limits still apply. · Shared by this account.";
+      return;
+    }
     const left = serverCaps.left;
-    const chipS = $("gamesChip"); if (chipS) chipS.textContent = left + " games";
-    const clS = $("gameCostLine");
-    if (clS) clS.textContent = !dossier.calibrated ? "First game is calibration · free"
+    const noPlan = (serverCaps.daily_credit || 0) === 0;
+    if (chipS) chipS.textContent = left + " games";
+    if (clS) clS.textContent = noPlan
+      ? (!dossier.calibrated ? "First game is calibration · free" : "No plan right now — lessons are still free")
+      : !dossier.calibrated ? "First game is calibration · free"
       : left > 0 ? "Uses 1 game · " + left + " left" : "No games left — more arrive at " + fmtNextCredit() + ".";
-    const nbS = $("newGameBtn"); if (nbS) nbS.disabled = dossier.calibrated ? left <= 0 : false;
-    const giS = $("gamesInfo");
-    if (giS) giS.textContent = "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
-      " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
-      fmtNextCredit() + " · Shared by this account.";
+    if (nbS) nbS.disabled = dossier.calibrated ? left <= 0 : false;
+    if (giS) giS.textContent = noPlan
+      ? "No active plan on this account right now. Lessons are still free, always."
+      : "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
+        " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
+        fmtNextCredit() + " · Shared by this account.";
     return;
   }
   const left = gamesLeft();
@@ -250,7 +271,7 @@ function renderWallet() {
                      " · Next " + DAILY_NEW + " at midnight · Shared by this account."; }
 }
 function updateGameInfo() {
-  const t = $("gameInfoTitle"); if (t) t.textContent = "You vs. the Coach (Sol)";
+  const t = $("gameInfoTitle"); if (t) t.textContent = "You vs. the Coach (" + (acctCoachSeat === "astra" ? "Astra" : "Sol") + ")";
   const k = $("gameInfoKind");
   if (k) k.textContent = mode === "practice" ? "Calibration game" : mode === "rated" ? "Rated game"
     : (dossier.calibrated ? "Rated game" : "Calibration game");
@@ -426,7 +447,7 @@ async function acctApi(path, opts) {
 function acctAuthHeaders() { return { "Content-Type": "application/json", "Authorization": "Bearer " + accountState.token }; }
 function storeAccount() { try { sessionStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountState)); } catch (_) {} }
 function clearAccount() {
-  accountState = null; serverCaps = null;
+  accountState = null; serverCaps = null; acctBillingNote = ""; acctCoachSeat = null;
   try { sessionStorage.removeItem(ACCOUNT_KEY); } catch (_) {}
 }
 async function refreshCaps() {
@@ -440,14 +461,20 @@ async function requestAccountSession(gid, charge) {
     body: JSON.stringify({ profile_id: activeProfileId, game_id: gid, charge: !!charge }),
   });
   if (data.caps) { serverCaps = data.caps; renderWallet(); }
+  if (typeof data.coach_seat === "string") { acctCoachSeat = data.coach_seat; updateGameInfo(); }
   storeToken(data.token, data.exp, gid);
   return data;
 }
 function onAccountNoGames() {
   // Race-only backstop: the pre-start check uses the same server
   // numbers, so a 409 here means another tab spent the last game.
-  coachLine("That's all the games for today — more arrive at " + fmtNextCredit() + ".");
-  setCoachState("No games left today.");
+  if (signedIn() && serverCaps && (serverCaps.daily_credit || 0) === 0) {
+    coachLine("This account has no plan right now — lessons are still free.");
+    setCoachState("No plan right now.");
+  } else {
+    coachLine("That's all the games for today — more arrive at " + fmtNextCredit() + ".");
+    setCoachState("No games left today.");
+  }
   gameActive = false;
 }
 async function syncProfilesOnSignIn(serverProfiles, activeId) {
@@ -459,7 +486,7 @@ async function syncProfilesOnSignIn(serverProfiles, activeId) {
     for (const lp of profilesState.profiles) {
       try {
         const made = await acctApi("/v1/profiles", { method: "POST", headers: acctAuthHeaders(),
-          body: JSON.stringify({ name: lp.name, mode: lp.mode || MODE_LABEL }) });
+          body: JSON.stringify({ name: lp.name, mode: lp.mode || MODE_LABEL, coach: lp.coach === "astra" ? "astra" : "sol" }) });
         try {
           const rawD = localStorage.getItem(profileDossierKey(lp.id));
           if (rawD && !localStorage.getItem(profileDossierKey(made.profile.id)))
@@ -472,7 +499,7 @@ async function syncProfilesOnSignIn(serverProfiles, activeId) {
   if (!list.length) list = [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }];
   const keep = list.some((p) => p.id === activeProfileId) ? activeProfileId
     : (activeId && list.some((p) => p.id === activeId) ? activeId : list[0].id);
-  profilesState = { activeId: keep, profiles: list.map((p) => ({ id: p.id, name: p.name, mode: p.mode })) };
+  profilesState = { activeId: keep, profiles: list.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" })) };
   activeProfileId = keep;
   saveProfilesState();
   DOSSIER_KEY = profileDossierKey(keep);
@@ -661,7 +688,7 @@ async function bootAccountSync() {
     serverCaps = data.caps || serverCaps;
     if (Array.isArray(data.profiles) && data.profiles.length) {
       profilesState = { activeId: data.active_profile_id || data.profiles[0].id,
-        profiles: data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode })) };
+        profiles: data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" })) };
       if (!profilesState.profiles.some((p) => p.id === profilesState.activeId))
         profilesState.activeId = profilesState.profiles[0].id;
       activeProfileId = profilesState.activeId;
@@ -689,7 +716,10 @@ function renderAccount() {
   const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
   const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
   const pl = $("optPlanLine");
-  if (pl) pl.textContent = accountState ? "Plan: Coach · " + accountState.email : PLAN_LINE_SIGNED_OUT;
+  if (pl) pl.textContent = accountState ? "Plan: " + planName(accountState.plan) + " · " + accountState.email : PLAN_LINE_SIGNED_OUT;
+  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState ? "" : "none";
+  const bn = $("optBillingNote"); if (bn) bn.textContent = acctBillingNote;
+  renderCoachPicker();
   // Phase 2b: passkey controls appear only when this browser can do
   // WebAuthn; otherwise one plain line explains why, and the password
   // form carries on alone.
@@ -698,6 +728,44 @@ function renderAccount() {
   if (note) note.textContent = supported ? "" : "Passkeys aren't available in this browser — your password still works.";
   const psb = $("optPasskeySignInBtn"); if (psb) psb.style.display = supported ? "" : "none";
   renderPasskeys();
+}
+// ---------- Phase 3: per-profile coach picker (Pro) + billing ----------
+// The picker shows ONLY on a Pro account, for a Standard profile —
+// the gate still enforces the rule (seat resolution is server-side);
+// this is presentation. No rating copy anywhere near it (UI pass c7).
+function renderCoachPicker() {
+  const row = $("optCoachRow"); if (!row) return;
+  const p = activeProfile();
+  const isPro = !!(accountState && accountState.plan === "pro");
+  const show = !!(p && p.mode !== "New Player" && isPro);
+  row.style.display = show ? "" : "none";
+  const note = $("optCoachNote");
+  if (note) note.textContent = (!show && accountState && p && p.mode !== "New Player" && !isPro)
+    ? "The Pro plan adds a second coach (Astra) for this profile." : "";
+  if (!show) return;
+  const sol = $("optCoachSolBtn"), ast = $("optCoachAstraBtn");
+  if (sol) sol.classList.toggle("sel", p.coach !== "astra");
+  if (ast) ast.classList.toggle("sel", p.coach === "astra");
+}
+function setProfileCoach(which) {
+  const p = activeProfile(); if (!p || !signedIn()) return;
+  p.coach = which; saveProfilesState(); renderCoachPicker();
+  acctApi("/v1/profiles/update", { method: "POST", headers: acctAuthHeaders(),
+    body: JSON.stringify({ profile_id: p.id, coach: which }) }).catch(() => {});
+}
+async function manageBilling() {
+  try {
+    const data = await acctApi("/v1/billing/portal", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
+    if (data && data.url) {
+      if (typeof window !== "undefined" && typeof window.open === "function") window.open(data.url, "_blank");
+      acctBillingNote = "Billing opened in a new tab.";
+    }
+  } catch (e) {
+    acctBillingNote = e && e.status === 503 ? "Billing isn't open yet — it arrives with the full launch."
+      : e && e.status === 409 ? "No billing account yet — billing starts with your first plan."
+      : "Billing didn't open just now — try again in a bit.";
+  }
+  renderAccount();
 }
 // ---------- relay: turn / review ----------
 async function fetchWithTimeout(url, opts, ms) {
@@ -784,8 +852,13 @@ function enterOfflineMode(why) {
 // ---------- game flow ----------
 function startGame(kind) {
   if (kind === "rated" && gamesLeft() <= 0) {
-    coachLine("That's all the games for today — next games arrive at midnight.");
-    setCoachState("No games left today.");
+    if (signedIn() && serverCaps && (serverCaps.daily_credit || 0) === 0) {
+      coachLine("This account has no plan right now — lessons are still free.");
+      setCoachState("No plan right now.");
+    } else {
+      coachLine("That's all the games for today — next games arrive at midnight.");
+      setCoachState("No games left today.");
+    }
     return;
   }
   if (kind === "rated") {
@@ -984,7 +1057,7 @@ async function onHint() {
 function renderReview(review, opts) {
   const rp = $("reviewPanel"), rb = $("reviewBody");
   if (!rp || !rb) return;
-  const hb = $("reviewByLine"); if (hb) hb.textContent = "Review by Sol";
+  const hb = $("reviewByLine"); if (hb) hb.textContent = "Review by " + (acctCoachSeat === "astra" ? "Astra" : "Sol");
   const cc = $("centerCol"); if (cc && cc.appendChild) cc.appendChild(rp);
   if (rp.classList && rp.classList.add) rp.classList.add("takeover");
   rp.style.display = "";
@@ -1116,6 +1189,9 @@ function init(opts) {
     const sib = $("optSignInBtn"); if (sib) sib.addEventListener("click", () => { accountAuth("login"); });
     const sub = $("optSignUpBtn"); if (sub) sub.addEventListener("click", () => { accountAuth("signup"); });
     const sob = $("optSignOutBtn"); if (sob) sob.addEventListener("click", () => { accountSignOut(); });
+    const mbb = $("optManageBilling"); if (mbb) mbb.addEventListener("click", () => { manageBilling(); });
+    const csb = $("optCoachSolBtn"); if (csb) csb.addEventListener("click", () => { setProfileCoach("sol"); });
+    const cab = $("optCoachAstraBtn"); if (cab) cab.addEventListener("click", () => { setProfileCoach("astra"); });
     const pkb = $("optPasskeySignInBtn"); if (pkb) pkb.addEventListener("click", () => { passkeySignIn(); });
     const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
     renderAccount();
@@ -1149,7 +1225,9 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   getAccount: () => accountState, getServerCaps: () => serverCaps,
   accountAuth, accountSignOut, signedIn,
   passkeySignIn, addPasskey, removePasskey, waSupported,
-  getPasskeys: () => passkeyList } };
+  getPasskeys: () => passkeyList,
+  getAcctPlan: () => (accountState ? accountState.plan : null), getAcctCoachSeat: () => acctCoachSeat,
+  getBillingNote: () => acctBillingNote } };
 })();
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
