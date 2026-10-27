@@ -39,6 +39,171 @@ const SF_URL = (typeof window !== "undefined" && window.COACH_SF_URL) || "stockf
 const PRUNE_DEPTH = 10, SCORE_DEPTH = 10;
 const PLAYER = "w", COACH = "b";
 const TOKEN_KEY = "chessCoachToken." + BRANCH;
+// ---------- local profiles (Ticket 006 Phase 1) ----------
+// Profiles are LOCAL this phase: a per-branch profile list in
+// localStorage; each profile's dossier lives under its own key (the
+// seeded default profile keeps the legacy key, so existing progress
+// is untouched). Modes are per-page this phase (this page is
+// New Player); the merged shell is Phase 2. The games wallet is
+// account-level (shared by every profile on this branch).
+const MODE_LABEL = "New Player";
+const DEFAULT_PROFILE_NAME = { kids: "Luke", beginnertest: "Beginner Test" }[BRANCH] || "Player";
+const PROFILES_KEY = "chessCoachProfiles." + BRANCH;
+function profileDossierKey(id) {
+  return id === "default" ? "chessCoachDossier." + BRANCH
+                          : "chessCoachDossier." + BRANCH + "." + id;
+}
+function loadProfilesState() {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem(PROFILES_KEY) || "null"); } catch (_) {}
+  if (!s || !Array.isArray(s.profiles) || !s.profiles.length)
+    s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }] };
+  if (!s.profiles.some((p) => p.id === s.activeId)) s.activeId = s.profiles[0].id;
+  return s;
+}
+function saveProfilesState() { try { localStorage.setItem(PROFILES_KEY, JSON.stringify(profilesState)); } catch (_) {} }
+let profilesState = loadProfilesState();
+let activeProfileId = profilesState.activeId;
+let DOSSIER_KEY = profileDossierKey(activeProfileId);
+function activeProfile() { return profilesState.profiles.find((p) => p.id === activeProfileId) || profilesState.profiles[0]; }
+function renderProfiles() {
+  const p = activeProfile(); if (!p) return;
+  const chip = $("profileChip");
+  if (chip) chip.textContent = (p.name || "P").slice(0, 1).toUpperCase() + " " + p.name;
+  const sel = $("optProfileSelect");
+  if (sel) {
+    sel.innerHTML = "";
+    for (const pr of profilesState.profiles) {
+      const o = document.createElement("option");
+      o.value = pr.id; o.textContent = pr.name + " · " + (pr.mode || MODE_LABEL);
+      sel.appendChild(o);
+    }
+    sel.value = activeProfileId;
+  }
+  const nm = $("optProfileName"); if (nm) nm.value = p.name;
+  const mt = $("optModeTag"); if (mt) mt.textContent = p.mode || MODE_LABEL;
+  const pv = $("optPrivacyLine"); if (pv) pv.textContent = p.name + "'s profile stores: display name only";
+  const sb = $("optSoundBtn"); if (sb) sb.textContent = dossier.muted ? "Sound: Off" : "Sound: On";
+}
+function openOptions() {
+  renderProfiles(); refreshVoicePicker(); initSpeedPicker();
+  const d = $("optionsDrawer"); if (d) d.style.display = "flex";
+}
+function closeOptions() { const d = $("optionsDrawer"); if (d) d.style.display = "none"; }
+function switchProfile(id) {
+  if (!id || id === activeProfileId) { renderProfiles(); return; }
+  if (gameActive && !gameOver) {
+    const target = profilesState.profiles.find((p) => p.id === id);
+    const okc = (typeof confirm === "function")
+      ? confirm("Switch to " + (target ? target.name : "the other profile") + "? Your current game is saved.") : true;
+    if (!okc) { renderProfiles(); return; }
+    saveCurrentGameRecord(); savedGameLive = false;
+  }
+  saveDossier();
+  activeProfileId = id; profilesState.activeId = id; saveProfilesState();
+  DOSSIER_KEY = profileDossierKey(id);
+  dossier = loadDossier();
+  lessonActive = false; currentLesson = null; lessonBaseFen = null; gameActive = false; savedGameLive = false;
+  reset();
+  renderDossier(); renderProfiles(); renderWallet();
+  showMenu(); closeOptions();
+}
+function addProfile() {
+  const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL };
+  profilesState.profiles.push(p); saveProfilesState();
+  switchProfile(p.id);
+}
+function deleteProfile() {
+  if (profilesState.profiles.length <= 1) return;
+  const okc = (typeof confirm === "function")
+    ? confirm("Delete this profile? Its progress on this device is removed.") : true;
+  if (!okc) return;
+  try { localStorage.removeItem(profileDossierKey(activeProfileId)); } catch (_) {}
+  profilesState.profiles = profilesState.profiles.filter((p) => p.id !== activeProfileId);
+  activeProfileId = profilesState.profiles[0].id; profilesState.activeId = activeProfileId;
+  saveProfilesState();
+  DOSSIER_KEY = profileDossierKey(activeProfileId);
+  dossier = loadDossier();
+  lessonActive = false; gameActive = false; savedGameLive = false;
+  reset();
+  renderDossier(); renderProfiles(); renderWallet();
+  showMenu(); closeOptions();
+}
+function lockDevice() {
+  sessionToken = null;
+  try { sessionStorage.removeItem(TOKEN_KEY); } catch (_) {}
+  closeOptions();
+  const gate = $("gate"); if (gate) gate.style.display = "";
+}
+// ---------- games wallet (local counters; server caps engine is Phase 2) ----------
+const WALLET_KEY = "chessCoachWallet." + BRANCH;
+const DAILY_NEW = 3, SAVE_CAP = 5, READY_CAP = 8;
+function saveWallet(w) { try { localStorage.setItem(WALLET_KEY, JSON.stringify(w)); } catch (_) {} }
+function loadWallet() {
+  let w = null;
+  try { w = JSON.parse(localStorage.getItem(WALLET_KEY) || "null"); } catch (_) {}
+  if (!w || typeof w !== "object") w = { day: todayStr(), credited: DAILY_NEW, used: 0, saved: 0 };
+  if (w.day !== todayStr()) { // a new day: unspent games roll into the saved pile
+    const leftover = Math.max(0, (w.credited || 0) - (w.used || 0));
+    w.saved = Math.min(SAVE_CAP, (w.saved || 0) + leftover);
+    w.credited = DAILY_NEW; w.used = 0; w.day = todayStr();
+    saveWallet(w);
+  }
+  return w;
+}
+function gamesLeft() { const w = loadWallet(); return Math.max(0, Math.min(READY_CAP, (w.saved || 0) + ((w.credited || 0) - (w.used || 0)))); }
+function walletBreakdown() { const w = loadWallet(); return { todayNew: Math.max(0, (w.credited || 0) - (w.used || 0)), saved: w.saved || 0, left: gamesLeft() }; }
+function consumeGame() {
+  const w = loadWallet();
+  if (gamesLeft() <= 0) return false;
+  if ((w.used || 0) < (w.credited || 0)) w.used = (w.used || 0) + 1; else w.saved = (w.saved || 0) - 1;
+  saveWallet(w); renderWallet();
+  return true;
+}
+function renderWallet() {
+  const left = gamesLeft();
+  const chip = $("gamesChip"); if (chip) chip.textContent = left + " games";
+  const cl = $("gameCostLine"); if (cl) cl.textContent = "Uses 1 game · " + left + " left";
+  const gi = $("gamesInfo");
+  if (gi) { const b = walletBreakdown();
+    gi.textContent = "Today: " + b.todayNew + " new · Saved: " + b.saved + " · Ready: up to " + READY_CAP +
+                     " · Next " + DAILY_NEW + " at midnight · Shared by this account."; }
+}
+function showOutOfGames() { const o = $("outOfGames"); if (o) o.style.display = "flex"; }
+function hideOutOfGames() { const o = $("outOfGames"); if (o) o.style.display = "none"; }
+// ---------- saved-game record (Menu sheet / Continue, (b)9) ----------
+let savedGameLive = false;
+function savedRecordKey() { return "chessCoachPaused." + BRANCH + "." + activeProfileId; }
+function loadSavedRecord() {
+  try { const r = JSON.parse(localStorage.getItem(savedRecordKey()) || "null");
+    return r && Array.isArray(r.history) && r.history.length ? r : null; } catch (_) { return null; }
+}
+function saveCurrentGameRecord() {
+  try { localStorage.setItem(savedRecordKey(), JSON.stringify({ history: history.slice(), mode: "kids", at: new Date().toISOString() })); } catch (_) {}
+}
+function clearSavedRecord() { savedGameLive = false; try { localStorage.removeItem(savedRecordKey()); } catch (_) {} }
+function hasSavedGame() { return savedGameLive || !!loadSavedRecord(); }
+function continueSavedGame() {
+  hideBigNext(); hideOutOfGames();
+  const km = $("kidsMenu"); if (km) km.style.display = "none";
+  if (savedGameLive) return; // the board in this tab still holds the game
+  const rec = loadSavedRecord(); if (!rec) return;
+  const st = C.stateFromSans(rec.history.slice());
+  setPageFromState(st, rec.history.slice(), capturedFromSans(C.startState(), rec.history.slice()));
+  mode = "kids"; gameActive = true; gameOver = false; lessonActive = false; currentLesson = null;
+  lastPlySeen = history.length;
+  gameId = newGameId();
+  sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode, gameId,
+                    targetStart: targetElo, alerts: [], diag: [], moves: [], offline: false };
+  updateGameInfo();
+  coachLine("Welcome back! Your game is right where you left it.");
+  connectionPromise = prepareConnection();
+}
+function onMenuButton() {
+  if (gameActive && !gameOver) { const ms = $("menuSheet"); if (ms) { ms.style.display = "flex"; return; } }
+  showMenu();
+}
+
 
 let sf = SF;                 // injectable for tests
 let responder = null;        // injectable for tests; default = relay fetch
@@ -77,14 +242,14 @@ function sanitizeDossier(d) {
 let pendingLevelUp = 0;
 function loadDossier() {
   let d = null;
-  try { const raw = localStorage.getItem("chessCoachDossier." + BRANCH); if (raw) d = JSON.parse(raw); } catch (_) {}
+  try { const raw = localStorage.getItem(DOSSIER_KEY); if (raw) d = JSON.parse(raw); } catch (_) {}
   const out = sanitizeDossier(d);
   // comeback award: +20 when the last visit was an earlier calendar day
   const today = todayStr();
   if (out.lastVisit && out.lastVisit < today) {
     const before = levelFor(out.points); out.points += 20;
     if (levelFor(out.points) > before) pendingLevelUp = levelFor(out.points);
-    try { localStorage.setItem("chessCoachDossier." + BRANCH, JSON.stringify(out)); } catch (_) {}
+    try { localStorage.setItem(DOSSIER_KEY, JSON.stringify(out)); } catch (_) {}
   }
   out.lastVisit = today;
   // legacy fields the shared adult code paths still read (not persisted schema)
@@ -97,7 +262,7 @@ function saveDossier() {
   try {
     const clean = sanitizeDossier(dossier);
     clean.lastVisit = dossier.lastVisit || todayStr();
-    localStorage.setItem("chessCoachDossier." + BRANCH, JSON.stringify(clean));
+    localStorage.setItem(DOSSIER_KEY, JSON.stringify(clean));
   } catch (_) {}
 }
 function replayState() {
@@ -116,7 +281,7 @@ function replayState() {
 // Mirror the latest coach text beside the board so it stays readable
 // during play without scrolling; the full log lives in #coachBody.
 function setTicker(text) {
-  const t = $("coachTicker"); if (!t) return;
+  const t = $("tickerText") || $("coachTicker"); if (!t) return;
   const clean = String(text).replace(/<[^>]*>/g, "").trim();
   if (!clean) return; // a cleared status is not a message — keep the last line
   t.textContent = clean;
@@ -129,6 +294,10 @@ function coachLine(text, opts) {
   const p = document.createElement("p"); p.className = "cline";
   p.textContent = clean;
   p.addEventListener("click", () => speak(clean.replace(/^Coach: /, "")));
+  const rb = document.createElement("button"); rb.className = "replayBtn"; rb.textContent = "🔊";
+  if (rb.setAttribute) rb.setAttribute("aria-label", "Hear that again");
+  rb.addEventListener("click", () => speak(clean.replace(/^Coach: /, "")));
+  p.appendChild(rb);
   b.appendChild(p); b.scrollTop = b.scrollHeight;
   if ((opts && opts.speak) || clean.startsWith("Coach:")) speak(clean.replace(/^Coach: /, ""));
 }
@@ -190,6 +359,7 @@ function renderDossier() {
     "Lessons done: " + done + " / 8", "Games played: " + dossier.gamesPlayed,
     "Games finished: " + dossier.gamesFinished, "Games won: " + dossier.gamesWon].join("\n");
   renderMenu();
+  renderWallet();
 }
 // ---------- relay gate: session ----------
 function expIsFuture(exp) {
@@ -340,6 +510,8 @@ function enterOfflineMode(why) {
 }
 // ---------- game flow ----------
 function startGame(kind) {
+  if (!consumeGame()) { showOutOfGames(); return; }
+  clearSavedRecord();
   hideBigNext();
   reset(); // base page reset
   scoreLog = []; evalTrail = []; lastEval = null; stepMarks = 0;
@@ -358,7 +530,7 @@ function startGame(kind) {
   sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode, gameId,
                     targetStart: targetElo, alerts: [], diag: [], flagged: false, moves: [], offline: false };
   $("reviewPanel").style.display = "none";
-  $("alertBody").textContent = "No alerts.";
+  const ab = $("alertBody"); if (ab) ab.textContent = "No alerts.";
   coachLine("New game! You are White — your move. Good luck, champion!");
   setCoachState("");
   renderDossier();
@@ -615,6 +787,7 @@ async function finishGame() {
   saveDossier(); renderDossier();
   try { localStorage.removeItem("chessCoachPaused." + BRANCH); } catch (_) {}
   renderReview(review, { resultText, mode, onlineReview, reviewNote });
+  renderWallet();
   coachLine("Game over. " + resultText + " Your review session is below the board.");
   updateGameInfo();
   showBigNext(isWin ? "You won! 🏆" : "Game over!", isWin ? "You won the game! Tap Next!" : "Good game! You finished! Tap Next!");
@@ -678,7 +851,7 @@ const LESSONS = [
     fen: "6k1/8/8/8/8/8/4ppp1/5K2 w - - 0 1",
     goalText: "Your king steps one square at a time. Capture ALL THREE black pawns!",
     targets: 3, check: (st, caps) => caps >= 3 },
-  { id: "capturing", title: "Capturing! ⚔", hero: null,
+  { id: "capturing", title: "Capturing ⚔", hero: null,
     fen: "6k1/8/8/3n1b1p/4P3/8/5N2/3Q3K w - - 0 1",
     goalText: "Capture ALL THREE black pieces — any of your pieces may capture!",
     targets: 3, check: (st, caps) => caps >= 3 },
@@ -709,6 +882,24 @@ const VOICE_PREFS = [
   /zira|david|catherine/i,
 ];
 const VOICE_KEY = "chessCoachVoice." + BRANCH;
+// Coach speed (Ticket 006 (b)11): Slow is the New Player default.
+const SPEED_KEY = "chessCoachSpeed." + BRANCH;
+const SPEEDS = { slow: 0.8, normal: 0.92, quick: 1.05 };
+function speedName() {
+  try { const s = localStorage.getItem(SPEED_KEY); if (s && SPEEDS[s]) return s; } catch (_) {}
+  return "slow";
+}
+function speechRate() { return SPEEDS[speedName()]; }
+function initSpeedPicker() {
+  for (const id of ["speedSelect", "optSpeedSelect"]) {
+    const sel = $(id); if (!sel) continue;
+    sel.value = speedName();
+    sel.addEventListener("change", () => {
+      try { localStorage.setItem(SPEED_KEY, sel.value); } catch (_) {}
+      for (const id2 of ["speedSelect", "optSpeedSelect"]) { const s2 = $(id2); if (s2) s2.value = sel.value; }
+    });
+  }
+}
 function synth() {
   return (typeof window !== "undefined" && window.speechSynthesis) ||
          (typeof speechSynthesis !== "undefined" ? speechSynthesis : null);
@@ -739,24 +930,30 @@ function pickVoice() {
   return vs.find((v) => v.default) || vs[0] || null;
 }
 function refreshVoicePicker() {
-  const sel = $("voiceSelect"); if (!sel) return;
   const vs = voiceList();
-  sel.innerHTML = "";
-  for (const v of vs) {
-    const o = document.createElement("option");
-    o.value = v.voiceURI || v.name;
-    o.textContent = v.name + (v.lang ? " (" + v.lang + ")" : "");
-    sel.appendChild(o);
-  }
   const chosen = pickVoice();
-  if (chosen) sel.value = chosen.voiceURI || chosen.name;
+  for (const id of ["voiceSelect", "optVoiceSelect"]) {
+    const sel = $(id); if (!sel) continue;
+    sel.innerHTML = "";
+    for (const v of vs) {
+      const o = document.createElement("option");
+      o.value = v.voiceURI || v.name;
+      o.textContent = v.name + (v.lang ? " (" + v.lang + ")" : "");
+      sel.appendChild(o);
+    }
+    if (chosen) sel.value = chosen.voiceURI || chosen.name;
+  }
 }
 function initVoicePicker() {
-  const sel = $("voiceSelect"); if (!sel) return;
+  const sel = $("voiceSelect"); if (!sel && !$("optVoiceSelect")) return;
   refreshVoicePicker();
-  sel.addEventListener("change", () => {
-    try { localStorage.setItem(VOICE_KEY, sel.value); } catch (_) {}
-  });
+  for (const id of ["voiceSelect", "optVoiceSelect"]) {
+    const s2 = $(id); if (!s2) continue;
+    s2.addEventListener("change", () => {
+      try { localStorage.setItem(VOICE_KEY, s2.value); } catch (_) {}
+      refreshVoicePicker();
+    });
+  }
   const sb = $("voiceSampleBtn");
   if (sb) sb.addEventListener("click", () => speak("Hello! I am your chess coach. Let's play chess!"));
   const ss = synth(); // voices often arrive async — repopulate when they land
@@ -773,7 +970,7 @@ function speak(text) {
     const U = (typeof SpeechSynthesisUtterance !== "undefined") ? SpeechSynthesisUtterance
             : (typeof window !== "undefined" ? window.SpeechSynthesisUtterance : null);
     u = U ? new U(String(text)) : { text: String(text) };
-    u.rate = 0.92; u.pitch = 1.05;
+    u.rate = speechRate(); u.pitch = 1.05;
     const v = pickVoice();
     if (!ttsDiagDone) { // once per page load: flag a device with no voice at all
       ttsDiagDone = true;
@@ -813,8 +1010,25 @@ function showBigNext(msgText, speakText) {
 }
 function hideBigNext() { if (bigNextEl) bigNextEl.style.display = "none"; }
 // ---------- confetti (self-written canvas, no external assets) ----------
+function reducedMotion() {
+  try { return typeof window !== "undefined" && !!window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches; } catch (_) { return false; }
+}
 function spawnConfetti(n) {
   try {
+    if (reducedMotion()) { // static star burst: no falling motion (b10)
+      const cv = document.createElement("canvas");
+      cv.id = "confettiCanvas";
+      cv.style.position = "fixed"; cv.style.inset = "0"; cv.style.width = "100%"; cv.style.height = "100%";
+      cv.style.pointerEvents = "none"; cv.style.zIndex = "99";
+      cv.width = 800; cv.height = 600;
+      document.body.appendChild(cv);
+      const ctx = cv.getContext && cv.getContext("2d");
+      if (ctx) { ctx.fillStyle = "#f1c40f"; ctx.font = "64px serif"; ctx.textAlign = "center";
+        for (let i = 0; i < 12; i++) ctx.fillText("★", 80 + (i % 4) * 210, 160 + Math.floor(i / 4) * 160); }
+      setTimeout(() => { try { cv.remove(); } catch (_) {} }, 1500);
+      return;
+    }
     const cv = document.createElement("canvas");
     cv.id = "confettiCanvas";
     cv.style.position = "fixed"; cv.style.inset = "0"; cv.style.width = "100%"; cv.style.height = "100%";
@@ -869,6 +1083,9 @@ function drawAnnotations(ann) {
     const sq = typeof hgt === "string" ? hgt : hgt.square, c = (typeof hgt === "object" && hgt.color) || "green";
     if (!sq) continue; const { x, y } = annXY(sq);
     out += '<rect x="' + x + '" y="' + y + '" width="100" height="100" fill="' + col(c, ".55") + '"/>';
+    if (c === "green") out += '<text x="' + (x + 68) + '" y="' + (y + 36) + '" font-size="36" fill="' + col(c, ".95") + '" class="annMark">✓</text>';
+    else if (c === "red") out += '<text x="' + (x + 68) + '" y="' + (y + 36) + '" font-size="36" fill="' + col(c, ".95") + '" class="annMark">✕</text>';
+    else if (c === "yellow") out += '<circle cx="' + (x + 50) + '" cy="' + (y + 50) + '" r="30" fill="none" stroke="' + col(c, ".9") + '" stroke-width="9"/>';
   }
   for (const ar of ann.arrows || []) {
     const from = ar.from || ar[0], to = ar.to || ar[1], c = ar.color || "green";
@@ -958,6 +1175,7 @@ function capturedFromSans(baseSt, sans) {
 }
 function startLesson(id) {
   const les = lessonById(id); if (!les) return;
+  clearSavedRecord();
   hideBigNext();
   reset();
   currentLesson = les; lessonBaseFen = les.fen; lessonActive = true; gameActive = false;
@@ -1010,24 +1228,36 @@ function checkLessonProgress() {
 }
 function showMenu() {
   hideBigNext();
+  const ms = $("menuSheet"); if (ms) ms.style.display = "none";
   lessonActive = false;
   updateGameInfo();
   renderMenu();
   const km = $("kidsMenu"); if (km) km.style.display = "";
 }
 function renderMenu() {
+  const lvl = levelFor(dossier.points);
   const pl = $("pointsLine");
-  if (pl) pl.textContent = "Points: " + dossier.points + " • Level " + levelFor(dossier.points);
+  if (pl) pl.textContent = "Level " + lvl;
+  const bar = $("levelBar");
+  if (bar) { const cur = LEVEL_THRESHOLDS[lvl - 1] || 0; const nxt = LEVEL_THRESHOLDS[lvl];
+    bar.style.width = nxt ? Math.round(100 * (dossier.points - cur) / (nxt - cur)) + "%" : "100%"; }
+  const nl = $("levelNextLine");
+  if (nl) { const nxt = LEVEL_THRESHOLDS[lvl];
+    nl.textContent = nxt ? (nxt - dossier.points) + " points to Level " + (lvl + 1) : "Top level!"; }
   for (const id of LESSON_IDS) {
     const btn = $("lessonBtn-" + id); if (!btn) continue;
     const les = lessonById(id);
     btn.textContent = les.title + (dossier.lessons[id] ? " ✅" : "");
   }
   const unlocked = LESSON_IDS.every((id) => dossier.lessons[id]);
+  const remaining = LESSON_IDS.filter((id) => !dossier.lessons[id]).length;
   const nb = $("newGameBtn");
   if (nb) { nb.disabled = !unlocked; nb.classList.toggle("locked", !unlocked); }
   const uh = $("unlockHint");
-  if (uh) uh.textContent = unlocked ? "You unlocked real games! 🏆" : "Finish all 8 lessons to unlock!";
+  if (uh) uh.textContent = unlocked ? "You unlocked real games! 🏆" : "Opens after the 8 lessons, " + remaining + " to go";
+  const cb = $("continueBtn");
+  if (cb) cb.style.display = hasSavedGame() ? "" : "none";
+  renderWallet();
 }
 // ---------- undo ----------
 function undoMove() {
@@ -1048,7 +1278,7 @@ function undoMove() {
   setPageFromState(st, keep, capturedFromSans(base, keep));
   lastPlySeen = history.length;
   gameOver = false; undoPendingRetry = true;
-  coachLine("Undo! Your move again.");
+  coachLine("Okay — try again! Your move.");
 }
 // ---------- gentle candidate set for real games ----------
 // Implemented with the sf-adapter's MultiPV analyze() (the same path the
@@ -1094,6 +1324,7 @@ function poll() {
     if (grew && undoPendingRetry && gameActive && gameId && !dossier.undoRetryPaid[gameId]) {
       dossier.undoRetryPaid[gameId] = true; undoPendingRetry = false;
       awardPoints(5, "retry after undo");
+      coachLine("Tried again! +5");
     }
     scorePosition();
     maybeCalibrate();
@@ -1112,7 +1343,24 @@ function init(opts) {
     renderDossier();
     const nb = $("newGameBtn"); if (nb) nb.addEventListener("click", () => { if (!nb.disabled) startGame("kids"); });
     const hb = $("hintBtn"); if (hb) hb.addEventListener("click", onHint);
-    const mb = $("menuBtn"); if (mb) mb.addEventListener("click", showMenu);
+    const mb = $("menuBtn"); if (mb) mb.addEventListener("click", onMenuButton);
+    const kp = $("keepPlayingBtn"); if (kp) kp.addEventListener("click", () => { const ms = $("menuSheet"); if (ms) ms.style.display = "none"; });
+    const sv = $("saveToMenuBtn"); if (sv) sv.addEventListener("click", () => { saveCurrentGameRecord(); savedGameLive = true; showMenu(); });
+    const ct = $("continueBtn"); if (ct) ct.addEventListener("click", continueSavedGame);
+    const tr = $("tickerReplayBtn"); if (tr) tr.addEventListener("click", () => { const t = $("tickerText") || $("coachTicker"); if (t) speak(String(t.textContent || "").replace(/^Coach: /, "")); });
+    const ogL = $("outOfGamesLessonBtn"); if (ogL) ogL.addEventListener("click", () => { hideOutOfGames(); showMenu(); });
+    const ogC = $("outOfGamesClose"); if (ogC) ogC.addEventListener("click", hideOutOfGames);
+    const pc = $("profileChip"); if (pc) pc.addEventListener("click", openOptions);
+    const oc = $("optionsClose"); if (oc) oc.addEventListener("click", closeOptions);
+    const ps = $("optProfileSelect"); if (ps) ps.addEventListener("change", () => switchProfile(ps.value));
+    const ap = $("optAddProfile"); if (ap) ap.addEventListener("click", addProfile);
+    const pn = $("optProfileName"); if (pn) pn.addEventListener("change", () => { const p = activeProfile(); const v = String(pn.value || "").trim(); if (p && v) { p.name = v; saveProfilesState(); renderProfiles(); } });
+    const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
+    const lk = $("optLockBtn"); if (lk) lk.addEventListener("click", lockDevice);
+    const osb = $("optSoundBtn"); if (osb) osb.addEventListener("click", () => { dossier.muted = !dossier.muted; saveDossier(); const mub = $("muteBtn"); if (mub) mub.textContent = dossier.muted ? "🔇" : "🔊"; renderProfiles(); });
+    const gc = $("gamesChip"); if (gc) gc.addEventListener("click", () => { const gi = $("gamesInfo"); if (gi) { renderWallet(); gi.style.display = gi.style.display === "none" ? "" : "none"; } });
+    initSpeedPicker();
+    renderProfiles();
     const ub = $("undoBtn"); if (ub) ub.addEventListener("click", undoMove);
     const mub = $("muteBtn"); if (mub) { mub.textContent = dossier.muted ? "🔇" : "🔊";
       mub.addEventListener("click", () => { dossier.muted = !dossier.muted; saveDossier(); mub.textContent = dossier.muted ? "🔇" : "🔊"; }); }
@@ -1139,6 +1387,9 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, 
   getTarget: () => targetElo, setScoreLog: (s) => { scoreLog = s; },
   getOffline: () => offlineMode, getGameId: () => gameId, hasToken: () => !!sessionToken,
   getDiag: () => diagEntries.map((e) => e.line),
+  getWallet: () => loadWallet(), gamesLeft, speedName, speechRate, reducedMotion,
+  getProfiles: () => profilesState, getActiveProfileId: () => activeProfileId,
+  switchProfile, addProfile, hasSavedGame, continueSavedGame, renderWallet,
   getLesson: () => currentLesson, isLessonActive: () => lessonActive, levelFor,
   gentleCandidates, awardPoints, LESSONS, stateFromFen,
   finishGame, replayState } };

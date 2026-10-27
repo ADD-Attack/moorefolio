@@ -3,8 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chess Coach for Kids — MooreFolio</title>
-<meta name="description" content="A friendly chess coach for kids: short spoken lessons, then real games against the Coach. It talks out loud, shows moves with colors and arrows, and cheers for trying.">
+<title>Chess Coach: New Player — MooreFolio</title>
+<meta name="description" content="A friendly chess coach for new players: short spoken lessons, then real games against the Coach. It talks out loud, shows moves with colors and arrows, and cheers for trying.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Lexend:wght@400;600&display=swap" rel="stylesheet">
 <style>
   :root{
     --ink:#1d1710; --paper:#f6efe3; --panel:#fffaf0; --line:#d8c9a8;
@@ -13,11 +15,11 @@
   }
   *{box-sizing:border-box}
   body{margin:0;background:var(--paper);color:var(--ink);
-    font-family:Georgia,'Times New Roman',serif;}
+    font-family:'Atkinson Hyperlegible','Lexend',Verdana,Arial,sans-serif;font-size:20px;line-height:1.5}
   header{max-width:1060px;margin:0 auto;padding:22px 16px 4px;text-align:center}
   header h1{margin:0;font-size:34px;letter-spacing:.5px}
   header h1 .rust{color:var(--rust)}
-  header p{margin:6px 0 0;font-style:italic;color:#5c4c36}
+  header p{margin:6px 0 0;color:#5c4c36}
   .layout{max-width:1060px;margin:10px auto 30px;padding:0 16px;
     display:flex;gap:18px;align-items:flex-start;justify-content:center;flex-wrap:wrap}
   .side{width:230px;display:flex;flex-direction:column;gap:14px}
@@ -25,8 +27,8 @@
     box-shadow:0 2px 8px rgba(60,40,10,.08)}
   .panel h3{margin:0;padding:8px 12px;font-size:15px;letter-spacing:.4px;
     border-bottom:1px solid var(--line);color:var(--rust);text-align:center}
-  .panel .body{padding:10px 12px;min-height:44px;font-size:22px;line-height:1.25;word-break:break-all}
-  .panel .body.small{font-size:14px;word-break:normal}
+  .panel .body{padding:10px 12px;min-height:44px;font-size:20px;line-height:1.5;word-break:break-all}
+  .panel .body.small{font-size:20px;word-break:normal}
   #movesBody{font-size:14px;max-height:300px;overflow:auto;word-break:normal}
   #movesBody table{border-collapse:collapse;width:100%}
   #movesBody td{padding:2px 6px}
@@ -34,7 +36,7 @@
   .center{display:flex;flex-direction:column;align-items:center;gap:10px}
   .versus{font-size:20px}
   .versus b{padding:0 6px}
-  #turnLine{font-size:16px;font-style:italic;min-height:20px}
+  #turnLine{font-size:20px;min-height:24px}
   #turnLine .check{color:var(--check);font-weight:bold;font-style:normal}
   #boardWrap{position:relative;border:10px solid #6e4a2f;border-radius:6px;box-shadow:0 6px 24px rgba(60,40,10,.25);
     background:#6e4a2f}
@@ -71,20 +73,20 @@
   #promoModal .card h4{margin:0 0 10px}
   #promoModal .choices{display:flex;gap:8px}
   #promoModal .choices button{font-size:38px;padding:4px 14px}
-  #coachBody{font-size:14px;word-break:normal;max-height:220px;overflow:auto}
+  #coachBody{font-size:20px;word-break:normal;max-height:220px;overflow:auto}
   #coachBody .cline{margin:0 0 8px}
   #coachBody .cline.diag{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;opacity:.7}
   #alertBody{font-size:12px;word-break:normal;max-height:140px;overflow:auto;color:#8a2f23}
-  #reviewBody{font-size:14px;word-break:normal}
+  #reviewBody{font-size:20px;word-break:normal}
   #reviewBody li{margin-bottom:6px}
-  .coachstate{font-style:italic;color:#5c4c36}
+  .coachstate{color:#5c4c36}
   #coachTicker{width:100%;min-height:52px;display:flex;align-items:center;justify-content:center;
     text-align:center;background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--rust);
     border-radius:10px;box-shadow:0 2px 8px rgba(60,40,10,.08);padding:7px 12px;
-    font-size:14px;line-height:1.3}
+    font-size:22px;line-height:1.5}
   .center .panel{width:100%}
   #dossierBody{white-space:pre-line}
-  #modeLine{font-size:14px;font-style:italic;color:#5c4c36;min-height:18px}
+  #modeLine{font-size:18px;color:#5c4c36;min-height:18px}
   #gate{position:fixed;inset:0;background:var(--paper);z-index:40;display:flex;align-items:center;justify-content:center}
   #gate .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;text-align:center;max-width:340px}
   #gate input{font-size:16px;padding:8px;width:100%;margin:10px 0;border:1px solid var(--line);border-radius:6px}
@@ -102,13 +104,38 @@
   #bigNextOverlay .bigmsg{font-size:44px;font-weight:bold;line-height:1.15;margin:0 0 24px}
   #bigNextBtn{font-size:40px;padding:18px 56px;border-radius:16px}
   #bigNextClose{position:absolute;top:4px;right:8px;background:transparent;color:var(--rust);
-    border:none;font-size:30px;line-height:1;padding:8px 12px}
+    border:none;font-size:30px;line-height:1;padding:8px 12px;min-width:48px;min-height:48px}
+
+  .betaPill{font-size:13px;background:var(--rust);color:#fff;border-radius:999px;padding:2px 10px;vertical-align:middle}
+  header{position:relative}
+  .headerChips{position:absolute;top:8px;right:10px;display:flex;gap:8px;z-index:5}
+  .chipBtn{font-size:15px;padding:6px 12px;border-radius:999px}
+  #gamesInfo{position:absolute;top:54px;right:10px;background:var(--panel);border:1px solid var(--line);
+    border-radius:10px;padding:10px 14px;font-size:16px;z-index:6;max-width:330px;text-align:left;line-height:1.5}
+  #levelBarWrap{height:12px;background:#e7dcc2;border-radius:999px;overflow:hidden;margin:4px auto;max-width:420px}
+  #levelBar{height:100%;width:0;background:var(--rust)}
+  #tickerReplayBtn{min-width:44px;min-height:44px;font-size:20px;margin-left:10px;padding:4px 10px}
+  .cline .replayBtn{margin-left:8px;padding:2px 8px;font-size:14px}
+  .annMark{font-family:Arial,sans-serif;font-weight:bold}
+  #optionsDrawer{position:fixed;inset:0;background:rgba(20,12,4,.45);z-index:45;align-items:stretch;justify-content:flex-end}
+  .optSheet{background:var(--panel);width:400px;max-width:100%;height:100%;overflow:auto;padding:18px;text-align:left}
+  .optSheet h3{margin:0} .optSheet h4{margin:18px 0 6px;color:var(--rust)}
+  .optHead{display:flex;justify-content:space-between;align-items:center}
+  .optRow{margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:18px}
+  .optRow select,.optRow input{font-size:16px;padding:6px;max-width:60%}
+  #optionsClose{min-width:48px;min-height:48px}
+  #menuSheet,#outOfGames{position:fixed;inset:0;background:rgba(20,12,4,.45);z-index:44;align-items:center;justify-content:center}
+  #menuSheet .card,#outOfGames .card{background:var(--panel);border:3px solid var(--rust);border-radius:16px;
+    padding:26px 30px;text-align:center;max-width:92vw;font-size:22px}
+  #outOfGamesClose{min-width:48px;min-height:48px}
 </style>
 </head>
 <body>
 <header>
-  <h1><span class="rust">♞</span> Chess Coach <span style="font-size:15px">(beta)</span></h1>
+  <h1><span class="rust">♞</span> Chess Coach <span class="betaPill">beta</span></h1>
   <p>You vs. the Coach — it plays, it teaches, it remembers. <span id="branchLine"></span></p>
+  <div class="headerChips"><button id="gamesChip" class="chipBtn" type="button">3 games</button><button id="profileChip" class="chipBtn" type="button">Player</button></div>
+  <div id="gamesInfo" style="display:none"></div>
 </header>
 
 <div class="layout">
@@ -127,34 +154,20 @@
     <div class="versus">♔ <b id="whiteName">White</b> vs. <b id="blackName">Black</b> ♚</div>
     <div id="turnLine"></div>
     <div id="boardWrap"><div id="board"></div><svg id="annotSvg" viewBox="0 0 800 800" style="position:absolute;inset:0;width:100%;height:100%;pointer-events:none;z-index:7"></svg></div>
-    <div id="coachTicker" aria-live="polite">Coach is getting ready…</div>
+    <div id="coachTicker" aria-live="polite"><span id="tickerText">Coach is getting ready…</span><button id="tickerReplayBtn" type="button" aria-label="Hear that again">🔊</button></div>
     <div class="controls">
       <button id="menuBtn" style="font-size:22px;padding:12px 22px">🏠 Menu</button>
-      <button id="undoBtn" style="font-size:22px;padding:12px 22px">↩ Undo</button>
+      <button id="undoBtn" style="font-size:22px;padding:12px 22px">↩ Try again</button>
       <button id="muteBtn" style="font-size:22px;padding:12px 22px">🔊</button>
       <button id="hintBtn" class="ghost">Hint</button>
     </div>
-    <div class="controls">
-      <button id="resetBtn">Reset Game</button>
-      <button id="flipBtn" class="ghost">Flip Board</button>
-      <button id="soundBtn" class="ghost">Sound: On</button>
-    </div>
     <div class="panel"><h3>Coach</h3><div class="body" id="coachBody"><span class="coachstate" id="coachState">Coach is getting ready…</span></div></div>
+    <div class="panel" id="reviewPanel" style="display:none"><h3>Review Session</h3><div class="body" id="reviewBody"></div></div>
     <div id="modeLine"></div>
   </div>
 
-  <div class="side">
-    <div class="panel"><h3>Moves</h3><div class="body" id="movesBody"></div></div>
-    <div class="panel" id="reviewPanel" style="display:none"><h3>Review Session</h3><div class="body" id="reviewBody"></div></div>
-  </div>
-
-  <div class="side">
-    <div class="panel"><h3>Your Dossier</h3><div class="body small" id="dossierBody"></div></div>
-    <div class="panel"><h3>Failsafe Log (testing)</h3><div class="body" id="alertBody">No alerts.</div></div>
-  </div>
 </div>
 
-<footer>A same-computer chess board in the spirit of the classic Brasee single-client page — rebuilt as a single self-contained file for moorefolio.com. Game state lives only in this browser tab.</footer>
 
 <div id="promoModal"><div class="card">
   <h4>Promote to:</h4>
@@ -440,7 +453,7 @@ function render(inCheck){
   // moves
   let rows='';
   for(let n=0;n<history.length;n+=2) rows+='<tr><td>'+(n/2+1)+'.</td><td>'+history[n]+'</td><td>'+(history[n+1]||'')+'</td></tr>';
-  document.getElementById('movesBody').innerHTML='<table>'+rows+'</table>';
+  const mbEl=document.getElementById('movesBody'); if(mbEl) mbEl.innerHTML='<table>'+rows+'</table>';
   // turn line
   const tl=document.getElementById('turnLine');
   if(gameOver){
@@ -517,19 +530,18 @@ function playThock(capture){
     src.start();
   }catch(_){ }
 }
-document.getElementById('resetBtn').addEventListener('click',reset);
-document.getElementById('flipBtn').addEventListener('click',()=>{ flipped=!flipped; render(); });
-document.getElementById('soundBtn').addEventListener('click',function(){
-  soundOn=!soundOn;
-  this.textContent = soundOn ? 'Sound: On' : 'Sound: Off';
-  if(soundOn) ensureAudio();
-});
+// New Player mode has no Reset/Flip/Sound row (Ticket 006 (b)2): one-tap
+// Reset next to big friendly buttons is a trap, Flip/Sound duplicate the
+// mute button and Options. Sound state lives on the 🔊 button.
 reset();
 </script>
 <div id="kidsMenu" style="position:fixed;inset:0;background:var(--paper);z-index:30;display:flex;align-items:center;justify-content:center;overflow:auto">
 <div class="card" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;text-align:center;max-width:560px;width:92%">
-  <h2 style="margin:0 0 4px">♞ Chess Coach for Kids!</h2>
-  <div id="pointsLine" style="font-size:20px;margin:6px 0 14px">Points: 0 • Level 1</div>
+  <h2 style="margin:0 0 4px">♞ Let's learn chess</h2>
+  <div id="pointsLine" style="font-size:24px;margin:6px 0 4px">Level 1</div>
+  <div id="levelBarWrap"><div id="levelBar"></div></div>
+  <div id="levelNextLine" style="font-size:17px;margin:4px 0 12px"></div>
+  <button id="continueBtn" style="display:none;font-size:22px;padding:12px 24px;margin:0 0 14px;width:100%">Continue your game ▶</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     <button class="lessonBtn" id="lessonBtn-pawn" style="font-size:24px;padding:18px 8px">Meet the Pawn ♟</button>
     <button class="lessonBtn" id="lessonBtn-rook" style="font-size:24px;padding:18px 8px">Rook ♜</button>
@@ -537,16 +549,43 @@ reset();
     <button class="lessonBtn" id="lessonBtn-knight" style="font-size:24px;padding:18px 8px">Knight ♞</button>
     <button class="lessonBtn" id="lessonBtn-queen" style="font-size:24px;padding:18px 8px">Queen ♛</button>
     <button class="lessonBtn" id="lessonBtn-king" style="font-size:24px;padding:18px 8px">King ♚</button>
-    <button class="lessonBtn" id="lessonBtn-capturing" style="font-size:24px;padding:18px 8px">Capturing! ⚔</button>
+    <button class="lessonBtn" id="lessonBtn-capturing" style="font-size:24px;padding:18px 8px">Capturing ⚔</button>
     <button class="lessonBtn" id="lessonBtn-king-safety" style="font-size:24px;padding:18px 8px">Keep Your King Safe 🛡</button>
   </div>
-  <button id="newGameBtn" style="font-size:26px;padding:16px 28px;margin-top:16px;width:100%">Play a Real Game! 🏆</button>
-  <div id="unlockHint" style="font-size:15px;margin-top:8px">Finish all 8 lessons to unlock!</div>
+  <button id="newGameBtn" style="font-size:26px;padding:16px 28px;margin-top:16px;width:100%">Play a full game 🏆</button>
+  <div id="gameCostLine" style="font-size:17px;margin-top:6px"></div>
+  <div id="unlockHint" style="font-size:17px;margin-top:8px">Opens after the 8 lessons</div>
   <div id="voiceBox" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;font-size:15px">
     <label for="voiceSelect">Coach voice:</label><br>
     <select id="voiceSelect" style="font-size:16px;padding:6px;max-width:100%;margin-top:6px"></select>
-    <button id="voiceSampleBtn" class="ghost" style="margin-left:8px">▶ Hear it</button>
+    <button id="voiceSampleBtn" class="ghost" style="margin-left:8px">▶ Hear it</button><br>
+    <label for="speedSelect" style="display:inline-block;margin-top:10px">Coach speed:</label><br>
+    <select id="speedSelect" style="font-size:16px;padding:6px;margin-top:6px"><option value="slow">Slow</option><option value="normal">Normal</option><option value="quick">Quick</option></select>
   </div>
+</div></div>
+<div id="optionsDrawer" style="display:none"><div class="optSheet">
+  <div class="optHead"><h3>Options</h3><button id="optionsClose" type="button">✕</button></div>
+  <div class="optRow"><label for="optProfileSelect">Profile</label><select id="optProfileSelect"></select></div>
+  <div class="optRow"><span></span><button id="optAddProfile" type="button" class="ghost">+ Add profile</button></div>
+  <div class="optRow"><label for="optProfileName">Name</label><input id="optProfileName" type="text"></div>
+  <div class="optRow"><span>Mode</span><span id="optModeTag"></span></div>
+  <div class="optRow"><label for="optVoiceSelect">Coach voice</label><select id="optVoiceSelect"></select></div>
+  <div class="optRow"><label for="optSpeedSelect">Coach speed</label><select id="optSpeedSelect"><option value="slow">Slow</option><option value="normal">Normal</option><option value="quick">Quick</option></select></div>
+  <div class="optRow"><span>Sound</span><button id="optSoundBtn" type="button" class="ghost">Sound: On</button></div>
+  <h4>Settings</h4>
+  <div class="optRow"><span id="optPlanLine">Plan: Beta — accounts and billing arrive with the full launch.</span></div>
+  <div class="optRow"><span id="optPrivacyLine"></span></div>
+  <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
+</div></div>
+<div id="menuSheet" style="display:none"><div class="card">
+  <p>Your game is still here.</p>
+  <button id="keepPlayingBtn" type="button">Keep playing</button>
+  <button id="saveToMenuBtn" type="button" class="ghost">Save and go to menu</button>
+</div></div>
+<div id="outOfGames" style="display:none"><div class="card">
+  <p id="outOfGamesMsg">That's all the games for today. More tomorrow! Try a lesson again?</p>
+  <button id="outOfGamesLessonBtn" type="button">Go to lessons</button>
+  <button id="outOfGamesClose" type="button" class="ghost">✕</button>
 </div></div>
 <div id="gate"><div class="card">
   <h3 style="margin:0;color:var(--rust)">♞ Chess Coach — private beta</h3>
