@@ -53,6 +53,11 @@ try {
   if (rawAcct) { const d = JSON.parse(rawAcct); if (d && d.token && d.email) accountState = d; }
 } catch (_) {}
 let serverCaps = null;     // last caps view from the gate (signed in only)
+// Phase 3: plan display names for the Options account block — plain
+// names, no signage about who a plan is "for".
+const PLAN_NAMES = { coach: "Coach", pro: "Pro", byok_weekly: "BYOK", lapsed: "Paused", none: "No plan" };
+function planName(id) { return PLAN_NAMES[id] || "Coach"; }
+let acctBillingNote = "";  // last billing action's plain-language result
 let pendingCharge = false; // the next account session spends a game
 function signedIn() { return !!accountState; }
 // ---------- local profiles (Ticket 006 Phase 1) ----------
@@ -77,7 +82,7 @@ function loadProfilesState() {
   let s = null;
   try { s = JSON.parse(localStorage.getItem(profilesStorageKey()) || "null"); } catch (_) {}
   if (!s || !Array.isArray(s.profiles) || !s.profiles.length)
-    s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }] };
+    s = { activeId: "default", profiles: [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL, coach: "sol" }] };
   if (!s.profiles.some((p) => p.id === s.activeId)) s.activeId = s.profiles[0].id;
   return s;
 }
@@ -134,7 +139,7 @@ function switchProfile(id) {
 }
 function addProfile() {
   if (signedIn()) { addProfileSignedIn(); return; }
-  const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL };
+  const p = { id: "p" + Date.now().toString(36), name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL, coach: "sol" };
   profilesState.profiles.push(p); saveProfilesState();
   switchProfile(p.id);
 }
@@ -142,7 +147,7 @@ async function addProfileSignedIn() {
   try {
     const made = await acctApi("/v1/profiles", { method: "POST", headers: acctAuthHeaders(),
       body: JSON.stringify({ name: "Player " + (profilesState.profiles.length + 1), mode: MODE_LABEL }) });
-    profilesState.profiles = made.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
+    profilesState.profiles = made.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" }));
     saveProfilesState();
     switchProfile(made.profile.id);
   } catch (_) { /* stay on the current profile; a later sync repairs the list */ }
@@ -170,7 +175,7 @@ async function deleteProfileSignedIn() {
     const data = await acctApi("/v1/profiles/delete", { method: "POST", headers: acctAuthHeaders(),
       body: JSON.stringify({ profile_id: victim }) });
     try { localStorage.removeItem(profileDossierKey(victim)); } catch (_) {}
-    profilesState.profiles = data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode }));
+    profilesState.profiles = data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" }));
     activeProfileId = data.active_profile_id || (profilesState.profiles[0] && profilesState.profiles[0].id);
     profilesState.activeId = activeProfileId;
     saveProfilesState();
@@ -224,13 +229,26 @@ function consumeGame() {
 }
 function renderWallet() {
   if (signedIn() && serverCaps) {
+    const chipS = $("gamesChip"), clS = $("gameCostLine"), giS = $("gamesInfo");
+    if (serverCaps.unlimited) {
+      // BYOK posture (Phase 3): games run on the account's own key —
+      // no daily counter at all. (Key handling itself is Phase 4.)
+      if (chipS) chipS.textContent = "∞ your key";
+      if (clS) clS.textContent = "Your key · no daily limit";
+      if (giS) giS.textContent = "Games on this account run on your own key — no daily limit. " +
+        "Platform safety limits still apply. · Shared by this account.";
+      return;
+    }
     const left = serverCaps.left;
-    const chipS = $("gamesChip"); if (chipS) chipS.textContent = left + " games";
-    const clS = $("gameCostLine"); if (clS) clS.textContent = "Uses 1 game · " + left + " left";
-    const giS = $("gamesInfo");
-    if (giS) giS.textContent = "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
-      " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
-      fmtNextCredit() + " · Shared by this account.";
+    if (chipS) chipS.textContent = left + " games";
+    if (clS) clS.textContent = (serverCaps.daily_credit || 0) === 0
+      ? "No plan right now — lessons are still free"
+      : "Uses 1 game · " + left + " left";
+    if (giS) giS.textContent = (serverCaps.daily_credit || 0) === 0
+      ? "No active plan on this account right now. Lessons are still free, always."
+      : "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
+        " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
+        fmtNextCredit() + " · Shared by this account.";
     return;
   }
   const left = gamesLeft();
@@ -513,7 +531,7 @@ async function acctApi(path, opts) {
 function acctAuthHeaders() { return { "Content-Type": "application/json", "Authorization": "Bearer " + accountState.token }; }
 function storeAccount() { try { sessionStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountState)); } catch (_) {} }
 function clearAccount() {
-  accountState = null; serverCaps = null;
+  accountState = null; serverCaps = null; acctBillingNote = "";
   try { sessionStorage.removeItem(ACCOUNT_KEY); } catch (_) {}
 }
 async function refreshCaps() {
@@ -545,7 +563,7 @@ async function syncProfilesOnSignIn(serverProfiles, activeId) {
     for (const lp of profilesState.profiles) {
       try {
         const made = await acctApi("/v1/profiles", { method: "POST", headers: acctAuthHeaders(),
-          body: JSON.stringify({ name: lp.name, mode: lp.mode || MODE_LABEL }) });
+          body: JSON.stringify({ name: lp.name, mode: lp.mode || MODE_LABEL, coach: lp.coach === "astra" ? "astra" : "sol" }) });
         try {
           const rawD = localStorage.getItem(profileDossierKey(lp.id));
           if (rawD && !localStorage.getItem(profileDossierKey(made.profile.id)))
@@ -558,7 +576,7 @@ async function syncProfilesOnSignIn(serverProfiles, activeId) {
   if (!list.length) list = [{ id: "default", name: DEFAULT_PROFILE_NAME, mode: MODE_LABEL }];
   const keep = list.some((p) => p.id === activeProfileId) ? activeProfileId
     : (activeId && list.some((p) => p.id === activeId) ? activeId : list[0].id);
-  profilesState = { activeId: keep, profiles: list.map((p) => ({ id: p.id, name: p.name, mode: p.mode })) };
+  profilesState = { activeId: keep, profiles: list.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" })) };
   activeProfileId = keep;
   saveProfilesState();
   DOSSIER_KEY = profileDossierKey(keep);
@@ -747,7 +765,7 @@ async function bootAccountSync() {
     serverCaps = data.caps || serverCaps;
     if (Array.isArray(data.profiles) && data.profiles.length) {
       profilesState = { activeId: data.active_profile_id || data.profiles[0].id,
-        profiles: data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode })) };
+        profiles: data.profiles.map((p) => ({ id: p.id, name: p.name, mode: p.mode, coach: p.coach === "astra" ? "astra" : "sol" })) };
       if (!profilesState.profiles.some((p) => p.id === profilesState.activeId))
         profilesState.activeId = profilesState.profiles[0].id;
       activeProfileId = profilesState.activeId;
@@ -775,7 +793,9 @@ function renderAccount() {
   const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
   const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
   const pl = $("optPlanLine");
-  if (pl) pl.textContent = accountState ? "Plan: Coach · " + accountState.email : PLAN_LINE_SIGNED_OUT;
+  if (pl) pl.textContent = accountState ? "Plan: " + planName(accountState.plan) + " · " + accountState.email : PLAN_LINE_SIGNED_OUT;
+  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState ? "" : "none";
+  const bn = $("optBillingNote"); if (bn) bn.textContent = acctBillingNote;
   // Phase 2b: passkey controls appear only when this browser can do
   // WebAuthn; otherwise one plain line explains why, and the password
   // form carries on alone.
@@ -784,6 +804,21 @@ function renderAccount() {
   if (note) note.textContent = supported ? "" : "Passkeys aren't available in this browser — your password still works.";
   const psb = $("optPasskeySignInBtn"); if (psb) psb.style.display = supported ? "" : "none";
   renderPasskeys();
+}
+// ---------- Phase 3: billing ----------
+async function manageBilling() {
+  try {
+    const data = await acctApi("/v1/billing/portal", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
+    if (data && data.url) {
+      if (typeof window !== "undefined" && typeof window.open === "function") window.open(data.url, "_blank");
+      acctBillingNote = "Billing opened in a new tab.";
+    }
+  } catch (e) {
+    acctBillingNote = e && e.status === 503 ? "Billing isn't open yet — it arrives with the full launch."
+      : e && e.status === 409 ? "No billing account yet — billing starts with your first plan."
+      : "Billing didn't open just now — try again in a bit.";
+  }
+  renderAccount();
 }
 // ---------- relay: turn / review ----------
 async function fetchWithTimeout(url, opts, ms) {
@@ -1728,6 +1763,7 @@ function init(opts) {
     const sib = $("optSignInBtn"); if (sib) sib.addEventListener("click", () => { accountAuth("login"); });
     const sub = $("optSignUpBtn"); if (sub) sub.addEventListener("click", () => { accountAuth("signup"); });
     const sob = $("optSignOutBtn"); if (sob) sob.addEventListener("click", () => { accountSignOut(); });
+    const mbb = $("optManageBilling"); if (mbb) mbb.addEventListener("click", () => { manageBilling(); });
     const pkb = $("optPasskeySignInBtn"); if (pkb) pkb.addEventListener("click", () => { passkeySignIn(); });
     const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
     renderAccount();
@@ -1771,6 +1807,8 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, 
   accountAuth, accountSignOut, signedIn,
   passkeySignIn, addPasskey, removePasskey, waSupported,
   getPasskeys: () => passkeyList,
+  getAcctPlan: () => (accountState ? accountState.plan : null),
+  getBillingNote: () => acctBillingNote,
   getLesson: () => currentLesson, isLessonActive: () => lessonActive, levelFor,
   gentleCandidates, awardPoints, LESSONS, stateFromFen,
   finishGame, replayState } };
