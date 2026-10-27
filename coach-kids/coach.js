@@ -1910,3 +1910,5 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, 
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
 if (typeof module !== "undefined" && module.exports) module.exports = CoachUI;
+
+/* pipeline proof — Ticket 006 Phase 5 auto-deploy marker (comment only, no behavior change) */
