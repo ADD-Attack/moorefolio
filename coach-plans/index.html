@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Chess Coach — Plans</title>
+<style>
+  :root{ --cream:#fffaf0; --paper:#fffdf7; --ink:#2b241a; --muted:#6f6250; --line:#e7dcc4; --accent:#8a5a1e; --accent-dark:#6f4511; --gold:#f3d98b; --band:#f7ecd2; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--cream); color:var(--ink); font-family:Georgia,'Times New Roman',serif; font-size:17px; line-height:1.55; }
+  a{ color:var(--accent-dark); }
+  header{ display:flex; justify-content:space-between; align-items:center; gap:16px; max-width:1020px; margin:0 auto; padding:20px 20px 4px; }
+  .wordmark{ font-size:24px; font-weight:bold; letter-spacing:.2px; }
+  header a{ font-size:15px; }
+  main{ max-width:1020px; margin:0 auto; padding:10px 20px 48px; }
+  .hero{ text-align:center; padding:26px 0 8px; }
+  .hero h1{ font-size:34px; line-height:1.25; margin:0 auto 22px; max-width:720px; }
+  .demo{ display:inline-block; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px 16px 10px; }
+  .board{ display:grid; grid-template-columns:repeat(8,40px); grid-template-rows:repeat(8,40px); margin:0 auto; border:2px solid #7a5c33; width:max-content; }
+  .sq{ display:flex; align-items:center; justify-content:center; font-size:28px; line-height:1; }
+  .sq.l{ background:#f0d9b5; }
+  .sq.d{ background:#b58863; }
+  .demo-line{ min-height:28px; font-style:italic; margin:12px 4px 4px; font-size:17px; }
+  .btn{ display:inline-block; background:var(--accent); color:#fff; border:0; border-radius:8px; padding:12px 22px; font-size:17px; font-family:inherit; cursor:pointer; text-decoration:none; }
+  .btn:hover{ background:var(--accent-dark); }
+  .hero .btn{ margin-top:18px; }
+  section{ margin-top:44px; }
+  h2{ font-size:26px; margin:0 0 16px; text-align:center; }
+  .beats{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .beat, .way-card, .plan-card{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:20px; }
+  .beat h3, .way-card h3{ margin:0 0 8px; font-size:19px; }
+  .beat p, .way-card p{ margin:0; color:var(--muted); }
+  .ways{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .ways-note{ text-align:center; margin:16px 0 0; font-size:18px; }
+  .billing-toggle{ display:flex; justify-content:center; gap:8px; align-items:center; margin-bottom:20px; }
+  .toggle-btn{ background:transparent; border:1px solid var(--accent); color:var(--accent-dark); border-radius:999px; padding:8px 18px; font-size:16px; font-family:inherit; cursor:pointer; }
+  .toggle-btn.active{ background:var(--accent); color:#fff; }
+  .toggle-btn .save{ font-size:13px; background:var(--gold); color:var(--ink); border-radius:999px; padding:2px 8px; margin-left:6px; }
+  .toggle-btn.active .save{ background:#fff; }
+  .plan-cards{ display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+  .plan-card{ position:relative; text-align:center; }
+  .plan-card h3{ margin:0 0 6px; font-size:23px; }
+  .badge{ display:inline-block; background:var(--gold); color:var(--ink); border-radius:999px; padding:3px 12px; font-size:14px; margin-bottom:10px; }
+  .price{ font-size:34px; margin:6px 0 12px; }
+  .price .suffix{ font-size:18px; color:var(--muted); }
+  .plan-copy{ color:var(--muted); min-height:78px; }
+  .tagline{ color:var(--ink); font-style:italic; margin:0 0 16px; }
+  .billing-note{ text-align:center; min-height:26px; margin:18px 0 0; font-size:16px; }
+  .byok-band{ background:var(--band); border:1px solid var(--line); border-radius:12px; padding:18px 22px; margin-top:22px; text-align:center; }
+  .byok-band p{ margin:0 0 12px; }
+  .byok-band details{ margin-top:14px; text-align:left; }
+  .byok-band summary{ cursor:pointer; font-weight:bold; }
+  .family{ text-align:center; background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:22px; }
+  .family p{ margin:0; font-size:18px; }
+  .faq-item{ background:var(--paper); border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin-bottom:12px; }
+  .faq-item h3{ margin:0 0 6px; font-size:18px; }
+  .faq-item p{ margin:0; color:var(--muted); }
+  .test-code{ background:var(--band); border:1px solid var(--line); border-radius:12px; padding:22px; text-align:center; }
+  .test-code p{ margin:0 0 14px; font-size:18px; }
+  .test-code input{ font-size:16px; font-family:inherit; padding:11px 12px; border:1px solid var(--line); border-radius:8px; min-width:220px; }
+  .redeem-note{ min-height:24px; margin:12px 0 0; }
+  footer{ text-align:center; color:var(--muted); font-size:14px; padding:0 20px 32px; }
+  @media (max-width:720px){ .beats, .ways, .plan-cards{ grid-template-columns:1fr; } .board{ grid-template-columns:repeat(8,34px); grid-template-rows:repeat(8,34px); } .sq{ font-size:23px; } .hero h1{ font-size:28px; } }
+</style>
+</head>
+<body>
+<header>
+  <div class="wordmark">♞ Chess Coach</div>
+  <a href="#test-code">Have a test code?</a>
+</header>
+<main>
+
+  <div class="hero">
+    <h1>A chess coach that plays you, talks you through it, and remembers you.</h1>
+    <div class="demo">
+      <div class="board" id="demoBoard" aria-label="A short demo game">
+        <div class="sq l" id="demoSq0">♜</div><div class="sq d" id="demoSq1">♞</div><div class="sq l" id="demoSq2">♝</div><div class="sq d" id="demoSq3">♛</div><div class="sq l" id="demoSq4">♚</div><div class="sq d" id="demoSq5">♝</div><div class="sq l" id="demoSq6">♞</div><div class="sq d" id="demoSq7">♜</div>
+        <div class="sq d" id="demoSq8">♟</div><div class="sq l" id="demoSq9">♟</div><div class="sq d" id="demoSq10">♟</div><div class="sq l" id="demoSq11">♟</div><div class="sq d" id="demoSq12">♟</div><div class="sq l" id="demoSq13">♟</div><div class="sq d" id="demoSq14">♟</div><div class="sq l" id="demoSq15">♟</div>
+        <div class="sq l" id="demoSq16"></div><div class="sq d" id="demoSq17"></div><div class="sq l" id="demoSq18"></div><div class="sq d" id="demoSq19"></div><div class="sq l" id="demoSq20"></div><div class="sq d" id="demoSq21"></div><div class="sq l" id="demoSq22"></div><div class="sq d" id="demoSq23"></div>
+        <div class="sq d" id="demoSq24"></div><div class="sq l" id="demoSq25"></div><div class="sq d" id="demoSq26"></div><div class="sq l" id="demoSq27"></div><div class="sq d" id="demoSq28"></div><div class="sq l" id="demoSq29"></div><div class="sq d" id="demoSq30"></div><div class="sq l" id="demoSq31"></div>
+        <div class="sq l" id="demoSq32"></div><div class="sq d" id="demoSq33"></div><div class="sq l" id="demoSq34"></div><div class="sq d" id="demoSq35"></div><div class="sq l" id="demoSq36"></div><div class="sq d" id="demoSq37"></div><div class="sq l" id="demoSq38"></div><div class="sq d" id="demoSq39"></div>
+        <div class="sq d" id="demoSq40"></div><div class="sq l" id="demoSq41"></div><div class="sq d" id="demoSq42"></div><div class="sq l" id="demoSq43"></div><div class="sq d" id="demoSq44"></div><div class="sq l" id="demoSq45"></div><div class="sq d" id="demoSq46"></div><div class="sq l" id="demoSq47"></div>
+        <div class="sq l" id="demoSq48">♙</div><div class="sq d" id="demoSq49">♙</div><div class="sq l" id="demoSq50">♙</div><div class="sq d" id="demoSq51">♙</div><div class="sq l" id="demoSq52">♙</div><div class="sq d" id="demoSq53">♙</div><div class="sq l" id="demoSq54">♙</div><div class="sq d" id="demoSq55">♙</div>
+        <div class="sq d" id="demoSq56">♖</div><div class="sq l" id="demoSq57">♘</div><div class="sq d" id="demoSq58">♗</div><div class="sq l" id="demoSq59">♕</div><div class="sq d" id="demoSq60">♔</div><div class="sq l" id="demoSq61">♗</div><div class="sq d" id="demoSq62">♘</div><div class="sq l" id="demoSq63">♖</div>
+      </div>
+      <p class="demo-line" id="demoLine">Watch a short game.</p>
+    </div>
+    <div><a class="btn" href="/coach-you/">Start playing</a></div>
+  </div>
+
+  <section>
+    <h2>How it works</h2>
+    <div class="beats">
+      <div class="beat"><h3>It plays real moves</h3><p>A chess engine checks every one, so every move it makes is legal and grounded.</p></div>
+      <div class="beat"><h3>It explains as you go</h3><p>Short, plain lines while you play — why it moved, what it sees, and what to watch for next.</p></div>
+      <div class="beat"><h3>It remembers your games</h3><p>Your past games shape the next ones, so the coaching follows you instead of starting over.</p></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Two ways to play</h2>
+    <div class="ways">
+      <div class="way-card"><h3>New Player</h3><p>Never played? 8 short lessons, a coach that speaks every step. Any age.</p></div>
+      <div class="way-card"><h3>Standard</h3><p>Know the game? Rated games and a review after each.</p></div>
+    </div>
+    <p class="ways-note">One account, a profile for everyone in the house.</p>
+  </section>
+
+  <section id="plans">
+    <h2>Plans</h2>
+    <div class="billing-toggle">
+      <button type="button" class="toggle-btn active" id="toggleMonthly">Monthly</button>
+      <button type="button" class="toggle-btn" id="toggleAnnual">Annual <span class="save">2 months free</span></button>
+    </div>
+    <div class="plan-cards" id="planCards">
+      <div class="plan-card">
+        <h3>Coach</h3>
+        <p class="price"><span id="coachPrice">$12</span><span class="suffix" id="coachSuffix">/mo</span></p>
+        <p class="plan-copy">Sol, a patient coach for every level · 3 new games a day · Skip a day, they wait: up to 8 ready · Reviews by Sol.</p>
+        <button type="button" class="btn" id="chooseCoachBtn" data-plan="coach">Choose Coach</button>
+      </div>
+      <div class="plan-card">
+        <h3>Pro</h3>
+        <span class="badge">Deeper coaching</span>
+        <p class="price"><span id="proPrice">$29</span><span class="suffix" id="proSuffix">/mo</span></p>
+        <p class="plan-copy">Everything in Coach, plus Astra · 10 a day, up to 17 ready · Choose Sol or Astra · Reviews by Astra</p>
+        <p class="tagline">Players around 1900 and up tend to get the most from Astra's deeper feedback.</p>
+        <button type="button" class="btn" id="chooseProBtn" data-plan="pro">Choose Pro</button>
+      </div>
+    </div>
+    <p class="billing-note" id="billingNote"></p>
+
+    <div class="byok-band" id="byokBand">
+      <p>Already pay for an AI model like Claude or ChatGPT? Bring your own key: $5/week (≈$21.67/mo), no daily game limit. On its own or added to any plan.</p>
+      <button type="button" class="btn" id="byokBtn" data-plan="byok_weekly">Bring your own key</button>
+      <details>
+        <summary>What's an API key?</summary>
+        <p>An API key is a private code from a model provider. Give it to Chess Coach and your games run on your own account with that provider, billed to you there instead of to us. Keep it private, like a password. Not sure? You don't need this.</p>
+      </details>
+    </div>
+  </section>
+
+  <section class="family">
+    <h2>Family &amp; privacy</h2>
+    <p>Accounts belong to adults. New Player profiles store a display name only. No ads. No chat with strangers. Ever.</p>
+  </section>
+
+  <section>
+    <h2>Questions</h2>
+    <div class="faq-item">
+      <h3>Can I cancel anytime?</h3>
+      <p>Yes — cancel anytime, in a couple of clicks, and your plan simply runs to the end of the period you already paid for. No fee for stopping, and you can come back later.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What happens to games I don't use?</h3>
+      <p>If you skip a day, skipped games wait — up to 8 ready on Coach, 17 on Pro. A quiet week does not waste them; they are there when you sit back down.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Sol or Astra — what's the difference?</h3>
+      <p>Sol is a patient coach for every level, clear and steady. Astra goes deeper: longer lines, finer points, and sharper feedback on close positions. Both play through the same engine-checked moves.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Who reviews my games?</h3>
+      <p>The model your plan uses — Sol on Coach, Astra on Pro, your own model with BYOK.</p>
+    </div>
+    <div class="faq-item">
+      <h3>Can I share it with my children?</h3>
+      <p>Yes. Profiles live under one account, so each person in the house gets their own profile, games, and progress — including a New Player profile for someone just starting.</p>
+    </div>
+    <div class="faq-item">
+      <h3>What happens to my key with BYOK?</h3>
+      <p>Your keys are stored on our servers, never in your browser. Chess Coach uses your key only to run your games and reviews, and you can remove it from your account settings at any time.</p>
+    </div>
+  </section>
+
+  <section class="test-code" id="test-code">
+    <h2>Test codes</h2>
+    <p>Got a test code? Play free for 7 days. Create an account before it ends to keep your rating, dossier and games.</p>
+    <input type="text" id="testCodeInput" placeholder="Enter your test code" autocomplete="off">
+    <button type="button" class="btn" id="redeemBtn">Redeem</button>
+    <p class="redeem-note" id="redeemNote"></p>
+  </section>
+
+</main>
+<footer>Chess Coach</footer>
+<script src="plans.js"></script>
+</body>
+</html>
