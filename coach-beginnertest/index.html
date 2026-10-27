@@ -580,9 +580,15 @@ reset();
   <div class="optRow"><label for="optAcctEmail">Email</label><input id="optAcctEmail" type="email" autocomplete="email"></div>
   <div class="optRow"><label for="optAcctPw">Password</label><input id="optAcctPw" type="password" autocomplete="current-password"></div>
   <div class="optRow"><span></span><span><button id="optSignInBtn" type="button" class="ghost">Sign in</button> <button id="optSignUpBtn" type="button" class="ghost">Create account</button></span></div>
+  <div class="optRow"><span></span><button id="optPasskeySignInBtn" type="button" class="ghost">Sign in with a passkey</button></div>
   <div class="optRow"><span id="optAcctMsg"></span></div>
   </div>
   <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost" style="display:none">Sign out</button></div>
+  <div id="optPasskeyManage" style="display:none">
+  <div class="optRow"><span>Passkeys</span><span id="optPasskeyList">None yet</span></div>
+  <div class="optRow"><span></span><button id="optAddPasskeyBtn" type="button" class="ghost">Add a passkey</button></div>
+  </div>
+  <div class="optRow"><span id="optPasskeyNote"></span></div>
   <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
 </div></div>
 <div id="menuSheet" style="display:none"><div class="card">
