@@ -563,9 +563,14 @@ reset();
   <div class="optRow"><span id="optBillingNote"></span></div>
   <div id="optByokSection">
   <div class="optRow"><span>Your own AI key (optional)</span><span id="optByokState">No key saved</span></div>
+  <div id="optByokInactive">
+  <div class="optRow"><span>BYOK — $5/week, on its own or added to any plan</span><span><button id="optByokPlansBtn" type="button" class="ghost">See plans</button></span></div>
+  </div>
+  <div id="optByokForm">
   <div class="optRow"><label for="optByokProvider">Provider</label><select id="optByokProvider"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option></select></div>
   <div class="optRow"><label for="optByokModel">Model</label><select id="optByokModel"></select></div>
   <div class="optRow"><label for="optByokKey">API key</label><input id="optByokKey" type="password" autocomplete="off" placeholder="Paste your key"></div>
+  </div>
   <div class="optRow"><span></span><span><button id="optByokSaveBtn" type="button" class="ghost">Save key</button> <button id="optByokTestBtn" type="button" class="ghost">Test key</button> <button id="optByokRemoveBtn" type="button" class="ghost" style="display:none">Remove key</button></span></div>
   <div class="optRow"><span id="optByokNote">Stored on our servers, never in this browser. Games on your key don't use your plan's games.</span></div>
   </div>

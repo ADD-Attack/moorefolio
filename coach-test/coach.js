@@ -60,6 +60,7 @@ let acctBillingNote = "";  // last billing action's plain-language result
 let acctCoachSeat = null;  // seat of the current account game ("sol"|"astra"|"kids"|"byok"), from /v1/account/session
 let byokState = null;      // BYOK summary from the gate (never the key itself)
 let byokModels = null;     // curated model lists from the gate
+let byokPaid = false;      // BYOK paid state (the gate's byok_addon slot) — a stored key alone activates nothing
 let pendingCharge = false; // the next account session spends a game
 function signedIn() { return !!accountState; }
 // ---------- local profiles (Ticket 006 Phase 1) ----------
@@ -452,7 +453,7 @@ function acctAuthHeaders() { return { "Content-Type": "application/json", "Autho
 function storeAccount() { try { sessionStorage.setItem(ACCOUNT_KEY, JSON.stringify(accountState)); } catch (_) {} }
 function clearAccount() {
   accountState = null; serverCaps = null; acctBillingNote = ""; acctCoachSeat = null;
-  byokState = null; byokModels = null;
+  byokState = null; byokModels = null; byokPaid = false;
   try { sessionStorage.removeItem(ACCOUNT_KEY); } catch (_) {}
 }
 // Phase 4: one adoption path for every way an account session
@@ -461,8 +462,10 @@ function clearAccount() {
 function adoptAccount(data) {
   const a = data.account || {};
   accountState = { token: data.token, exp: data.exp, email: a.email || null, plan: a.plan,
+    base_plan: a.base_plan || null, byok_addon: a.byok_addon || null,
     guest: !!a.guest, guest_days_left: (typeof a.guest_days_left === "number" ? a.guest_days_left : null),
     guest_expires_at: a.guest_expires_at || null };
+  if (a.byok_addon) byokPaid = a.byok_addon === "active";
   storeAccount();
   serverCaps = data.caps || null;
 }
@@ -714,6 +717,7 @@ async function bootAccountSync() {
     try {
       const me = await acctApi("/v1/account", { headers: acctAuthHeaders() });
       if (me && accountState) {
+        if (me.byok_addon) { accountState.byok_addon = me.byok_addon; byokPaid = me.byok_addon === "active"; }
         accountState.guest = !!me.guest;
         accountState.guest_days_left = (typeof me.guest_days_left === "number" ? me.guest_days_left : null);
         accountState.guest_expires_at = me.guest_expires_at || null;
@@ -821,6 +825,15 @@ const BYOK_MODELS_FALLBACK = {
 };
 function byokNote(text) { const n = $("optByokNote"); if (n) n.textContent = text; }
 function renderByok() {
+  // Paid state decides the shape of the section (fix pass A+B):
+  // active -> the live key form, as before; inactive -> the plan
+  // line + a button to the plans page instead of a form that would
+  // only 403. A stored key's masked summary (and its Remove button)
+  // stays visible either way — a lapsed key is inert, not deleted.
+  const form = $("optByokForm"); if (form) form.style.display = byokPaid ? "" : "none";
+  const inactive = $("optByokInactive"); if (inactive) inactive.style.display = byokPaid ? "none" : "";
+  const editBtns = [$("optByokSaveBtn"), $("optByokTestBtn")];
+  for (const b of editBtns) if (b) b.style.display = byokPaid ? "" : "none";
   const state = $("optByokState");
   if (state) state.textContent = byokState
     ? "····" + String(byokState.tail || "").replace(/^·+/, "") + " · added " + String(byokState.added_at || "").slice(0, 10)
@@ -848,6 +861,7 @@ async function refreshByok() {
   try {
     const data = await acctApi("/v1/byok", { headers: acctAuthHeaders() });
     byokState = data.byok || null;
+    if (typeof data.byok_paid === "boolean") byokPaid = data.byok_paid;
     if (data.models) byokModels = data.models;
   } catch (_) { /* keep the last known summary */ }
   renderByok();
@@ -867,7 +881,8 @@ async function saveByokKey() {
     byokNote("Key saved. Your games now run on your own model — they don't use your plan's games.");
     refreshCaps();
   } catch (e) {
-    byokNote(e && e.status === 400 ? "That key or model pick didn't look right — check and try again."
+    byokNote(e && e.status === 403 ? "BYOK isn't active on your plan yet."
+      : e && e.status === 400 ? "That key or model pick didn't look right — check and try again."
       : "Couldn't save the key just now — try again in a bit.");
   }
 }
@@ -878,7 +893,10 @@ async function testByokKey() {
     const data = await acctApi("/v1/byok/test", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
     byokNote(data && data.ok ? "Your key works — " + byokState.provider + " answered."
       : "Your provider rejected that key. Check it on your provider account, then save it again.");
-  } catch (_) { byokNote("Couldn't reach your provider just now — try again in a bit."); }
+  } catch (e) {
+    byokNote(e && e.status === 403 ? "BYOK isn't active on your plan yet."
+      : "Couldn't reach your provider just now — try again in a bit.");
+  }
 }
 async function removeByokKey() {
   if (!accountState) return;
@@ -1388,6 +1406,11 @@ function init(opts) {
     const clb = $("optClaimBtn"); if (clb) clb.addEventListener("click", () => { claimGuestAccount(); });
     const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => { openOptions(); });
     const bsv = $("optByokSaveBtn"); if (bsv) bsv.addEventListener("click", () => { saveByokKey(); });
+    const bpl = $("optByokPlansBtn"); if (bpl) bpl.addEventListener("click", () => {
+      const url = "https://moorefolio.com/coach-plans/";
+      if (typeof window.open === "function") window.open(url, "_blank");
+      else if (window.location) window.location.href = url;
+    });
     const bte = $("optByokTestBtn"); if (bte) bte.addEventListener("click", () => { testByokKey(); });
     const brm = $("optByokRemoveBtn"); if (brm) brm.addEventListener("click", () => { removeByokKey(); });
     const bpv = $("optByokProvider"); if (bpv) bpv.addEventListener("change", () => { renderByok(); });
