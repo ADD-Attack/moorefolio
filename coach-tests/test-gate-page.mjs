@@ -27,7 +27,7 @@ const mock = {
   passkeys: [],
   healthStatus: 200,
   turnHandler: null, // (callNo, body) => {status, json}
-  byok: null, byokTestMode: "ok", // Phase 4 fixtures
+  byok: null, byokTestMode: "ok", byokPaid: false, // Phase 4 fixtures + fix pass A+B paid state
   guest: false, guestExpired: false,
   acct: null,
   resetAcct() {
@@ -49,7 +49,7 @@ const mock = {
     this.healthStatus = 200;
     this.turnHandler = null;
     this.billingMode = "unconfigured";
-    this.byok = null; this.byokTestMode = "ok";
+    this.byok = null; this.byokTestMode = "ok"; this.byokPaid = false;
     this.guest = false; this.guestExpired = false;
     this.resetAcct();
   },
@@ -93,7 +93,9 @@ const server = http.createServer(async (req, res) => {
     if (url0 === "/v1/signup" && body.email === "taken@example.com") return send(409, { error: "account exists" });
     if (body.password !== ACCT_PW) return send(401, { error: "unauthorized" });
     return send(200, { token: "acct-tok-1", exp: Math.floor(Date.now() / 1000) + 3600,
-                       account: { email: body.email, plan: mock.acct.plan },
+                       account: { email: body.email, plan: mock.acct.plan,
+                                  base_plan: mock.acct.plan === "byok_weekly" ? "none" : mock.acct.plan,
+                                  byok_addon: mock.byokPaid ? "active" : "inactive" },
                        profiles: mock.acct.profiles, active_profile_id: mock.acct.activeId,
                        caps: { ...mock.acct.caps } });
   }
@@ -155,12 +157,13 @@ const server = http.createServer(async (req, res) => {
   //      the real crypto/routing/lifecycle are proven in test-gate.mjs
   if (url0 === "/v1/byok" && req.method === "GET") {
     mock.calls.byok.push({ op: "get" });
-    return send(200, { byok: mock.byok, models: {
+    return send(200, { byok: mock.byok, byok_paid: mock.byokPaid, byok_addon: mock.byokPaid ? "active" : "inactive", models: {
       openai: [{ id: "gpt-6-sol", label: "GPT-6 Sol" }, { id: "gpt-6-luna", label: "GPT-6 Luna" }],
       anthropic: [{ id: "claude-opus-5-5", label: "Claude Opus 5.5" }, { id: "claude-sonnet-5", label: "Claude Sonnet 5" }] } });
   }
   if (url0 === "/v1/byok" && req.method === "POST") {
     mock.calls.byok.push({ op: "set", body });
+    if (!mock.byokPaid) return send(403, { error: "BYOK isn't active on your plan yet." });
     mock.byok = { provider: body.provider, model: body.model,
                   tail: "····" + String(body.key).slice(-4), added_at: new Date().toISOString() };
     return send(200, { byok: mock.byok });
@@ -168,6 +171,7 @@ const server = http.createServer(async (req, res) => {
   if (url0 === "/v1/byok/remove") { mock.calls.byok.push({ op: "remove" }); mock.byok = null; return send(200, { byok: null }); }
   if (url0 === "/v1/byok/test") {
     mock.calls.byok.push({ op: "test" });
+    if (!mock.byokPaid) return send(403, { error: "BYOK isn't active on your plan yet." });
     if (!mock.byok) return send(409, { error: "no key saved" });
     return send(200, mock.byokTestMode === "reject" ? { ok: false, error: "key rejected" }
       : { ok: true, provider: mock.byok.provider, model: mock.byok.model });
@@ -196,7 +200,7 @@ const server = http.createServer(async (req, res) => {
     return send(200, { email: mock.guest ? null : "tester@example.com", plan: mock.acct.plan,
                        guest: !!mock.guest, guest_days_left: mock.guest ? 7 : null,
                        guest_expires_at: mock.guest ? new Date(Date.now() + 7 * 864e5).toISOString() : null,
-                       byok: mock.byok,
+                       byok: mock.byok, byok_paid: mock.byokPaid, byok_addon: mock.byokPaid ? "active" : "inactive",
                        profiles: mock.acct.profiles, active_profile_id: mock.acct.activeId,
                        caps: { ...mock.acct.caps } });
   }
@@ -209,7 +213,7 @@ const server = http.createServer(async (req, res) => {
     const prof = mock.acct.profiles.find((x) => x.id === body.profile_id) ||
                  (body.profile_id === "srv-guest" ? { id: "srv-guest", mode: "Standard", coach: "sol" } : null);
     const seat = !prof ? "sol" : prof.mode === "New Player" ? "kids"
-      : (mock.byok ? "byok" : (mock.acct.plan === "pro" && prof.coach === "astra" ? "astra" : "sol"));
+      : (mock.byok && mock.byokPaid ? "byok" : (mock.acct.plan === "pro" && prof.coach === "astra" ? "astra" : "sol"));
     return send(200, { token, exp: Math.floor(Date.now() / 1000) + 3600, caps: { ...mock.acct.caps }, charged: !!body.charge, coach_seat: seat });
   }
   return send(404, { error: "unknown route" });
@@ -240,7 +244,8 @@ const IDS = ["board", "boardWrap", "branchLine", "capturedByWhite", "capturedByB
   "guestBanner", "guestBannerText", "guestKeepBtn", "optRedeemCode", "optRedeemBtn",
   "optGuestClaim", "optGuestDays", "optClaimEmail", "optClaimPw", "optClaimBtn", "optClaimMsg",
   "optByokSection", "optByokState", "optByokProvider", "optByokModel", "optByokKey",
-  "optByokSaveBtn", "optByokTestBtn", "optByokRemoveBtn", "optByokNote"];
+  "optByokSaveBtn", "optByokTestBtn", "optByokRemoveBtn", "optByokNote",
+  "optByokForm", "optByokInactive", "optByokPlansBtn"];
 
 function makeStorage() {
   const m = new Map();
@@ -986,6 +991,10 @@ async function test12() {
      html.includes('id="optByokProvider"') && html.includes('id="optByokModel"') &&
      html.includes('id="optByokKey"') && html.includes('id="optByokTestBtn"') && html.includes("Test key") &&
      html.includes('id="optByokRemoveBtn"') && html.includes("Stored on our servers, never in this browser"));
+  ok("the inactive BYOK block carries the exact plan line + a plans-page button (fix pass A+B)",
+     html.includes('id="optByokInactive"') && html.includes('id="optByokForm"') &&
+     html.includes("BYOK — $5/week, on its own or added to any plan") &&
+     html.includes('id="optByokPlansBtn"') && html.includes("See plans"));
   ok("guest banner + claim form + redeem entry exist; no 'grown-up' copy anywhere",
      html.includes('id="guestBanner"') && html.includes('id="guestKeepBtn"') && html.includes("Keep my progress") &&
      html.includes('id="optGuestClaim"') && html.includes('id="optRedeemCode"') && html.includes('id="optRedeemBtn"') &&
@@ -996,7 +1005,35 @@ async function test12() {
   await signIn(env);
   ok("BYOK state starts empty", env.registry.get("optByokState").textContent === "No key saved",
      env.registry.get("optByokState").textContent);
+  // Fix pass A+B, inactive state: no live key form — the plan line +
+  // plans button show instead, and even a programmatic save attempt
+  // surfaces the gate's plain 403 copy, storing nothing.
+  ok("inactive paid state: key form hidden, plan-line block shown, save/test buttons hidden",
+     env.registry.get("optByokForm").style.display === "none" &&
+     env.registry.get("optByokInactive").style.display === "" &&
+     env.registry.get("optByokSaveBtn").style.display === "none" &&
+     env.registry.get("optByokTestBtn").style.display === "none",
+     "form " + env.registry.get("optByokForm").style.display + " inactive " + env.registry.get("optByokInactive").style.display);
+  ok("plans button is wired (click handler registered)",
+     (env.registry.get("optByokPlansBtn").listeners.click || []).length >= 1);
   const PAGE_KEY = "sk-page-test-1234567890WXYZ";
+  env.registry.get("optByokKey").value = PAGE_KEY;
+  await clickEl(env, "optByokSaveBtn"); await pump(env, 10);
+  ok("save while inactive -> the note renders the gate's 403 copy verbatim; nothing stored",
+     env.registry.get("optByokNote").textContent === "BYOK isn't active on your plan yet." &&
+     mock.byok === null && env.CoachUI._test.getByok() === null,
+     env.registry.get("optByokNote").textContent);
+  mock.calls.byok.length = 0; // the 403 attempt above is asserted; the paid flow below counts fresh
+  // Paid state on (what the webhook/operator flip does at the gate):
+  // re-sign-in so the page re-reads it, and the live form returns.
+  mock.byokPaid = true;
+  await signOut(env);
+  await signIn(env);
+  ok("active paid state: key form shown, plan-line block hidden, save/test buttons back",
+     env.registry.get("optByokForm").style.display === "" &&
+     env.registry.get("optByokInactive").style.display === "none" &&
+     env.registry.get("optByokSaveBtn").style.display === "",
+     "form " + env.registry.get("optByokForm").style.display + " inactive " + env.registry.get("optByokInactive").style.display);
   env.registry.get("optByokKey").value = PAGE_KEY;
   await clickEl(env, "optByokSaveBtn"); await pump(env, 10);
   const setCall = mock.calls.byok.find((c) => c.op === "set");
