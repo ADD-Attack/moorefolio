@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Three demos — Christopher Moore · Kansas City</title>
+<style>
+  :root{ --paper:#f4efe8; --ink:#1c1917; --ink2:#57504a; --brick:#a03e2d; --line:#d8d0c2; }
+  *{ box-sizing:border-box; }
+  html,body{ height:100%; }
+  body{ margin:0; display:flex; flex-direction:column; height:100dvh; background:var(--paper); color:var(--ink);
+        font:400 16px/1.45 -apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif; }
+  header{ flex:0 0 auto; border-bottom:1px solid var(--line); padding:10px 16px 0; }
+  .who{ display:flex; flex-wrap:wrap; gap:4px 14px; align-items:baseline; margin:0 0 8px; }
+  .who b{ font-weight:650; }
+  .who span{ color:var(--ink2); font-size:14px; }
+  .who a{ margin-left:auto; color:var(--brick); font-size:14px; font-weight:600; text-decoration:none; }
+  .who a:hover{ text-decoration:underline; }
+  .tabs{ display:flex; gap:6px; flex-wrap:wrap; }
+  .tabs [role="tab"]{ appearance:none; border:1px solid var(--line); border-bottom:none; background:transparent;
+    color:var(--ink2); font:600 15px/1.2 inherit; padding:10px 16px; border-radius:10px 10px 0 0; cursor:pointer; }
+  .tabs [role="tab"] small{ display:block; font-weight:500; font-size:12px; margin-top:2px; }
+  .tabs [role="tab"][aria-selected="true"]{ background:#fffdf9; color:var(--ink); box-shadow:inset 0 3px 0 var(--brick); }
+  main{ flex:1 1 auto; min-height:0; background:#fffdf9; }
+  iframe{ display:block; width:100%; height:100%; border:0; }
+  @media (max-width:560px){ .tabs [role="tab"]{ padding:8px 10px; font-size:14px; } .who a{ margin-left:0; } }
+</style>
+</head>
+<body>
+<header>
+  <p class="who"><b>Christopher Moore</b><span>Three demo pages — one per tab. Pick a tab; the demo runs inside it.</span>
+  <a id="full" href="/spider-a/" target="_blank" rel="noopener">Open this demo full-page ↗</a></p>
+  <div class="tabs" role="tablist" aria-label="Demo pages">
+    <button role="tab" id="tab-a" aria-selected="true" data-key="a" data-src="/spider-a/" data-full="/spider-a/">A<small>The Working Specimen</small></button>
+    <button role="tab" id="tab-b" aria-selected="false" data-key="b" data-src="/spider-b/" data-full="/spider-b/">B<small>One Thread</small></button>
+    <button role="tab" id="tab-c" aria-selected="false" data-key="c" data-src="/spider-c/" data-full="/spider-c/">C<small>Kansas City Ghost Sign</small></button>
+  </div>
+</header>
+<main>
+  <iframe id="demo" src="/spider-a/" title="Demo A — The Working Specimen" loading="eager"></iframe>
+</main>
+<script>
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var frame = document.getElementById('demo');
+  var full = document.getElementById('full');
+  var names = { a: 'Demo A — The Working Specimen', b: 'Demo B — One Thread', c: 'Demo C — Kansas City Ghost Sign' };
+  function select(tab, focus) {
+    tabs.forEach(function (t) { t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+    if (frame.getAttribute('src') !== tab.dataset.src) frame.setAttribute('src', tab.dataset.src);
+    frame.title = names[tab.dataset.key];
+    full.setAttribute('href', tab.dataset.full);
+    if (history.replaceState) history.replaceState(null, '', '#' + tab.dataset.key);
+    if (focus) tab.focus();
+  }
+  tabs.forEach(function (tab, i) {
+    tab.addEventListener('click', function () { select(tab, false); });
+    tab.addEventListener('keydown', function (e) {
+      var j = null;
+      if (e.key === 'ArrowRight') j = (i + 1) % tabs.length;
+      if (e.key === 'ArrowLeft') j = (i + tabs.length - 1) % tabs.length;
+      if (j !== null) { e.preventDefault(); select(tabs[j], true); }
+    });
+  });
+  var start = (location.hash || '').replace('#', '');
+  var initial = tabs.filter(function (t) { return t.dataset.key === start; })[0] || tabs[0];
+  if (initial !== tabs[0]) select(initial, false);
+</script>
+</body>
+</html>
