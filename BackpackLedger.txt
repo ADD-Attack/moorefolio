@@ -1,0 +1,46 @@
+[t=  1.14s] BIND OK on SKM_Quinn_Simple. Pieces (each rigid on exactly one bone):
+  pack body          -> spine_03
+  pack outer panel   -> spine_03
+  pack lid           -> spine_03
+  front strap L      -> spine_05
+  shoulder bridge L  -> clavicle_l
+  back strap L       -> spine_05
+  front strap R      -> spine_05
+  shoulder bridge R  -> clavicle_r
+  back strap R       -> spine_05
+
+[t=  1.45s] AUTOPLAY START
+[t=  1.45s] BEAT 1 START: run, front 3/4 camera
+[t=  4.65s]   capture 01_front_run.png
+[t=  7.15s] BEAT 1 END: run, front 3/4 camera | attached+rigid=yes | max seam drift=4.59 cm (bridge/back R; overlap 6 cm) | sway peak pitch=7.00 roll=2.61 deg (clamp 7) | AUTO PASS
+[t=  7.15s] BEAT 2 START: jump, side/rear camera
+[t=  8.15s]   jump
+[t=  8.53s]   capture 02_back_jump.png
+[t= 13.16s] BEAT 2 END: jump, side/rear camera | attached+rigid=yes | max seam drift=5.58 cm (bridge/back R; overlap 6 cm) | sway peak pitch=5.20 roll=5.37 deg (clamp 7) | AUTO PASS
+[t= 13.16s] BEAT 3 START: crouch (stand-in), front-side camera
+[t= 13.46s]   crouch ON (bIsCrouched=0 capsule half-height=90.0, torso pitch stand-in 20 deg)
+[t= 16.16s]   capture 03_crouch.png
+[t= 18.16s]   crouch OFF (bIsCrouched=1 capsule half-height=40.0, torso pitch stand-in 0 deg)
+[t= 18.16s] BEAT 3 END: crouch (stand-in), front-side camera | attached+rigid=yes | max seam drift=3.14 cm (bridge/back R; overlap 6 cm) | sway peak pitch=7.00 roll=4.56 deg (clamp 7) | AUTO PASS
+[t= 18.16s] BEAT 4 START: back view idle -> run
+[t= 23.67s]   capture 04_back_view.png
+[t= 25.17s] BEAT 4 END: back view idle -> run | attached+rigid=yes | max seam drift=4.59 cm (bridge/back R; overlap 6 cm) | sway peak pitch=4.78 roll=2.39 deg (clamp 7) | AUTO PASS
+[t= 25.17s] BEAT 5 START: unequip (key E)
+[t= 25.47s]   inject key E via Slate
+[t= 25.47s]   key E via PlayerController -> UNEQUIP (0.25 s scale beat)
+[t= 26.67s]   capture 05_unequipped.png
+[t= 29.17s] BEAT 5 END: unequip (key E) | attached+rigid=yes | max seam drift=3.02 cm (front/bridge L; overlap 6 cm) | sway peak pitch=5.45 roll=2.26 deg (clamp 7) unequipped=yes | AUTO PASS
+[t= 29.17s] BEAT 6 START: equip (key E)
+[t= 29.47s]   inject key E via Slate
+[t= 29.47s]   key E via PlayerController -> EQUIP (0.25 s scale beat)
+[t= 32.17s] BEAT 6 END: equip (key E) | attached+rigid=yes | max seam drift=0.00 cm (-; overlap 6 cm) | sway peak pitch=0.02 roll=0.01 deg (clamp 7) re-equipped=yes | AUTO PASS
+[t= 32.18s] AUTOPLAY END
+
+==== VISUAL REVIEW of the captures (by eye, 2026-10-29 15:30 CDT) ====
+Run: standalone -game -BPAutoPlay -RenderOffscreen, Template_Default map, build of 15:24. AUTO checks above are measured in-engine every frame.
+01_front_run.png  PASS - mid-stride run; both front strap panels flat on the chest, both shoulder bridges visible over the clavicles. No twist or stretch. Pack side visible.
+02_back_jump.png  PASS - jump apex from the side/rear; pack two-tone (green body, orange outer panel) reads clearly; shoulder bridge sits on the shoulder; nothing separates. Sway within the 7 deg clamp (log).
+03_crouch.png     PASS for straps / STAND-IN for crouch - capsule really crouches (bIsCrouched=1, half-height 90 -> 40). The template has no crouch animation, so the "crouch" pose is a 20 deg whole-body forward pitch: legs stay straight. Straps stay flat and attached under the tilt.
+04_back_view.png  PASS - rear view while running; back strap runs from the shoulder down under the pack lid; pack upright and attached at the mid back.
+05_unequipped.png PASS - after key E (Slate-injected) the pack and every strap piece are gone; character clean.
+Seam note: the measured bridge/back-strap drift peaks at 5.6 cm in the jump, inside the 6 cm overlap, so no gap shows in any capture. It is close to the overlap; a real asset would want 8 cm.
