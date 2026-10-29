@@ -109,6 +109,8 @@
   .optHead{display:flex;justify-content:space-between;align-items:center}
   .optRow{margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:15px}
   .optRow select,.optRow input{font-size:15px;padding:6px;max-width:60%}
+  .optGroup{font-weight:bold;margin:16px 0 4px;border-top:4px solid var(--line);padding-top:10px}
+  .optFooter{font-size:13px;color:#5c4c36;margin-top:16px}
   @media (max-width:760px){ .optSheet{width:100%} }
 </style>
 </head>
@@ -116,7 +118,7 @@
 <header>
   <h1><span class="rust">♞</span> Chess Coach <span class="betaPill">beta</span></h1>
   <p>You vs. the Coach — it plays, it teaches, it remembers. <span id="branchLine"></span></p>
-  <div class="headerChips"><button id="gamesChip" class="chipBtn" type="button">3 games</button><button id="profileChip" class="chipBtn" type="button">Player</button></div>
+  <div class="headerChips"><button id="gamesChip" class="chipBtn" type="button" style="visibility:hidden"></button><button id="profileChip" class="chipBtn" type="button" style="visibility:hidden"></button></div>
   <div id="gamesInfo" style="display:none"></div>
 </header>
 <div id="guestBanner" style="display:none;max-width:1060px;margin:8px auto 0;padding:8px 14px;background:#fdf3e0;border:1px solid #d9b96a;border-radius:10px;font-size:14px;text-align:center"><span id="guestBannerText"></span> <button id="guestKeepBtn" type="button" class="ghost">Keep my progress</button></div>
@@ -534,37 +536,56 @@ reset();
   <div class="optRow"><span></span><button id="optAddProfile" type="button" class="ghost">+ Add profile</button></div>
   <div class="optRow"><label for="optProfileName">Name</label><input id="optProfileName" type="text"></div>
   <div class="optRow"><span>Mode</span><span id="optModeTag"></span></div>
+  <h4>Coach</h4>
   <div class="optRow"><span>Coach strength</span><button id="optRecalibrate" type="button" class="ghost">Recalibrate</button></div>
-  <div class="optRow"><span>Sound</span><button id="optSoundBtn" type="button" class="ghost">Sound: On</button></div>
-  <div class="optRow" id="optCoachRow" style="display:none"><span>Coach</span><span><button id="optCoachSolBtn" type="button" class="ghost">Sol</button> <button id="optCoachAstraBtn" type="button" class="ghost">Astra</button></span></div>
+  <div class="optRow" id="optCoachRow" style="display:none"><span>Coach</span><span role="radiogroup" aria-label="Coach"><button id="optCoachSolBtn" type="button" class="ghost" role="radio" aria-checked="true">Sol</button> <button id="optCoachAstraBtn" type="button" class="ghost" role="radio" aria-checked="false">Astra</button></span></div>
   <div class="optRow"><span id="optCoachNote"></span></div>
+  <div class="optRow" id="optCoachApplyRow" style="display:none"><span id="optCoachApplyNote"></span></div>
+  <div class="optRow"><span>Sound</span><button id="optSoundBtn" type="button" class="ghost">Sound: On</button></div>
   <h4>Settings</h4>
-  <div class="optRow"><span id="optPlanLine">Plan: Beta — accounts and billing arrive with the full launch.</span></div>
-  <div class="optRow"><span id="optPrivacyLine"></span></div>
-  <div class="optRow"><span>Account</span><span id="optAccountLine">Not signed in</span></div>
-  <div id="optAcctForm">
-  <div class="optRow"><label for="optAcctEmail">Email</label><input id="optAcctEmail" type="email" autocomplete="email"></div>
-  <div class="optRow"><label for="optAcctPw">Password</label><input id="optAcctPw" type="password" autocomplete="current-password"></div>
-  <div class="optRow"><span></span><span><button id="optSignInBtn" type="button" class="ghost">Sign in</button> <button id="optSignUpBtn" type="button" class="ghost">Create account</button></span></div>
+  <div class="optGroup">Account</div>
+  <div class="optRow"><span id="optAccountLine">Not signed in · games are saved on this device only</span><button id="optAcctToggle" type="button" class="ghost" aria-expanded="false" aria-label="Open account settings">▸</button></div>
+  <div id="optAcctBlock" style="display:none">
+  <div id="optAcctSignedOut">
+  <div class="optRow"><span></span><span><button id="optShowSignIn" type="button" class="ghost">Sign in</button> <button id="optShowSignUp" type="button" class="ghost">Create account</button></span></div>
+  <div id="optSignInForm">
+  <div class="optRow"><label for="optSiEmail">Email</label><input id="optSiEmail" type="email" autocomplete="email"></div>
+  <div class="optRow"><label for="optSiPw">Password</label><input id="optSiPw" type="password" autocomplete="current-password"></div>
+  <div class="optRow"><span></span><button id="optSignInBtn" type="button" class="ghost">Sign in</button></div>
   <div class="optRow"><span></span><button id="optPasskeySignInBtn" type="button" class="ghost">Sign in with a passkey</button></div>
-  <div class="optRow"><label for="optRedeemCode">Test code</label><input id="optRedeemCode" type="text" autocomplete="off" placeholder="Have a test code?"></div>
+  </div>
+  <div id="optSignUpForm" style="display:none">
+  <div class="optRow"><label for="optSuEmail">Email</label><input id="optSuEmail" type="email" autocomplete="email"></div>
+  <div class="optRow"><label for="optSuPw">Password</label><input id="optSuPw" type="password" autocomplete="new-password"></div>
+  <div class="optRow"><span></span><button id="optSignUpBtn" type="button" class="ghost">Create account</button></div>
+  </div>
+  <div class="optRow"><span></span><button id="optRedeemToggle" type="button" class="ghost">Have a test code?</button></div>
+  <div id="optRedeemBox" style="display:none">
+  <div class="optRow"><label for="optRedeemCode">Test code</label><input id="optRedeemCode" type="text" autocomplete="off" placeholder="Test code"></div>
   <div class="optRow"><span></span><button id="optRedeemBtn" type="button" class="ghost">Use test code</button></div>
-  <div class="optRow"><span id="optAcctMsg"></span></div>
+  </div>
   </div>
   <div id="optGuestClaim" style="display:none">
-  <div class="optRow"><span>Test account</span><span id="optGuestDays"></span></div>
+  <div class="optRow"><span id="optGuestLead"></span></div>
   <div class="optRow"><label for="optClaimEmail">Email</label><input id="optClaimEmail" type="email" autocomplete="email"></div>
   <div class="optRow"><label for="optClaimPw">Password</label><input id="optClaimPw" type="password" autocomplete="new-password"></div>
   <div class="optRow"><span></span><button id="optClaimBtn" type="button" class="ghost">Keep my progress</button></div>
   <div class="optRow"><span id="optClaimMsg"></span></div>
   </div>
-  <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost" style="display:none">Sign out</button></div>
-  <div class="optRow"><span></span><button id="optManageBilling" type="button" class="ghost" style="display:none">Manage billing</button></div>
-  <div class="optRow"><span id="optBillingNote"></span></div>
+  <div id="optAcctSignedIn" style="display:none">
+  <div class="optRow"><span id="optBillingLine">Billing isn't open yet. Your beta access keeps working.</span></div>
+  <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost">Sign out</button></div>
+  </div>
+  <div class="optRow"><span id="optAcctMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="optGroup">Your own AI key</div>
   <div id="optByokSection">
-  <div class="optRow"><span>Your own AI key (optional)</span><span id="optByokState">No key saved</span></div>
+  <div class="optRow" id="optByokStateRow"><span>Your own AI key (optional)</span><span id="optByokState">No key saved</span></div>
+  <div id="optByokSignedOut">
+  <div class="optRow"><span>Use your own AI key — $5/week, on its own or with any plan. Sign in to set one up.</span></div>
+  </div>
   <div id="optByokInactive">
-  <div class="optRow"><span>BYOK — $5/week, on its own or added to any plan</span><span><button id="optByokPlansBtn" type="button" class="ghost">See plans</button></span></div>
+  <div class="optRow"><span>Use your own AI key — $5/week, on its own or with any plan.</span><span><button id="optByokPlansBtn" type="button" class="ghost">See plans</button></span></div>
   </div>
   <div id="optByokForm">
   <div class="optRow"><label for="optByokProvider">Provider</label><select id="optByokProvider"><option value="openai">OpenAI</option><option value="anthropic">Anthropic</option></select></div>
@@ -573,14 +594,22 @@ reset();
   </div>
   <div class="optRow"><span></span><span><button id="optByokSaveBtn" type="button" class="ghost">Save key</button> <button id="optByokTestBtn" type="button" class="ghost">Test key</button> <button id="optByokRemoveBtn" type="button" class="ghost" style="display:none">Remove key</button></span></div>
   <div class="optRow"><span id="optByokNote">Stored on our servers, never in this browser. Games on your key don't use your plan's games.</span></div>
+  <div class="optRow"><span id="optByokMsg" aria-live="polite"></span></div>
   </div>
+  <div class="optGroup">Passkeys</div>
+  <div class="optRow"><span id="optPasskeyAbout">A passkey lets you sign in with this device's fingerprint, face or PIN — no password to type.</span></div>
   <div id="optPasskeyManage" style="display:none">
   <div class="optRow"><span>Passkeys</span><span id="optPasskeyList">None yet</span></div>
   <div class="optRow"><span></span><button id="optAddPasskeyBtn" type="button" class="ghost">Add a passkey</button></div>
   </div>
   <div class="optRow"><span id="optPasskeyNote"></span></div>
-  <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
+  <div class="optGroup">This device</div>
+  <div class="optRow"><span></span><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
+  <div class="optGroup">Delete this profile</div>
+  <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button></div>
+  <div class="optFooter"><span id="optPrivacyLine"></span></div>
 </div></div>
+
 <div id="gate"><div class="card">
   <h3 style="margin:0;color:var(--rust)">♞ Chess Coach — private beta</h3>
   <p style="font-size:14px">This branch is unlisted; the password is checked by the coach relay.</p>

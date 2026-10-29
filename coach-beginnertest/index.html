@@ -25,11 +25,11 @@
   .side{width:230px;display:flex;flex-direction:column;gap:14px}
   .panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;
     box-shadow:0 2px 8px rgba(60,40,10,.08)}
-  .panel h3{margin:0;padding:8px 12px;font-size:15px;letter-spacing:.4px;
+  .panel h3{margin:0;padding:8px 12px;font-size:22px;letter-spacing:.4px;
     border-bottom:1px solid var(--line);color:var(--rust);text-align:center}
   .panel .body{padding:10px 12px;min-height:44px;font-size:20px;line-height:1.5;word-break:break-all}
   .panel .body.small{font-size:20px;word-break:normal}
-  #movesBody{font-size:14px;max-height:300px;overflow:auto;word-break:normal}
+  #movesBody{font-size:20px;max-height:300px;overflow:auto;word-break:normal}
   #movesBody table{border-collapse:collapse;width:100%}
   #movesBody td{padding:2px 6px}
   #movesBody td:first-child{color:#8a7757;width:30px;text-align:right}
@@ -61,7 +61,7 @@
   .piece.dragging{cursor:grabbing;filter:drop-shadow(0 10px 10px rgba(0,0,0,.45));z-index:6}
   .sq.incheck{box-shadow:inset 0 0 0 100px rgba(210,59,46,.45)}
   .controls{display:flex;gap:10px}
-  button{font-family:inherit;font-size:15px;padding:8px 16px;border-radius:8px;cursor:pointer;
+  button{font-family:inherit;font-size:20px;padding:8px 16px;border-radius:8px;cursor:pointer;
     border:1px solid var(--rust);background:var(--rust);color:#fff}
   button.ghost{background:transparent;color:var(--rust)}
   button:hover{filter:brightness(1.08)}
@@ -86,10 +86,10 @@
     font-size:22px;line-height:1.5}
   .center .panel{width:100%}
   #dossierBody{white-space:pre-line}
-  #modeLine{font-size:18px;color:#5c4c36;min-height:18px}
+  #modeLine{font-size:20px;color:#5c4c36;min-height:18px}
   #gate{position:fixed;inset:0;background:var(--paper);z-index:40;display:flex;align-items:center;justify-content:center}
   #gate .card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:26px 30px;text-align:center;max-width:340px}
-  #gate input{font-size:16px;padding:8px;width:100%;margin:10px 0;border:1px solid var(--line);border-radius:6px}
+  #gate input{font-size:20px;padding:8px;width:100%;margin:10px 0;border:1px solid var(--line);border-radius:6px}
   @media (max-width:760px){
     #board{grid-template-columns:repeat(8,11.5vw);grid-template-rows:repeat(8,11.5vw)}
     .sq{font-size:8.5vw} .side{width:100%;order:2}
@@ -115,29 +115,32 @@
   #levelBarWrap{height:12px;background:#e7dcc2;border-radius:999px;overflow:hidden;margin:4px auto;max-width:420px}
   #levelBar{height:100%;width:0;background:var(--rust)}
   #tickerReplayBtn{min-width:44px;min-height:44px;font-size:20px;margin-left:10px;padding:4px 10px}
-  .cline .replayBtn{margin-left:8px;padding:2px 8px;font-size:14px}
+  .cline .replayBtn{margin-left:8px;padding:2px 8px;font-size:20px;min-height:44px;min-width:44px}
   .annMark{font-family:Arial,sans-serif;font-weight:bold}
   #optionsDrawer{position:fixed;inset:0;background:rgba(20,12,4,.45);z-index:45;align-items:stretch;justify-content:flex-end}
   .optSheet{background:var(--panel);width:400px;max-width:100%;height:100%;overflow:auto;padding:18px;text-align:left}
   .optSheet h3{margin:0} .optSheet h4{margin:18px 0 6px;color:var(--rust)}
   .optHead{display:flex;justify-content:space-between;align-items:center}
-  .optRow{margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:18px}
-  .optRow select,.optRow input{font-size:16px;padding:6px;max-width:60%}
+  .optRow{margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:20px}
+  .optRow select,.optRow input{font-size:20px;padding:6px;max-width:60%}
+  .optGroup{font-weight:bold;margin:16px 0 4px;border-top:4px solid var(--line);padding-top:10px}
+  .optFooter{margin-top:16px}
   #optionsClose{min-width:48px;min-height:48px}
   #menuSheet,#outOfGames{position:fixed;inset:0;background:rgba(20,12,4,.45);z-index:44;align-items:center;justify-content:center}
   #menuSheet .card,#outOfGames .card{background:var(--panel);border:3px solid var(--rust);border-radius:16px;
     padding:26px 30px;text-align:center;max-width:92vw;font-size:22px}
   #outOfGamesClose{min-width:48px;min-height:48px}
+  #voiceBox select{font-size:20px;padding:8px}
+  #gamesInfo{font-size:20px}
 </style>
 </head>
 <body>
 <header>
   <h1><span class="rust">♞</span> Chess Coach <span class="betaPill">beta</span></h1>
   <p>You vs. the Coach — it plays, it teaches, it remembers. <span id="branchLine"></span></p>
-  <div class="headerChips"><button id="gamesChip" class="chipBtn" type="button">3 games</button><button id="profileChip" class="chipBtn" type="button">Player</button></div>
+  <div class="headerChips"><button id="profileChip" class="chipBtn" type="button" style="visibility:hidden"></button></div>
   <div id="gamesInfo" style="display:none"></div>
 </header>
-<div id="guestBanner" style="display:none;max-width:1060px;margin:8px auto 0;padding:8px 14px;background:#fdf3e0;border:1px solid #d9b96a;border-radius:10px;font-size:14px;text-align:center"><span id="guestBannerText"></span> <button id="guestKeepBtn" type="button" class="ghost">Keep my progress</button></div>
 
 <div class="layout">
   <div class="side">
@@ -538,10 +541,11 @@ reset();
 </script>
 <div id="kidsMenu" style="position:fixed;inset:0;background:var(--paper);z-index:30;display:flex;align-items:center;justify-content:center;overflow:auto">
 <div class="card" style="background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:22px 26px;text-align:center;max-width:560px;width:92%">
+<div id="guestBanner" style="display:none;margin:0 0 12px;padding:8px 14px;background:#fdf3e0;border:1px solid #d9b96a;border-radius:10px;font-size:20px;text-align:center"><span id="guestBannerText"></span> <button id="guestKeepBtn" type="button" class="ghost">Keep my progress</button></div>
   <h2 style="margin:0 0 4px">♞ Let's learn chess</h2>
   <div id="pointsLine" style="font-size:24px;margin:6px 0 4px">Level 1</div>
   <div id="levelBarWrap"><div id="levelBar"></div></div>
-  <div id="levelNextLine" style="font-size:17px;margin:4px 0 12px"></div>
+  <div id="levelNextLine" style="font-size:20px;margin:4px 0 12px"></div>
   <button id="continueBtn" style="display:none;font-size:22px;padding:12px 24px;margin:0 0 14px;width:100%">Continue your game ▶</button>
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
     <button class="lessonBtn" id="lessonBtn-pawn" style="font-size:24px;padding:18px 8px">Meet the Pawn ♟</button>
@@ -554,9 +558,10 @@ reset();
     <button class="lessonBtn" id="lessonBtn-king-safety" style="font-size:24px;padding:18px 8px">Keep Your King Safe 🛡</button>
   </div>
   <button id="newGameBtn" style="font-size:26px;padding:16px 28px;margin-top:16px;width:100%">Play a full game 🏆</button>
-  <div id="gameCostLine" style="font-size:17px;margin-top:6px"></div>
+  <div id="gameCostLine" style="font-size:20px;margin-top:6px"></div>
+<div id="menuOutOfGames" style="display:none"><p id="menuOutOfGamesMsg" style="font-weight:bold"></p></div>
   <div id="unlockHint" style="font-size:17px;margin-top:8px">Opens after the 8 lessons</div>
-  <div id="voiceBox" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;font-size:15px">
+  <div id="voiceBox" style="margin-top:16px;border-top:1px solid var(--line);padding-top:12px;font-size:20px">
     <label for="voiceSelect">Coach voice:</label><br>
     <select id="voiceSelect" style="font-size:16px;padding:6px;max-width:100%;margin-top:6px"></select>
     <button id="voiceSampleBtn" class="ghost" style="margin-left:8px">▶ Hear it</button><br>
@@ -570,53 +575,74 @@ reset();
   <div class="optRow"><span></span><button id="optAddProfile" type="button" class="ghost">+ Add profile</button></div>
   <div class="optRow"><label for="optProfileName">Name</label><input id="optProfileName" type="text"></div>
   <div class="optRow"><span>Mode</span><span id="optModeTag"></span></div>
-  <div class="optRow"><label for="optVoiceSelect">Coach voice</label><select id="optVoiceSelect"></select></div>
-  <div class="optRow"><label for="optSpeedSelect">Coach speed</label><select id="optSpeedSelect"><option value="slow">Slow</option><option value="normal">Normal</option><option value="quick">Quick</option></select></div>
+  <h4>Coach</h4>
   <div class="optRow"><span>Sound</span><button id="optSoundBtn" type="button" class="ghost">Sound: On</button></div>
+  <div class="optRow"><span>Voice and speed are in the Menu.</span></div>
   <h4>Settings</h4>
-  <div class="optRow"><span id="optPlanLine">Plan: Beta — accounts and billing arrive with the full launch.</span></div>
-  <div class="optRow"><span id="optPrivacyLine"></span></div>
-  <div class="optRow"><span>Account</span><span id="optAccountLine">Not signed in</span></div>
-  <div id="optAcctForm">
-  <div class="optRow"><label for="optAcctEmail">Email</label><input id="optAcctEmail" type="email" autocomplete="email"></div>
-  <div class="optRow"><label for="optAcctPw">Password</label><input id="optAcctPw" type="password" autocomplete="current-password"></div>
-  <div class="optRow"><span></span><span><button id="optSignInBtn" type="button" class="ghost">Sign in</button> <button id="optSignUpBtn" type="button" class="ghost">Create account</button></span></div>
+  <div class="optGroup">Account</div>
+  <div class="optRow"><span id="optAccountLine">Not signed in · games are saved on this device only</span><button id="optAcctToggle" type="button" class="ghost" aria-expanded="false" aria-label="Open account settings">▸</button></div>
+  <div id="optAcctBlock" style="display:none">
+  <div id="optAcctSignedOut">
+  <div class="optRow"><span></span><span><button id="optShowSignIn" type="button" class="ghost">Sign in</button> <button id="optShowSignUp" type="button" class="ghost">Create account</button></span></div>
+  <div id="optSignInForm">
+  <div class="optRow"><label for="optSiEmail">Email</label><input id="optSiEmail" type="email" autocomplete="email"></div>
+  <div class="optRow"><label for="optSiPw">Password</label><input id="optSiPw" type="password" autocomplete="current-password"></div>
+  <div class="optRow"><span></span><button id="optSignInBtn" type="button" class="ghost">Sign in</button></div>
   <div class="optRow"><span></span><button id="optPasskeySignInBtn" type="button" class="ghost">Sign in with a passkey</button></div>
-  <div class="optRow"><label for="optRedeemCode">Test code</label><input id="optRedeemCode" type="text" autocomplete="off" placeholder="Have a test code?"></div>
+  </div>
+  <div id="optSignUpForm" style="display:none">
+  <div class="optRow"><label for="optSuEmail">Email</label><input id="optSuEmail" type="email" autocomplete="email"></div>
+  <div class="optRow"><label for="optSuPw">Password</label><input id="optSuPw" type="password" autocomplete="new-password"></div>
+  <div class="optRow"><span></span><button id="optSignUpBtn" type="button" class="ghost">Create account</button></div>
+  </div>
+  <div class="optRow"><span></span><button id="optRedeemToggle" type="button" class="ghost">Have a test code?</button></div>
+  <div id="optRedeemBox" style="display:none">
+  <div class="optRow"><label for="optRedeemCode">Test code</label><input id="optRedeemCode" type="text" autocomplete="off" placeholder="Test code"></div>
   <div class="optRow"><span></span><button id="optRedeemBtn" type="button" class="ghost">Use test code</button></div>
-  <div class="optRow"><span id="optAcctMsg"></span></div>
+  </div>
   </div>
   <div id="optGuestClaim" style="display:none">
-  <div class="optRow"><span>Test account</span><span id="optGuestDays"></span></div>
+  <div class="optRow"><span id="optGuestLead"></span></div>
   <div class="optRow"><label for="optClaimEmail">Email</label><input id="optClaimEmail" type="email" autocomplete="email"></div>
   <div class="optRow"><label for="optClaimPw">Password</label><input id="optClaimPw" type="password" autocomplete="new-password"></div>
   <div class="optRow"><span></span><button id="optClaimBtn" type="button" class="ghost">Keep my progress</button></div>
   <div class="optRow"><span id="optClaimMsg"></span></div>
   </div>
-  <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost" style="display:none">Sign out</button></div>
-  <div class="optRow"><span></span><button id="optManageBilling" type="button" class="ghost" style="display:none">Manage billing</button></div>
-  <div class="optRow"><span id="optBillingNote"></span></div>
+  <div id="optAcctSignedIn" style="display:none">
+  <div class="optRow"><span id="optBillingLine">Billing isn't open yet. Your beta access keeps working.</span></div>
+  <div class="optRow"><span></span><button id="optSignOutBtn" type="button" class="ghost">Sign out</button></div>
+  </div>
+  <div class="optRow"><span id="optAcctMsg" aria-live="polite"></span></div>
+  </div>
+  <div class="optGroup">Your own AI key</div>
   <div class="optRow"><span id="optByokNpLine">New Player always plays with the built-in coach.</span></div>
+  <div class="optGroup">Passkeys</div>
+  <div class="optRow"><span id="optPasskeyAbout">A passkey lets you sign in with this device's fingerprint, face or PIN — no password to type.</span></div>
   <div id="optPasskeyManage" style="display:none">
   <div class="optRow"><span>Passkeys</span><span id="optPasskeyList">None yet</span></div>
   <div class="optRow"><span></span><button id="optAddPasskeyBtn" type="button" class="ghost">Add a passkey</button></div>
   </div>
   <div class="optRow"><span id="optPasskeyNote"></span></div>
-  <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
+  <div class="optGroup">This device</div>
+  <div class="optRow"><span></span><button id="optLockBtn" type="button" class="ghost">Lock this device</button></div>
+  <div class="optGroup">Delete this profile</div>
+  <div class="optRow"><button id="optDeleteProfile" type="button" class="ghost">Delete this profile</button></div>
+  <div class="optFooter"><span id="optPrivacyLine"></span></div>
 </div></div>
+
 <div id="menuSheet" style="display:none"><div class="card">
   <p>Your game is still here.</p>
   <button id="keepPlayingBtn" type="button">Keep playing</button>
   <button id="saveToMenuBtn" type="button" class="ghost">Save and go to menu</button>
 </div></div>
 <div id="outOfGames" style="display:none"><div class="card">
-  <p id="outOfGamesMsg">That's all the games for today. More tomorrow! Try a lesson again?</p>
+  <p id="outOfGamesMsg">Out of games for now. More tomorrow! Lessons are always free.</p>
   <button id="outOfGamesLessonBtn" type="button">Go to lessons</button>
   <button id="outOfGamesClose" type="button" class="ghost">✕</button>
 </div></div>
 <div id="gate"><div class="card">
   <h3 style="margin:0;color:var(--rust)">♞ Chess Coach — private beta</h3>
-  <p style="font-size:14px">This branch is unlisted; the password is checked by the coach relay.</p>
+  <p style="font-size:20px">This branch is unlisted; the password is checked by the coach relay.</p>
   <input id="gateInput" type="password" placeholder="Password" autocomplete="off">
   <div id="gateMsg" style="font-size:13px;color:#8a2f23;min-height:16px"></div>
   <button id="gateBtn">Enter</button>

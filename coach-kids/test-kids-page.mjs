@@ -174,16 +174,18 @@ const IDS = ["board", "boardWrap", "branchLine", "capturedByWhite", "capturedByB
   "gate", "gateInput", "gateMsg", "gateBtn", "gateOfflineBtn", "modeLine",
   "kidsMenu", "pointsLine", "unlockHint", "annotSvg",
   "gameInfoTitle", "voiceSelect", "voiceSampleBtn",
-  "tickerText", "tickerReplayBtn", "gamesChip", "gamesInfo", "profileChip",
+  "tickerText", "tickerReplayBtn", "gamesInfo", "profileChip",
   "optionsDrawer", "optionsClose", "optProfileSelect", "optAddProfile", "optProfileName",
-  "optModeTag", "optVoiceSelect", "optSpeedSelect", "optSoundBtn", "optPlanLine", "optPrivacyLine",
+  "optModeTag", "optSoundBtn", "optPrivacyLine", "menuOutOfGames", "menuOutOfGamesMsg", "outOfGamesMsg",
   "optLockBtn", "optDeleteProfile", "speedSelect", "levelBar", "levelNextLine", "gameCostLine",
-  "optAccountLine", "optAcctForm", "optAcctEmail", "optAcctPw", "optSignInBtn",
+  "optAccountLine", "optAcctBlock", "optAcctToggle", "optAcctSignedOut", "optAcctSignedIn",
+  "optSiEmail", "optSiPw", "optSuEmail", "optSuPw", "optSignInBtn", "optShowSignIn", "optShowSignUp",
+  "optRedeemToggle", "optRedeemBox", "optBillingLine", "optGuestLead",
   "optSignUpBtn", "optSignOutBtn", "optAcctMsg",
   "optPasskeySignInBtn", "optPasskeyManage", "optPasskeyList", "optAddPasskeyBtn", "optPasskeyNote",
-  "optManageBilling", "optBillingNote",
+  "optPasskeyAbout",
   "guestBanner", "guestBannerText", "guestKeepBtn", "optRedeemCode", "optRedeemBtn",
-  "optGuestClaim", "optGuestDays", "optClaimEmail", "optClaimPw", "optClaimBtn", "optClaimMsg",
+  "optGuestClaim", "optClaimEmail", "optClaimPw", "optClaimBtn", "optClaimMsg",
   "optByokNpLine",
   "continueBtn", "menuSheet", "keepPlayingBtn", "saveToMenuBtn",
   "outOfGames", "outOfGamesMsg", "outOfGamesLessonBtn", "outOfGamesClose",
@@ -713,7 +715,8 @@ async function test12() {
   ok("speed choice persists like the voice picker", env.localStorage.getItem("chessCoachSpeed.kids") === "quick",
      env.localStorage.getItem("chessCoachSpeed.kids"));
   ok("rate follows the speed setting", env.CoachUI._test.speechRate() === 1.05);
-  ok("Options mirror shows the same speed", env.registry.get("optSpeedSelect").value === "quick");
+  ok("voice + speed live in the Menu only: the drawer points there and holds no second picker",
+     !html.includes('id="optSpeedSelect"') && !html.includes('id="optVoiceSelect"') && html.includes("Voice and speed are in the Menu."));
   env.CoachUI.speak("Speed check");
   const u = env.utterances[env.utterances.length - 1];
   ok("utterances use the chosen speed", !!u && u.rate === 1.05, u ? "rate=" + u.rate : "none");
@@ -726,21 +729,18 @@ async function test13() {
   const env = loadCoach(allLessonsDossier());
   await unlock(env);
   // header chips
-  ok("games chip shows the local counter", env.registry.get("gamesChip").textContent === "3 games",
-     env.registry.get("gamesChip").textContent);
+  ok("no games chip on the New Player play screen (count lives on the menu)", !html.includes('id="gamesChip"'));
   ok("profile chip shows the seeded profile (Luke)", env.registry.get("profileChip").textContent === "L Luke",
      env.registry.get("profileChip").textContent);
-  ok("pre-game line shows cost + remaining", env.registry.get("gameCostLine").textContent === "Uses 1 game · 3 left",
+  ok("pre-game line shows cost + remaining", env.registry.get("gameCostLine").textContent === "You have 3 games ready.",
      env.registry.get("gameCostLine").textContent);
-  // games chip popover copy never uses the forbidden words
-  for (const f of env.registry.get("gamesChip").listeners.click || []) f();
   const gi = env.registry.get("gamesInfo").textContent;
-  ok("games popover explains the counter", gi.includes("Today: 3 new") && gi.includes("Shared by this account"), gi);
-  ok("games popover never says 'bank' or 'in hand'", !/bank|in hand/i.test(gi), gi);
+  ok("games breakdown uses the account dialect, device-local when signed out", gi.includes("Today: 3 new") && gi.includes("On this device only") && !gi.includes("Shared"), gi);
+  ok("games breakdown never says 'bank' or 'in hand'", !/bank|in hand/i.test(gi), gi);
   // starting a game spends one
   env.CoachUI.startGame("kids");
-  ok("chip drops after a game starts", env.registry.get("gamesChip").textContent === "2 games",
-     env.registry.get("gamesChip").textContent);
+  ok("menu count drops after a game starts", env.registry.get("gameCostLine").textContent === "You have 2 games ready.",
+     env.registry.get("gameCostLine").textContent);
   ok("wallet persisted locally", !!env.localStorage.getItem("chessCoachWallet.kids"));
   // Menu mid-game opens the save sheet, not the menu (b9)
   fireClick(env, "menuBtn");
@@ -784,13 +784,17 @@ async function test13() {
   // out of games: drain the wallet, then a game start shows the no-commerce screen
   env.localStorage.setItem("chessCoachWallet.kids", JSON.stringify({ day: todayStr(), credited: 3, used: 3, saved: 0 }));
   env.CoachUI._test.renderWallet();
-  ok("chip reads 0 games when drained", env.registry.get("gamesChip").textContent === "0 games",
-     env.registry.get("gamesChip").textContent);
+  ok("menu swaps to the out-of-games card when drained (lessons complete)",
+     env.registry.get("menuOutOfGames").style.display === "" &&
+     env.registry.get("menuOutOfGamesMsg").textContent === "Out of games for now. More tomorrow! Lessons are always free." &&
+     env.registry.get("newGameBtn").style.display === "none",
+     env.registry.get("menuOutOfGamesMsg").textContent);
   env.CoachUI.startGame("kids");
   const og = env.registry.get("outOfGames");
   ok("out-of-games screen appears", og.style.display === "flex", "display=" + og.style.display);
   const ogBlock = (html.match(/<div id="outOfGames"[\s\S]*?<\/div><\/div>/) || [""])[0];
-  ok("out-of-games copy is the spec line", ogBlock.includes("That's all the games for today. More tomorrow! Try a lesson again?"), ogBlock.slice(0, 120));
+  ok("out-of-games copy is the spec line", ogBlock.includes("Out of games for now. More tomorrow! Lessons are always free.") &&
+     env.registry.get("outOfGamesMsg").textContent === "Out of games for now. More tomorrow! Lessons are always free.", ogBlock.slice(0, 120));
   ok("out-of-games screen has NO price and NO upgrade wording", !/\$|price|upgrade|buy/i.test(ogBlock), ogBlock.slice(0, 120));
   ok("no game was started while out of games", env.CoachUI._test.getDossier().gamesPlayed === 1,
      "gamesPlayed=" + env.CoachUI._test.getDossier().gamesPlayed);
@@ -803,21 +807,21 @@ async function test14() {
   const env = loadCoach(baseDossier());
   await unlock(env);
   ok("signed out at start: local profile (Luke) + local wallet drive the page",
-     env.registry.get("optAccountLine").textContent === "Not signed in" &&
-     env.registry.get("profileChip").textContent === "L Luke" &&
-     env.registry.get("gamesChip").textContent === "3 games",
+     env.registry.get("optAccountLine").textContent === "Not signed in · games are saved on this device only" &&
+     env.registry.get("profileChip").textContent === "L Luke",
      env.registry.get("optAccountLine").textContent + " / " + env.registry.get("profileChip").textContent);
   // sign in from Options
-  env.registry.get("optAcctEmail").value = "parent@example.com";
-  env.registry.get("optAcctPw").value = ACCT_PW;
+  env.registry.get("optSiEmail").value = "parent@example.com";
+  env.registry.get("optSiPw").value = ACCT_PW;
   fireClick(env, "optSignInBtn");
   await pump(env, 10); await sleep(20);
   ok("sign-in succeeds and the server profile takes over the chip (Luke Two)",
      env.CoachUI._test.signedIn() === true &&
-     env.registry.get("optAccountLine").textContent === "Signed in as parent@example.com" &&
+     env.registry.get("optAccountLine").textContent === "Plan: Coach · parent@example.com" &&
      env.registry.get("profileChip").textContent === "L Luke Two",
      env.registry.get("profileChip").textContent);
-  ok("games chip shows the server caps (3)", env.registry.get("gamesChip").textContent === "3 games");
+  ok("menu count shows the server caps (3)", env.registry.get("gameCostLine").textContent === "You have 3 games ready.",
+     env.registry.get("gameCostLine").textContent);
   const branchSessionsBefore = mock.calls.session.length;
   // a full game opens a CHARGED account session; the local wallet is untouched
   env.CoachUI.startGame("kids");
@@ -827,10 +831,10 @@ async function test14() {
      !!as && as.profile_id === "srv-luke2" && as.charge === true,
      "acctSession=" + JSON.stringify(mock.calls.acctSession));
   ok("no new branch session for the game", mock.calls.session.length === branchSessionsBefore);
-  ok("server caps decremented (chip 2 games) and the LOCAL wallet was NOT spent",
-     env.registry.get("gamesChip").textContent === "2 games" &&
+  ok("server caps decremented (menu count 2) and the LOCAL wallet was NOT spent",
+     env.registry.get("gameCostLine").textContent === "You have 2 games ready." &&
      env.CoachUI._test.getWallet().used === 0,
-     env.registry.get("gamesChip").textContent + " used=" + env.CoachUI._test.getWallet().used);
+     env.registry.get("gameCostLine").textContent + " used=" + env.CoachUI._test.getWallet().used);
   // a lesson opens an UNCHARGED account session (lessons are free)
   env.CoachUI.startLesson("pawn");
   await pump(env, 20); await sleep(20);
@@ -838,18 +842,18 @@ async function test14() {
   ok("lesson session is uncharged and carries the lesson game_id",
      !!ls && ls.charge === false && /^lesson-pawn-/.test(ls.game_id || ""),
      "lessonSession=" + JSON.stringify(ls));
-  ok("caps unchanged by the lesson (still 2)", env.registry.get("gamesChip").textContent === "2 games");
+  ok("caps unchanged by the lesson (still 2)", env.registry.get("gameCostLine").textContent === "You have 2 games ready.");
   const pk = mock.calls.pickup[mock.calls.pickup.length - 1];
   ok("the lesson pickup rode the account game token", !!pk && /^Bearer tok-acct-/.test(pk.headers.authorization || ""),
      "pickupAuth=" + (pk && pk.headers.authorization));
   // sign out -> local mode returns
   fireClick(env, "optSignOutBtn");
   await pump(env, 10); await sleep(20);
-  ok("sign-out returns to local profiles + wallet (Luke, local 3 games)",
+  ok("sign-out returns to local profiles + wallet (Luke, local count back)",
      env.CoachUI._test.signedIn() === false && mock.calls.acctLogout === 1 &&
      env.registry.get("profileChip").textContent === "L Luke" &&
-     env.registry.get("gamesChip").textContent === "3 games",
-     env.registry.get("profileChip").textContent + " / " + env.registry.get("gamesChip").textContent);
+     env.registry.get("gameCostLine").textContent === "You have 3 games ready.",
+     env.registry.get("profileChip").textContent + " / " + env.registry.get("gameCostLine").textContent);
 }
 
 // ---------- Test 15: Phase 2b (Ticket 006) passkey surface + wiring ----------
@@ -871,13 +875,13 @@ async function test15() {
      env.registry.get("optPasskeyNote").textContent);
   const env2 = loadCoach(baseDossier(), { webauthn: makeFakeWebAuthn() });
   await unlock(env2);
-  env2.registry.get("optAcctEmail").value = "parent@example.com";
+  env2.registry.get("optSiEmail").value = "parent@example.com";
   fireClick(env2, "optPasskeySignInBtn");
   await pump(env2, 10); await sleep(20);
   ok("passkey sign-in: options + verify called, signed in, server profile on the chip",
      mock.calls.waAuthOptions.length === 1 && mock.calls.waAuthVerify.length === 1 &&
      env2.CoachUI._test.signedIn() === true &&
-     env2.registry.get("optAccountLine").textContent === "Signed in as parent@example.com" &&
+     env2.registry.get("optAccountLine").textContent === "Plan: Coach · parent@example.com" &&
      env2.registry.get("profileChip").textContent === "L Luke Two",
      env2.registry.get("optAccountLine").textContent + " / " + env2.registry.get("profileChip").textContent);
   ok("the email from the form rode along to auth options",
@@ -905,16 +909,17 @@ async function test15() {
 // ---------- Test 16: Phase 3 (Ticket 006) plan display + billing on the New Player pages ----------
 async function test16() {
   begin("16 Phase 3 plans + billing");
-  ok("drawer has Manage billing; the coach picker is NOT on New Player pages",
-     html.includes('id="optManageBilling"') && html.includes("Manage billing") &&
+  ok("billing stays parked (no Manage billing button); the coach picker is NOT on New Player pages",
+     !html.includes('id="optManageBilling"') && !html.includes("Manage billing") &&
+     html.includes('id="optBillingLine"') && html.includes("Billing isn't open yet. Your beta access keeps working.") &&
      !html.includes('id="optCoachRow"') && !html.includes('id="optCoachAstraBtn"'));
   ok("no 'grown-up' copy on the page", !/grown[- ]up/i.test(html));
   mock.reset();
   const env = loadCoach(RELAY);
   await unlock(env);
   const signIn = async () => {
-    env.registry.get("optAcctEmail").value = "parent@example.com";
-    env.registry.get("optAcctPw").value = ACCT_PW;
+    env.registry.get("optSiEmail").value = "parent@example.com";
+    env.registry.get("optSiPw").value = ACCT_PW;
     for (const f of env.registry.get("optSignInBtn").listeners.click || []) await f();
     await pump(env, 10);
   };
@@ -923,31 +928,29 @@ async function test16() {
     await pump(env, 10);
   };
   await signIn();
-  ok("plan line shows the display name (Coach)", env.registry.get("optPlanLine").textContent === "Plan: Coach · parent@example.com",
-     env.registry.get("optPlanLine").textContent);
-  ok("Manage billing shows when signed in", env.registry.get("optManageBilling").style.display === "");
-  for (const f of env.registry.get("optManageBilling").listeners.click || []) await f();
-  await pump(env, 10);
-  ok("portal endpoint was called", mock.calls.billing.some((c) => c.url === "/v1/billing/portal"));
-  ok("unconfigured billing reads gracefully", env.registry.get("optBillingNote").textContent === "Billing isn't open yet — it arrives with the full launch.",
-     env.registry.get("optBillingNote").textContent);
+  ok("plan line shows the display name (Coach)", env.registry.get("optAccountLine").textContent === "Plan: Coach · parent@example.com",
+     env.registry.get("optAccountLine").textContent);
+  ok("signed-in billing line shows the parked copy; no portal call is possible",
+     env.registry.get("optBillingLine").textContent === "Billing isn't open yet. Your beta access keeps working." &&
+     mock.calls.billing.length === 0,
+     env.registry.get("optBillingLine").textContent);
   mock.acct.plan = "byok_weekly";
   mock.acct.caps = { plan: "byok_weekly", unlimited: true, left: null, today_new: 0, saved: 0,
                      daily_credit: 0, ready_cap: 0, next_credit_at: null };
   await signOut();
   await signIn();
-  ok("plan line shows BYOK", env.registry.get("optPlanLine").textContent === "Plan: BYOK · parent@example.com",
-     env.registry.get("optPlanLine").textContent);
-  ok("chip reads '∞ your key' on the unlimited posture", env.registry.get("gamesChip").textContent === "∞ your key",
-     env.registry.get("gamesChip").textContent);
+  ok("plan line shows BYOK", env.registry.get("optAccountLine").textContent === "Plan: BYOK · parent@example.com",
+     env.registry.get("optAccountLine").textContent);
+  ok("menu count names the key on the unlimited posture", env.registry.get("gameCostLine").textContent === "Your key · no daily limit",
+     env.registry.get("gameCostLine").textContent);
   mock.acct.plan = "lapsed";
   mock.acct.caps = { left: 0, today_new: 0, saved: 3, daily_credit: 0, ready_cap: 0,
                      next_credit_at: new Date(Date.now() + 3600e3).toISOString() };
   await signOut();
   await signIn();
   env.CoachUI._test.renderWallet();
-  ok("plan line shows Paused", env.registry.get("optPlanLine").textContent === "Plan: Paused · parent@example.com",
-     env.registry.get("optPlanLine").textContent);
+  ok("plan line shows Paused", env.registry.get("optAccountLine").textContent === "Plan: Paused · parent@example.com",
+     env.registry.get("optAccountLine").textContent);
   ok("zero-credit cost line is honest", env.registry.get("gameCostLine").textContent === "No plan right now — lessons are still free",
      env.registry.get("gameCostLine").textContent);
 }
@@ -984,7 +987,8 @@ async function test17() {
   ok("banner + account lines name the test account with its days left",
      env.registry.get("guestBanner").style.display === "" &&
      env.registry.get("guestBannerText").textContent.includes("7 days left") &&
-     env.registry.get("optAccountLine").textContent === "Test account — 7 days left" &&
+     env.registry.get("optAccountLine").textContent === "Test account · 7 days left" &&
+     env.registry.get("optGuestLead").textContent.includes("the test account ends in 7 days and is deleted 30 days after that") &&
      env.registry.get("optGuestClaim").style.display === "",
      env.registry.get("optAccountLine").textContent);
   env.CoachUI.startGame("kids");
@@ -996,15 +1000,43 @@ async function test17() {
   env.registry.get("optClaimPw").value = "claimed-pass-1";
   fireClick(env, "optClaimBtn");
   await pump(env, 10); await sleep(20);
-  ok("claim converts the guest: banner hides, account line shows the email",
+  ok("claim converts the guest: banner hides, status line becomes the plan line",
      env.CoachUI._test.getAccount().guest === false &&
      env.registry.get("guestBanner").style.display === "none" &&
-     env.registry.get("optAccountLine").textContent === "Signed in as parent-claimed@example.com" &&
+     env.registry.get("optAccountLine").textContent === "Plan: Coach · parent-claimed@example.com" &&
      env.registry.get("optAcctMsg").textContent.includes("this account is yours now"),
      env.registry.get("optAccountLine").textContent);
 }
 
-const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17];
+
+// ---------- Test 18: UI Pass 2 (Astra consult, 2026-10-29) ----------
+async function test18() {
+  begin("18 UI Pass 2 deltas (New Player)");
+  ok("blanket size rule: generic buttons and drawer rows at 20px, panel headings at 22px",
+     html.includes("button{font-family:inherit;font-size:20px") &&
+     html.includes(".optRow{margin:10px 0;display:flex;gap:10px;align-items:center;justify-content:space-between;font-size:20px}") &&
+     html.includes("font-size:22px") && !html.includes('id="optVoiceSelect"'));
+  ok("guest banner lives on the menu screen only, never above the board",
+     html.indexOf('id="guestBanner"') > html.indexOf('id="kidsMenu"'));
+  ok("account block starts collapsed; drawer groups stand in the Pass 2 order",
+     html.includes('id="optAcctBlock" style="display:none"') &&
+     html.indexOf(">Account<") < html.indexOf(">Your own AI key<") &&
+     html.indexOf(">Your own AI key<") < html.indexOf(">Passkeys<") &&
+     html.indexOf(">Passkeys<") < html.indexOf(">This device<") &&
+     html.indexOf(">This device<") < html.indexOf(">Delete this profile<") &&
+     html.includes("A passkey lets you sign in with this device's fingerprint, face or PIN"));
+  mock.reset();
+  const env = loadCoach(baseDossier());
+  await unlock(env);
+  env.localStorage.setItem("chessCoachWallet.kids", JSON.stringify({ day: todayStr(), credited: 3, used: 3, saved: 0 }));
+  env.CoachUI._test.renderWallet();
+  ok("lessons incomplete: the real-game button stays visible (greyed) even at zero games — the menu swap yields",
+     env.registry.get("newGameBtn").style.display !== "none" &&
+     env.registry.get("menuOutOfGames").style.display === "none",
+     "btn=" + env.registry.get("newGameBtn").style.display + " oog=" + env.registry.get("menuOutOfGames").style.display);
+}
+
+const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18];
 for (const t of tests) { try { await t(); } catch (e) { fail++; if (perTest[current]) perTest[current].fail++; console.log("FAIL test threw: " + (e && e.stack || e)); } }
 console.log("\nSUMMARY");
 for (const [name, r] of Object.entries(perTest)) console.log(name + ": " + r.pass + " passed, " + r.fail + " failed");

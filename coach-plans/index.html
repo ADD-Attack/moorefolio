@@ -62,6 +62,7 @@
   .redeem-note{ min-height:24px; margin:12px 0 0; }
   footer{ text-align:center; color:var(--muted); font-size:14px; padding:0 20px 32px; }
   @media (max-width:720px){ .beats, .ways, .plan-cards{ grid-template-columns:1fr; } .board{ grid-template-columns:repeat(8,34px); grid-template-rows:repeat(8,34px); } .sq{ font-size:23px; } .hero h1{ font-size:28px; } }
+  @media (prefers-reduced-motion: reduce){ #demoStepsList{display:block !important} }
 </style>
 </head>
 <body>
@@ -85,8 +86,16 @@
         <div class="sq d" id="demoSq56">♖</div><div class="sq l" id="demoSq57">♘</div><div class="sq d" id="demoSq58">♗</div><div class="sq l" id="demoSq59">♕</div><div class="sq d" id="demoSq60">♔</div><div class="sq l" id="demoSq61">♗</div><div class="sq d" id="demoSq62">♘</div><div class="sq l" id="demoSq63">♖</div>
       </div>
       <p class="demo-line" id="demoLine">Watch a short game.</p>
+      <ol id="demoStepsList" style="display:none">
+        <li>e4 — Your king pawn steps out.</li>
+        <li>e5 — The coach answers in kind.</li>
+        <li>Bc4 — Your bishop slides out, aiming at a soft spot.</li>
+        <li>Nc6 — The coach develops quietly.</li>
+        <li>Qxf7# — Your queen strikes — check!</li>
+        <li>Checkmate — that's the game.</li>
+      </ol>
     </div>
-    <div><a class="btn" href="/coach-you/">Start playing</a></div>
+    <div><a class="btn" id="heroStartBtn" href="#two-ways">Start playing</a></div>
   </div>
 
   <section>
@@ -98,17 +107,18 @@
     </div>
   </section>
 
-  <section>
+  <section id="two-ways">
     <h2>Two ways to play</h2>
     <div class="ways">
-      <div class="way-card"><h3>New Player</h3><p>Never played? 8 short lessons, a coach that speaks every step. Any age.</p></div>
-      <div class="way-card"><h3>Standard</h3><p>Know the game? Rated games and a review after each.</p></div>
+      <div class="way-card"><h3>New Player</h3><p>Never played? 8 short lessons, a coach that speaks every step. Any age.</p><p><a class="btn" href="/coach-kids/">Start as a New Player</a></p></div>
+      <div class="way-card"><h3>Standard</h3><p>Know the game? Rated games and a review after each.</p><p><a class="btn" href="/coach-you/">Start playing</a></p></div>
     </div>
     <p class="ways-note">One account, a profile for everyone in the house.</p>
   </section>
 
   <section id="plans">
     <h2>Plans</h2>
+    <p class="billing-note" id="parkedLine">Plans aren't on sale yet — your beta access keeps working.</p>
     <div class="billing-toggle">
       <button type="button" class="toggle-btn active" id="toggleMonthly">Monthly</button>
       <button type="button" class="toggle-btn" id="toggleAnnual">Annual <span class="save">2 months free</span></button>
@@ -176,7 +186,7 @@
 
   <section class="test-code" id="test-code">
     <h2>Test codes</h2>
-    <p>Got a test code? Play free for 7 days. Create an account before it ends to keep your rating, dossier and games.</p>
+    <p>Got a test code? Play free for 7 days. Keep your progress before it ends and your rating, dossier and games stay yours.</p>
     <input type="text" id="testCodeInput" placeholder="Enter your test code" autocomplete="off">
     <button type="button" class="btn" id="redeemBtn">Redeem</button>
     <p class="redeem-note" id="redeemNote"></p>
