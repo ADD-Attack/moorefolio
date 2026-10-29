@@ -94,7 +94,7 @@ function activeProfile() { return profilesState.profiles.find((p) => p.id === ac
 function renderProfiles() {
   const p = activeProfile(); if (!p) return;
   const chip = $("profileChip");
-  if (chip) chip.textContent = (p.name || "P").slice(0, 1).toUpperCase() + " " + p.name;
+  if (chip) { chip.textContent = (p.name || "P").slice(0, 1).toUpperCase() + " " + p.name; chip.style.visibility = "visible"; }
   const sel = $("optProfileSelect");
   if (sel) {
     sel.innerHTML = "";
@@ -214,10 +214,44 @@ function gamesLeft() {
   const w = loadWallet(); return Math.max(0, Math.min(READY_CAP, (w.saved || 0) + ((w.credited || 0) - (w.used || 0))));
 }
 function fmtNextCredit() {
-  if (!serverCaps || !serverCaps.next_credit_at) return "midnight";
+  if (!serverCaps || !serverCaps.next_credit_at) return "at midnight";
   try {
-    return new Date(serverCaps.next_credit_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  } catch (_) { return "midnight"; }
+    const d = new Date(serverCaps.next_credit_at);
+    const t = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const now = new Date();
+    if (d.toDateString() === now.toDateString()) return "at " + t;
+    const tm = new Date(now); tm.setDate(now.getDate() + 1);
+    if (d.toDateString() === tm.toDateString()) return "tomorrow at " + t;
+    return d.toLocaleDateString([], { weekday: "short" }) + " at " + t;
+  } catch (_) { return "at midnight"; }
+}
+function npGamesLeft() {
+  if (signedIn() && serverCaps) return serverCaps.unlimited ? Infinity : (serverCaps.left || 0);
+  return gamesLeft();
+}
+function outOfGamesText() {
+  // UI Pass 2 (b)3: day-aware, never a clock time in New Player.
+  if (signedIn() && serverCaps && serverCaps.next_credit_at) {
+    try {
+      if (new Date(serverCaps.next_credit_at).toDateString() === new Date().toDateString())
+        return "Out of games for now. More later today! Lessons are always free.";
+    } catch (_) {}
+  }
+  return "Out of games for now. More tomorrow! Lessons are always free.";
+}
+function renderMenuGames() {
+  // UI Pass 2 (b)2: at zero games (lessons complete) the menu swaps
+  // the greyed button + cost line for the out-of-games card. Before
+  // the lessons are complete the Ticket 005 rule stands: the button
+  // stays visible and greyed, so this swap never runs.
+  const oog = $("menuOutOfGames"); if (!oog) return;
+  const unlocked = typeof LESSON_IDS !== "undefined" && LESSON_IDS.every((id) => dossier.lessons[id]);
+  const noPlan = signedIn() && serverCaps && !serverCaps.unlimited && (serverCaps.daily_credit || 0) === 0;
+  const out = unlocked && dossier.calibrated && !noPlan && npGamesLeft() === 0;
+  oog.style.display = out ? "" : "none";
+  const nb = $("newGameBtn"); if (nb) nb.style.display = out ? "none" : "";
+  const cl = $("gameCostLine"); if (cl) cl.style.display = out ? "none" : "";
+  if (out) { const m = $("menuOutOfGamesMsg"); if (m) m.textContent = outOfGamesText(); }
 }
 function walletBreakdown() { const w = loadWallet(); return { todayNew: Math.max(0, (w.credited || 0) - (w.used || 0)), saved: w.saved || 0, left: gamesLeft() }; }
 function consumeGame() {
@@ -236,30 +270,38 @@ function renderWallet() {
       if (chipS) chipS.textContent = "∞ your key";
       if (clS) clS.textContent = "Your key · no daily limit";
       if (giS) giS.textContent = "Games on this account run on your own key — no daily limit. " +
-        "Platform safety limits still apply. · Shared by this account.";
+        "Platform safety limits still apply.";
+      renderMenuGames();
       return;
     }
     const left = serverCaps.left;
     if (chipS) chipS.textContent = left + " games";
     if (clS) clS.textContent = (serverCaps.daily_credit || 0) === 0
       ? "No plan right now — lessons are still free"
-      : "Uses 1 game · " + left + " left";
+      : !dossier.calibrated ? "This first game is free."
+      : left > 0 ? "You have " + left + (left === 1 ? " game" : " games") + " ready."
+      : "";
     if (giS) giS.textContent = (serverCaps.daily_credit || 0) === 0
       ? "No active plan on this account right now. Lessons are still free, always."
       : "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
-        " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
-        fmtNextCredit() + " · Shared by this account.";
+        " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " arrive " +
+        fmtNextCredit();
+    renderMenuGames();
     return;
   }
   const left = gamesLeft();
   const chip = $("gamesChip"); if (chip) chip.textContent = left + " games";
-  const cl = $("gameCostLine"); if (cl) cl.textContent = "Uses 1 game · " + left + " left";
+  const cl = $("gameCostLine");
+  if (cl) cl.textContent = !dossier.calibrated ? "This first game is free."
+    : left > 0 ? "You have " + left + (left === 1 ? " game" : " games") + " ready."
+    : "";
   const gi = $("gamesInfo");
   if (gi) { const b = walletBreakdown();
-    gi.textContent = "Today: " + b.todayNew + " new · Saved: " + b.saved + " · Ready: up to " + READY_CAP +
-                     " · Next " + DAILY_NEW + " at midnight · Shared by this account."; }
+    gi.textContent = "Today: " + b.todayNew + " new · Ready: up to " + READY_CAP +
+                     " · Next " + DAILY_NEW + " at 12:00 AM · On this device only."; }
+  renderMenuGames();
 }
-function showOutOfGames() { const o = $("outOfGames"); if (o) o.style.display = "flex"; }
+function showOutOfGames() { const m = $("outOfGamesMsg"); if (m) m.textContent = outOfGamesText(); const o = $("outOfGames"); if (o) o.style.display = "flex"; }
 function hideOutOfGames() { const o = $("outOfGames"); if (o) o.style.display = "none"; }
 // ---------- saved-game record (Menu sheet / Continue, (b)9) ----------
 let savedGameLive = false;
@@ -596,7 +638,7 @@ async function syncProfilesOnSignIn(serverProfiles, activeId) {
   renderDossier(); renderProfiles(); renderWallet();
 }
 async function accountAuth(kind) { // "login" | "signup"
-  const em = $("optAcctEmail"), pw = $("optAcctPw"), msg = $("optAcctMsg");
+  const em = $(kind === "signup" ? "optSuEmail" : "optSiEmail"), pw = $(kind === "signup" ? "optSuPw" : "optSiPw"), msg = $("optAcctMsg");
   const email = em ? String(em.value || "").trim() : "";
   const password = pw ? String(pw.value || "") : "";
   if (!email || !password) { if (msg) msg.textContent = "Enter an email and a password."; return; }
@@ -721,6 +763,7 @@ async function addPasskey() {
   }
 }
 async function removePasskey(credId) {
+  if (typeof confirm === "function" && !confirm("Remove this passkey? You can still sign in with your password.")) return;
   const msg = $("optAcctMsg");
   try {
     const data = await acctApi("/v1/passkeys/remove", { method: "POST", headers: acctAuthHeaders(),
@@ -731,7 +774,7 @@ async function removePasskey(credId) {
   } catch (_) { if (msg) msg.textContent = "Couldn't remove that passkey — try again."; }
 }
 async function passkeySignIn() {
-  const em = $("optAcctEmail"), msg = $("optAcctMsg");
+  const em = $("optSiEmail"), msg = $("optAcctMsg");
   if (!waSupported()) { if (msg) msg.textContent = "Passkeys aren't available in this browser."; return; }
   const email = em ? String(em.value || "").trim() : "";
   if (msg) msg.textContent = "Waiting for your passkey…";
@@ -804,27 +847,36 @@ async function bootAccountSync() {
     }
   }
 }
-const PLAN_LINE_SIGNED_OUT = "Plan: Beta — accounts and billing arrive with the full launch.";
 function guestDaysText() {
   const n = accountState && typeof accountState.guest_days_left === "number" ? accountState.guest_days_left : null;
   if (n === null) return "";
   return n <= 0 ? "last day" : n === 1 ? "1 day left" : n + " days left";
 }
+function guestLeadText() {
+  const n = accountState && typeof accountState.guest_days_left === "number" ? accountState.guest_days_left : null;
+  const tail2 = n === null ? "the test account ends soon and is deleted 30 days after that."
+    : n <= 0 ? "the test account ends today and is deleted 30 days after that."
+    : n === 1 ? "the test account ends in 1 day and is deleted 30 days after that."
+    : "the test account ends in " + n + " days and is deleted 30 days after that.";
+  return "Add an email and password to keep this profile, its rating and its games. If you don't, " + tail2;
+}
+function planStatusText() {
+  if (!accountState) return "Not signed in · games are saved on this device only";
+  if (accountState.guest) return "Test account · " + guestDaysText();
+  return "Plan: " + (accountState.plan === "none" ? "Beta access" : planName(accountState.plan)) + " · " + accountState.email;
+}
+function expandAccount() {
+  const blk = $("optAcctBlock"); if (blk) blk.style.display = "";
+  const tg = $("optAcctToggle"); if (tg) { tg.setAttribute("aria-expanded", "true"); tg.textContent = "▾"; }
+}
 function renderAccount() {
   const line = $("optAccountLine");
-  if (line) line.textContent = !accountState ? "Not signed in"
-    : accountState.guest ? "Test account — " + guestDaysText()
-    : "Signed in as " + accountState.email;
-  const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
-  const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
-  const pl = $("optPlanLine");
-  if (pl) pl.textContent = !accountState ? PLAN_LINE_SIGNED_OUT
-    : accountState.guest ? "Plan: " + planName(accountState.plan) + " (test code) · " + guestDaysText()
-    : "Plan: " + planName(accountState.plan) + " · " + accountState.email;
-  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState && !accountState.guest ? "" : "none";
-  const bn = $("optBillingNote"); if (bn) bn.textContent = acctBillingNote;
-  // Phase 4 guest surfaces: the banner over the board and the claim
-  // form in this drawer. Both exist only while the account is a guest.
+  if (line) line.textContent = planStatusText();
+  const bl = $("optBillingLine"); if (bl) bl.textContent = "Billing isn't open yet. Your beta access keeps working.";
+  const so2 = $("optAcctSignedOut"); if (so2) so2.style.display = accountState ? "none" : "";
+  const si2 = $("optAcctSignedIn"); if (si2) si2.style.display = accountState && !accountState.guest ? "" : "none";
+  // Phase 4 guest surfaces: the banner (menu screen only) and the
+  // claim form in this drawer. Both exist only while a guest.
   const banner = $("guestBanner");
   if (banner) {
     banner.style.display = accountState && accountState.guest ? "" : "none";
@@ -833,7 +885,7 @@ function renderAccount() {
       bt.textContent = "You're on a test account — " + guestDaysText() + ". Keep your progress to make it yours.";
   }
   const claim = $("optGuestClaim"); if (claim) claim.style.display = accountState && accountState.guest ? "" : "none";
-  const gd = $("optGuestDays"); if (gd) gd.textContent = accountState && accountState.guest ? guestDaysText() : "";
+  const lead = $("optGuestLead"); if (lead && accountState && accountState.guest) lead.textContent = guestLeadText();
   // Phase 2b: passkey controls appear only when this browser can do
   // WebAuthn; otherwise one plain line explains why, and the password
   // form carries on alone.
@@ -1859,7 +1911,28 @@ function init(opts) {
     const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
     const rdb = $("optRedeemBtn"); if (rdb) rdb.addEventListener("click", () => { redeemTestCode(); });
     const clb = $("optClaimBtn"); if (clb) clb.addEventListener("click", () => { claimGuestAccount(); });
-    const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => { openOptions(); });
+    const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => {
+      openOptions(); expandAccount();
+      const ce = $("optClaimEmail"); if (ce && typeof ce.focus === "function") ce.focus();
+    });
+    const atg = $("optAcctToggle"); if (atg) atg.addEventListener("click", () => {
+      const blk = $("optAcctBlock"); if (!blk) return;
+      const open = blk.style.display !== "none";
+      blk.style.display = open ? "none" : "";
+      atg.setAttribute("aria-expanded", open ? "false" : "true");
+      atg.textContent = open ? "▸" : "▾";
+    });
+    const ssi = $("optShowSignIn"); if (ssi) ssi.addEventListener("click", () => {
+      const a = $("optSignInForm"), b = $("optSignUpForm");
+      if (a) a.style.display = ""; if (b) b.style.display = "none";
+    });
+    const ssu = $("optShowSignUp"); if (ssu) ssu.addEventListener("click", () => {
+      const a = $("optSignInForm"), b = $("optSignUpForm");
+      if (a) a.style.display = "none"; if (b) b.style.display = "";
+    });
+    const rtg = $("optRedeemToggle"); if (rtg) rtg.addEventListener("click", () => {
+      const rb = $("optRedeemBox"); if (rb) rb.style.display = rb.style.display === "none" ? "" : "none";
+    });
     renderAccount();
     if (accountState) { bootAccountSync(); refreshPasskeys(); }
     const dp = $("optDeleteProfile"); if (dp) dp.addEventListener("click", deleteProfile);
@@ -1910,3 +1983,4 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, startLesson, 
 if (typeof window !== "undefined" && !window.__coachManualInit)
   window.addEventListener("DOMContentLoaded", () => CoachUI.init());
 if (typeof module !== "undefined" && module.exports) module.exports = CoachUI;
+

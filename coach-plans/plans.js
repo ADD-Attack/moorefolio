@@ -13,11 +13,11 @@
     "chessCoachAccount.beginnertest"
   ];
 
-  var CREATE_ACCOUNT_NOTE = "Create your account first — open a coach page and use Options → Account.";
-  var BILLING_NOT_OPEN_NOTE = "Billing isn't open yet — plans launch soon. Your beta access keeps working.";
+  var CREATE_ACCOUNT_NOTE = "Plans aren't on sale yet — your beta access keeps working.";
+  var BILLING_NOT_OPEN_NOTE = "Plans aren't on sale yet — your beta access keeps working.";
   var ERROR_NOTE = "Something went wrong — try again in a moment.";
   var REDEEM_URL = "https://abraham-1.tail629694.ts.net/v1/redeem";
-  var REDEEM_OK_NOTE = "Test code accepted — you're in for 7 days.";
+  var REDEEM_OK_NOTE = "Test code accepted — you're in for 7 days. Choose how to play:";
   var REDEEM_BAD_NOTE = "That code wasn't recognized — check it and try again.";
   var REDEEM_EMPTY_NOTE = "Enter your test code first.";
   var REDEEM_SLOW_NOTE = "Too many tries — wait a bit and try again.";
@@ -122,7 +122,7 @@
   function checkout(plan) {
     var token = findToken();
     if (!token) {
-      showBillingNote(CREATE_ACCOUNT_NOTE, true);
+      showBillingNote(CREATE_ACCOUNT_NOTE, false);
       return Promise.resolve(false);
     }
     var interval = plan === "byok_weekly" ? "weekly" : (annual ? "annual" : "monthly");
@@ -234,7 +234,7 @@
             }
           }
           var note = el("redeemNote");
-          if (note) note.innerHTML = REDEEM_OK_NOTE + ' <a href="/coach-you/">Open the coach and play</a>';
+          if (note) note.innerHTML = REDEEM_OK_NOTE + ' <a class="btn" href="/coach-kids/">New Player</a> <a class="btn" href="/coach-you/">Standard</a>';
           return true;
         }
         if (status === 401) { setText("redeemNote", REDEEM_BAD_NOTE); return false; }
@@ -253,9 +253,36 @@
     redeemBtn.addEventListener("click", function () { return redeem(); });
   }
 
+  // UI Pass 2 (d)2: arriving from a coach page (referrer, or ?from=
+  // set by the coach drawer's See plans link) turns the hero button
+  // into the way back.
+  var heroBtn = el("heroStartBtn");
+  if (heroBtn) {
+    var fromPath = null;
+    try { fromPath = new URLSearchParams(window.location.search).get("from"); } catch (e) { fromPath = null; }
+    if (!fromPath && typeof document !== "undefined" && document.referrer) {
+      try {
+        var rp = new URL(document.referrer).pathname;
+        if (/coach-(you|ben|test|kids|beginnertest)/.test(rp)) fromPath = rp;
+      } catch (e) { /* a referrer we cannot parse is just a cold visit */ }
+    }
+    if (fromPath && fromPath.indexOf("/coach-") === 0) {
+      heroBtn.textContent = "Back to the coach";
+      heroBtn.setAttribute("href", fromPath);
+    }
+  }
+
   setAnnual(false);
   renderBoard();
-  if (typeof setInterval === "function") {
+  // UI Pass 2 (d)7: reduced motion gets the still final position +
+  // the captions as a list (the list itself is CSS-gated); no loop.
+  var REDUCED = false;
+  try { REDUCED = !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches); } catch (e) { REDUCED = false; }
+  if (REDUCED) {
+    for (var di = 0; di < DEMO_STEPS.length; di++) applyMove(DEMO_STEPS[di]);
+    demoStep = DEMO_STEPS.length;
+    setText("demoLine", "A short game in six moves.");
+  } else if (typeof setInterval === "function") {
     try { setInterval(stepDemo, 1800); } catch (e) { /* demo loop is decorative */ }
   }
 })();

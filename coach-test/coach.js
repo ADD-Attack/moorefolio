@@ -97,7 +97,7 @@ function activeProfile() { return profilesState.profiles.find((p) => p.id === ac
 function renderProfiles() {
   const p = activeProfile(); if (!p) return;
   const chip = $("profileChip");
-  if (chip) chip.textContent = (p.name || "P").slice(0, 1).toUpperCase() + " " + p.name;
+  if (chip) { chip.textContent = (p.name || "P").slice(0, 1).toUpperCase() + " " + p.name; chip.style.visibility = "visible"; }
   const sel = $("optProfileSelect");
   if (sel) {
     sel.innerHTML = "";
@@ -223,10 +223,22 @@ function gamesLeft() {
   const w = loadWallet(); return Math.max(0, Math.min(READY_CAP, (w.saved || 0) + ((w.credited || 0) - (w.used || 0))));
 }
 function fmtNextCredit() {
-  if (!serverCaps || !serverCaps.next_credit_at) return "midnight";
+  if (!serverCaps || !serverCaps.next_credit_at) return "at midnight";
   try {
-    return new Date(serverCaps.next_credit_at).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
-  } catch (_) { return "midnight"; }
+    const d = new Date(serverCaps.next_credit_at);
+    const t = d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    const now = new Date();
+    const sameDay = d.toDateString() === now.toDateString();
+    if (sameDay) return "at " + t;
+    const tm = new Date(now); tm.setDate(now.getDate() + 1);
+    if (d.toDateString() === tm.toDateString()) return "tomorrow at " + t;
+    return d.toLocaleDateString([], { weekday: "short" }) + " at " + t;
+  } catch (_) { return "at midnight"; }
+}
+function sharedPoolText() {
+  // UI Pass 2 (a)2: the shared-pool fact is stated only when this
+  // account actually has more than one profile to share it with.
+  return profilesState && profilesState.profiles.length >= 2 ? " · Shared by every profile on this account." : "";
 }
 function walletBreakdown() { const w = loadWallet(); return { todayNew: Math.max(0, (w.credited || 0) - (w.used || 0)), saved: w.saved || 0, left: gamesLeft() }; }
 function consumeGame() {
@@ -237,6 +249,7 @@ function consumeGame() {
   return true;
 }
 function renderWallet() {
+  const gc0 = $("gamesChip"); if (gc0) gc0.style.visibility = "visible";
   if (signedIn() && serverCaps) {
     const chipS = $("gamesChip"), clS = $("gameCostLine"), giS = $("gamesInfo"), nbS = $("newGameBtn");
     if (serverCaps.unlimited) {
@@ -246,7 +259,7 @@ function renderWallet() {
       if (clS) clS.textContent = !dossier.calibrated ? "First game is calibration · free" : "Your key · no daily limit";
       if (nbS) nbS.disabled = false;
       if (giS) giS.textContent = "Games on this account run on your own key — no daily limit. " +
-        "Platform safety limits still apply. · Shared by this account.";
+        "Platform safety limits still apply." + sharedPoolText();
       return;
     }
     const left = serverCaps.left;
@@ -255,25 +268,25 @@ function renderWallet() {
     if (clS) clS.textContent = noPlan
       ? (!dossier.calibrated ? "First game is calibration · free" : "No plan right now — lessons are still free")
       : !dossier.calibrated ? "First game is calibration · free"
-      : left > 0 ? "Uses 1 game · " + left + " left" : "No games left — more arrive at " + fmtNextCredit() + ".";
+      : left > 0 ? "Uses 1 game · " + left + " left" : "No games left — more arrive " + fmtNextCredit() + ".";
     if (nbS) nbS.disabled = dossier.calibrated ? left <= 0 : false;
     if (giS) giS.textContent = noPlan
       ? "No active plan on this account right now. Lessons are still free, always."
       : "Today: " + serverCaps.today_new + " new · Saved: " + serverCaps.saved +
-        " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " at " +
-        fmtNextCredit() + " · Shared by this account.";
+        " · Ready: up to " + serverCaps.ready_cap + " · Next " + serverCaps.daily_credit + " arrive " +
+        fmtNextCredit() + sharedPoolText();
     return;
   }
   const left = gamesLeft();
   const chip = $("gamesChip"); if (chip) chip.textContent = left + " games";
   const cl = $("gameCostLine");
   if (cl) cl.textContent = !dossier.calibrated ? "First game is calibration · free"
-    : left > 0 ? "Uses 1 game · " + left + " left" : "Next games arrive at midnight.";
+    : left > 0 ? "Uses 1 game · " + left + " left" : "No games left — more arrive at 12:00 AM.";
   const nb = $("newGameBtn"); if (nb) nb.disabled = dossier.calibrated ? left <= 0 : false;
   const gi = $("gamesInfo");
   if (gi) { const b = walletBreakdown();
-    gi.textContent = "Today: " + b.todayNew + " new · Saved: " + b.saved + " · Ready: up to " + READY_CAP +
-                     " · Next " + DAILY_NEW + " at midnight · Shared by this account."; }
+    gi.textContent = "Today: " + b.todayNew + " new · Ready: up to " + READY_CAP +
+                     " · Next " + DAILY_NEW + " at 12:00 AM · On this device only."; }
 }
 function updateGameInfo() {
   const t = $("gameInfoTitle"); if (t) t.textContent = "You vs. the Coach (" + (acctCoachSeat === "astra" ? "Astra" : acctCoachSeat === "byok" ? "your model" : "Sol") + ")";
@@ -472,7 +485,13 @@ function adoptAccount(data) {
 async function refreshCaps() {
   if (!accountState) return;
   try { serverCaps = await acctApi("/v1/games", { headers: acctAuthHeaders() }); renderWallet(); }
-  catch (_) { /* keep the last known numbers */ }
+  catch (_) {
+    if (!serverCaps) {
+      const chip = $("gamesChip"), gi = $("gamesInfo");
+      if (chip) { chip.textContent = "— games"; chip.style.visibility = "visible"; }
+      if (gi) gi.textContent = "Couldn't load your games. Reload to try again.";
+    }
+  }
 }
 async function requestAccountSession(gid, charge) {
   const data = await acctApi("/v1/account/session", {
@@ -491,7 +510,7 @@ function onAccountNoGames() {
     coachLine("This account has no plan right now — lessons are still free.");
     setCoachState("No plan right now.");
   } else {
-    coachLine("That's all the games for today — more arrive at " + fmtNextCredit() + ".");
+    coachLine("That's all the games for now — more arrive " + fmtNextCredit() + ".");
     setCoachState("No games left today.");
   }
   gameActive = false;
@@ -527,7 +546,7 @@ async function syncProfilesOnSignIn(serverProfiles, activeId) {
   renderDossier(); renderProfiles(); renderWallet();
 }
 async function accountAuth(kind) { // "login" | "signup"
-  const em = $("optAcctEmail"), pw = $("optAcctPw"), msg = $("optAcctMsg");
+  const em = $(kind === "signup" ? "optSuEmail" : "optSiEmail"), pw = $(kind === "signup" ? "optSuPw" : "optSiPw"), msg = $("optAcctMsg");
   const email = em ? String(em.value || "").trim() : "";
   const password = pw ? String(pw.value || "") : "";
   if (!email || !password) { if (msg) msg.textContent = "Enter an email and a password."; return; }
@@ -652,6 +671,7 @@ async function addPasskey() {
   }
 }
 async function removePasskey(credId) {
+  if (typeof confirm === "function" && !confirm("Remove this passkey? You can still sign in with your password.")) return;
   const msg = $("optAcctMsg");
   try {
     const data = await acctApi("/v1/passkeys/remove", { method: "POST", headers: acctAuthHeaders(),
@@ -662,7 +682,7 @@ async function removePasskey(credId) {
   } catch (_) { if (msg) msg.textContent = "Couldn't remove that passkey — try again."; }
 }
 async function passkeySignIn() {
-  const em = $("optAcctEmail"), msg = $("optAcctMsg");
+  const em = $("optSiEmail"), msg = $("optAcctMsg");
   if (!waSupported()) { if (msg) msg.textContent = "Passkeys aren't available in this browser."; return; }
   const email = em ? String(em.value || "").trim() : "";
   if (msg) msg.textContent = "Waiting for your passkey…";
@@ -736,25 +756,34 @@ async function bootAccountSync() {
     }
   }
 }
-const PLAN_LINE_SIGNED_OUT = "Plan: Beta — accounts and billing arrive with the full launch.";
 function guestDaysText() {
   const n = accountState && typeof accountState.guest_days_left === "number" ? accountState.guest_days_left : null;
   if (n === null) return "";
   return n <= 0 ? "last day" : n === 1 ? "1 day left" : n + " days left";
 }
+function guestLeadText() {
+  const n = accountState && typeof accountState.guest_days_left === "number" ? accountState.guest_days_left : null;
+  const tail = n === null ? "the test account ends soon and is deleted 30 days after that."
+    : n <= 0 ? "the test account ends today and is deleted 30 days after that."
+    : n === 1 ? "the test account ends in 1 day and is deleted 30 days after that."
+    : "the test account ends in " + n + " days and is deleted 30 days after that.";
+  return "Add an email and password to keep this profile, its rating and its games. If you don't, " + tail;
+}
+function planStatusText() {
+  if (!accountState) return "Not signed in · games are saved on this device only";
+  if (accountState.guest) return "Test account · " + guestDaysText();
+  return "Plan: " + (accountState.plan === "none" ? "Beta access" : planName(accountState.plan)) + " · " + accountState.email;
+}
+function expandAccount() {
+  const blk = $("optAcctBlock"); if (blk) blk.style.display = "";
+  const tg = $("optAcctToggle"); if (tg) { tg.setAttribute("aria-expanded", "true"); tg.textContent = "▾"; }
+}
 function renderAccount() {
   const line = $("optAccountLine");
-  if (line) line.textContent = !accountState ? "Not signed in"
-    : accountState.guest ? "Test account — " + guestDaysText()
-    : "Signed in as " + accountState.email;
-  const form = $("optAcctForm"); if (form) form.style.display = accountState ? "none" : "";
-  const so = $("optSignOutBtn"); if (so) so.style.display = accountState ? "" : "none";
-  const pl = $("optPlanLine");
-  if (pl) pl.textContent = !accountState ? PLAN_LINE_SIGNED_OUT
-    : accountState.guest ? "Plan: " + planName(accountState.plan) + " (test code) · " + guestDaysText()
-    : "Plan: " + planName(accountState.plan) + " · " + accountState.email;
-  const mb = $("optManageBilling"); if (mb) mb.style.display = accountState && !accountState.guest ? "" : "none";
-  const bn = $("optBillingNote"); if (bn) bn.textContent = acctBillingNote;
+  if (line) line.textContent = planStatusText();
+  const bl = $("optBillingLine"); if (bl) bl.textContent = "Billing isn't open yet. Your beta access keeps working.";
+  const so2 = $("optAcctSignedOut"); if (so2) so2.style.display = accountState ? "none" : "";
+  const si2 = $("optAcctSignedIn"); if (si2) si2.style.display = accountState && !accountState.guest ? "" : "none";
   // Phase 4 guest surfaces: the banner over the board and the claim
   // form in this drawer. Both exist only while the account is a guest.
   const banner = $("guestBanner");
@@ -765,7 +794,7 @@ function renderAccount() {
       bt.textContent = "You're on a test account — " + guestDaysText() + ". Keep your progress to make it yours.";
   }
   const claim = $("optGuestClaim"); if (claim) claim.style.display = accountState && accountState.guest ? "" : "none";
-  const gd = $("optGuestDays"); if (gd) gd.textContent = accountState && accountState.guest ? guestDaysText() : "";
+  const lead = $("optGuestLead"); if (lead && accountState && accountState.guest) lead.textContent = guestLeadText();
   renderCoachPicker();
   refreshByok();
   // Phase 2b: passkey controls appear only when this browser can do
@@ -789,7 +818,16 @@ function renderCoachPicker() {
   row.style.display = show ? "" : "none";
   const note = $("optCoachNote");
   if (note) note.textContent = (!show && accountState && p && p.mode !== "New Player" && !isPro)
-    ? "The Pro plan adds a second coach (Astra) for this profile." : "";
+    ? "Astra, a second coach, comes with the Pro plan." : "";
+  const solB0 = $("optCoachSolBtn"), astB0 = $("optCoachAstraBtn");
+  if (solB0) { if (typeof solB0.setAttribute === "function") solB0.setAttribute("aria-checked", p.coach !== "astra" ? "true" : "false"); solB0.textContent = p.coach !== "astra" ? "✓ Sol" : "Sol"; }
+  if (astB0) { if (typeof astB0.setAttribute === "function") astB0.setAttribute("aria-checked", p.coach === "astra" ? "true" : "false"); astB0.textContent = p.coach === "astra" ? "✓ Astra" : "Astra"; }
+  const aRow = $("optCoachApplyRow"), aNote = $("optCoachApplyNote");
+  if (aRow && aNote) {
+    const mid = show && typeof gameActive !== "undefined" && gameActive && !gameOver;
+    aRow.style.display = mid ? "" : "none";
+    aNote.textContent = mid ? "Applies from your next game." : "";
+  }
   if (!show) return;
   const sol = $("optCoachSolBtn"), ast = $("optCoachAstraBtn");
   if (sol) sol.classList.toggle("sel", p.coach !== "astra");
@@ -823,38 +861,65 @@ const BYOK_MODELS_FALLBACK = {
   openai: [{ id: "gpt-6-sol", label: "GPT-6 Sol" }, { id: "gpt-6-luna", label: "GPT-6 Luna" }],
   anthropic: [{ id: "claude-opus-5-5", label: "Claude Opus 5.5" }, { id: "claude-sonnet-5", label: "Claude Sonnet 5" }],
 };
-function byokNote(text) { const n = $("optByokNote"); if (n) n.textContent = text; }
+function byokNote(text) { const n = $("optByokMsg"); if (n) n.textContent = text || ""; }
+function byokTailText() {
+  const t = byokState && byokState.tail ? String(byokState.tail).replace(/·/g, "") : "";
+  return t ? t.slice(-4) : "";
+}
+function byokSavedText() {
+  if (!byokState || !byokState.added_at) return "";
+  try { return " · saved " + new Date(byokState.added_at).toLocaleDateString([], { month: "short", day: "numeric" }); }
+  catch (_) { return ""; }
+}
 function renderByok() {
-  // Paid state decides the shape of the section (fix pass A+B):
-  // active -> the live key form, as before; inactive -> the plan
-  // line + a button to the plans page instead of a form that would
-  // only 403. A stored key's masked summary (and its Remove button)
-  // stays visible either way — a lapsed key is inert, not deleted.
-  const form = $("optByokForm"); if (form) form.style.display = byokPaid ? "" : "none";
-  const inactive = $("optByokInactive"); if (inactive) inactive.style.display = byokPaid ? "none" : "";
-  const editBtns = [$("optByokSaveBtn"), $("optByokTestBtn")];
-  for (const b of editBtns) if (b) b.style.display = byokPaid ? "" : "none";
+  const sec = $("optByokSection"); if (!sec) return;
+  const signed = signedIn();
+  const soLine = $("optByokSignedOut"); if (soLine) soLine.style.display = signed ? "none" : "";
+  const stateRow = $("optByokStateRow"); if (stateRow) stateRow.style.display = signed ? "" : "none";
+  const form = $("optByokForm");
+  const inactive = $("optByokInactive");
+  const saveB = $("optByokSaveBtn"), testB = $("optByokTestBtn"), removeB = $("optByokRemoveBtn");
   const state = $("optByokState");
-  if (state) state.textContent = byokState
-    ? "····" + String(byokState.tail || "").replace(/^·+/, "") + " · added " + String(byokState.added_at || "").slice(0, 10)
-    : "No key saved";
-  const rm = $("optByokRemoveBtn"); if (rm) rm.style.display = byokState ? "" : "none";
-  const prov = $("optByokProvider");
-  const model = $("optByokModel");
-  if (prov && byokState && byokState.provider) prov.value = byokState.provider;
-  if (prov && !prov.value) prov.value = "openai"; // the picker's first option, stated explicitly
-  if (model) {
-    const lists = byokModels || BYOK_MODELS_FALLBACK;
-    const list = lists[prov ? prov.value : "openai"] || [];
-    model.innerHTML = "";
-    for (const m of list) {
-      const o = document.createElement("option");
-      o.value = m.id; o.textContent = m.label || m.id;
-      model.appendChild(o);
-    }
-    if (byokState && byokState.model && list.some((m) => m.id === byokState.model)) model.value = byokState.model;
-    else if (!list.some((m) => m.id === model.value)) model.value = list.length ? list[0].id : "";
+  const noteEl = $("optByokNote");
+  if (!signed) {
+    if (form) form.style.display = "none";
+    if (inactive) inactive.style.display = "none";
+    if (saveB) saveB.style.display = "none";
+    if (testB) testB.style.display = "none";
+    if (removeB) removeB.style.display = "none";
+    if (noteEl) noteEl.style.display = "none";
+    return;
   }
+  if (noteEl) noteEl.style.display = "";
+  if (form) form.style.display = byokPaid ? "" : "none";
+  if (inactive) {
+    inactive.style.display = byokPaid ? "none" : "";
+    if (!byokPaid) {
+      const lead = inactive.querySelector("span");
+      if (lead) lead.textContent = byokState
+        ? "Key ending …" + byokTailText() + " · not in use — your key plan isn't active."
+        : "Use your own AI key — $5/week, on its own or with any plan.";
+    }
+  }
+  if (state) state.textContent = byokState ? "Key ending …" + byokTailText() + byokSavedText() : "No key saved";
+  if (saveB) saveB.style.display = byokPaid ? "" : "none";
+  if (testB) testB.style.display = byokPaid && byokState ? "" : "none";
+  if (removeB) removeB.style.display = byokState ? "" : "none";
+  const psel = $("optByokProvider");
+  if (psel && byokState && byokState.provider) psel.value = byokState.provider;
+  if (psel && !psel.value) psel.value = "openai"; // the picker's first option, stated explicitly
+  renderByokModels();
+}
+function renderByokModels() {
+  const sel = $("optByokModel"); if (!sel) return;
+  const prov = ($("optByokProvider") || {}).value || (byokState && byokState.provider) || "openai";
+  const list = ((byokModels || BYOK_MODELS_FALLBACK) || {})[prov] || [];
+  const cur = sel.value;
+  sel.innerHTML = "";
+  for (const m of list) { const o = document.createElement("option"); o.value = m.id; o.textContent = m.label; sel.appendChild(o); }
+  const want = (byokState && byokState.provider === prov && byokState.model) || cur;
+  if (want && list.some((m) => m.id === want)) sel.value = want;
+  else if (!list.some((m) => m.id === sel.value)) sel.value = list.length ? list[0].id : "";
 }
 async function refreshByok() {
   if (!accountState) { byokState = null; renderByok(); return; }
@@ -871,14 +936,14 @@ async function saveByokKey() {
   const key = keyEl ? String(keyEl.value || "").trim() : "";
   if (!accountState) { byokNote("Sign in first — the key is stored on your account."); return; }
   if (!key) { byokNote("Paste your key first — the field is never filled back in for you."); return; }
-  byokNote("Saving…");
+  byokNote("");
   try {
     const data = await acctApi("/v1/byok", { method: "POST", headers: acctAuthHeaders(),
       body: JSON.stringify({ provider: prov ? prov.value : "openai", model: model ? model.value : "", key }) });
     byokState = data.byok || null;
     if (keyEl) keyEl.value = "";
     renderByok();
-    byokNote("Key saved. Your games now run on your own model — they don't use your plan's games.");
+    byokNote("Key saved.");
     refreshCaps();
   } catch (e) {
     byokNote(e && e.status === 403 ? "BYOK isn't active on your plan yet."
@@ -888,11 +953,11 @@ async function saveByokKey() {
 }
 async function testByokKey() {
   if (!accountState || !byokState) { byokNote("Save a key first, then test it."); return; }
-  byokNote("Testing — one small call to your provider…");
+  byokNote("");
   try {
     const data = await acctApi("/v1/byok/test", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
-    byokNote(data && data.ok ? "Your key works — " + byokState.provider + " answered."
-      : "Your provider rejected that key. Check it on your provider account, then save it again.");
+    byokNote(data && data.ok ? "Key works."
+      : "Key refused by " + (byokState && byokState.provider === "anthropic" ? "Anthropic" : "OpenAI") + " — check it and try again.");
   } catch (e) {
     byokNote(e && e.status === 403 ? "BYOK isn't active on your plan yet."
       : "Couldn't reach your provider just now — try again in a bit.");
@@ -900,11 +965,12 @@ async function testByokKey() {
 }
 async function removeByokKey() {
   if (!accountState) return;
+  if (typeof confirm === "function" && !confirm("Remove this key? Games will use your plan again.")) return;
   try {
     await acctApi("/v1/byok/remove", { method: "POST", headers: acctAuthHeaders(), body: "{}" });
     byokState = null;
     renderByok();
-    byokNote("Key removed. Your games use your plan again.");
+    byokNote("Key removed.");
     refreshCaps();
   } catch (_) { byokNote("Couldn't remove the key just now — try again in a bit."); }
 }
@@ -1052,7 +1118,7 @@ function startGame(kind) {
       coachLine("This account has no plan right now — lessons are still free.");
       setCoachState("No plan right now.");
     } else {
-      coachLine("That's all the games for today — next games arrive at midnight.");
+      coachLine("That's all the games for now — more arrive at 12:00 AM.");
       setCoachState("No games left today.");
     }
     return;
@@ -1404,10 +1470,32 @@ function init(opts) {
     const apb = $("optAddPasskeyBtn"); if (apb) apb.addEventListener("click", () => { addPasskey(); });
     const rdb = $("optRedeemBtn"); if (rdb) rdb.addEventListener("click", () => { redeemTestCode(); });
     const clb = $("optClaimBtn"); if (clb) clb.addEventListener("click", () => { claimGuestAccount(); });
-    const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => { openOptions(); });
+    const gkb = $("guestKeepBtn"); if (gkb) gkb.addEventListener("click", () => {
+      openOptions(); expandAccount();
+      const ce = $("optClaimEmail"); if (ce && typeof ce.focus === "function") ce.focus();
+    });
+    const atg = $("optAcctToggle"); if (atg) atg.addEventListener("click", () => {
+      const blk = $("optAcctBlock"); if (!blk) return;
+      const open = blk.style.display !== "none";
+      blk.style.display = open ? "none" : "";
+      atg.setAttribute("aria-expanded", open ? "false" : "true");
+      atg.textContent = open ? "▸" : "▾";
+    });
+    const ssi = $("optShowSignIn"); if (ssi) ssi.addEventListener("click", () => {
+      const a = $("optSignInForm"), b = $("optSignUpForm");
+      if (a) a.style.display = ""; if (b) b.style.display = "none";
+    });
+    const ssu = $("optShowSignUp"); if (ssu) ssu.addEventListener("click", () => {
+      const a = $("optSignInForm"), b = $("optSignUpForm");
+      if (a) a.style.display = "none"; if (b) b.style.display = "";
+    });
+    const rtg = $("optRedeemToggle"); if (rtg) rtg.addEventListener("click", () => {
+      const rb = $("optRedeemBox"); if (rb) rb.style.display = rb.style.display === "none" ? "" : "none";
+    });
     const bsv = $("optByokSaveBtn"); if (bsv) bsv.addEventListener("click", () => { saveByokKey(); });
     const bpl = $("optByokPlansBtn"); if (bpl) bpl.addEventListener("click", () => {
-      const url = "https://moorefolio.com/coach-plans/";
+      const fromPath = (typeof window !== "undefined" && window.location && window.location.pathname) || "/coach-you/";
+      const url = "https://moorefolio.com/coach-plans/?from=" + encodeURIComponent(fromPath);
       if (typeof window.open === "function") window.open(url, "_blank");
       else if (window.location) window.location.href = url;
     });

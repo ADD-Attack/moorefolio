@@ -235,17 +235,20 @@ const IDS = ["board", "boardWrap", "branchLine", "capturedByWhite", "capturedByB
   "centerCol", "capStripTop", "capStripBottom", "gameInfoTitle", "gameInfoKind", "gameInfoProfile",
   "gameCostLine", "gamesChip", "gamesInfo", "profileChip", "optionsDrawer", "optionsClose",
   "optProfileSelect", "optAddProfile", "optProfileName", "optModeTag", "optRecalibrate",
-  "optSoundBtn", "optPlanLine", "optPrivacyLine", "optLockBtn", "optDeleteProfile",
+  "optSoundBtn", "optPrivacyLine", "optLockBtn", "optDeleteProfile",
   "coachHistToggle", "reviewByLine", "failsafePanel",
-  "optAccountLine", "optAcctForm", "optAcctEmail", "optAcctPw", "optSignInBtn",
-  "optSignUpBtn", "optSignOutBtn", "optAcctMsg",
+  "optAccountLine", "optAcctBlock", "optAcctToggle", "optAcctSignedOut", "optAcctSignedIn",
+  "optSiEmail", "optSiPw", "optSuEmail", "optSuPw", "optSignInBtn",
+  "optSignUpBtn", "optSignOutBtn", "optAcctMsg", "optShowSignIn", "optShowSignUp",
+  "optRedeemToggle", "optRedeemBox", "optBillingLine", "optGuestLead",
   "optPasskeySignInBtn", "optPasskeyManage", "optPasskeyList", "optAddPasskeyBtn", "optPasskeyNote",
-  "optManageBilling", "optBillingNote", "optCoachRow", "optCoachSolBtn", "optCoachAstraBtn", "optCoachNote",
+  "optCoachRow", "optCoachSolBtn", "optCoachAstraBtn", "optCoachNote", "optCoachApplyRow", "optCoachApplyNote",
   "guestBanner", "guestBannerText", "guestKeepBtn", "optRedeemCode", "optRedeemBtn",
-  "optGuestClaim", "optGuestDays", "optClaimEmail", "optClaimPw", "optClaimBtn", "optClaimMsg",
+  "optGuestClaim", "optClaimEmail", "optClaimPw", "optClaimBtn", "optClaimMsg",
   "optByokSection", "optByokState", "optByokProvider", "optByokModel", "optByokKey",
-  "optByokSaveBtn", "optByokTestBtn", "optByokRemoveBtn", "optByokNote",
-  "optByokForm", "optByokInactive", "optByokPlansBtn"];
+  "optByokSaveBtn", "optByokTestBtn", "optByokRemoveBtn", "optByokNote", "optByokMsg",
+  "optByokForm", "optByokInactive", "optByokPlansBtn", "optByokSignedOut", "optByokStateRow",
+  "optPasskeyAbout"];
 
 function makeStorage() {
   const m = new Map();
@@ -686,7 +689,7 @@ async function test8() {
   // games popover copy, forbidden words absent
   for (const f of env.registry.get("gamesChip").listeners.click || []) f();
   const gi = env.registry.get("gamesInfo").textContent;
-  ok("games popover explains the counter", gi.includes("Today: 2 new") && gi.includes("Shared by this account"), gi);
+  ok("games popover explains the counter", gi.includes("Today: 2 new") && gi.includes("at 12:00 AM") && gi.includes("On this device only") && !gi.includes("Shared"), gi);
   ok("games popover never says 'bank' or 'in hand'", !/bank|in hand/i.test(gi), gi);
   // (a7) coach history disclosure counts lines
   playSan(env, "e4"); await pump(env);
@@ -731,7 +734,7 @@ async function test8() {
   env3.CoachUI._test.getDossier().calibrated = true;
   env3.CoachUI.startGame("rated");
   ok("rated start blocked at zero games", env3.CoachUI._test.getSession() === null &&
-     collectText(env3.registry.get("coachBody")).includes("next games arrive at midnight"),
+     collectText(env3.registry.get("coachBody")).includes("more arrive at 12:00 AM"),
      env3.registry.get("coachTicker").textContent);
 }
 
@@ -742,13 +745,13 @@ async function test9() {
   const env = loadCoach(RELAY);
   await unlock(env);
   ok("signed out at start: account line says so, local profile + wallet drive the chips",
-     env.registry.get("optAccountLine").textContent === "Not signed in" &&
+     env.registry.get("optAccountLine").textContent === "Not signed in · games are saved on this device only" &&
      env.registry.get("profileChip").textContent === "Y You" &&
      env.registry.get("gamesChip").textContent === "3 games",
      env.registry.get("optAccountLine").textContent + " / " + env.registry.get("profileChip").textContent);
   // wrong account password -> honest message, still signed out
-  env.registry.get("optAcctEmail").value = "tester@example.com";
-  env.registry.get("optAcctPw").value = "not-the-password";
+  env.registry.get("optSiEmail").value = "tester@example.com";
+  env.registry.get("optSiPw").value = "not-the-password";
   for (const f of env.registry.get("optSignInBtn").listeners.click || []) await f();
   await pump(env, 10);
   ok("wrong account password shows the sign-in error and stays signed out",
@@ -756,17 +759,17 @@ async function test9() {
      env.CoachUI._test.signedIn() === false,
      env.registry.get("optAcctMsg").textContent);
   // right account password -> server profiles + caps take over
-  env.registry.get("optAcctPw").value = ACCT_PW;
+  env.registry.get("optSiPw").value = ACCT_PW;
   for (const f of env.registry.get("optSignInBtn").listeners.click || []) await f();
   await pump(env, 10);
-  ok("sign-in succeeds: account line names the email", env.registry.get("optAccountLine").textContent === "Signed in as tester@example.com",
+  ok("sign-in succeeds: the status line becomes the plan line", env.registry.get("optAccountLine").textContent === "Plan: Coach · tester@example.com",
      env.registry.get("optAccountLine").textContent);
-  ok("sign-in form hides, sign-out shows",
-     env.registry.get("optAcctForm").style.display === "none" && env.registry.get("optSignOutBtn").style.display === "");
+  ok("sign-in views swap: signed-out block hides, signed-in block shows",
+     env.registry.get("optAcctSignedOut").style.display === "none" && env.registry.get("optAcctSignedIn").style.display === "");
   ok("profiles are the server's now (chip = Dad, the mock account's profile)",
      env.registry.get("profileChip").textContent === "D Dad", env.registry.get("profileChip").textContent);
-  ok("plan line names the account", env.registry.get("optPlanLine").textContent === "Plan: Coach · tester@example.com",
-     env.registry.get("optPlanLine").textContent);
+  ok("plan line names the account", env.registry.get("optAccountLine").textContent === "Plan: Coach · tester@example.com",
+     env.registry.get("optAccountLine").textContent);
   ok("games chip shows the server caps (3)", env.registry.get("gamesChip").textContent === "3 games");
   const branchSessionsBefore = mock.calls.session.length;
   // a rated game opens an ACCOUNT session (charged) instead of a branch session
@@ -790,7 +793,7 @@ async function test9() {
   // games popover from server numbers; forbidden words absent
   for (const f of env.registry.get("gamesChip").listeners.click || []) f();
   const gi = env.registry.get("gamesInfo").textContent;
-  ok("games popover shows server breakdown", gi.includes("Today: 2 new") && gi.includes("Saved: 0") && gi.includes("Shared by this account"), gi);
+  ok("games popover shows server breakdown (one profile: no shared-pool line yet)", gi.includes("Today: 2 new") && gi.includes("Saved: 0") && gi.includes("arrive") && !gi.includes("Shared"), gi);
   ok("games popover never says 'bank' or 'in hand'", !/bank|in hand/i.test(gi), gi);
   // add a profile -> server create + switch
   for (const f of env.registry.get("optAddProfile").listeners.click || []) await f();
@@ -809,9 +812,10 @@ async function test9() {
      env.registry.get("profileChip").textContent === "Y You" &&
      env.registry.get("gamesChip").textContent === "3 games",
      env.registry.get("profileChip").textContent + " / " + env.registry.get("gamesChip").textContent);
-  ok("account line back to signed-out, plan line restored",
-     env.registry.get("optAccountLine").textContent === "Not signed in" &&
-     env.registry.get("optPlanLine").textContent.includes("accounts and billing arrive"));
+  ok("account line back to signed-out; the stale beta plan line is gone",
+     env.registry.get("optAccountLine").textContent === "Not signed in · games are saved on this device only" &&
+     env.registry.get("optAcctSignedOut").style.display === "" &&
+     env.registry.get("optAcctSignedIn").style.display === "none");
 }
 
 // ---------- Test 10: Phase 2b (Ticket 006) passkey surface + wiring ----------
@@ -844,7 +848,7 @@ async function test10() {
   ok("passkey sign-in: auth options + verify called, page signed in as the account",
      mock.calls.waAuthOptions.length === 1 && mock.calls.waAuthVerify.length === 1 &&
      env2.CoachUI._test.signedIn() === true &&
-     env2.registry.get("optAccountLine").textContent === "Signed in as tester@example.com",
+     env2.registry.get("optAccountLine").textContent === "Plan: Coach · tester@example.com",
      env2.registry.get("optAccountLine").textContent);
   const vb = mock.calls.waAuthVerify[0] || {};
   ok("verify body carries the ceremony fields as base64url strings",
@@ -879,8 +883,8 @@ async function test10() {
 
 // ---------- Test 11: Phase 3 (Ticket 006) plans, billing, coach picker ----------
 async function signIn(env) {
-  env.registry.get("optAcctEmail").value = "tester@example.com";
-  env.registry.get("optAcctPw").value = ACCT_PW;
+  env.registry.get("optSiEmail").value = "tester@example.com";
+  env.registry.get("optSiPw").value = ACCT_PW;
   for (const f of env.registry.get("optSignInBtn").listeners.click || []) await f();
   await pump(env, 10);
 }
@@ -890,43 +894,43 @@ async function signOut(env) {
 }
 async function test11() {
   begin("11 Phase 3 plans + billing + coach picker");
-  ok("drawer has Manage billing + the coach picker rows",
-     html.includes('id="optManageBilling"') && html.includes("Manage billing") &&
+  ok("drawer has the coach picker rows; billing stays parked (no Manage billing button anywhere)",
+     !html.includes('id="optManageBilling"') && !html.includes("Manage billing") &&
      html.includes('id="optCoachRow"') && html.includes('id="optCoachSolBtn"') && html.includes('id="optCoachAstraBtn"') &&
-     html.includes('id="optBillingNote"') && html.includes('id="optCoachNote"'));
+     html.includes('id="optBillingLine"') && html.includes("Billing isn't open yet. Your beta access keeps working.") &&
+     html.includes('id="optCoachNote"'));
   const coachJs = fs.readFileSync(path.join(branchDir, "coach.js"), "utf8");
   ok("no Elo-gate copy anywhere in the controller", !/1900|eligible|unlock/i.test(coachJs));
   mock.reset();
   const env = loadCoach(RELAY);
   await unlock(env);
   await signIn(env);
-  ok("plan line shows the display name (Coach)", env.registry.get("optPlanLine").textContent === "Plan: Coach · tester@example.com",
-     env.registry.get("optPlanLine").textContent);
-  ok("Manage billing shows when signed in", env.registry.get("optManageBilling").style.display === "");
+  ok("plan line shows the display name (Coach)", env.registry.get("optAccountLine").textContent === "Plan: Coach · tester@example.com",
+     env.registry.get("optAccountLine").textContent);
+  ok("signed-in billing line shows the parked copy", env.registry.get("optBillingLine").textContent === "Billing isn't open yet. Your beta access keeps working.",
+     env.registry.get("optBillingLine").textContent);
   ok("coach picker hidden on the Coach plan", env.registry.get("optCoachRow").style.display === "none");
-  ok("picker note explains Pro adds Astra (no Elo copy)", env.registry.get("optCoachNote").textContent === "The Pro plan adds a second coach (Astra) for this profile.",
+  ok("picker note explains Pro adds Astra (no Elo copy)", env.registry.get("optCoachNote").textContent === "Astra, a second coach, comes with the Pro plan.",
      env.registry.get("optCoachNote").textContent);
-  for (const f of env.registry.get("optManageBilling").listeners.click || []) await f();
-  await pump(env, 10);
-  ok("portal endpoint was called", mock.calls.billing.some((c) => c.url === "/v1/billing/portal"));
-  ok("unconfigured billing reads gracefully", env.registry.get("optBillingNote").textContent === "Billing isn't open yet — it arrives with the full launch.",
-     env.registry.get("optBillingNote").textContent);
+  ok("parked posture: no portal call is possible from the drawer", mock.calls.billing.length === 0);
   // Pro: picker appears, Astra selectable, seat follows into the game + review
   mock.acct.plan = "pro";
   await signOut(env);
   await signIn(env);
-  ok("plan line shows Pro after re-login", env.registry.get("optPlanLine").textContent === "Plan: Pro · tester@example.com",
-     env.registry.get("optPlanLine").textContent);
+  ok("plan line shows Pro after re-login", env.registry.get("optAccountLine").textContent === "Plan: Pro · tester@example.com",
+     env.registry.get("optAccountLine").textContent);
   ok("coach picker visible on Pro for a Standard profile", env.registry.get("optCoachRow").style.display === "");
   ok("Sol is the default selection", env.registry.get("optCoachSolBtn").classList.contains("sel") &&
-     !env.registry.get("optCoachAstraBtn").classList.contains("sel"));
+     !env.registry.get("optCoachAstraBtn").classList.contains("sel") &&
+     env.registry.get("optCoachSolBtn").textContent === "✓ Sol");
   for (const f of env.registry.get("optCoachAstraBtn").listeners.click || []) await f();
   await pump(env, 10);
   ok("choosing Astra posted the profile coach update",
      mock.calls.acctProfiles.some((c) => c.op === "update" && c.body.coach === "astra"),
      JSON.stringify(mock.calls.acctProfiles));
   ok("Astra shows selected", env.registry.get("optCoachAstraBtn").classList.contains("sel") &&
-     !env.registry.get("optCoachSolBtn").classList.contains("sel"));
+     !env.registry.get("optCoachSolBtn").classList.contains("sel") &&
+     env.registry.get("optCoachAstraBtn").textContent === "✓ Astra");
   mock.turnHandler = (n, body) => {
     const want = body.moves.includes("g4") ? "Qh4" : "e5";
     const cand = body.candidates.find((c) => c.san === want || c.san.startsWith(want));
@@ -943,19 +947,14 @@ async function test11() {
   playSan(env, "g4"); await pump(env, 60);
   ok("review byline names Astra", env.registry.get("reviewByLine").textContent === "Review by Astra",
      env.registry.get("reviewByLine").textContent);
-  mock.billingMode = "ok";
-  for (const f of env.registry.get("optManageBilling").listeners.click || []) await f();
-  await pump(env, 10);
-  ok("configured billing: portal URL handled with the new-tab note",
-     env.CoachUI._test.getBillingNote() === "Billing opened in a new tab.", env.CoachUI._test.getBillingNote());
   // BYOK caps shape -> unlimited chip + popover, no numbers
   mock.acct.plan = "byok_weekly";
   mock.acct.caps = { plan: "byok_weekly", unlimited: true, left: null, today_new: 0, saved: 0,
                      daily_credit: 0, ready_cap: 0, next_credit_at: null };
   await signOut(env);
   await signIn(env);
-  ok("plan line shows BYOK", env.registry.get("optPlanLine").textContent === "Plan: BYOK · tester@example.com",
-     env.registry.get("optPlanLine").textContent);
+  ok("plan line shows BYOK", env.registry.get("optAccountLine").textContent === "Plan: BYOK · tester@example.com",
+     env.registry.get("optAccountLine").textContent);
   ok("chip reads '∞ your key' on the unlimited posture", env.registry.get("gamesChip").textContent === "∞ your key",
      env.registry.get("gamesChip").textContent);
   ok("cost line names the key, no daily limit",
@@ -969,8 +968,8 @@ async function test11() {
   await signIn(env);
   env.CoachUI._test.getDossier().calibrated = true;
   env.CoachUI._test.renderWallet();
-  ok("plan line shows Paused", env.registry.get("optPlanLine").textContent === "Plan: Paused · tester@example.com",
-     env.registry.get("optPlanLine").textContent);
+  ok("plan line shows Paused", env.registry.get("optAccountLine").textContent === "Plan: Paused · tester@example.com",
+     env.registry.get("optAccountLine").textContent);
   ok("zero-credit cost line is honest (no promise of more games)",
      env.registry.get("gameCostLine").textContent === "No plan right now — lessons are still free",
      env.registry.get("gameCostLine").textContent);
@@ -991,9 +990,9 @@ async function test12() {
      html.includes('id="optByokProvider"') && html.includes('id="optByokModel"') &&
      html.includes('id="optByokKey"') && html.includes('id="optByokTestBtn"') && html.includes("Test key") &&
      html.includes('id="optByokRemoveBtn"') && html.includes("Stored on our servers, never in this browser"));
-  ok("the inactive BYOK block carries the exact plan line + a plans-page button (fix pass A+B)",
+  ok("the inactive BYOK block carries the exact plan line + a plans-page button (fix pass A+B, Pass 2 copy)",
      html.includes('id="optByokInactive"') && html.includes('id="optByokForm"') &&
-     html.includes("BYOK — $5/week, on its own or added to any plan") &&
+     html.includes("Use your own AI key — $5/week, on its own or with any plan.") &&
      html.includes('id="optByokPlansBtn"') && html.includes("See plans"));
   ok("guest banner + claim form + redeem entry exist; no 'grown-up' copy anywhere",
      html.includes('id="guestBanner"') && html.includes('id="guestKeepBtn"') && html.includes("Keep my progress") &&
@@ -1019,10 +1018,10 @@ async function test12() {
   const PAGE_KEY = "sk-page-test-1234567890WXYZ";
   env.registry.get("optByokKey").value = PAGE_KEY;
   await clickEl(env, "optByokSaveBtn"); await pump(env, 10);
-  ok("save while inactive -> the note renders the gate's 403 copy verbatim; nothing stored",
-     env.registry.get("optByokNote").textContent === "BYOK isn't active on your plan yet." &&
+  ok("save while inactive -> the status line renders the gate's 403 copy verbatim; nothing stored",
+     env.registry.get("optByokMsg").textContent === "BYOK isn't active on your plan yet." &&
      mock.byok === null && env.CoachUI._test.getByok() === null,
-     env.registry.get("optByokNote").textContent);
+     env.registry.get("optByokMsg").textContent);
   mock.calls.byok.length = 0; // the 403 attempt above is asserted; the paid flow below counts fresh
   // Paid state on (what the webhook/operator flip does at the gate):
   // re-sign-in so the page re-reads it, and the live form returns.
@@ -1040,8 +1039,8 @@ async function test12() {
   ok("save posted provider+model+key to /v1/byok exactly once",
      !!setCall && setCall.body.key === PAGE_KEY && setCall.body.provider === "openai" && setCall.body.model === "gpt-6-sol",
      JSON.stringify(mock.calls.byok.map((c) => c.op)));
-  ok("state shows the masked tail + added date only",
-     env.registry.get("optByokState").textContent.startsWith("····WXYZ · added ") &&
+  ok("state shows the masked tail + saved date only (Pass 2 (c)5)",
+     env.registry.get("optByokState").textContent.startsWith("Key ending …WXYZ · saved ") &&
      env.CoachUI._test.getByok() && env.CoachUI._test.getByok().tail === "····WXYZ",
      env.registry.get("optByokState").textContent);
   ok("key field cleared after save, and the key is nowhere in sessionStorage",
@@ -1049,13 +1048,13 @@ async function test12() {
      ![...env.sessionStorage._map.values()].join(" ").includes(PAGE_KEY));
   await clickEl(env, "optByokTestBtn"); await pump(env, 10);
   ok("test key reports the provider answered",
-     env.registry.get("optByokNote").textContent.includes("Your key works"),
-     env.registry.get("optByokNote").textContent);
+     env.registry.get("optByokMsg").textContent === "Key works.",
+     env.registry.get("optByokMsg").textContent);
   mock.byokTestMode = "reject";
   await clickEl(env, "optByokTestBtn"); await pump(env, 10);
   ok("test key reports a rejection plainly",
-     env.registry.get("optByokNote").textContent.includes("rejected that key"),
-     env.registry.get("optByokNote").textContent);
+     env.registry.get("optByokMsg").textContent === "Key refused by OpenAI — check it and try again.",
+     env.registry.get("optByokMsg").textContent);
   mock.byokTestMode = "ok";
   // seat + labels on the customer's model
   env.CoachUI._test.getDossier().calibrated = true;
@@ -1094,22 +1093,22 @@ async function test12() {
   ok("a good code signs in as a guest (no email)",
      env2.CoachUI._test.signedIn() === true && env2.CoachUI._test.getAccount().guest === true &&
      env2.CoachUI._test.getAccount().email === null);
-  ok("banner shows with the days-left copy; account + plan lines name the test account",
+  ok("banner shows with the days-left copy; the status line names the test account",
      env2.registry.get("guestBanner").style.display === "" &&
      env2.registry.get("guestBannerText").textContent.includes("test account") &&
      env2.registry.get("guestBannerText").textContent.includes("7 days left") &&
-     env2.registry.get("optAccountLine").textContent === "Test account — 7 days left" &&
-     env2.registry.get("optPlanLine").textContent === "Plan: Coach (test code) · 7 days left" &&
+     env2.registry.get("optAccountLine").textContent === "Test account · 7 days left" &&
+     env2.registry.get("optGuestLead").textContent.includes("the test account ends in 7 days and is deleted 30 days after that") &&
      env2.registry.get("optGuestClaim").style.display === "",
-     env2.registry.get("optAccountLine").textContent + " / " + env2.registry.get("optPlanLine").textContent);
+     env2.registry.get("optAccountLine").textContent + " / " + env2.registry.get("optGuestLead").textContent);
   env2.registry.get("optClaimEmail").value = "claimed@example.com";
   env2.registry.get("optClaimPw").value = "claimed-pass-1";
   await clickEl(env2, "optClaimBtn"); await pump(env2, 10);
-  ok("claim converts the guest: banner + claim form hide, account line shows the email, confirmation copy lands",
+  ok("claim converts the guest: banner + claim form hide, status line becomes the plan line, confirmation copy lands",
      env2.CoachUI._test.getAccount().guest === false &&
      env2.registry.get("guestBanner").style.display === "none" &&
      env2.registry.get("optGuestClaim").style.display === "none" &&
-     env2.registry.get("optAccountLine").textContent === "Signed in as claimed@example.com" &&
+     env2.registry.get("optAccountLine").textContent === "Plan: Coach · claimed@example.com" &&
      env2.registry.get("optAcctMsg").textContent.includes("this account is yours now"),
      env2.registry.get("optAccountLine").textContent);
   // expired guest: the session refusal names the ended test account
@@ -1128,7 +1127,47 @@ async function test12() {
   mock.guestExpired = false;
 }
 
-const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12];
+
+// ---------- Test 13: UI Pass 2 (Astra consult, 2026-10-29) ----------
+async function test13() {
+  begin("13 UI Pass 2 deltas");
+  ok("chips carry no placeholder values and stay hidden until the first state render",
+     html.includes('id="gamesChip" class="chipBtn" type="button" style="visibility:hidden"') &&
+     html.includes('id="profileChip" class="chipBtn" type="button" style="visibility:hidden"') &&
+     !html.includes(">3 games<") && !html.includes(">Player<"));
+  ok("account block starts collapsed behind its chevron row",
+     html.includes('id="optAcctBlock" style="display:none"') && html.includes('id="optAcctToggle"') &&
+     html.includes('aria-expanded="false"'));
+  ok("drawer groups stand in the Pass 2 order (Account, Your own AI key, Passkeys, This device, Delete this profile last)",
+     html.indexOf(">Account<") > -1 &&
+     html.indexOf(">Account<") < html.indexOf(">Your own AI key<") &&
+     html.indexOf(">Your own AI key<") < html.indexOf(">Passkeys<") &&
+     html.indexOf(">Passkeys<") < html.indexOf(">This device<") &&
+     html.indexOf(">This device<") < html.indexOf(">Delete this profile<"));
+  ok("passkey explainer present; the stale beta plan line is gone; privacy line is footer text",
+     html.includes("A passkey lets you sign in with this device's fingerprint, face or PIN") &&
+     !html.includes("accounts and billing arrive with the full launch") &&
+     html.includes('class="optFooter"'));
+  ok("account messages land on one aria-live line",
+     html.includes('id="optAcctMsg" aria-live="polite"') && html.includes('id="optByokMsg" aria-live="polite"'));
+  mock.reset();
+  mock.acct.caps.next_credit_at = new Date(Date.now() + 26 * 3600e3).toISOString();
+  const env = loadCoach(RELAY);
+  await unlock(env);
+  await signIn(env);
+  const gi = env.registry.get("gamesInfo").textContent;
+  ok("next credit is day-aware when it lands tomorrow (no bare clock time)",
+     gi.includes("tomorrow at") && gi.includes("arrive"), gi);
+  ok("one profile: the shared-pool line stays off the popover", !gi.includes("Shared"), gi);
+  for (const f of env.registry.get("optAddProfile").listeners.click || []) await f();
+  await pump(env, 10);
+  env.CoachUI._test.renderWallet();
+  ok("two profiles: the shared-pool line appears, worded for profiles",
+     env.registry.get("gamesInfo").textContent.includes("Shared by every profile on this account."),
+     env.registry.get("gamesInfo").textContent);
+}
+
+const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13];
 for (const t of tests) {
   try { await t(); }
   catch (e) { fail++; if (perTest[current]) perTest[current].fail++;

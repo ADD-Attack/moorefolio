@@ -38,7 +38,7 @@ const EXACT_STRINGS = [
   "What's an API key?",
   "Not sure? You don't need this.",
   "Accounts belong to adults. New Player profiles store a display name only. No ads. No chat with strangers. Ever.",
-  "Got a test code? Play free for 7 days. Create an account before it ends to keep your rating, dossier and games.",
+  "Got a test code? Play free for 7 days. Keep your progress before it ends and your rating, dossier and games stay yours.",
   "Can I cancel anytime?",
   "cancel anytime",
   "up to 8 ready on Coach, 17 on Pro",
@@ -51,6 +51,16 @@ ok("title is exact", html.includes("<title>Chess Coach — Plans</title>"));
 ok("noindex meta present", html.includes('<meta name="robots" content="noindex, nofollow">'));
 ok("header test-code link points at #test-code", html.includes('<a href="#test-code">Have a test code?</a>'));
 ok("Start playing links to /coach-you/", html.includes('href="/coach-you/"'));
+ok("Pass 2 (d)1: hero scrolls to the two-ways fork; each way card carries its own start button",
+   html.includes('id="heroStartBtn" href="#two-ways"') && html.includes('id="two-ways"') &&
+   html.includes('<a class="btn" href="/coach-kids/">Start as a New Player</a>') &&
+   html.includes('<a class="btn" href="/coach-you/">Start playing</a>'));
+ok("Pass 2 (d)3: the parked line stands above the billing toggle",
+   html.includes('id="parkedLine"') && html.includes("Plans aren't on sale yet — your beta access keeps working.") &&
+   html.indexOf('id="parkedLine"') < html.indexOf('id="toggleMonthly"'));
+ok("Pass 2 (d)7: reduced-motion demo captions ship as a list, revealed only under the media query",
+   html.includes('id="demoStepsList"') && html.includes("prefers-reduced-motion: reduce") &&
+   html.includes("Checkmate — that's the game."));
 ok("BYOK disclosure is a <details> element ending with the not-sure sentence",
    /<details>[\s\S]*?Not sure\? You don't need this\.<\/p>\s*<\/details>/.test(html));
 ok("test-code band present with id", html.includes('id="test-code"'));
@@ -205,9 +215,8 @@ async function behavior() {
     const proBtn = env.planButtons.find((b) => b.dataset.plan === "pro");
     await fireClick(proBtn);
     const note = env.registry.get("billingNote").textContent;
-    ok("no token: create-account note shown", note.includes("Create your account first — open a coach page and use Options → Account."), note);
-    ok("no token: note carries a link to /coach-you/", env.registry.get("billingNote").innerHTML.includes('href="/coach-you/"'));
-    ok("no token: NO fetch made", fetch.calls.length === 0, "calls=" + fetch.calls.length);
+    ok("no token: the parked note shows instead of the create-account pointer (Pass 2 (d)3)", note === "Plans aren't on sale yet — your beta access keeps working.", note);
+    ok("no token: the parked note stands alone, no coach-page link appended (Pass 2 (d)3)", !note.includes("Open a coach page"), note);
   }
   // (3) token + 503 billing_configured:false: exact note, body {plan:pro, interval:monthly}
   {
@@ -217,7 +226,7 @@ async function behavior() {
     await fireClick(proBtn);
     const note = env.registry.get("billingNote").textContent;
     ok("503: exact billing-not-open note shown",
-       note === "Billing isn't open yet — plans launch soon. Your beta access keeps working.", note);
+       note === "Plans aren't on sale yet — your beta access keeps working.", note);
     ok("503: exactly one fetch made", fetch.calls.length === 1, "calls=" + fetch.calls.length);
     if (fetch.calls.length === 1) {
       const call = fetch.calls[0];
@@ -279,7 +288,7 @@ async function behavior() {
     await fireClick(env.registry.get("redeemBtn"));
     const note = env.registry.get("redeemNote").textContent;
     ok("redeem good code: accepted copy with the coach link",
-       note.includes("Test code accepted — you're in for 7 days.") && note.includes("Open the coach and play"), note);
+       note.includes("Test code accepted — you're in for 7 days. Choose how to play:") && note.includes("New Player") && note.includes("Standard"), note);
     let allStored = true, parsed = null;
     for (const k of ACCOUNT_KEYS) {
       const raw = env.sessionStorage.getItem(k);
