@@ -4,12 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Ramble to Roadmap — AI Operations Audit</title>
-<meta name="description" content="Send us how your business runs — in your own words, mess and all. Five days later: a structured profile, your bottlenecks ranked, and a 90-day roadmap for what to automate first. $2,500 fixed. You own the roadmap.">
-<!-- STAGED PACKAGE — NOT DEPLOYED. Future home: moorefolio.com/ramble-to-roadmap (owner's publish press).
-     Deploy notes (resolved 2026-10-30 under the owner publish authorization):
-       1. Intake form action (search "INTAKE-ACTION (resolved 2026-10-30)") — point it at the real form/email endpoint.
-       2. Sample link (search "SAMPLE-LINK (resolved 2026-10-30: file sits beside index.html)") — sample-walkthrough.html sits beside this file in the package;
-          confirm the deployed path matches. -->
+<meta name="description" content="A step-by-step guided intake for the Ramble to Roadmap AI Operations Audit, with an AI intake agent step. $2,500 fixed, 5 days, you own the roadmap.">
+<!-- LIVE — deployed 2026-10-30 under owner authorization ("Maybe publish it?", 05:32 CDT).
+     TruGreen-style guided flow: one screen per step, sticky progress bar, AI intake agent
+     at Step 2, every action a real button (Opus pass, owner direction 2026-10-30).
+     Source of truth for this design: ../prototype-step-flow/ in the package. -->
 <style>
   :root{
     --ink:#101d29; --ink2:#33465a; --paper:#fbf9f5; --card:#ffffff;
@@ -18,292 +17,510 @@
     --radius:14px;
   }
   *{box-sizing:border-box}
-  body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);line-height:1.55}
+  html,body{height:100%}
+  body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);line-height:1.45;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
   h1,h2,h3,.sans{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif}
-  a{color:var(--accent-ink)}
-  .wrap{max-width:1020px;margin:0 auto;padding:0 20px}
-  header.site{position:sticky;top:0;background:rgba(251,249,245,.96);border-bottom:1px solid var(--line);z-index:10}
-  header.site .wrap{display:flex;align-items:center;gap:18px;padding:12px 20px}
-  .brand{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:.01em}
-  .brand small{display:block;font-weight:600;color:var(--accent-ink);font-size:.72rem;text-transform:uppercase;letter-spacing:.14em}
-  nav.main{margin-left:auto;display:flex;gap:16px;align-items:center;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.9rem}
-  nav.main a{color:var(--ink2);text-decoration:none}
-  nav.main a:hover{color:var(--accent-ink)}
-  .btn{display:inline-block;background:var(--accent);color:#fff !important;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:700;border:2px solid var(--accent)}
-  .btn.ghost{background:transparent;color:var(--accent-ink) !important}
-  .btn:hover{filter:brightness(1.08)}
-  section{padding:56px 0}
-  .hero{padding:72px 0 48px}
-  .eyebrow{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:.75rem;font-weight:700;color:var(--accent-ink)}
-  .hero h1{font-size:2.7rem;line-height:1.12;margin:.35em 0 .4em}
-  .hero p.lede{font-size:1.22rem;color:var(--ink2);max-width:44em}
-  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
-  .chip{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.82rem;font-weight:700;border:1.5px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--card)}
+  /* compact progress header (pinned by layout, page never scrolls) */
+  header.progress{flex:none;background:rgba(251,249,245,.97);border-bottom:1px solid var(--line)}
+  header.progress .wrap{max-width:880px;margin:0 auto;padding:8px 16px 6px}
+  .prow{display:flex;align-items:baseline;gap:14px}
+  .brand{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:.98rem}
+  .brand small{font-weight:600;color:var(--accent-ink);font-size:.64rem;text-transform:uppercase;letter-spacing:.14em;margin-left:8px}
+  .pmeta{margin-left:auto;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.82rem;font-weight:700;color:var(--ink2);white-space:nowrap}
+  .pmeta strong{color:var(--accent-ink)}
+  .track{height:6px;background:#e9e2d6;border-radius:99px;margin:6px 0 0;overflow:hidden}
+  .fill{height:100%;width:20%;background:var(--accent);border-radius:99px;transition:width .45s ease}
+  .psteps{display:flex;justify-content:space-between;padding:4px 0 2px}
+  .pstep{background:none;border:none;padding:2px 1px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);cursor:default;border-bottom:2px solid transparent}
+  .pstep.done{color:var(--accent-ink);cursor:pointer}
+  .pstep.done:hover{border-bottom-color:var(--accent)}
+  .pstep.on{color:var(--ink)}
+  @media(max-width:640px){.psteps .pstep{display:none}.psteps .pstep.on{display:inline}}
+  /* app column */
+  .app{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:880px;margin:0 auto;padding:0 14px}
+  /* slim hero */
+  .hero{flex:none;padding:10px 2px 2px}
+  .eyebrow{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.15em;font-size:.68rem;font-weight:700;color:var(--accent-ink)}
+  .hero h1{font-size:1.5rem;line-height:1.15;margin:.22em 0 .2em}
+  .hero p.lede{font-size:.95rem;color:var(--ink2);margin:0;max-width:46em}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
+  .chip{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.72rem;font-weight:700;border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;background:var(--card)}
   .chip.hot{border-color:var(--accent);color:var(--accent-ink)}
-  .band{background:var(--band);color:var(--band-ink)}
-  .band h2{color:#fff}
-  .band .eyebrow{color:#e8a35f}
-  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px}
-  .card{background:var(--card);border:1.5px solid var(--line);border-top:5px solid var(--accent);border-radius:var(--radius);padding:18px}
-  .band .card{background:#1a3448;border-color:#2c4b63;color:var(--band-ink)}
-  .card h3{margin:.2em 0 .4em;font-size:1.02rem}
-  .card p{margin:0;color:var(--ink2);font-size:.96rem}
-  .band .card p{color:#cfdce6}
-  .num{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;color:var(--accent);font-size:.85rem;letter-spacing:.12em}
-  .steps{display:flex;flex-direction:column;gap:0;max-width:760px}
-  .step{background:var(--card);border:1.5px solid var(--line);border-left:6px solid var(--accent);border-radius:var(--radius);padding:16px 20px}
-  .step h3{margin:.1em 0 .3em}
-  .step p{margin:0;color:var(--ink2)}
-  .step .day{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink)}
-  .arrow{text-align:center;font-size:1.15rem;color:var(--accent);padding:4px 0}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
-  @media(max-width:720px){.cols{grid-template-columns:1fr}.hero h1{font-size:2.05rem}nav.main a.hideS{display:none}}
-  .fit{border-radius:var(--radius);padding:20px;border:1.5px solid var(--line);background:var(--card)}
-  .fit.good{border-top:6px solid var(--good)} .fit.bad{border-top:6px solid var(--bad)}
-  .fit ul{margin:.4em 0 0;padding-left:1.2em} .fit li{margin:.3em 0}
-  .ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-top:24px}
-  .rung{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px}
-  .rung.entry{border:2.5px solid var(--accent);box-shadow:0 6px 24px rgba(184,92,18,.13)}
-  .rung .price{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:1.7rem;font-weight:800;margin:.15em 0}
-  .rung .price small{font-size:.85rem;font-weight:600;color:var(--ink2)}
-  .rung p{color:var(--ink2);font-size:.95rem}
-  .tag{display:inline-block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:#fff;border-radius:4px;padding:3px 8px}
-  details{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:14px 18px;margin:10px 0}
-  summary{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;cursor:pointer}
-  details p{color:var(--ink2)}
-  form.intake{background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);padding:24px;max-width:760px}
-  form.intake label{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;font-size:.9rem;display:block;margin:14px 0 5px}
-  form.intake input[type=text],form.intake input[type=email],form.intake textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font:inherit;background:#fff}
-  form.intake textarea{min-height:170px}
-  form.intake .hint{font-size:.88rem;color:var(--ink2)}
-  .callout{border:2px dashed var(--accent);border-radius:var(--radius);padding:18px 22px;background:#fff7ec}
-  footer.site{border-top:1px solid var(--line);padding:28px 0;color:var(--ink2);font-size:.9rem}
-  .big{font-size:1.35rem;line-height:1.4}
+  .heroactions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+  @media(max-width:640px){.hero h1{font-size:1.22rem}.hero p.lede{font-size:.88rem}}
+  /* wizard — single viewport, one panel at a time */
+  .wizard{flex:1;min-height:0;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);margin:8px 0 12px;box-shadow:0 10px 30px rgba(16,29,41,.07);display:flex;flex-direction:column;overflow:hidden}
+  .wstep{display:none}
+  .wstep.active{display:flex;flex-direction:column;height:100%;min-height:0}
+  .scroll{flex:1;min-height:0;overflow-y:auto;padding:14px 18px 8px}
+  .wstep h2{margin:.1em 0 .25em;font-size:1.28rem}
+  .wstep .sub{color:var(--ink2);margin:0 0 10px;font-size:.93rem}
+  .kicker{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-ink)}
+  label{display:block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;font-size:.85rem;margin:9px 0 3px}
+  input[type=text],input[type=email],select,textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;background:#fff}
+  textarea{height:min(30dvh,210px);min-height:110px;resize:none}
+  .hint{font-size:.84rem;color:var(--ink2)}
+  .count{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.74rem;color:var(--ink2);text-align:right;margin-top:3px}
+  .err{display:none;background:#fdeeea;border:1.5px solid var(--bad);color:var(--bad);border-radius:8px;padding:8px 11px;font-size:.88rem;margin:10px 0 0}
+  .err.show{display:block}
+  .nav{flex:none;display:flex;gap:10px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);background:#fff}
+  /* button system — every action on this page is a real button (owner rule, Opus pass 2026-10-30) */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(180deg,#cf6d1d,var(--accent));color:#fff;padding:12px 22px;border-radius:999px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;border:2px solid #9c4f0d;cursor:pointer;font-size:1rem;line-height:1.15;box-shadow:0 3px 0 #9c4f0d,0 8px 18px rgba(184,92,18,.28);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;min-height:48px}
+  .btn:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 4px 0 #9c4f0d,0 12px 22px rgba(184,92,18,.32)}
+  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #9c4f0d,0 4px 10px rgba(184,92,18,.25)}
+  .btn.ghost{background:#fff;color:var(--accent-ink);border-color:var(--accent);box-shadow:0 3px 0 rgba(184,92,18,.45);font-weight:700}
+  .btn.ghost:hover{background:#fff7ec;box-shadow:0 4px 0 rgba(184,92,18,.45)}
+  .btn.ghost:active{box-shadow:0 1px 0 rgba(184,92,18,.45)}
+  .btn.quiet{background:#fff;color:var(--ink2);border-color:var(--line);box-shadow:none;font-weight:700}
+  .btn.quiet:hover{background:#f4f1ea;box-shadow:none}
+  .btn.small{padding:8px 15px;font-size:.85rem;min-height:40px}
+  .btn:focus-visible,.pstep:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f0b269;outline-offset:2px}
+  .nav .btn[data-next],.nav #sendBtn{flex:1}
+  .nav .spacer{flex:1}
+  @keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(184,92,18,.45)}100%{box-shadow:0 0 0 14px rgba(184,92,18,0)}}
+  .wizard.pulse{animation:pulseGlow .7s ease-out 2}
+  /* agent step */
+  .agentbox{border:2px dashed var(--accent);border-radius:var(--radius);background:#fff7ec;padding:10px 14px}
+  .agentbox h3{margin:.1em 0 .3em;font-size:1rem}
+  .agenthead{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+  .avatar{width:38px;height:38px;flex:none;border-radius:50%;background:var(--band);color:var(--band-ink);display:flex;align-items:center;justify-content:center;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:.72rem;letter-spacing:.03em;border:2px solid var(--accent)}
+  .agenthead .aname{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:.92rem;line-height:1.2}
+  .agenthead .arole{font-size:.78rem;color:var(--ink2);line-height:1.25}
+  .spin{display:none;align-items:center;gap:10px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;font-size:.9rem;color:var(--ink2)}
+  .spin.show{display:flex}
+  .dot{width:13px;height:13px;border-radius:50%;border:3px solid var(--accent);border-top-color:transparent;animation:sp 0.8s linear infinite;flex:none}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .preview{display:none}
+  .preview.show{display:block}
+  .badge{display:inline-block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--band);color:var(--band-ink);border-radius:4px;padding:2px 7px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
+  .tchip{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.76rem;font-weight:600;border:1.5px solid var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 9px;background:#fff}
+  /* toggle cards — compact 2-column grid */
+  .toggles{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+  @media(max-width:380px){.toggles{grid-template-columns:1fr}}
+  .tgl{display:flex;gap:8px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;background:#fff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;margin:0}
+  .tgl input{margin-top:2px;accent-color:var(--accent);width:16px;height:16px;flex:none}
+  .tgl b{display:block;font-size:.83rem;line-height:1.25}
+  .tgl span{font-size:.74rem;color:var(--ink2);line-height:1.3;display:block}
+  .tgl:has(input:checked){border-color:var(--accent);background:#fff7ec}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media(max-width:640px){.cols{gap:8px}}
+  /* review */
+  .review{border:1.5px solid var(--line);border-radius:10px;padding:2px 14px;background:#fdfcf9}
+  .review p{margin:8px 0;font-size:.93rem}
+  .review .k{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);display:block}
+  blockquote{margin:6px 0;padding:8px 12px;border-left:5px solid var(--accent);background:#fff7ec;color:var(--ink2);font-size:.9rem}
+  /* offer details dialog (overlay — not part of page flow) */
+  dialog.offer{border:2px solid var(--ink);border-radius:var(--radius);padding:0;width:min(680px,94vw);max-height:92dvh;background:var(--card);color:var(--ink)}
+  dialog.offer::backdrop{background:rgba(16,29,41,.55)}
+  .dlg-body{max-height:92dvh;overflow-y:auto;padding:18px 20px}
+  .dlg-head{display:flex;align-items:center;gap:10px}
+  .dlg-head h2{margin:0;font-size:1.25rem}
+  .dlg-head .spacer{flex:1}
+  .ladder{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+  @media(max-width:520px){.ladder{grid-template-columns:1fr}}
+  .rung{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
+  .rung.entry{border:2px solid var(--accent);background:#fff7ec}
+  .rung h3{margin:0;font-size:.95rem}
+  .rung .price{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:1.25rem;font-weight:800}
+  .rung .price small{font-size:.75rem;font-weight:600;color:var(--ink2)}
+  .rung p{color:var(--ink2);font-size:.84rem;margin:.2em 0 0}
+  .dlg-body p{font-size:.92rem}
 </style>
 </head>
 <body>
 
-<header class="site">
+<header class="progress">
   <div class="wrap">
-    <div class="brand">Ramble to Roadmap<small>AI Operations Audit</small></div>
-    <nav class="main">
-      <a class="hideS" href="#how">How it works</a>
-      <a class="hideS" href="#receive">What you get</a>
-      <a class="hideS" href="#pricing">Pricing</a>
-      <a class="hideS" href="#faq">FAQ</a>
-      <a class="btn" href="#intake">Start your audit</a>
-    </nav>
+    <div class="prow">
+      <div class="brand">Ramble to Roadmap<small>AI Operations Audit</small></div>
+      <div class="pmeta" aria-live="polite">Step <strong id="pStep">1</strong> of 5 · <strong id="pPct">20%</strong></div>
+    </div>
+    <div class="track" role="progressbar" aria-label="Intake progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20" id="pTrack"><div class="fill" id="pFill"></div></div>
+    <div class="psteps" id="pSteps">
+      <button type="button" class="pstep on" data-goto="1" aria-current="step">1 · Ramble</button>
+      <button type="button" class="pstep" data-goto="2">2 · AI intake agent</button>
+      <button type="button" class="pstep" data-goto="3">3 · Where it hurts</button>
+      <button type="button" class="pstep" data-goto="4">4 · Contact</button>
+      <button type="button" class="pstep" data-goto="5">5 · Review &amp; send</button>
+    </div>
   </div>
 </header>
 
-<section class="hero">
-  <div class="wrap">
+<div class="app">
+  <section class="hero">
     <div class="eyebrow">AI Operations Audit · Fixed price · 5 days</div>
     <h1>Find where AI actually belongs in your business.</h1>
-    <p class="lede">Send us how your business runs — in your own words, mess and all. Five days later you get a structured profile of your company, your bottlenecks ranked, and a 90-day roadmap for what to automate first, what to leave human, and what to skip entirely.</p>
+    <p class="lede">Tell it like it is — messy, half-remembered, spreadsheet-and-all. Five days later you get a profile of your operation, your bottlenecks ranked, and a 90-day roadmap that's yours to keep.</p>
     <div class="chips">
       <span class="chip hot">$2,500 fixed</span>
       <span class="chip">Delivered in 5 days</span>
       <span class="chip">You own the roadmap</span>
       <span class="chip">Fee credits 100% toward your build</span>
-      <span class="chip">No questionnaire · No workshops</span>
     </div>
-    <p><a class="btn" href="#intake">Send your ramble</a>
-    &nbsp;<a class="btn ghost" href="sample-walkthrough.html">See a sample report</a><!-- SAMPLE-LINK (resolved 2026-10-30: file sits beside index.html): sample page sits beside this file in the package; confirm path at deploy time. --></p>
-  </div>
-</section>
-
-<section class="band">
-  <div class="wrap">
-    <div class="eyebrow">The field gate</div>
-    <h2>Everything starts with what field you're in.</h2>
-    <p class="big">The first question we ask — before any analysis — is the one everything else keys off: <strong>what field is your business in?</strong> Not just the industry. The sub-field. "Multi-location dental group" produces a different roadmap than "dental," and a guessed field produces a wrong one.</p>
-    <p>So our strategy stage doesn't run on a guess. It waits — fail-closed — until you've confirmed the field in your own words. It's the cheapest question in the engagement, and it unlocks the expensive work. That's the deal: you ramble first, unconstrained. Then we confirm the field. Then the roadmap gets built on solid ground.</p>
-  </div>
-</section>
-
-<section>
-  <div class="wrap">
-    <div class="eyebrow">The gap</div>
-    <h2>You're running a real business on spreadsheets and memory.</h2>
-    <p>The big AI vendors want enterprise contracts. The local consultants want to sell you a website. Neither one starts by reading how your operation actually works. We do — because that's where the automation worth paying for is hiding.</p>
-    <div class="cards">
-      <div class="card"><h3>Hours into seconds-work</h3><p>How many hours a week go to work a system should do in seconds?</p></div>
-      <div class="card"><h3>The quiet handoff</h3><p>Where does a handoff between two tools — or two people — quietly drop things?</p></div>
-      <div class="card"><h3>One person's head</h3><p>What happens to the process that lives in one employee's head when they quit?</p></div>
-      <div class="card"><h3>Prove it</h3><p>Which of your numbers could you not prove if someone asked?</p></div>
+    <div class="heroactions">
+      <button type="button" class="btn small" id="startBtn">Start my roadmap →</button>
+      <button type="button" class="btn ghost small" data-sample>See a finished sample report</button>
+      <button type="button" class="btn quiet small" data-offer-open>Offer details</button>
     </div>
-    <p style="margin-top:26px" class="big"><strong>We earn the build by proving the roadmap first.</strong> The audit is not a sales call. It is a deliverable.</p>
-  </div>
-</section>
+  </section>
 
-<section style="padding-top:0">
-  <div class="wrap">
-    <div class="eyebrow">What we evaluate</div>
-    <h2>Four areas. One clear picture.</h2>
-    <div class="cards">
-      <div class="card"><div class="num">01</div><h3>Workflows</h3><p>The recurring work that eats time, creates errors, or depends on one person remembering.</p></div>
-      <div class="card"><div class="num">02</div><h3>Systems &amp; data</h3><p>What tools are in play, where the data actually lives, and where handoffs between systems — or people — create friction and lag.</p></div>
-      <div class="card"><div class="num">03</div><h3>Decision points</h3><p>Where judgment, approval, and accountability must stay human, no matter what gets automated.</p></div>
-      <div class="card"><div class="num">04</div><h3>Opportunity ranking</h3><p>Every opportunity scored by business value, technical readiness, and implementation scope — so you know where to start, and why.</p></div>
-    </div>
-  </div>
-</section>
+  <form class="wizard" id="wizard" novalidate>
 
-<section class="band" id="how">
-  <div class="wrap">
-    <div class="eyebrow">How it works</div>
-    <h2>Structured. Asynchronous. Specific to your business.</h2>
-    <p>Not a questionnaire. Not a workshop series. A working engagement designed to produce a plan you can defend and act on — built around your schedule, not ours.</p>
-    <div class="steps" style="margin-top:24px">
-      <div class="step"><div class="day">Day 1 · Intake</div><h3>Send the messy version</h3><p>Paste it into the form below or attach the file — however it exists. Rambling, half-remembered, typo'd is fine; that's real intake. Our pipeline turns it into a structured, validated profile of your company.</p></div>
-      <div class="arrow">▼</div>
-      <div class="step"><div class="day">Day 1 · Clarification opens</div><h3>Answer a short list of questions — in the same email thread</h3><p>Question 1 is always field confirmation (see above). The rest are generated from the gaps in your profile — the things your ramble didn't state. We ask instead of guessing. This is the only homework, and it's short.</p></div>
-      <div class="arrow">▼</div>
-      <div class="step"><div class="day">Days 2–3 · Evaluation</div><h3>Findings, bottlenecks, ranking</h3><p>We evaluate your operation across the four areas, flag the bottlenecks and risks, and rank every opportunity by value, readiness, and scope.</p></div>
-      <div class="arrow">▼</div>
-      <div class="step"><div class="day">Days 4–5 · Roadmap</div><h3>Your 90-day plan</h3><p>What to build first, in what order, what each system does, and what each one needs before a build can start — sequenced into Days 1–30, 31–60, and 61–90.</p></div>
-      <div class="arrow">▼</div>
-      <div class="step"><div class="day">Day 5 · Decision call</div><h3>We walk through it together</h3><p>You keep the roadmap either way. If you build with us, your $2,500 credits toward the build. If you don't, you have a plan specific enough to act on independently. No lock-in, no follow-up pressure sequence.</p></div>
-    </div>
-  </div>
-</section>
-
-<section id="receive">
-  <div class="wrap">
-    <div class="eyebrow">What you receive</div>
-    <h2>A report your leadership can present and act on.</h2>
-    <div class="cols">
-      <div class="fit">
-        <h3 style="margin-top:0">The report — 7 sections</h3>
-        <ul>
-          <li><strong>Executive Summary</strong></li>
-          <li><strong>Company Profile</strong> — including sourced external reference lines</li>
-          <li><strong>Findings</strong></li>
-          <li><strong>Bottlenecks &amp; Risks</strong></li>
-          <li><strong>Recommendations</strong> — prioritized, each with its trace</li>
-          <li><strong>90-Day Roadmap</strong> — phased and sequenced</li>
-          <li><strong>Unknowns &amp; Assumptions</strong> — in the open</li>
-        </ul>
-        <p>Plus a <strong>human-ownership map</strong>: what stays with your people, explicitly.</p>
-        <p><a href="sample-walkthrough.html">Read a complete sample report →</a> Same format clients get, built from a fictional company, labeled as such.</p>
+    <!-- STEP 1 -->
+    <section class="wstep active" data-step="1" aria-labelledby="h1">
+      <div class="scroll">
+        <div class="kicker">Step 1 of 5</div>
+        <h2 id="h1">Send the messy version</h2>
+        <p class="sub">Don't polish it. Start anywhere — the morning rush, the spreadsheet that runs the place, the process only one person understands. Two honest paragraphs beat a perfect form; structure is our job, not yours.</p>
+        <label for="ramble">Your ramble</label>
+        <textarea id="ramble" name="ramble" placeholder="Start anywhere. The morning rush, the spreadsheet that runs the place, the thing only one person knows how to do…"></textarea>
+        <div class="count"><span id="rambleCount">0</span> characters · a couple of honest paragraphs is plenty (minimum 120)</div>
+        <p style="margin:8px 0 0"><button type="button" class="btn ghost small" id="sampleBtn">▶ Try it with the sample ramble</button>
+        <span class="hint"> — the fictional Heartland Haul Logistics ramble, so you can feel the whole flow in a minute.</span></p>
+        <div class="err" id="err1" role="alert"></div>
       </div>
-      <div class="callout">
-        <h3 style="margin-top:0">Nothing in your report is invented.</h3>
-        <p>Every recommendation traces to something you told us or a source we name. What we couldn't establish is listed under Unknowns — in the open, not buried or smoothed over.</p>
-        <p>If the honest answer is a $50/month tool, the report says that. If nothing in your operation clears the bar for automation, the report says that too — and your fee comes back (see the guarantee in the FAQ).</p>
-      </div>
-    </div>
-  </div>
-</section>
+      <div class="nav"><span class="spacer"></span><button type="button" class="btn" data-next>Show me my draft profile →</button></div>
+    </section>
 
-<section style="padding-top:0">
-  <div class="wrap">
-    <div class="eyebrow">Built for</div>
-    <h2>Owner-led companies, roughly 10–100 staff.</h2>
-    <div class="cols">
-      <div class="fit good"><h3 style="margin-top:0">Right for you if…</h3>
-        <ul>
-          <li>You're doing real revenue on spreadsheets, email, and institutional memory</li>
-          <li>Your tools don't talk to each other, and your people copy data between them</li>
-          <li>You're using AI scattered, or not at all, and want to know where it actually pays</li>
-          <li>You can give it one intake, one short round of answers, and one decision call</li>
-        </ul>
+    <!-- STEP 2 -->
+    <section class="wstep" data-step="2" aria-labelledby="h2">
+      <div class="scroll">
+        <div class="kicker">Step 2 of 5</div>
+        <h2 id="h2">Meet your AI intake agent</h2>
+        <p class="sub">It reads your ramble and drafts your profile on the spot. You check its work — especially the one thing everything keys off.</p>
+        <div class="agentbox">
+          <div class="agenthead">
+            <div class="avatar" aria-hidden="true">R2R</div>
+            <div>
+              <div class="aname">Your intake agent</div>
+              <div class="arole">First read of your operation — it drafts, you decide what's true.</div>
+            </div>
+          </div>
+          <div class="spin" id="agentSpin"><div class="dot" aria-hidden="true"></div><span>Reading your ramble and drafting your profile…</span></div>
+          <div class="preview" id="agentPreview">
+            <span class="badge">Intake-agent preview · draft, not your audit</span>
+            <h3>Here's what it heard</h3>
+            <div class="chiprow" id="themeList"></div>
+            <p id="headcountLine" class="hint" style="margin:4px 0 0"></p>
+            <p class="hint" style="margin:6px 0 0">That's the first read — the full audit goes far deeper. First, confirm the field it should read your business through:</p>
+          </div>
+        </div>
+        <h3 style="margin:14px 0 0;font-size:1.02rem">The field gate — confirm before we go further</h3>
+        <p class="sub" style="margin-bottom:2px">Everything keys off your field. A guessed field produces a wrong roadmap, so the agent proposes and <strong>you confirm</strong> — nothing downstream runs on an unconfirmed field.</p>
+        <div class="cols">
+          <div>
+            <label for="industry">Industry</label>
+            <input type="text" id="industry" name="industry" placeholder="e.g. Logistics and freight transportation" autocomplete="off">
+          </div>
+          <div>
+            <label for="subfield">Sub-field</label>
+            <input type="text" id="subfield" name="subfield" placeholder="e.g. Regional LTL carrier, 2 terminals" autocomplete="off">
+          </div>
+        </div>
+        <p class="hint" style="margin:6px 0 0">Pre-filled where the agent found a signal — edit freely. "Dental" is an industry; "multi-location dental group" is a sub-field, and it changes the roadmap.</p>
+        <div class="err" id="err2" role="alert"></div>
       </div>
-      <div class="fit bad"><h3 style="margin-top:0">Not the right fit if…</h3>
-        <ul>
-          <li>You're pre-revenue, or the core process doesn't exist yet</li>
-          <li>You have no existing systems or operational data to look at</li>
-          <li>You're shopping for a chatbot or a quick AI demo</li>
-          <li>You want a one-size-fits-all answer, not a plan built from your own operation</li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</section>
+      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" data-next>Lock in my field →</button></div>
+    </section>
 
-<section class="band" id="pricing">
-  <div class="wrap">
-    <div class="eyebrow">Pricing</div>
-    <h2>Every engagement begins with the audit.</h2>
-    <p>That ensures we understand your operation before anyone commits to a scope — and you understand exactly what you're getting before you commit to a build.</p>
+    <!-- STEP 3 -->
+    <section class="wstep" data-step="3" aria-labelledby="h3">
+      <div class="scroll">
+        <div class="kicker">Step 3 of 5</div>
+        <h2 id="h3">Where does it hurt?</h2>
+        <p class="sub">Tap everything that sounds familiar — it weights what the evaluation digs into first.</p>
+        <div class="toggles" role="group" aria-label="Pain areas">
+          <label class="tgl"><input type="checkbox" name="pain" value="Spreadsheets & version drift"><span><b>Spreadsheets &amp; version drift</b><span>Three copies of the truth, none today's.</span></span></label>
+          <label class="tgl"><input type="checkbox" name="pain" value="Manual re-typing & handoffs"><span><b>Manual re-typing &amp; handoffs</b><span>Same data typed into 2–3 systems by hand.</span></span></label>
+          <label class="tgl"><input type="checkbox" name="pain" value="Slow turnaround"><span><b>Slow turnaround</b><span>Answers arrive after the customer moved on.</span></span></label>
+          <label class="tgl"><input type="checkbox" name="pain" value="Paperwork & documents"><span><b>Paperwork &amp; documents</b><span>Status invisible until someone chases it.</span></span></label>
+          <label class="tgl"><input type="checkbox" name="pain" value="Knowledge in one person's head"><span><b>One person's head</b><span>A critical process only one employee knows.</span></span></label>
+          <label class="tgl"><input type="checkbox" name="pain" value="Approvals & decisions"><span><b>Approvals &amp; decisions</b><span>Judgment calls queue behind the busiest person.</span></span></label>
+        </div>
+        <div class="cols">
+          <div>
+            <label for="teamsize">Team size</label>
+            <select id="teamsize" name="teamsize">
+              <option value="">Choose one…</option>
+              <option>Under 10</option>
+              <option>10–25</option>
+              <option>26–50</option>
+              <option>51–100</option>
+              <option>Over 100</option>
+            </select>
+          </div>
+          <div>
+            <label for="goal">Primary goal</label>
+            <select id="goal" name="goal">
+              <option value="">Choose one…</option>
+              <option>Win back time on manual work</option>
+              <option>Respond to customers faster</option>
+              <option>Cut errors and rework</option>
+              <option>Grow without adding headcount</option>
+              <option>See the operation clearly for the first time</option>
+            </select>
+          </div>
+        </div>
+        <div class="err" id="err3" role="alert"></div>
+      </div>
+      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" data-next>Continue — just the details →</button></div>
+    </section>
+
+    <!-- STEP 4 -->
+    <section class="wstep" data-step="4" aria-labelledby="h4">
+      <div class="scroll">
+        <div class="kicker">Step 4 of 5</div>
+        <h2 id="h4">Where should the roadmap go?</h2>
+        <p class="sub">Clarification questions arrive by email in this thread — a short numbered list. Answering it is the only homework.</p>
+        <label for="cname">Your name</label>
+        <input type="text" id="cname" name="cname" autocomplete="name">
+        <label for="cbiz">Business name</label>
+        <input type="text" id="cbiz" name="cbiz" autocomplete="organization">
+        <label for="cemail">Email</label>
+        <input type="email" id="cemail" name="cemail" autocomplete="email">
+        <p class="hint"><strong>Payment:</strong> no card is taken on this page. Fit and start date are confirmed first, then invoice — $2,500 fixed, 100% credited toward a build started within 60 days, refunded if the roadmap finds nothing that clears the bar. The 5-day clock starts after intake and fit are confirmed.</p>
+        <div class="err" id="err4" role="alert"></div>
+      </div>
+      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" data-next>Review my request →</button></div>
+    </section>
+
+    <!-- STEP 5 -->
+    <section class="wstep" data-step="5" aria-labelledby="h5">
+      <div class="scroll">
+        <div class="kicker">Step 5 of 5</div>
+        <h2 id="h5">Review and send</h2>
+        <p class="sub">One tap opens a ready-to-send email with everything below already filled in. Nothing leaves your hands until you press send in your mail app — and you can edit the draft first.</p>
+        <div class="review" id="reviewBox"></div>
+        <div class="err" id="err5" role="alert"></div>
+        <p class="hint">Addressed to <strong>ai@moorefolio.com</strong>. Prefer to just write the email yourself? Same address — ramble first, structure optional.</p>
+      </div>
+      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" id="sendBtn">Send my ramble →</button></div>
+    </section>
+  </form>
+</div>
+
+<!-- OFFER DETAILS — overlay dialog, not part of the page flow -->
+<dialog class="offer" id="offerDialog" aria-labelledby="offerH">
+  <div class="dlg-body">
+    <div class="dlg-head">
+      <h2 id="offerH">Offer details</h2>
+      <span class="spacer"></span>
+      <button type="button" class="btn quiet small" id="offerClose">Close ✕</button>
+    </div>
+    <p><strong>Every engagement begins with the audit</strong> — one fixed price to find out where AI actually pays in your operation, before anyone commits to a build.</p>
     <div class="ladder">
-      <div class="rung entry"><span class="tag">Start here</span><h3>The Audit</h3><div class="price">$2,500</div><p>5-day operations audit and 90-day AI roadmap. Structured profile, ranked bottlenecks, human-ownership map. <strong>Credited 100% toward your build</strong> if you start within 60 days.</p></div>
-      <div class="rung"><h3>Core Build</h3><div class="price"><small>from</small> $7,500</div><p>One core automation system from your roadmap. Built, integrated, staff training, 30-day support.</p></div>
-      <div class="rung"><h3>Systems Build</h3><div class="price"><small>from</small> $18,500</div><p>3–5 connected systems from your roadmap, built to compound across your operation. 60-day support.</p></div>
-      <div class="rung"><h3>Operate</h3><div class="price"><small>from</small> $1,500<small>/mo</small></div><p>We run and improve the systems your team uses — monitoring, adjustments, quarterly review. Your people keep the judgment and the relationships.</p></div>
+      <div class="rung entry"><h3>The Audit</h3><div class="price">$2,500</div><p>5-day audit + 90-day roadmap. Credited 100% toward your build if you start within 60 days.</p></div>
+      <div class="rung"><h3>Core Build</h3><div class="price"><small>from</small> $7,500</div><p>One core automation system from your roadmap, integrated, with staff training.</p></div>
+      <div class="rung"><h3>Systems Build</h3><div class="price"><small>from</small> $18,500</div><p>3–5 connected systems from your roadmap, built to compound.</p></div>
+      <div class="rung"><h3>Operate</h3><div class="price"><small>from</small> $1,500<small>/mo</small></div><p>We run and improve the systems; your people keep the judgment.</p></div>
     </div>
-    <p style="margin-top:22px"><strong>Founding Cohort:</strong> the first 3 clients start at the standard $2,500 and are asked — only asked — to allow a case study at delivery. We run <strong>4 audits per month</strong> at founding pace; when the month is full, the next starts the month after. We claim no client results yet, because there aren't any. The sample report is the proof of format; the cohort is where proof of results comes from.</p>
+    <p><strong>Founding pace:</strong> 4 audits per month; when the month is full, the next starts the month after. We claim no client results yet, because there aren't any — the sample report is the proof of format.</p>
+    <p><strong>You own the roadmap. Nothing in it is invented.</strong> Build it with us, someone else, or in-house. Every recommendation traces to something you told us or a source we name; what we couldn't establish is listed under Unknowns, in the open. If nothing clears the bar for automation, the report says so — and your fee comes back.</p>
+    <p><strong>What you receive:</strong> Executive Summary · Company Profile · Findings · Bottlenecks &amp; Risks · Recommendations (each with its trace) · 90-Day Roadmap · Unknowns &amp; Assumptions — plus a human-ownership map of what stays with your people.</p>
+    <p><button type="button" class="btn ghost small" data-sample>Read a complete sample report →</button></p>
+    <p>Same format clients get, built from a fictional company, labeled as such.</p>
+    <p class="hint">Ramble to Roadmap — AI Operations Audit. Staged prototype of the guided step flow, not the live page. No client results are claimed, because none exist yet.</p>
   </div>
-</section>
+</dialog>
 
-<section id="faq">
-  <div class="wrap">
-    <div class="eyebrow">Buyer questions</div>
-    <h2>Common questions, answered straight.</h2>
+<script>
+(function(){
+  "use strict";
+  var TOTAL = 5, current = 1, maxReached = 1, agentRan = false;
+  var $ = function(id){ return document.getElementById(id); };
+  var steps = Array.prototype.slice.call(document.querySelectorAll(".wstep"));
 
-    <details><summary>What does the audit cost, exactly?</summary>
-      <p>$2,500, fixed. It credits 100% toward a build or Operate engagement started within 60 days of delivery — so if you move forward, you've already paid for the first step. If you don't, you walk away with a prioritized implementation plan specific enough to act on independently.</p></details>
+  var SAMPLE_RAMBLE = "hi, this is Marla Jensen, ops manager over at Heartland Haul Logistics. we're a small freight outfit based out of Kansas City, about 40 staff total counting drivers and the office folks. honestly I dont really know where to start. dispatch is a mess — all our loads get planned on spreadsheets, like three different ones that dont match each other, and the drivers call in constantly because the sheet they have is yesterdays version. sales are down maybe 15% this year and the owner thinks its because our quotes take too long to turn around, customers just go with whoever answers first. we want to get quotes out same-day and stop losing customers over slow paperwork. budget is tight though, we cant afford a big software project or new hires right now. theres also a lot of manual re-typing between the dispatch spreadsheet and the invoicing system which causes billing mistakes. anyway thats kind of where were at, hoping you can help us figure out whats possible.";
 
-    <details><summary>What if the audit finds nothing worth automating?</summary>
-      <p>Then the fee is refunded. If your finished roadmap contains zero opportunities that clear the value bar defined in the report's ranking criteria, we don't keep money for a report that tells you to do nothing. We don't manufacture findings to justify a fee — that's the whole point of the nothing-invented rule.</p></details>
+  var THEMES = [
+    { re: /spreadsheet|excel|google sheet/i, label: "Core work coordinated through spreadsheets" },
+    { re: /don'?t match|doesn'?t match|versions?|out of date|yesterday/i, label: "Version drift — copies of the truth that don't agree" },
+    { re: /re-?typing|retype|type .* again|manual(ly)? (enter|input|re)/i, label: "Manual re-typing between systems" },
+    { re: /slow|turn ?around|too long|answers? first|same-day|response time/i, label: "Slow turnaround on a core process" },
+    { re: /paperwork|invoic|billing|document|paper\b/i, label: "Heavy paperwork and document handling" },
+    { re: /only .* knows|one person|in .* head|institutional/i, label: "Knowledge concentrated in one person's head" },
+    { re: /approv|sign[- ]?off|decision/i, label: "Approvals and decisions as a bottleneck" }
+  ];
+  var FIELDS = [
+    { re: /logistics|freight|truck|dispatch|carrier|haul/i, ind: "Logistics and freight transportation", sub: "Freight carrier — dispatch operations" },
+    { re: /dental|dentist|orthodont/i, ind: "Healthcare — dental", sub: "Dental practice / group" },
+    { re: /restaurant|cafe|kitchen|food truck/i, ind: "Food service", sub: "Restaurant operations" },
+    { re: /law firm|attorney|legal|paralegal/i, ind: "Professional services — legal", sub: "Law practice" },
+    { re: /construction|contractor|builders|remodel/i, ind: "Construction and trades", sub: "Contractor operations" },
+    { re: /retail|store|shop|e-?commerce/i, ind: "Retail", sub: "Retail operations" },
+    { re: /clinic|medical|patients|healthcare/i, ind: "Healthcare", sub: "Clinic operations" },
+    { re: /accounting|bookkeep|cpa|tax prep/i, ind: "Professional services — accounting", sub: "Accounting practice" }
+  ];
 
-    <details><summary>Do I own the roadmap?</summary>
-      <p>100%. Build it with us, build it with someone else, or build it in-house. The roadmap is yours regardless of what you decide next.</p></details>
+  function showErr(n, msg){
+    var e = $("err" + n);
+    if(!e) return;
+    if(msg){ e.textContent = msg; e.classList.add("show"); }
+    else { e.textContent = ""; e.classList.remove("show"); }
+  }
+  function updateProgress(){
+    var pct = Math.round(current / TOTAL * 100);
+    $("pFill").style.width = pct + "%";
+    $("pStep").textContent = current;
+    $("pPct").textContent = pct + "%";
+    $("pTrack").setAttribute("aria-valuenow", pct);
+    Array.prototype.forEach.call(document.querySelectorAll("#pSteps .pstep"), function(s){
+      var sn = parseInt(s.getAttribute("data-goto"), 10);
+      s.classList.toggle("on", sn === current);
+      s.classList.toggle("done", sn < current || (sn <= maxReached && sn !== current));
+      if(sn === current){ s.setAttribute("aria-current", "step"); } else { s.removeAttribute("aria-current"); }
+    });
+  }
+  function goTo(n){
+    current = n;
+    if(n > maxReached) maxReached = n;
+    steps.forEach(function(s){ s.classList.toggle("active", parseInt(s.getAttribute("data-step"), 10) === n); });
+    updateProgress();
+    var active = document.querySelector(".wstep.active .scroll");
+    if(active) active.scrollTop = 0;
+    if(n === 2){ runAgent(); }
+    if(n === 5){ buildReview(); }
+  }
 
-    <details><summary>Why no questionnaire and no workshops?</summary>
-      <p>Because questionnaires get the polished version, and workshops get the meeting version. We want the real version — how the operation actually runs, in your words. The structured work is our job, not your homework. The only thing we schedule live is the Day-5 decision call.</p></details>
+  function runAgent(){
+    if(agentRan) return;
+    agentRan = true;
+    var spin = $("agentSpin"), prev = $("agentPreview");
+    spin.classList.add("show"); prev.classList.remove("show");
+    window.setTimeout(function(){
+      var text = $("ramble").value;
+      var found = [];
+      THEMES.forEach(function(t){ if(t.re.test(text)) found.push(t.label); });
+      if(!found.length) found.push("Manual, fragmented workflows (no single dominant theme — the audit digs here first)");
+      var box = $("themeList"); box.innerHTML = "";
+      found.forEach(function(f){
+        var c = document.createElement("span"); c.className = "tchip"; c.textContent = f; box.appendChild(c);
+      });
+      var hm = text.match(/(\d{1,4})\s*(staff|employees|people|team)/i);
+      $("headcountLine").textContent = hm ? ("Headcount as stated in your ramble: about " + hm[1] + " — recorded as stated, never silently 'corrected'.") : "";
+      var f = null;
+      for(var i = 0; i < FIELDS.length; i++){ if(FIELDS[i].re.test(text)){ f = FIELDS[i]; break; } }
+      if(f && !$("industry").value){ $("industry").value = f.ind; }
+      if(f && !$("subfield").value){ $("subfield").value = f.sub; }
+      spin.classList.remove("show"); prev.classList.add("show");
+    }, 1400);
+  }
 
-    <details><summary>Why do you ask about my "field" first?</summary>
-      <p>Because everything keys off it. The bottlenecks worth flagging, the risks that matter, the tools in your world, what "good" looks like — all field-specific. Confirming industry + sub-field is one short question, and it is the difference between a roadmap built for your kind of business and generic advice with the nouns swapped. Our strategy stage literally does not start until it's confirmed.</p></details>
+  function validate(n){
+    if(n === 1){
+      var v = $("ramble").value.trim();
+      if(v.length < 120){ showErr(1, "Give the agent a little more to work with — a couple of honest paragraphs about how things actually run (minimum 120 characters). Messy is fine; short is the only problem."); return false; }
+      showErr(1, null); return true;
+    }
+    if(n === 2){
+      if(!$("industry").value.trim() || !$("subfield").value.trim()){ showErr(2, "The field gate: industry and sub-field both need your confirmation before anything downstream runs. A guess here produces a wrong roadmap — that's the whole point of this step."); return false; }
+      showErr(2, null); return true;
+    }
+    if(n === 3){
+      var any = document.querySelectorAll("input[name='pain']:checked").length > 0;
+      if(!any || !$("teamsize").value || !$("goal").value){ showErr(3, "Pick at least one pain area, plus your team size and primary goal — it takes ten seconds and it weights the whole evaluation."); return false; }
+      showErr(3, null); return true;
+    }
+    if(n === 4){
+      var em = $("cemail").value.trim();
+      if(!$("cname").value.trim() || !$("cbiz").value.trim() || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ showErr(4, "Name, business name, and a valid email — the roadmap and your clarification questions both travel by that thread."); return false; }
+      showErr(4, null); return true;
+    }
+    return true;
+  }
 
-    <details><summary>What happens with my information?</summary>
-      <p>Your intake is used to build your report — only that. It is not sold, and it is not used to train anything for other clients. The report includes its own audit trail: every recommendation points back to what you said or a named source.</p></details>
+  function esc(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+  function selectedPains(){
+    return Array.prototype.map.call(document.querySelectorAll("input[name='pain']:checked"), function(c){ return c.value; });
+  }
+  function buildReview(){
+    var r = $("ramble").value.trim();
+    var excerpt = r.length > 320 ? r.slice(0, 320) + "…" : r;
+    $("reviewBox").innerHTML =
+      "<p><span class='k'>Send to</span>" + esc($("cname").value) + " · " + esc($("cbiz").value) + " · " + esc($("cemail").value) + "</p>" +
+      "<p><span class='k'>Field (confirmed by you)</span>" + esc($("industry").value) + " — " + esc($("subfield").value) + "</p>" +
+      "<p><span class='k'>Focus areas</span>" + esc(selectedPains().join(" · ")) + "</p>" +
+      "<p><span class='k'>Team size · Primary goal</span>" + esc($("teamsize").value) + " · " + esc($("goal").value) + "</p>" +
+      "<p><span class='k'>Your ramble (excerpt)</span></p><blockquote>" + esc(excerpt) + "</blockquote>";
+  }
 
-    <details><summary>How much of my time does this take?</summary>
-      <p>One intake (as long as your ramble is), one short round of numbered questions in an email thread, and one decision call on Day 5. That's the design: your involvement concentrates where judgment matters.</p></details>
+  document.querySelectorAll("[data-next]").forEach(function(b){
+    b.addEventListener("click", function(){ if(validate(current)) goTo(current + 1); });
+  });
+  document.querySelectorAll("[data-back]").forEach(function(b){
+    b.addEventListener("click", function(){ showErr(current, null); goTo(current - 1); });
+  });
+  /* progress steps are buttons: revisit any step already reached, never skip ahead */
+  document.querySelectorAll("[data-goto]").forEach(function(b){
+    b.addEventListener("click", function(){
+      var n = parseInt(b.getAttribute("data-goto"), 10);
+      if(n <= maxReached && n !== current){ showErr(current, null); goTo(n); }
+    });
+  });
+  /* sample report — a button, not a link (owner rule); relative nav works from file:// and Pages */
+  document.querySelectorAll("[data-sample]").forEach(function(b){
+    b.addEventListener("click", function(){ window.location.href = "sample-walkthrough.html"; });
+  });
+  /* hero primary CTA: drop the visitor straight into Step 1 */
+  $("startBtn").addEventListener("click", function(){
+    if(current !== 1){ showErr(current, null); goTo(1); }
+    var w = document.querySelector(".wizard");
+    w.classList.remove("pulse"); void w.offsetWidth; w.classList.add("pulse");
+    $("ramble").focus();
+  });
+  $("sampleBtn").addEventListener("click", function(){
+    $("ramble").value = SAMPLE_RAMBLE;
+    $("rambleCount").textContent = SAMPLE_RAMBLE.length;
+    agentRan = false;
+    showErr(1, null);
+  });
+  $("ramble").addEventListener("input", function(){
+    $("rambleCount").textContent = this.value.length;
+    agentRan = false;
+  });
+  $("wizard").addEventListener("submit", function(e){ e.preventDefault(); });
 
-    <details><summary>What happens after I receive the roadmap?</summary>
-      <p>You decide. If you want to credit the audit toward a build or Operate, we scope it together from the roadmap — the roadmap already contains the requirements. If not, the plan is yours and there's no follow-up pressure. The 60-day credit window is the only clock, and it's stated up front.</p></details>
+  /* offer details dialog */
+  var dlg = $("offerDialog");
+  document.querySelectorAll("[data-offer-open]").forEach(function(b){
+    b.addEventListener("click", function(){ if(dlg.showModal) dlg.showModal(); });
+  });
+  $("offerClose").addEventListener("click", function(){ dlg.close(); });
+  dlg.addEventListener("click", function(e){ if(e.target === dlg) dlg.close(); });
 
-    <details><summary>How is this different from hiring a consultant, or a dev shop?</summary>
-      <p>Consultants advise but don't build. Dev shops build but start from a spec you have to write. This starts from your own description of your operation and ends with a buildable, costed sequence — produced by the same pipeline that will help build it.</p></details>
+  $("sendBtn").addEventListener("click", function(){
+    var body = [
+      "RAMBLE TO ROADMAP — AUDIT INTAKE",
+      "",
+      "Name: " + $("cname").value.trim(),
+      "Business: " + $("cbiz").value.trim(),
+      "Email: " + $("cemail").value.trim(),
+      "",
+      "FIELD (confirmed at intake):",
+      "Industry: " + $("industry").value.trim(),
+      "Sub-field: " + $("subfield").value.trim(),
+      "",
+      "FOCUS AREAS: " + selectedPains().join("; "),
+      "Team size: " + $("teamsize").value,
+      "Primary goal: " + $("goal").value,
+      "",
+      "MY RAMBLE:",
+      $("ramble").value.trim()
+    ].join("\n");
+    var href = "mailto:ai@moorefolio.com?subject=" +
+      encodeURIComponent("Ramble to Roadmap — Audit Intake (" + $("cbiz").value.trim() + ")") +
+      "&body=" + encodeURIComponent(body);
+    window.location.href = href;
+    showErr(5, null);
+    var note = document.createElement("p");
+    note.className = "hint";
+    note.textContent = "Your email draft should now be open, addressed to ai@moorefolio.com. Send it when you're ready — we confirm fit and a start date before any invoice, and the 5-day clock starts at that confirmation.";
+    $("reviewBox").appendChild(note);
+  });
 
-    <details><summary>Is this going to recommend chatbots?</summary>
-      <p>No. It's about identifying where automation creates real business value in your operation and which opportunities deserve investment first. If the answer is a $50/month tool you already could buy, the report tells you that.</p></details>
-  </div>
-</section>
-
-<section class="band" id="intake">
-  <div class="wrap">
-    <div class="eyebrow">Book the audit</div>
-    <h2>Five days. Your roadmap.</h2>
-    <p>Tell us about your operation — in your own words. $2,500 fixed, credited toward your build, refunded if nothing clears the bar. You own the roadmap regardless.</p>
-    <!-- INTAKE-ACTION: mailto endpoint set at deploy 2026-10-30 to ai@moorefolio.com (owner domain email, per owner authorization "Step 1 publish you can do"). Original note: the owner replaces this mailto
-         with the real intake form endpoint (or a monitored inbox address). Do not treat as live. -->
-    <form class="intake" action="mailto:ai@moorefolio.com?subject=Ramble%20to%20Roadmap%20—%20Audit%20Intake" method="post" enctype="text/plain">
-      <label for="f-name">Your name</label>
-      <input type="text" id="f-name" name="name" autocomplete="name">
-      <label for="f-company">Business name</label>
-      <input type="text" id="f-company" name="company" autocomplete="organization">
-      <label for="f-email">Email (your clarification questions arrive in this thread)</label>
-      <input type="email" id="f-email" name="email" autocomplete="email">
-      <label for="f-ramble">How does your business actually run?</label>
-      <textarea id="f-ramble" name="ramble" placeholder="Ramble freely — what's manual, what's messy, what breaks, what you wish ran itself. Messy is the point; structure is our job. (You can also attach a file instead, in your reply to our confirmation email.)"></textarea>
-      <p class="hint">First question you'll get back: <strong>confirm what field your business is in</strong> — industry and sub-field, in your words. Everything in your roadmap keys off it, so nothing is built on a guess.</p>
-      <p class="hint">Payment for the first engagements is by invoice — we'll confirm fit and start date before any invoice is issued. No card is taken on this page.</p>
-      <p><button class="btn" type="submit" style="font:inherit;cursor:pointer">Send your ramble</button></p>
-    </form>
-    <p style="margin-top:18px">No lock-in contract · Roadmap is yours to keep · 4 audits per month at founding pace</p>
-  </div>
-</section>
-
-<footer class="site">
-  <div class="wrap">
-    <p><strong>Ramble to Roadmap</strong> — AI Operations Audit. A 5-day, fixed-price audit for owner-led companies: your operation, in your words, out the other side as a roadmap you own.</p>
-    <p>The sample report linked from this page uses a fictional company and fictional data, labeled as such. No client results are claimed on this page, because none exist yet.</p>
-  </div>
-</footer>
-
+  updateProgress();
+})();
+</script>
 </body>
 </html>
