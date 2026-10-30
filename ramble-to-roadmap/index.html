@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ramble to Roadmap — AI Operations Audit</title>
+<meta name="description" content="Send us how your business runs — in your own words, mess and all. Five days later: a structured profile, your bottlenecks ranked, and a 90-day roadmap for what to automate first. $2,500 fixed. You own the roadmap.">
+<!-- STAGED PACKAGE — NOT DEPLOYED. Future home: moorefolio.com/ramble-to-roadmap (owner's publish press).
+     Deploy notes (resolved 2026-10-30 under the owner publish authorization):
+       1. Intake form action (search "INTAKE-ACTION (resolved 2026-10-30)") — point it at the real form/email endpoint.
+       2. Sample link (search "SAMPLE-LINK (resolved 2026-10-30: file sits beside index.html)") — sample-walkthrough.html sits beside this file in the package;
+          confirm the deployed path matches. -->
+<style>
+  :root{
+    --ink:#101d29; --ink2:#33465a; --paper:#fbf9f5; --card:#ffffff;
+    --line:#d8dee6; --accent:#b85c12; --accent-ink:#8a430a;
+    --good:#1d6b46; --bad:#9c3324; --band:#122634; --band-ink:#f3ede2;
+    --radius:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);line-height:1.55}
+  h1,h2,h3,.sans{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif}
+  a{color:var(--accent-ink)}
+  .wrap{max-width:1020px;margin:0 auto;padding:0 20px}
+  header.site{position:sticky;top:0;background:rgba(251,249,245,.96);border-bottom:1px solid var(--line);z-index:10}
+  header.site .wrap{display:flex;align-items:center;gap:18px;padding:12px 20px}
+  .brand{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:1.05rem;letter-spacing:.01em}
+  .brand small{display:block;font-weight:600;color:var(--accent-ink);font-size:.72rem;text-transform:uppercase;letter-spacing:.14em}
+  nav.main{margin-left:auto;display:flex;gap:16px;align-items:center;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.9rem}
+  nav.main a{color:var(--ink2);text-decoration:none}
+  nav.main a:hover{color:var(--accent-ink)}
+  .btn{display:inline-block;background:var(--accent);color:#fff !important;padding:10px 18px;border-radius:999px;text-decoration:none;font-weight:700;border:2px solid var(--accent)}
+  .btn.ghost{background:transparent;color:var(--accent-ink) !important}
+  .btn:hover{filter:brightness(1.08)}
+  section{padding:56px 0}
+  .hero{padding:72px 0 48px}
+  .eyebrow{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.16em;font-size:.75rem;font-weight:700;color:var(--accent-ink)}
+  .hero h1{font-size:2.7rem;line-height:1.12;margin:.35em 0 .4em}
+  .hero p.lede{font-size:1.22rem;color:var(--ink2);max-width:44em}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0}
+  .chip{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.82rem;font-weight:700;border:1.5px solid var(--ink);border-radius:999px;padding:5px 12px;background:var(--card)}
+  .chip.hot{border-color:var(--accent);color:var(--accent-ink)}
+  .band{background:var(--band);color:var(--band-ink)}
+  .band h2{color:#fff}
+  .band .eyebrow{color:#e8a35f}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:24px}
+  .card{background:var(--card);border:1.5px solid var(--line);border-top:5px solid var(--accent);border-radius:var(--radius);padding:18px}
+  .band .card{background:#1a3448;border-color:#2c4b63;color:var(--band-ink)}
+  .card h3{margin:.2em 0 .4em;font-size:1.02rem}
+  .card p{margin:0;color:var(--ink2);font-size:.96rem}
+  .band .card p{color:#cfdce6}
+  .num{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;color:var(--accent);font-size:.85rem;letter-spacing:.12em}
+  .steps{display:flex;flex-direction:column;gap:0;max-width:760px}
+  .step{background:var(--card);border:1.5px solid var(--line);border-left:6px solid var(--accent);border-radius:var(--radius);padding:16px 20px}
+  .step h3{margin:.1em 0 .3em}
+  .step p{margin:0;color:var(--ink2)}
+  .step .day{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.75rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink)}
+  .arrow{text-align:center;font-size:1.15rem;color:var(--accent);padding:4px 0}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:720px){.cols{grid-template-columns:1fr}.hero h1{font-size:2.05rem}nav.main a.hideS{display:none}}
+  .fit{border-radius:var(--radius);padding:20px;border:1.5px solid var(--line);background:var(--card)}
+  .fit.good{border-top:6px solid var(--good)} .fit.bad{border-top:6px solid var(--bad)}
+  .fit ul{margin:.4em 0 0;padding-left:1.2em} .fit li{margin:.3em 0}
+  .ladder{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:14px;margin-top:24px}
+  .rung{background:var(--card);border:1.5px solid var(--line);border-radius:var(--radius);padding:20px}
+  .rung.entry{border:2.5px solid var(--accent);box-shadow:0 6px 24px rgba(184,92,18,.13)}
+  .rung .price{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:1.7rem;font-weight:800;margin:.15em 0}
+  .rung .price small{font-size:.85rem;font-weight:600;color:var(--ink2)}
+  .rung p{color:var(--ink2);font-size:.95rem}
+  .tag{display:inline-block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.7rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--accent);color:#fff;border-radius:4px;padding:3px 8px}
+  details{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:14px 18px;margin:10px 0}
+  summary{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;cursor:pointer}
+  details p{color:var(--ink2)}
+  form.intake{background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);padding:24px;max-width:760px}
+  form.intake label{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;font-size:.9rem;display:block;margin:14px 0 5px}
+  form.intake input[type=text],form.intake input[type=email],form.intake textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:10px;font:inherit;background:#fff}
+  form.intake textarea{min-height:170px}
+  form.intake .hint{font-size:.88rem;color:var(--ink2)}
+  .callout{border:2px dashed var(--accent);border-radius:var(--radius);padding:18px 22px;background:#fff7ec}
+  footer.site{border-top:1px solid var(--line);padding:28px 0;color:var(--ink2);font-size:.9rem}
+  .big{font-size:1.35rem;line-height:1.4}
+</style>
+</head>
+<body>
+
+<header class="site">
+  <div class="wrap">
+    <div class="brand">Ramble to Roadmap<small>AI Operations Audit</small></div>
+    <nav class="main">
+      <a class="hideS" href="#how">How it works</a>
+      <a class="hideS" href="#receive">What you get</a>
+      <a class="hideS" href="#pricing">Pricing</a>
+      <a class="hideS" href="#faq">FAQ</a>
+      <a class="btn" href="#intake">Start your audit</a>
+    </nav>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="wrap">
+    <div class="eyebrow">AI Operations Audit · Fixed price · 5 days</div>
+    <h1>Find where AI actually belongs in your business.</h1>
+    <p class="lede">Send us how your business runs — in your own words, mess and all. Five days later you get a structured profile of your company, your bottlenecks ranked, and a 90-day roadmap for what to automate first, what to leave human, and what to skip entirely.</p>
+    <div class="chips">
+      <span class="chip hot">$2,500 fixed</span>
+      <span class="chip">Delivered in 5 days</span>
+      <span class="chip">You own the roadmap</span>
+      <span class="chip">Fee credits 100% toward your build</span>
+      <span class="chip">No questionnaire · No workshops</span>
+    </div>
+    <p><a class="btn" href="#intake">Send your ramble</a>
+    &nbsp;<a class="btn ghost" href="sample-walkthrough.html">See a sample report</a><!-- SAMPLE-LINK (resolved 2026-10-30: file sits beside index.html): sample page sits beside this file in the package; confirm path at deploy time. --></p>
+  </div>
+</section>
+
+<section class="band">
+  <div class="wrap">
+    <div class="eyebrow">The field gate</div>
+    <h2>Everything starts with what field you're in.</h2>
+    <p class="big">The first question we ask — before any analysis — is the one everything else keys off: <strong>what field is your business in?</strong> Not just the industry. The sub-field. "Multi-location dental group" produces a different roadmap than "dental," and a guessed field produces a wrong one.</p>
+    <p>So our strategy stage doesn't run on a guess. It waits — fail-closed — until you've confirmed the field in your own words. It's the cheapest question in the engagement, and it unlocks the expensive work. That's the deal: you ramble first, unconstrained. Then we confirm the field. Then the roadmap gets built on solid ground.</p>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow">The gap</div>
+    <h2>You're running a real business on spreadsheets and memory.</h2>
+    <p>The big AI vendors want enterprise contracts. The local consultants want to sell you a website. Neither one starts by reading how your operation actually works. We do — because that's where the automation worth paying for is hiding.</p>
+    <div class="cards">
+      <div class="card"><h3>Hours into seconds-work</h3><p>How many hours a week go to work a system should do in seconds?</p></div>
+      <div class="card"><h3>The quiet handoff</h3><p>Where does a handoff between two tools — or two people — quietly drop things?</p></div>
+      <div class="card"><h3>One person's head</h3><p>What happens to the process that lives in one employee's head when they quit?</p></div>
+      <div class="card"><h3>Prove it</h3><p>Which of your numbers could you not prove if someone asked?</p></div>
+    </div>
+    <p style="margin-top:26px" class="big"><strong>We earn the build by proving the roadmap first.</strong> The audit is not a sales call. It is a deliverable.</p>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="eyebrow">What we evaluate</div>
+    <h2>Four areas. One clear picture.</h2>
+    <div class="cards">
+      <div class="card"><div class="num">01</div><h3>Workflows</h3><p>The recurring work that eats time, creates errors, or depends on one person remembering.</p></div>
+      <div class="card"><div class="num">02</div><h3>Systems &amp; data</h3><p>What tools are in play, where the data actually lives, and where handoffs between systems — or people — create friction and lag.</p></div>
+      <div class="card"><div class="num">03</div><h3>Decision points</h3><p>Where judgment, approval, and accountability must stay human, no matter what gets automated.</p></div>
+      <div class="card"><div class="num">04</div><h3>Opportunity ranking</h3><p>Every opportunity scored by business value, technical readiness, and implementation scope — so you know where to start, and why.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="how">
+  <div class="wrap">
+    <div class="eyebrow">How it works</div>
+    <h2>Structured. Asynchronous. Specific to your business.</h2>
+    <p>Not a questionnaire. Not a workshop series. A working engagement designed to produce a plan you can defend and act on — built around your schedule, not ours.</p>
+    <div class="steps" style="margin-top:24px">
+      <div class="step"><div class="day">Day 1 · Intake</div><h3>Send the messy version</h3><p>Paste it into the form below or attach the file — however it exists. Rambling, half-remembered, typo'd is fine; that's real intake. Our pipeline turns it into a structured, validated profile of your company.</p></div>
+      <div class="arrow">▼</div>
+      <div class="step"><div class="day">Day 1 · Clarification opens</div><h3>Answer a short list of questions — in the same email thread</h3><p>Question 1 is always field confirmation (see above). The rest are generated from the gaps in your profile — the things your ramble didn't state. We ask instead of guessing. This is the only homework, and it's short.</p></div>
+      <div class="arrow">▼</div>
+      <div class="step"><div class="day">Days 2–3 · Evaluation</div><h3>Findings, bottlenecks, ranking</h3><p>We evaluate your operation across the four areas, flag the bottlenecks and risks, and rank every opportunity by value, readiness, and scope.</p></div>
+      <div class="arrow">▼</div>
+      <div class="step"><div class="day">Days 4–5 · Roadmap</div><h3>Your 90-day plan</h3><p>What to build first, in what order, what each system does, and what each one needs before a build can start — sequenced into Days 1–30, 31–60, and 61–90.</p></div>
+      <div class="arrow">▼</div>
+      <div class="step"><div class="day">Day 5 · Decision call</div><h3>We walk through it together</h3><p>You keep the roadmap either way. If you build with us, your $2,500 credits toward the build. If you don't, you have a plan specific enough to act on independently. No lock-in, no follow-up pressure sequence.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="receive">
+  <div class="wrap">
+    <div class="eyebrow">What you receive</div>
+    <h2>A report your leadership can present and act on.</h2>
+    <div class="cols">
+      <div class="fit">
+        <h3 style="margin-top:0">The report — 7 sections</h3>
+        <ul>
+          <li><strong>Executive Summary</strong></li>
+          <li><strong>Company Profile</strong> — including sourced external reference lines</li>
+          <li><strong>Findings</strong></li>
+          <li><strong>Bottlenecks &amp; Risks</strong></li>
+          <li><strong>Recommendations</strong> — prioritized, each with its trace</li>
+          <li><strong>90-Day Roadmap</strong> — phased and sequenced</li>
+          <li><strong>Unknowns &amp; Assumptions</strong> — in the open</li>
+        </ul>
+        <p>Plus a <strong>human-ownership map</strong>: what stays with your people, explicitly.</p>
+        <p><a href="sample-walkthrough.html">Read a complete sample report →</a> Same format clients get, built from a fictional company, labeled as such.</p>
+      </div>
+      <div class="callout">
+        <h3 style="margin-top:0">Nothing in your report is invented.</h3>
+        <p>Every recommendation traces to something you told us or a source we name. What we couldn't establish is listed under Unknowns — in the open, not buried or smoothed over.</p>
+        <p>If the honest answer is a $50/month tool, the report says that. If nothing in your operation clears the bar for automation, the report says that too — and your fee comes back (see the guarantee in the FAQ).</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <div class="eyebrow">Built for</div>
+    <h2>Owner-led companies, roughly 10–100 staff.</h2>
+    <div class="cols">
+      <div class="fit good"><h3 style="margin-top:0">Right for you if…</h3>
+        <ul>
+          <li>You're doing real revenue on spreadsheets, email, and institutional memory</li>
+          <li>Your tools don't talk to each other, and your people copy data between them</li>
+          <li>You're using AI scattered, or not at all, and want to know where it actually pays</li>
+          <li>You can give it one intake, one short round of answers, and one decision call</li>
+        </ul>
+      </div>
+      <div class="fit bad"><h3 style="margin-top:0">Not the right fit if…</h3>
+        <ul>
+          <li>You're pre-revenue, or the core process doesn't exist yet</li>
+          <li>You have no existing systems or operational data to look at</li>
+          <li>You're shopping for a chatbot or a quick AI demo</li>
+          <li>You want a one-size-fits-all answer, not a plan built from your own operation</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="pricing">
+  <div class="wrap">
+    <div class="eyebrow">Pricing</div>
+    <h2>Every engagement begins with the audit.</h2>
+    <p>That ensures we understand your operation before anyone commits to a scope — and you understand exactly what you're getting before you commit to a build.</p>
+    <div class="ladder">
+      <div class="rung entry"><span class="tag">Start here</span><h3>The Audit</h3><div class="price">$2,500</div><p>5-day operations audit and 90-day AI roadmap. Structured profile, ranked bottlenecks, human-ownership map. <strong>Credited 100% toward your build</strong> if you start within 60 days.</p></div>
+      <div class="rung"><h3>Core Build</h3><div class="price"><small>from</small> $7,500</div><p>One core automation system from your roadmap. Built, integrated, staff training, 30-day support.</p></div>
+      <div class="rung"><h3>Systems Build</h3><div class="price"><small>from</small> $18,500</div><p>3–5 connected systems from your roadmap, built to compound across your operation. 60-day support.</p></div>
+      <div class="rung"><h3>Operate</h3><div class="price"><small>from</small> $1,500<small>/mo</small></div><p>We run and improve the systems your team uses — monitoring, adjustments, quarterly review. Your people keep the judgment and the relationships.</p></div>
+    </div>
+    <p style="margin-top:22px"><strong>Founding Cohort:</strong> the first 3 clients start at the standard $2,500 and are asked — only asked — to allow a case study at delivery. We run <strong>4 audits per month</strong> at founding pace; when the month is full, the next starts the month after. We claim no client results yet, because there aren't any. The sample report is the proof of format; the cohort is where proof of results comes from.</p>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="eyebrow">Buyer questions</div>
+    <h2>Common questions, answered straight.</h2>
+
+    <details><summary>What does the audit cost, exactly?</summary>
+      <p>$2,500, fixed. It credits 100% toward a build or Operate engagement started within 60 days of delivery — so if you move forward, you've already paid for the first step. If you don't, you walk away with a prioritized implementation plan specific enough to act on independently.</p></details>
+
+    <details><summary>What if the audit finds nothing worth automating?</summary>
+      <p>Then the fee is refunded. If your finished roadmap contains zero opportunities that clear the value bar defined in the report's ranking criteria, we don't keep money for a report that tells you to do nothing. We don't manufacture findings to justify a fee — that's the whole point of the nothing-invented rule.</p></details>
+
+    <details><summary>Do I own the roadmap?</summary>
+      <p>100%. Build it with us, build it with someone else, or build it in-house. The roadmap is yours regardless of what you decide next.</p></details>
+
+    <details><summary>Why no questionnaire and no workshops?</summary>
+      <p>Because questionnaires get the polished version, and workshops get the meeting version. We want the real version — how the operation actually runs, in your words. The structured work is our job, not your homework. The only thing we schedule live is the Day-5 decision call.</p></details>
+
+    <details><summary>Why do you ask about my "field" first?</summary>
+      <p>Because everything keys off it. The bottlenecks worth flagging, the risks that matter, the tools in your world, what "good" looks like — all field-specific. Confirming industry + sub-field is one short question, and it is the difference between a roadmap built for your kind of business and generic advice with the nouns swapped. Our strategy stage literally does not start until it's confirmed.</p></details>
+
+    <details><summary>What happens with my information?</summary>
+      <p>Your intake is used to build your report — only that. It is not sold, and it is not used to train anything for other clients. The report includes its own audit trail: every recommendation points back to what you said or a named source.</p></details>
+
+    <details><summary>How much of my time does this take?</summary>
+      <p>One intake (as long as your ramble is), one short round of numbered questions in an email thread, and one decision call on Day 5. That's the design: your involvement concentrates where judgment matters.</p></details>
+
+    <details><summary>What happens after I receive the roadmap?</summary>
+      <p>You decide. If you want to credit the audit toward a build or Operate, we scope it together from the roadmap — the roadmap already contains the requirements. If not, the plan is yours and there's no follow-up pressure. The 60-day credit window is the only clock, and it's stated up front.</p></details>
+
+    <details><summary>How is this different from hiring a consultant, or a dev shop?</summary>
+      <p>Consultants advise but don't build. Dev shops build but start from a spec you have to write. This starts from your own description of your operation and ends with a buildable, costed sequence — produced by the same pipeline that will help build it.</p></details>
+
+    <details><summary>Is this going to recommend chatbots?</summary>
+      <p>No. It's about identifying where automation creates real business value in your operation and which opportunities deserve investment first. If the answer is a $50/month tool you already could buy, the report tells you that.</p></details>
+  </div>
+</section>
+
+<section class="band" id="intake">
+  <div class="wrap">
+    <div class="eyebrow">Book the audit</div>
+    <h2>Five days. Your roadmap.</h2>
+    <p>Tell us about your operation — in your own words. $2,500 fixed, credited toward your build, refunded if nothing clears the bar. You own the roadmap regardless.</p>
+    <!-- INTAKE-ACTION: mailto endpoint set at deploy 2026-10-30 to ai@moorefolio.com (owner domain email, per owner authorization "Step 1 publish you can do"). Original note: the owner replaces this mailto
+         with the real intake form endpoint (or a monitored inbox address). Do not treat as live. -->
+    <form class="intake" action="mailto:ai@moorefolio.com?subject=Ramble%20to%20Roadmap%20—%20Audit%20Intake" method="post" enctype="text/plain">
+      <label for="f-name">Your name</label>
+      <input type="text" id="f-name" name="name" autocomplete="name">
+      <label for="f-company">Business name</label>
+      <input type="text" id="f-company" name="company" autocomplete="organization">
+      <label for="f-email">Email (your clarification questions arrive in this thread)</label>
+      <input type="email" id="f-email" name="email" autocomplete="email">
+      <label for="f-ramble">How does your business actually run?</label>
+      <textarea id="f-ramble" name="ramble" placeholder="Ramble freely — what's manual, what's messy, what breaks, what you wish ran itself. Messy is the point; structure is our job. (You can also attach a file instead, in your reply to our confirmation email.)"></textarea>
+      <p class="hint">First question you'll get back: <strong>confirm what field your business is in</strong> — industry and sub-field, in your words. Everything in your roadmap keys off it, so nothing is built on a guess.</p>
+      <p class="hint">Payment for the first engagements is by invoice — we'll confirm fit and start date before any invoice is issued. No card is taken on this page.</p>
+      <p><button class="btn" type="submit" style="font:inherit;cursor:pointer">Send your ramble</button></p>
+    </form>
+    <p style="margin-top:18px">No lock-in contract · Roadmap is yours to keep · 4 audits per month at founding pace</p>
+  </div>
+</section>
+
+<footer class="site">
+  <div class="wrap">
+    <p><strong>Ramble to Roadmap</strong> — AI Operations Audit. A 5-day, fixed-price audit for owner-led companies: your operation, in your words, out the other side as a roadmap you own.</p>
+    <p>The sample report linked from this page uses a fictional company and fictional data, labeled as such. No client results are claimed on this page, because none exist yet.</p>
+  </div>
+</footer>
+
+</body>
+</html>
