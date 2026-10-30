@@ -2,143 +2,235 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#fbf9f5">
 <title>Ramble to Roadmap — AI Operations Audit</title>
 <meta name="description" content="A step-by-step guided intake for the Ramble to Roadmap AI Operations Audit, with an AI intake agent step. $2,500 fixed, 5 days, you own the roadmap.">
-<!-- LIVE — deployed 2026-10-30 under owner authorization ("Maybe publish it?", 05:32 CDT).
-     TruGreen-style guided flow: one screen per step, sticky progress bar, AI intake agent
-     at Step 2, every action a real button (Opus pass, owner direction 2026-10-30).
-     Source of truth for this design: ../prototype-step-flow/ in the package. -->
+<!-- STAGED PROTOTYPE — NOT DEPLOYED. Owner direction 2026-10-30: TruGreen-style guided flow,
+     progress bar that fills per step, an AI agent at one of the steps.
+     05:26 "Too much scrolling" — one screen per step, 100dvh, no page scroll.
+     05:29 "More enticing buttons and to navigate, not hyperlinks" — buttons only, zero anchor elements.
+     Full-page experience pass (Opus, 2026-10-30): "everything above the container can be a step 0
+     panel. And it shouldn't be a container. It should be the whole page. It should be an experience.
+     Sleeker and more professional." — Step 0 intro scene; no card; every step is a full-viewport scene
+     with a pinned full-width action bar.
+     Live page is untouched in ../deploy/ramble-to-roadmap/. See DESIGN.md. -->
 <style>
   :root{
-    --ink:#101d29; --ink2:#33465a; --paper:#fbf9f5; --card:#ffffff;
-    --line:#d8dee6; --accent:#b85c12; --accent-ink:#8a430a;
+    --ink:#101d29; --ink2:#46576a; --ink3:#6f7d8c; --paper:#fbf9f5; --white:#ffffff;
+    --line:rgba(16,29,41,.12); --line2:rgba(16,29,41,.22);
+    --accent:#b85c12; --accent-ink:#8a430a; --accent-soft:#fdf1e4;
     --good:#1d6b46; --bad:#9c3324; --band:#122634; --band-ink:#f3ede2;
-    --radius:14px;
+    --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+    --serif:Georgia,'Times New Roman',serif;
+    --col:880px; --ease:cubic-bezier(.22,.7,.2,1);
   }
   *{box-sizing:border-box}
   html,body{height:100%}
-  body{margin:0;font-family:Georgia,'Times New Roman',serif;background:var(--paper);color:var(--ink);line-height:1.45;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
-  h1,h2,h3,.sans{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif}
-  /* compact progress header (pinned by layout, page never scrolls) */
-  header.progress{flex:none;background:rgba(251,249,245,.97);border-bottom:1px solid var(--line)}
-  header.progress .wrap{max-width:880px;margin:0 auto;padding:8px 16px 6px}
-  .prow{display:flex;align-items:baseline;gap:14px}
-  .brand{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:.98rem}
-  .brand small{font-weight:600;color:var(--accent-ink);font-size:.64rem;text-transform:uppercase;letter-spacing:.14em;margin-left:8px}
-  .pmeta{margin-left:auto;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.82rem;font-weight:700;color:var(--ink2);white-space:nowrap}
-  .pmeta strong{color:var(--accent-ink)}
-  .track{height:6px;background:#e9e2d6;border-radius:99px;margin:6px 0 0;overflow:hidden}
-  .fill{height:100%;width:20%;background:var(--accent);border-radius:99px;transition:width .45s ease}
-  .psteps{display:flex;justify-content:space-between;padding:4px 0 2px}
-  .pstep{background:none;border:none;padding:2px 1px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.64rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:var(--ink2);cursor:default;border-bottom:2px solid transparent}
+  body{margin:0;font-family:var(--sans);color:var(--ink);line-height:1.5;height:100dvh;display:flex;flex-direction:column;overflow:hidden;
+    background-color:var(--paper);transition:background-color .6s ease;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+  /* per-step scene tint — light, for orientation only */
+  body[data-step="0"]{background-color:#fbf9f5}
+  body[data-step="1"]{background-color:#faf7f1}
+  body[data-step="2"]{background-color:#fcf4ea}
+  body[data-step="3"]{background-color:#f6f7f4}
+  body[data-step="4"]{background-color:#f7f6f3}
+  body[data-step="5"]{background-color:#fbf8f2}
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:0;
+    background:radial-gradient(60vmax 50vmax at 88% -10%,rgba(184,92,18,.10),transparent 60%),
+               radial-gradient(50vmax 40vmax at -10% 110%,rgba(18,38,52,.06),transparent 60%);
+    transition:opacity .6s ease}
+  body:not([data-step="0"]) .glow{opacity:.45}
+  h1,h2,h3{font-family:var(--serif);font-weight:400;letter-spacing:-.01em;color:var(--ink)}
+
+  /* ---------- progress header (full width, translucent over the scene) ---------- */
+  header.progress{position:relative;z-index:3;flex:none;background:rgba(251,249,245,.78);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top)}
+  header.progress .wrap{max-width:var(--col);margin:0 auto;padding:12px 20px 8px}
+  .prow{display:flex;align-items:center;gap:12px}
+  .brand{font-weight:800;font-size:.95rem;letter-spacing:-.005em;white-space:nowrap}
+  .brand small{font-weight:600;color:var(--ink3);font-size:.62rem;text-transform:uppercase;letter-spacing:.16em;margin-left:9px}
+  .pmeta{margin-left:auto;font-size:.78rem;font-weight:600;color:var(--ink3);white-space:nowrap;font-variant-numeric:tabular-nums}
+  .pmeta strong{color:var(--ink);font-weight:700}
+  .track{height:3px;background:rgba(16,29,41,.08);border-radius:99px;margin:10px 0 0;overflow:hidden}
+  .fill{height:100%;width:0;background:var(--accent);border-radius:99px;transition:width .6s var(--ease)}
+  .psteps{display:flex;justify-content:space-between;gap:4px;padding:6px 0 0}
+  .pstep{background:none;border:none;padding:4px 2px;font-family:var(--sans);font-size:.66rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink3);cursor:default;border-radius:6px;transition:color .2s ease,background-color .2s ease}
   .pstep.done{color:var(--accent-ink);cursor:pointer}
-  .pstep.done:hover{border-bottom-color:var(--accent)}
-  .pstep.on{color:var(--ink)}
-  @media(max-width:640px){.psteps .pstep{display:none}.psteps .pstep.on{display:inline}}
-  /* app column */
-  .app{flex:1;min-height:0;display:flex;flex-direction:column;width:100%;max-width:880px;margin:0 auto;padding:0 14px}
-  /* slim hero */
-  .hero{flex:none;padding:10px 2px 2px}
-  .eyebrow{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;text-transform:uppercase;letter-spacing:.15em;font-size:.68rem;font-weight:700;color:var(--accent-ink)}
-  .hero h1{font-size:1.5rem;line-height:1.15;margin:.22em 0 .2em}
-  .hero p.lede{font-size:.95rem;color:var(--ink2);margin:0;max-width:46em}
-  .chips{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0 2px}
-  .chip{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.72rem;font-weight:700;border:1.5px solid var(--ink);border-radius:999px;padding:2px 9px;background:var(--card)}
-  .chip.hot{border-color:var(--accent);color:var(--accent-ink)}
-  .heroactions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
-  @media(max-width:640px){.hero h1{font-size:1.22rem}.hero p.lede{font-size:.88rem}}
-  /* wizard — single viewport, one panel at a time */
-  .wizard{flex:1;min-height:0;background:var(--card);border:2px solid var(--ink);border-radius:var(--radius);margin:8px 0 12px;box-shadow:0 10px 30px rgba(16,29,41,.07);display:flex;flex-direction:column;overflow:hidden}
-  .wstep{display:none}
-  .wstep.active{display:flex;flex-direction:column;height:100%;min-height:0}
-  .scroll{flex:1;min-height:0;overflow-y:auto;padding:14px 18px 8px}
-  .wstep h2{margin:.1em 0 .25em;font-size:1.28rem}
-  .wstep .sub{color:var(--ink2);margin:0 0 10px;font-size:.93rem}
-  .kicker{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:var(--accent-ink)}
-  label{display:block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;font-size:.85rem;margin:9px 0 3px}
-  input[type=text],input[type=email],select,textarea{width:100%;border:1.5px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;background:#fff}
-  textarea{height:min(30dvh,210px);min-height:110px;resize:none}
-  .hint{font-size:.84rem;color:var(--ink2)}
-  .count{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.74rem;color:var(--ink2);text-align:right;margin-top:3px}
-  .err{display:none;background:#fdeeea;border:1.5px solid var(--bad);color:var(--bad);border-radius:8px;padding:8px 11px;font-size:.88rem;margin:10px 0 0}
-  .err.show{display:block}
-  .nav{flex:none;display:flex;gap:10px;align-items:center;padding:10px 18px;border-top:1px solid var(--line);background:#fff}
-  /* button system — every action on this page is a real button (owner rule, Opus pass 2026-10-30) */
-  .btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;background:linear-gradient(180deg,#cf6d1d,var(--accent));color:#fff;padding:12px 22px;border-radius:999px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;border:2px solid #9c4f0d;cursor:pointer;font-size:1rem;line-height:1.15;box-shadow:0 3px 0 #9c4f0d,0 8px 18px rgba(184,92,18,.28);transition:transform .12s ease,box-shadow .12s ease,filter .12s ease;min-height:48px}
-  .btn:hover{filter:brightness(1.07);transform:translateY(-1px);box-shadow:0 4px 0 #9c4f0d,0 12px 22px rgba(184,92,18,.32)}
-  .btn:active{transform:translateY(2px);box-shadow:0 1px 0 #9c4f0d,0 4px 10px rgba(184,92,18,.25)}
-  .btn.ghost{background:#fff;color:var(--accent-ink);border-color:var(--accent);box-shadow:0 3px 0 rgba(184,92,18,.45);font-weight:700}
-  .btn.ghost:hover{background:#fff7ec;box-shadow:0 4px 0 rgba(184,92,18,.45)}
-  .btn.ghost:active{box-shadow:0 1px 0 rgba(184,92,18,.45)}
-  .btn.quiet{background:#fff;color:var(--ink2);border-color:var(--line);box-shadow:none;font-weight:700}
-  .btn.quiet:hover{background:#f4f1ea;box-shadow:none}
-  .btn.small{padding:8px 15px;font-size:.85rem;min-height:40px}
-  .btn:focus-visible,.pstep:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid #f0b269;outline-offset:2px}
-  .nav .btn[data-next],.nav #sendBtn{flex:1}
-  .nav .spacer{flex:1}
-  @keyframes pulseGlow{0%{box-shadow:0 0 0 0 rgba(184,92,18,.45)}100%{box-shadow:0 0 0 14px rgba(184,92,18,0)}}
-  .wizard.pulse{animation:pulseGlow .7s ease-out 2}
-  /* agent step */
-  .agentbox{border:2px dashed var(--accent);border-radius:var(--radius);background:#fff7ec;padding:10px 14px}
-  .agentbox h3{margin:.1em 0 .3em;font-size:1rem}
-  .agenthead{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-  .avatar{width:38px;height:38px;flex:none;border-radius:50%;background:var(--band);color:var(--band-ink);display:flex;align-items:center;justify-content:center;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:.72rem;letter-spacing:.03em;border:2px solid var(--accent)}
-  .agenthead .aname{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:800;font-size:.92rem;line-height:1.2}
-  .agenthead .arole{font-size:.78rem;color:var(--ink2);line-height:1.25}
-  .spin{display:none;align-items:center;gap:10px;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-weight:700;font-size:.9rem;color:var(--ink2)}
+  .pstep.done:hover{background:rgba(184,92,18,.08)}
+  .pstep.on{color:var(--ink);font-weight:800}
+  @media(max-width:640px){
+    header.progress .wrap{padding:10px 16px 6px}
+    .brand small{display:none}
+    .psteps{display:none}
+  }
+
+  /* ---------- stage: each step is a full-viewport scene ---------- */
+  main.stage{position:relative;z-index:1;flex:1;min-height:0}
+  .scene{position:absolute;inset:0;overflow-y:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;
+    opacity:0;visibility:hidden;transform:translate3d(36px,0,0);
+    transition:opacity .45s var(--ease),transform .55s var(--ease),visibility 0s linear .55s}
+  .scene.past{transform:translate3d(-36px,0,0)}
+  .scene.active{opacity:1;visibility:visible;transform:none;transition:opacity .5s var(--ease) .08s,transform .6s var(--ease) .08s,visibility 0s}
+  @media(prefers-reduced-motion:reduce){.scene,.scene.past,.scene.active{transform:none;transition:opacity .2s linear,visibility 0s linear .2s}.scene.active{transition:opacity .2s linear}}
+  .col{max-width:var(--col);margin:0 auto;min-height:100%;padding:clamp(22px,5dvh,56px) 24px 28px;display:flex;flex-direction:column}
+  @media(max-width:640px){.col{padding:20px 18px 20px}}
+  .kicker{font-size:.7rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--accent-ink)}
+  .scene h2{font-size:clamp(1.55rem,4.4vw,2.25rem);line-height:1.12;margin:.3em 0 .35em}
+  .sub{font-family:var(--serif);color:var(--ink2);margin:0 0 18px;font-size:clamp(.98rem,2.4vw,1.08rem);line-height:1.5;max-width:40em}
+  .hint{font-size:.84rem;color:var(--ink3);line-height:1.45}
+  .hint strong{color:var(--ink2)}
+
+  /* ---------- Step 0 — intro ---------- */
+  .intro{justify-content:center}
+  .eyebrow{font-size:.72rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;color:var(--accent-ink);display:flex;align-items:center;gap:10px}
+  .eyebrow::before{content:"";width:28px;height:1px;background:var(--accent)}
+  .intro h1{font-size:clamp(2.1rem,7vw,3.7rem);line-height:1.04;margin:.35em 0 .35em;max-width:14em}
+  .intro h1 em{font-style:italic;color:var(--accent-ink)}
+  .lede{font-family:var(--serif);font-size:clamp(1.02rem,2.6vw,1.22rem);color:var(--ink2);margin:0;max-width:34em;line-height:1.5}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin:24px 0 0}
+  .chip{font-size:.76rem;font-weight:600;border:1px solid var(--line2);border-radius:999px;padding:5px 12px;background:rgba(255,255,255,.6);color:var(--ink2)}
+  .chip.hot{border-color:var(--accent);color:var(--accent-ink);background:var(--accent-soft);font-weight:700}
+  .introactions{display:flex;gap:10px;flex-wrap:wrap;margin-top:26px}
+  .path{list-style:none;display:flex;flex-wrap:wrap;gap:6px 0;padding:22px 0 0;margin:28px 0 0;border-top:1px solid var(--line);font-size:.76rem;color:var(--ink3);font-weight:600}
+  .path li{display:flex;align-items:center}
+  .path li+li::before{content:"→";margin:0 10px;color:var(--line2)}
+  .path b{color:var(--accent-ink);margin-right:5px;font-variant-numeric:tabular-nums}
+  @media(max-width:640px){.chips{margin-top:18px}.introactions{margin-top:20px}.introactions .btn{flex:1 1 auto}.path{display:none}}
+  @media(max-height:640px){.path{display:none}}
+
+  /* ---------- fields ---------- */
+  label{display:block;font-size:.8rem;font-weight:700;color:var(--ink2);margin:14px 0 6px;letter-spacing:.01em}
+  input[type=text],input[type=email],select,textarea{width:100%;border:1px solid var(--line2);border-radius:10px;padding:12px 14px;font:inherit;font-size:1rem;color:var(--ink);background:rgba(255,255,255,.85);transition:border-color .15s ease,box-shadow .15s ease,background-color .15s ease;-webkit-appearance:none;appearance:none}
+  select{background-image:linear-gradient(45deg,transparent 50%,var(--ink3) 50%),linear-gradient(135deg,var(--ink3) 50%,transparent 50%);background-position:calc(100% - 20px) 52%,calc(100% - 15px) 52%;background-size:5px 5px;background-repeat:no-repeat;padding-right:38px}
+  input::placeholder,textarea::placeholder{color:#9aa5b1}
+  input:hover,select:hover,textarea:hover{border-color:rgba(16,29,41,.35)}
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px rgba(184,92,18,.14);background:#fff}
+  .grow{flex:1;display:flex;flex-direction:column;min-height:0}
+  textarea{flex:1;min-height:130px;resize:none;font-family:var(--serif);font-size:1.02rem;line-height:1.55}
+  .count{font-size:.74rem;color:var(--ink3);text-align:right;margin-top:6px;font-variant-numeric:tabular-nums}
+  .samplerow{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px}
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:0 16px}
+  @media(max-width:560px){.cols.stack{grid-template-columns:1fr}}
+  .err{display:none;border-left:3px solid var(--bad);background:rgba(156,51,36,.07);color:var(--bad);border-radius:0 8px 8px 0;padding:10px 14px;font-size:.88rem;margin:16px 0 0}
+  .err.show{display:block;animation:nudge .35s var(--ease)}
+  @keyframes nudge{0%{transform:translateX(0)}30%{transform:translateX(-5px)}60%{transform:translateX(4px)}100%{transform:none}}
+
+  /* ---------- buttons — every action is a real button (owner rule) ---------- */
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:50px;padding:0 26px;border-radius:999px;border:1px solid transparent;
+    font-family:var(--sans);font-size:1rem;font-weight:700;letter-spacing:.005em;line-height:1.1;cursor:pointer;white-space:nowrap;
+    background:var(--accent);color:#fff;box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 6px 16px -6px rgba(184,92,18,.55),0 1px 2px rgba(16,29,41,.12);
+    transition:transform .15s var(--ease),box-shadow .2s ease,background-color .2s ease,color .2s ease,border-color .2s ease}
+  .btn .arr{display:inline-block;transition:transform .2s var(--ease)}
+  .btn:hover{background:#a65110;transform:translateY(-1px);box-shadow:0 1px 0 rgba(255,255,255,.25) inset,0 10px 22px -8px rgba(184,92,18,.6),0 1px 2px rgba(16,29,41,.12)}
+  .btn:hover .arr{transform:translateX(3px)}
+  .btn:active{transform:translateY(1px) scale(.99);box-shadow:0 2px 6px -2px rgba(184,92,18,.5)}
+  .btn.ghost{background:rgba(255,255,255,.7);color:var(--ink);border-color:var(--line2);box-shadow:0 1px 2px rgba(16,29,41,.06)}
+  .btn.ghost:hover{background:#fff;border-color:var(--ink);box-shadow:0 6px 16px -8px rgba(16,29,41,.25)}
+  .btn.quiet{background:transparent;color:var(--ink2);box-shadow:none;font-weight:600}
+  .btn.quiet:hover{background:rgba(16,29,41,.06);color:var(--ink);transform:none;box-shadow:none}
+  .btn.small{min-height:40px;padding:0 16px;font-size:.86rem}
+  .btn.tiny{min-height:34px;padding:0 13px;font-size:.78rem;font-weight:600}
+  .btn:focus-visible,.pstep:focus-visible{outline:3px solid #f0b269;outline-offset:2px}
+  .btn[hidden]{display:none}
+
+  /* ---------- pinned action bar (full width, bottom of viewport) ---------- */
+  .actionbar{position:relative;z-index:3;flex:none;border-top:1px solid var(--line);background:rgba(251,249,245,.82);backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);padding-bottom:env(safe-area-inset-bottom)}
+  .actionbar .wrap{max-width:var(--col);margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:10px}
+  .actionbar .spacer{flex:1}
+  .actionbar .step-note{font-size:.78rem;color:var(--ink3);font-weight:600}
+  @media(max-width:640px){
+    .actionbar .wrap{padding:10px 14px}
+    .actionbar .step-note{display:none}
+    .actionbar .primary{flex:1}
+    .actionbar .spacer{display:none}
+  }
+
+  /* ---------- Step 2 — agent ---------- */
+  .agent{display:flex;gap:14px;align-items:flex-start;padding:4px 0 18px;border-bottom:1px solid var(--line)}
+  .avatar{width:42px;height:42px;flex:none;border-radius:50%;background:var(--band);color:var(--band-ink);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:.7rem;letter-spacing:.04em;box-shadow:0 0 0 3px var(--paper),0 0 0 4px var(--accent)}
+  .agent-body{flex:1;min-width:0}
+  .aname{font-weight:700;font-size:.92rem;line-height:1.2}
+  .arole{font-size:.8rem;color:var(--ink3);line-height:1.3;margin-top:2px}
+  .spin{display:none;align-items:center;gap:10px;font-size:.9rem;font-weight:600;color:var(--ink2);margin-top:12px}
   .spin.show{display:flex}
-  .dot{width:13px;height:13px;border-radius:50%;border:3px solid var(--accent);border-top-color:transparent;animation:sp 0.8s linear infinite;flex:none}
-  @keyframes sp{to{transform:rotate(360deg)}}
-  .preview{display:none}
-  .preview.show{display:block}
-  .badge{display:inline-block;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.64rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;background:var(--band);color:var(--band-ink);border-radius:4px;padding:2px 7px}
-  .chiprow{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0 2px}
-  .tchip{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.76rem;font-weight:600;border:1.5px solid var(--accent);color:var(--accent-ink);border-radius:999px;padding:2px 9px;background:#fff}
-  /* toggle cards — compact 2-column grid */
-  .toggles{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
-  @media(max-width:380px){.toggles{grid-template-columns:1fr}}
-  .tgl{display:flex;gap:8px;align-items:flex-start;border:1.5px solid var(--line);border-radius:10px;padding:8px 10px;cursor:pointer;background:#fff;font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;margin:0}
-  .tgl input{margin-top:2px;accent-color:var(--accent);width:16px;height:16px;flex:none}
-  .tgl b{display:block;font-size:.83rem;line-height:1.25}
-  .tgl span{font-size:.74rem;color:var(--ink2);line-height:1.3;display:block}
-  .tgl:has(input:checked){border-color:var(--accent);background:#fff7ec}
-  .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:640px){.cols{gap:8px}}
-  /* review */
-  .review{border:1.5px solid var(--line);border-radius:10px;padding:2px 14px;background:#fdfcf9}
-  .review p{margin:8px 0;font-size:.93rem}
-  .review .k{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:.68rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--accent-ink);display:block}
-  blockquote{margin:6px 0;padding:8px 12px;border-left:5px solid var(--accent);background:#fff7ec;color:var(--ink2);font-size:.9rem}
-  /* offer details dialog (overlay — not part of page flow) */
-  dialog.offer{border:2px solid var(--ink);border-radius:var(--radius);padding:0;width:min(680px,94vw);max-height:92dvh;background:var(--card);color:var(--ink)}
-  dialog.offer::backdrop{background:rgba(16,29,41,.55)}
-  .dlg-body{max-height:92dvh;overflow-y:auto;padding:18px 20px}
-  .dlg-head{display:flex;align-items:center;gap:10px}
-  .dlg-head h2{margin:0;font-size:1.25rem}
+  .typing{display:inline-flex;gap:4px}
+  .typing i{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.3;animation:blink 1.1s infinite ease-in-out}
+  .typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+  @keyframes blink{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+  .preview{display:none;margin-top:10px}
+  .preview.show{display:block;animation:rise .5s var(--ease)}
+  @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .badge{display:inline-block;font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);background:var(--accent-soft);border:1px solid rgba(184,92,18,.3);border-radius:999px;padding:3px 9px}
+  .preview h3{font-size:1.08rem;margin:10px 0 6px}
+  .chiprow{display:flex;flex-wrap:wrap;gap:6px}
+  .tchip{font-size:.78rem;font-weight:600;color:var(--ink);border:1px solid var(--line2);background:rgba(255,255,255,.75);border-radius:999px;padding:4px 11px}
+  .tchip::before{content:"";display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-right:7px;vertical-align:1px}
+  .gate h3{font-size:1.15rem;margin:18px 0 4px}
+  .gate .sub{font-size:.95rem;margin-bottom:0}
+
+  /* ---------- Step 3 — toggles ---------- */
+  .toggles{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:2px}
+  @media(max-width:360px){.toggles{grid-template-columns:1fr}}
+  .tgl{position:relative;display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line2);border-radius:12px;padding:11px 12px;cursor:pointer;background:rgba(255,255,255,.7);margin:0;color:var(--ink);font-weight:400;transition:border-color .15s ease,background-color .15s ease,box-shadow .15s ease,transform .1s ease}
+  .tgl:hover{border-color:rgba(16,29,41,.4)}
+  .tgl:active{transform:scale(.99)}
+  .tgl input{margin:2px 0 0;accent-color:var(--accent);width:17px;height:17px;flex:none}
+  .tgl b{display:block;font-size:.86rem;line-height:1.25}
+  .tgl span{font-size:.76rem;color:var(--ink3);line-height:1.3;display:block;margin-top:2px}
+  .tgl:has(input:checked){border-color:var(--accent);background:#fff;box-shadow:0 0 0 3px rgba(184,92,18,.12)}
+  .tgl:has(input:focus-visible){outline:3px solid #f0b269;outline-offset:2px}
+
+  /* ---------- Step 5 — review ---------- */
+  .review{margin:4px 0 0;border-top:1px solid var(--line)}
+  .review .row{display:grid;grid-template-columns:170px 1fr;gap:4px 18px;padding:11px 0;border-bottom:1px solid var(--line);font-size:.94rem}
+  .review .k{font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);padding-top:3px}
+  @media(max-width:560px){.review .row{grid-template-columns:1fr;padding:9px 0}}
+  blockquote{margin:0;padding:2px 0 2px 14px;border-left:2px solid var(--accent);color:var(--ink2);font-family:var(--serif);font-size:.93rem;line-height:1.5}
+  .sentnote{margin-top:14px;padding:12px 14px;border-left:3px solid var(--good);background:rgba(29,107,70,.07);border-radius:0 8px 8px 0;font-size:.88rem;color:var(--ink2)}
+
+  /* ---------- offer details — full-screen sheet on phone, centered sheet on desktop ---------- */
+  dialog.offer{border:none;padding:0;margin:auto;width:min(720px,100vw);max-width:100vw;height:auto;max-height:min(92dvh,900px);background:var(--paper);color:var(--ink);border-radius:20px;box-shadow:0 30px 80px -20px rgba(16,29,41,.45)}
+  dialog.offer[open]{animation:sheet .45s var(--ease)}
+  @keyframes sheet{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+  dialog.offer::backdrop{background:rgba(16,29,41,.42);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px)}
+  .dlg-inner{display:flex;flex-direction:column;max-height:inherit}
+  .dlg-head{flex:none;display:flex;align-items:center;gap:10px;padding:16px 18px 14px 26px;border-bottom:1px solid var(--line)}
+  .dlg-head h2{margin:0;font-size:1.4rem}
   .dlg-head .spacer{flex:1}
-  .ladder{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
-  @media(max-width:520px){.ladder{grid-template-columns:1fr}}
-  .rung{border:1.5px solid var(--line);border-radius:10px;padding:10px 12px}
-  .rung.entry{border:2px solid var(--accent);background:#fff7ec}
-  .rung h3{margin:0;font-size:.95rem}
-  .rung .price{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;font-size:1.25rem;font-weight:800}
-  .rung .price small{font-size:.75rem;font-weight:600;color:var(--ink2)}
-  .rung p{color:var(--ink2);font-size:.84rem;margin:.2em 0 0}
-  .dlg-body p{font-size:.92rem}
+  .dlg-body{flex:1;min-height:0;overflow-y:auto;padding:20px 26px 26px}
+  .dlg-body p{font-size:.95rem;color:var(--ink2);margin:0 0 14px}
+  .dlg-body p strong{color:var(--ink)}
+  .ladder{display:grid;grid-template-columns:1fr 1fr;gap:0;margin:6px 0 20px;border-top:1px solid var(--line)}
+  .rung{padding:14px 16px 14px 0;border-bottom:1px solid var(--line)}
+  .rung:nth-child(even){padding-left:16px;border-left:1px solid var(--line)}
+  .rung h3{margin:0;font-size:1.02rem}
+  .rung.entry h3{color:var(--accent-ink)}
+  .rung .price{font-family:var(--sans);font-size:1.3rem;font-weight:800;margin-top:2px;font-variant-numeric:tabular-nums}
+  .rung .price small{font-size:.74rem;font-weight:600;color:var(--ink3)}
+  .rung p{color:var(--ink3);font-size:.84rem;margin:.25em 0 0}
+  @media(max-width:560px){
+    dialog.offer{width:100vw;height:100dvh;max-height:100dvh;border-radius:0}
+    .dlg-head{padding:calc(12px + env(safe-area-inset-top)) 12px 12px 20px}
+    .dlg-body{padding:18px 20px calc(24px + env(safe-area-inset-bottom))}
+    .ladder{grid-template-columns:1fr}
+    .rung,.rung:nth-child(even){padding:12px 0;border-left:none}
+  }
 </style>
 </head>
-<body>
+<body data-step="0">
+<div class="glow" aria-hidden="true"></div>
 
 <header class="progress">
   <div class="wrap">
     <div class="prow">
       <div class="brand">Ramble to Roadmap<small>AI Operations Audit</small></div>
-      <div class="pmeta" aria-live="polite">Step <strong id="pStep">1</strong> of 5 · <strong id="pPct">20%</strong></div>
+      <div class="pmeta" aria-live="polite"><span id="pLabel">Intro</span> · <strong id="pPct">0%</strong></div>
+      <button type="button" class="btn quiet tiny" data-offer-open>Offer details</button>
     </div>
-    <div class="track" role="progressbar" aria-label="Intake progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="20" id="pTrack"><div class="fill" id="pFill"></div></div>
+    <div class="track" role="progressbar" aria-label="Intake progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="pTrack"><div class="fill" id="pFill"></div></div>
     <div class="psteps" id="pSteps">
-      <button type="button" class="pstep on" data-goto="1" aria-current="step">1 · Ramble</button>
+      <button type="button" class="pstep on" data-goto="0" aria-current="step">0 · Intro</button>
+      <button type="button" class="pstep" data-goto="1">1 · Ramble</button>
       <button type="button" class="pstep" data-goto="2">2 · AI intake agent</button>
       <button type="button" class="pstep" data-goto="3">3 · Where it hurts</button>
       <button type="button" class="pstep" data-goto="4">4 · Contact</button>
@@ -147,68 +239,79 @@
   </div>
 </header>
 
-<div class="app">
-  <section class="hero">
-    <div class="eyebrow">AI Operations Audit · Fixed price · 5 days</div>
-    <h1>Find where AI actually belongs in your business.</h1>
-    <p class="lede">Tell it like it is — messy, half-remembered, spreadsheet-and-all. Five days later you get a profile of your operation, your bottlenecks ranked, and a 90-day roadmap that's yours to keep.</p>
-    <div class="chips">
-      <span class="chip hot">$2,500 fixed</span>
-      <span class="chip">Delivered in 5 days</span>
-      <span class="chip">You own the roadmap</span>
-      <span class="chip">Fee credits 100% toward your build</span>
-    </div>
-    <div class="heroactions">
-      <button type="button" class="btn small" id="startBtn">Start my roadmap →</button>
-      <button type="button" class="btn ghost small" data-sample>See a finished sample report</button>
-      <button type="button" class="btn quiet small" data-offer-open>Offer details</button>
+<form id="wizard" novalidate style="display:contents">
+<main class="stage" id="stage">
+
+  <!-- STEP 0 — INTRO -->
+  <section class="scene active" data-step="0" aria-labelledby="t0">
+    <div class="col intro">
+      <div class="eyebrow">AI Operations Audit · Fixed price · 5 days</div>
+      <h1 id="t0">Find where AI <em>actually</em> belongs in your business.</h1>
+      <p class="lede">Tell it like it is — messy, half-remembered, spreadsheet-and-all. Five days later you get a profile of your operation, your bottlenecks ranked, and a 90-day roadmap that's yours to keep.</p>
+      <div class="chips">
+        <span class="chip hot">$2,500 fixed</span>
+        <span class="chip">Delivered in 5 days</span>
+        <span class="chip">You own the roadmap</span>
+        <span class="chip">Fee credits 100% toward your build</span>
+      </div>
+      <div class="introactions">
+        <button type="button" class="btn ghost" data-sample>See a finished sample report</button>
+        <button type="button" class="btn quiet" data-offer-open>Offer details</button>
+      </div>
+      <ol class="path" aria-label="What happens next">
+        <li><b>1</b>Ramble</li>
+        <li><b>2</b>AI intake agent</li>
+        <li><b>3</b>Where it hurts</li>
+        <li><b>4</b>Contact</li>
+        <li><b>5</b>Review &amp; send</li>
+      </ol>
     </div>
   </section>
 
-  <form class="wizard" id="wizard" novalidate>
-
-    <!-- STEP 1 -->
-    <section class="wstep active" data-step="1" aria-labelledby="h1">
-      <div class="scroll">
-        <div class="kicker">Step 1 of 5</div>
-        <h2 id="h1">Send the messy version</h2>
-        <p class="sub">Don't polish it. Start anywhere — the morning rush, the spreadsheet that runs the place, the process only one person understands. Two honest paragraphs beat a perfect form; structure is our job, not yours.</p>
-        <label for="ramble">Your ramble</label>
+  <!-- STEP 1 -->
+  <section class="scene" data-step="1" aria-labelledby="t1">
+    <div class="col">
+      <div class="kicker">Step 1 of 5 · Ramble</div>
+      <h2 id="t1">Send the messy version</h2>
+      <p class="sub">Don't polish it. Start anywhere — the morning rush, the spreadsheet that runs the place, the process only one person understands. Structure is our job, not yours.</p>
+      <div class="grow">
+        <label for="ramble" style="margin-top:0">Your ramble</label>
         <textarea id="ramble" name="ramble" placeholder="Start anywhere. The morning rush, the spreadsheet that runs the place, the thing only one person knows how to do…"></textarea>
         <div class="count"><span id="rambleCount">0</span> characters · a couple of honest paragraphs is plenty (minimum 120)</div>
-        <p style="margin:8px 0 0"><button type="button" class="btn ghost small" id="sampleBtn">▶ Try it with the sample ramble</button>
-        <span class="hint"> — the fictional Heartland Haul Logistics ramble, so you can feel the whole flow in a minute.</span></p>
-        <div class="err" id="err1" role="alert"></div>
       </div>
-      <div class="nav"><span class="spacer"></span><button type="button" class="btn" data-next>Show me my draft profile →</button></div>
-    </section>
+      <div class="samplerow">
+        <button type="button" class="btn ghost small" id="sampleBtn">▶ Try it with the sample ramble</button>
+        <span class="hint">The fictional Heartland Haul Logistics ramble — feel the whole flow in a minute.</span>
+      </div>
+      <div class="err" id="err1" role="alert"></div>
+    </div>
+  </section>
 
-    <!-- STEP 2 -->
-    <section class="wstep" data-step="2" aria-labelledby="h2">
-      <div class="scroll">
-        <div class="kicker">Step 2 of 5</div>
-        <h2 id="h2">Meet your AI intake agent</h2>
-        <p class="sub">It reads your ramble and drafts your profile on the spot. You check its work — especially the one thing everything keys off.</p>
-        <div class="agentbox">
-          <div class="agenthead">
-            <div class="avatar" aria-hidden="true">R2R</div>
-            <div>
-              <div class="aname">Your intake agent</div>
-              <div class="arole">First read of your operation — it drafts, you decide what's true.</div>
-            </div>
-          </div>
-          <div class="spin" id="agentSpin"><div class="dot" aria-hidden="true"></div><span>Reading your ramble and drafting your profile…</span></div>
+  <!-- STEP 2 -->
+  <section class="scene" data-step="2" aria-labelledby="t2">
+    <div class="col">
+      <div class="kicker">Step 2 of 5 · AI intake agent</div>
+      <h2 id="t2">Meet your AI intake agent</h2>
+      <p class="sub">It reads your ramble and drafts your profile on the spot. You check its work — especially the one thing everything keys off.</p>
+      <div class="agent">
+        <div class="avatar" aria-hidden="true">R2R</div>
+        <div class="agent-body">
+          <div class="aname">Your intake agent</div>
+          <div class="arole">First read of your operation — it drafts, you decide what's true.</div>
+          <div class="spin" id="agentSpin"><span class="typing" aria-hidden="true"><i></i><i></i><i></i></span><span>Reading your ramble and drafting your profile…</span></div>
           <div class="preview" id="agentPreview">
             <span class="badge">Intake-agent preview · draft, not your audit</span>
             <h3>Here's what it heard</h3>
             <div class="chiprow" id="themeList"></div>
-            <p id="headcountLine" class="hint" style="margin:4px 0 0"></p>
-            <p class="hint" style="margin:6px 0 0">That's the first read — the full audit goes far deeper. First, confirm the field it should read your business through:</p>
+            <p id="headcountLine" class="hint" style="margin:8px 0 0"></p>
+            <p class="hint" style="margin:6px 0 0">That's the first read — the full audit goes far deeper. First, confirm the field it should read your business through.</p>
           </div>
         </div>
-        <h3 style="margin:14px 0 0;font-size:1.02rem">The field gate — confirm before we go further</h3>
-        <p class="sub" style="margin-bottom:2px">Everything keys off your field. A guessed field produces a wrong roadmap, so the agent proposes and <strong>you confirm</strong> — nothing downstream runs on an unconfirmed field.</p>
-        <div class="cols">
+      </div>
+      <div class="gate">
+        <h3>The field gate — confirm before we go further</h3>
+        <p class="sub">A guessed field produces a wrong roadmap, so the agent proposes and <strong>you confirm</strong> — nothing downstream runs on an unconfirmed field.</p>
+        <div class="cols stack">
           <div>
             <label for="industry">Industry</label>
             <input type="text" id="industry" name="industry" placeholder="e.g. Logistics and freight transportation" autocomplete="off">
@@ -218,118 +321,141 @@
             <input type="text" id="subfield" name="subfield" placeholder="e.g. Regional LTL carrier, 2 terminals" autocomplete="off">
           </div>
         </div>
-        <p class="hint" style="margin:6px 0 0">Pre-filled where the agent found a signal — edit freely. "Dental" is an industry; "multi-location dental group" is a sub-field, and it changes the roadmap.</p>
-        <div class="err" id="err2" role="alert"></div>
+        <p class="hint" style="margin:8px 0 0">Pre-filled where the agent found a signal — edit freely. "Dental" is an industry; "multi-location dental group" is a sub-field, and it changes the roadmap.</p>
       </div>
-      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" data-next>Lock in my field →</button></div>
-    </section>
+      <div class="err" id="err2" role="alert"></div>
+    </div>
+  </section>
 
-    <!-- STEP 3 -->
-    <section class="wstep" data-step="3" aria-labelledby="h3">
-      <div class="scroll">
-        <div class="kicker">Step 3 of 5</div>
-        <h2 id="h3">Where does it hurt?</h2>
-        <p class="sub">Tap everything that sounds familiar — it weights what the evaluation digs into first.</p>
-        <div class="toggles" role="group" aria-label="Pain areas">
-          <label class="tgl"><input type="checkbox" name="pain" value="Spreadsheets & version drift"><span><b>Spreadsheets &amp; version drift</b><span>Three copies of the truth, none today's.</span></span></label>
-          <label class="tgl"><input type="checkbox" name="pain" value="Manual re-typing & handoffs"><span><b>Manual re-typing &amp; handoffs</b><span>Same data typed into 2–3 systems by hand.</span></span></label>
-          <label class="tgl"><input type="checkbox" name="pain" value="Slow turnaround"><span><b>Slow turnaround</b><span>Answers arrive after the customer moved on.</span></span></label>
-          <label class="tgl"><input type="checkbox" name="pain" value="Paperwork & documents"><span><b>Paperwork &amp; documents</b><span>Status invisible until someone chases it.</span></span></label>
-          <label class="tgl"><input type="checkbox" name="pain" value="Knowledge in one person's head"><span><b>One person's head</b><span>A critical process only one employee knows.</span></span></label>
-          <label class="tgl"><input type="checkbox" name="pain" value="Approvals & decisions"><span><b>Approvals &amp; decisions</b><span>Judgment calls queue behind the busiest person.</span></span></label>
+  <!-- STEP 3 -->
+  <section class="scene" data-step="3" aria-labelledby="t3">
+    <div class="col">
+      <div class="kicker">Step 3 of 5 · Where it hurts</div>
+      <h2 id="t3">Where does it hurt?</h2>
+      <p class="sub">Tap everything that sounds familiar — it weights what the evaluation digs into first.</p>
+      <div class="toggles" role="group" aria-label="Pain areas">
+        <label class="tgl"><input type="checkbox" name="pain" value="Spreadsheets & version drift"><span><b>Spreadsheets &amp; version drift</b><span>Three copies of the truth, none today's.</span></span></label>
+        <label class="tgl"><input type="checkbox" name="pain" value="Manual re-typing & handoffs"><span><b>Manual re-typing &amp; handoffs</b><span>Same data typed into 2–3 systems by hand.</span></span></label>
+        <label class="tgl"><input type="checkbox" name="pain" value="Slow turnaround"><span><b>Slow turnaround</b><span>Answers arrive after the customer moved on.</span></span></label>
+        <label class="tgl"><input type="checkbox" name="pain" value="Paperwork & documents"><span><b>Paperwork &amp; documents</b><span>Status invisible until someone chases it.</span></span></label>
+        <label class="tgl"><input type="checkbox" name="pain" value="Knowledge in one person's head"><span><b>One person's head</b><span>A critical process only one employee knows.</span></span></label>
+        <label class="tgl"><input type="checkbox" name="pain" value="Approvals & decisions"><span><b>Approvals &amp; decisions</b><span>Judgment calls queue behind the busiest person.</span></span></label>
+      </div>
+      <div class="cols">
+        <div>
+          <label for="teamsize">Team size</label>
+          <select id="teamsize" name="teamsize">
+            <option value="">Choose one…</option>
+            <option>Under 10</option>
+            <option>10–25</option>
+            <option>26–50</option>
+            <option>51–100</option>
+            <option>Over 100</option>
+          </select>
         </div>
-        <div class="cols">
-          <div>
-            <label for="teamsize">Team size</label>
-            <select id="teamsize" name="teamsize">
-              <option value="">Choose one…</option>
-              <option>Under 10</option>
-              <option>10–25</option>
-              <option>26–50</option>
-              <option>51–100</option>
-              <option>Over 100</option>
-            </select>
-          </div>
-          <div>
-            <label for="goal">Primary goal</label>
-            <select id="goal" name="goal">
-              <option value="">Choose one…</option>
-              <option>Win back time on manual work</option>
-              <option>Respond to customers faster</option>
-              <option>Cut errors and rework</option>
-              <option>Grow without adding headcount</option>
-              <option>See the operation clearly for the first time</option>
-            </select>
-          </div>
+        <div>
+          <label for="goal">Primary goal</label>
+          <select id="goal" name="goal">
+            <option value="">Choose one…</option>
+            <option>Win back time on manual work</option>
+            <option>Respond to customers faster</option>
+            <option>Cut errors and rework</option>
+            <option>Grow without adding headcount</option>
+            <option>See the operation clearly for the first time</option>
+          </select>
         </div>
-        <div class="err" id="err3" role="alert"></div>
       </div>
-      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" data-next>Continue — just the details →</button></div>
-    </section>
+      <div class="err" id="err3" role="alert"></div>
+    </div>
+  </section>
 
-    <!-- STEP 4 -->
-    <section class="wstep" data-step="4" aria-labelledby="h4">
-      <div class="scroll">
-        <div class="kicker">Step 4 of 5</div>
-        <h2 id="h4">Where should the roadmap go?</h2>
-        <p class="sub">Clarification questions arrive by email in this thread — a short numbered list. Answering it is the only homework.</p>
-        <label for="cname">Your name</label>
-        <input type="text" id="cname" name="cname" autocomplete="name">
-        <label for="cbiz">Business name</label>
-        <input type="text" id="cbiz" name="cbiz" autocomplete="organization">
-        <label for="cemail">Email</label>
-        <input type="email" id="cemail" name="cemail" autocomplete="email">
-        <p class="hint"><strong>Payment:</strong> no card is taken on this page. Fit and start date are confirmed first, then invoice — $2,500 fixed, 100% credited toward a build started within 60 days, refunded if the roadmap finds nothing that clears the bar. The 5-day clock starts after intake and fit are confirmed.</p>
-        <div class="err" id="err4" role="alert"></div>
+  <!-- STEP 4 -->
+  <section class="scene" data-step="4" aria-labelledby="t4">
+    <div class="col">
+      <div class="kicker">Step 4 of 5 · Contact</div>
+      <h2 id="t4">Where should the roadmap go?</h2>
+      <p class="sub">Clarification questions arrive by email in this thread — a short numbered list. Answering it is the only homework.</p>
+      <div class="cols stack">
+        <div>
+          <label for="cname" style="margin-top:0">Your name</label>
+          <input type="text" id="cname" name="cname" autocomplete="name">
+        </div>
+        <div>
+          <label for="cbiz" style="margin-top:0">Business name</label>
+          <input type="text" id="cbiz" name="cbiz" autocomplete="organization">
+        </div>
       </div>
-      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" data-next>Review my request →</button></div>
-    </section>
+      <label for="cemail">Email</label>
+      <input type="email" id="cemail" name="cemail" autocomplete="email" inputmode="email">
+      <p class="hint" style="margin:16px 0 0"><strong>Payment:</strong> no card is taken on this page. Fit and start date are confirmed first, then invoice — $2,500 fixed, 100% credited toward a build started within 60 days, refunded if the roadmap finds nothing that clears the bar. The 5-day clock starts after intake and fit are confirmed.</p>
+      <div class="err" id="err4" role="alert"></div>
+    </div>
+  </section>
 
-    <!-- STEP 5 -->
-    <section class="wstep" data-step="5" aria-labelledby="h5">
-      <div class="scroll">
-        <div class="kicker">Step 5 of 5</div>
-        <h2 id="h5">Review and send</h2>
-        <p class="sub">One tap opens a ready-to-send email with everything below already filled in. Nothing leaves your hands until you press send in your mail app — and you can edit the draft first.</p>
-        <div class="review" id="reviewBox"></div>
-        <div class="err" id="err5" role="alert"></div>
-        <p class="hint">Addressed to <strong>ai@moorefolio.com</strong>. Prefer to just write the email yourself? Same address — ramble first, structure optional.</p>
-      </div>
-      <div class="nav"><button type="button" class="btn quiet" data-back>← Back</button><span class="spacer"></span><button type="button" class="btn" id="sendBtn">Send my ramble →</button></div>
-    </section>
-  </form>
-</div>
+  <!-- STEP 5 -->
+  <section class="scene" data-step="5" aria-labelledby="t5">
+    <div class="col">
+      <div class="kicker">Step 5 of 5 · Review &amp; send</div>
+      <h2 id="t5">Review and send</h2>
+      <p class="sub">One tap opens a ready-to-send email with everything below filled in. Nothing leaves your hands until you press send in your mail app — and you can edit the draft first.</p>
+      <div class="review" id="reviewBox"></div>
+      <div class="err" id="err5" role="alert"></div>
+      <p class="hint" style="margin:14px 0 0">Addressed to <strong>ai@moorefolio.com</strong>. Prefer to just write the email yourself? Same address — ramble first, structure optional.</p>
+    </div>
+  </section>
 
-<!-- OFFER DETAILS — overlay dialog, not part of the page flow -->
+</main>
+</form>
+
+<!-- pinned full-width action bar -->
+<nav class="actionbar" aria-label="Step navigation">
+  <div class="wrap">
+    <button type="button" class="btn quiet" id="backBtn" data-back hidden>← Back</button>
+    <span class="step-note" id="stepNote">Five short steps · nothing is sent until you press send</span>
+    <span class="spacer"></span>
+    <button type="button" class="btn primary" id="startBtn">Start my roadmap <span class="arr">→</span></button>
+    <button type="button" class="btn primary" id="nextBtn" data-next hidden><span id="nextLabel">Continue</span> <span class="arr">→</span></button>
+    <button type="button" class="btn primary" id="sendBtn" hidden>Send my ramble <span class="arr">→</span></button>
+  </div>
+</nav>
+
+<!-- OFFER DETAILS — sheet overlay, not part of the page flow -->
 <dialog class="offer" id="offerDialog" aria-labelledby="offerH">
-  <div class="dlg-body">
+  <div class="dlg-inner">
     <div class="dlg-head">
       <h2 id="offerH">Offer details</h2>
       <span class="spacer"></span>
       <button type="button" class="btn quiet small" id="offerClose">Close ✕</button>
     </div>
-    <p><strong>Every engagement begins with the audit</strong> — one fixed price to find out where AI actually pays in your operation, before anyone commits to a build.</p>
-    <div class="ladder">
-      <div class="rung entry"><h3>The Audit</h3><div class="price">$2,500</div><p>5-day audit + 90-day roadmap. Credited 100% toward your build if you start within 60 days.</p></div>
-      <div class="rung"><h3>Core Build</h3><div class="price"><small>from</small> $7,500</div><p>One core automation system from your roadmap, integrated, with staff training.</p></div>
-      <div class="rung"><h3>Systems Build</h3><div class="price"><small>from</small> $18,500</div><p>3–5 connected systems from your roadmap, built to compound.</p></div>
-      <div class="rung"><h3>Operate</h3><div class="price"><small>from</small> $1,500<small>/mo</small></div><p>We run and improve the systems; your people keep the judgment.</p></div>
+    <div class="dlg-body">
+      <p><strong>Every engagement begins with the audit</strong> — one fixed price to find out where AI actually pays in your operation, before anyone commits to a build.</p>
+      <div class="ladder">
+        <div class="rung entry"><h3>The Audit</h3><div class="price">$2,500</div><p>5-day audit + 90-day roadmap. Credited 100% toward your build if you start within 60 days.</p></div>
+        <div class="rung"><h3>Core Build</h3><div class="price"><small>from</small> $7,500</div><p>One core automation system from your roadmap, integrated, with staff training.</p></div>
+        <div class="rung"><h3>Systems Build</h3><div class="price"><small>from</small> $18,500</div><p>3–5 connected systems from your roadmap, built to compound.</p></div>
+        <div class="rung"><h3>Operate</h3><div class="price"><small>from</small> $1,500<small>/mo</small></div><p>We run and improve the systems; your people keep the judgment.</p></div>
+      </div>
+      <p><strong>Founding pace:</strong> 4 audits per month; when the month is full, the next starts the month after. We claim no client results yet, because there aren't any — the sample report is the proof of format.</p>
+      <p><strong>You own the roadmap. Nothing in it is invented.</strong> Build it with us, someone else, or in-house. Every recommendation traces to something you told us or a source we name; what we couldn't establish is listed under Unknowns, in the open. If nothing clears the bar for automation, the report says so — and your fee comes back.</p>
+      <p><strong>What you receive:</strong> Executive Summary · Company Profile · Findings · Bottlenecks &amp; Risks · Recommendations (each with its trace) · 90-Day Roadmap · Unknowns &amp; Assumptions — plus a human-ownership map of what stays with your people.</p>
+      <p><strong>Payment:</strong> no card is taken on the page. Fit and start date are confirmed first, then invoice.</p>
+      <p style="margin-top:20px"><button type="button" class="btn ghost" data-sample>Read a complete sample report <span class="arr">→</span></button></p>
+      <p class="hint">Same format clients get, built from a fictional company, labeled as such.</p>
+      <p class="hint">Ramble to Roadmap — AI Operations Audit. Staged prototype of the guided step flow, not the live page. No client results are claimed, because none exist yet.</p>
     </div>
-    <p><strong>Founding pace:</strong> 4 audits per month; when the month is full, the next starts the month after. We claim no client results yet, because there aren't any — the sample report is the proof of format.</p>
-    <p><strong>You own the roadmap. Nothing in it is invented.</strong> Build it with us, someone else, or in-house. Every recommendation traces to something you told us or a source we name; what we couldn't establish is listed under Unknowns, in the open. If nothing clears the bar for automation, the report says so — and your fee comes back.</p>
-    <p><strong>What you receive:</strong> Executive Summary · Company Profile · Findings · Bottlenecks &amp; Risks · Recommendations (each with its trace) · 90-Day Roadmap · Unknowns &amp; Assumptions — plus a human-ownership map of what stays with your people.</p>
-    <p><button type="button" class="btn ghost small" data-sample>Read a complete sample report →</button></p>
-    <p>Same format clients get, built from a fictional company, labeled as such.</p>
-    <p class="hint">Ramble to Roadmap — AI Operations Audit. Staged prototype of the guided step flow, not the live page. No client results are claimed, because none exist yet.</p>
   </div>
 </dialog>
 
 <script>
 (function(){
   "use strict";
-  var TOTAL = 5, current = 1, maxReached = 1, agentRan = false;
+  var TOTAL = 5, current = 0, maxReached = 0, agentRan = false;
   var $ = function(id){ return document.getElementById(id); };
-  var steps = Array.prototype.slice.call(document.querySelectorAll(".wstep"));
+  var scenes = Array.prototype.slice.call(document.querySelectorAll(".scene"));
+  var NAMES = ["Intro", "Ramble", "AI intake agent", "Where it hurts", "Contact", "Review & send"];
+  /* per-step primary labels sell the next payoff (05:29 Opus pass) */
+  var NEXT_LABELS = { 1: "Show me my draft profile", 2: "Lock in my field", 3: "Continue — just the details", 4: "Review my request" };
+  var NOTES = ["Five short steps · nothing is sent until you press send", "Step 1 of 5", "Step 2 of 5", "Step 3 of 5", "Step 4 of 5", "Last step"];
 
   var SAMPLE_RAMBLE = "hi, this is Marla Jensen, ops manager over at Heartland Haul Logistics. we're a small freight outfit based out of Kansas City, about 40 staff total counting drivers and the office folks. honestly I dont really know where to start. dispatch is a mess — all our loads get planned on spreadsheets, like three different ones that dont match each other, and the drivers call in constantly because the sheet they have is yesterdays version. sales are down maybe 15% this year and the owner thinks its because our quotes take too long to turn around, customers just go with whoever answers first. we want to get quotes out same-day and stop losing customers over slow paperwork. budget is tight though, we cant afford a big software project or new hires right now. theres also a lot of manual re-typing between the dispatch spreadsheet and the invoicing system which causes billing mistakes. anyway thats kind of where were at, hoping you can help us figure out whats possible.";
 
@@ -356,29 +482,41 @@
   function showErr(n, msg){
     var e = $("err" + n);
     if(!e) return;
-    if(msg){ e.textContent = msg; e.classList.add("show"); }
+    if(msg){ e.textContent = msg; e.classList.remove("show"); void e.offsetWidth; e.classList.add("show"); }
     else { e.textContent = ""; e.classList.remove("show"); }
   }
-  function updateProgress(){
-    var pct = Math.round(current / TOTAL * 100);
+  function updateChrome(){
+    var pct = Math.round(current / TOTAL * 100);   /* Step 0 = 0%, then 20% per step */
     $("pFill").style.width = pct + "%";
-    $("pStep").textContent = current;
+    $("pLabel").textContent = current === 0 ? "Intro" : ("Step " + current + " of " + TOTAL + " · " + NAMES[current]);
     $("pPct").textContent = pct + "%";
     $("pTrack").setAttribute("aria-valuenow", pct);
+    $("pTrack").setAttribute("aria-valuetext", current === 0 ? "Intro, 0%" : ("Step " + current + " of " + TOTAL + ", " + pct + "%"));
     Array.prototype.forEach.call(document.querySelectorAll("#pSteps .pstep"), function(s){
       var sn = parseInt(s.getAttribute("data-goto"), 10);
       s.classList.toggle("on", sn === current);
-      s.classList.toggle("done", sn < current || (sn <= maxReached && sn !== current));
+      s.classList.toggle("done", sn !== current && sn <= maxReached);
       if(sn === current){ s.setAttribute("aria-current", "step"); } else { s.removeAttribute("aria-current"); }
     });
+    document.body.setAttribute("data-step", current);
+    $("backBtn").hidden = current === 0;
+    $("startBtn").hidden = current !== 0;
+    $("nextBtn").hidden = !(current >= 1 && current <= 4);
+    $("sendBtn").hidden = current !== 5;
+    if(NEXT_LABELS[current]) $("nextLabel").textContent = NEXT_LABELS[current];
+    $("stepNote").textContent = NOTES[current];
   }
   function goTo(n){
     current = n;
     if(n > maxReached) maxReached = n;
-    steps.forEach(function(s){ s.classList.toggle("active", parseInt(s.getAttribute("data-step"), 10) === n); });
-    updateProgress();
-    var active = document.querySelector(".wstep.active .scroll");
-    if(active) active.scrollTop = 0;
+    scenes.forEach(function(s){
+      var sn = parseInt(s.getAttribute("data-step"), 10);
+      s.classList.toggle("active", sn === n);
+      s.classList.toggle("past", sn < n);
+      if(sn === n){ s.removeAttribute("inert"); s.removeAttribute("aria-hidden"); s.scrollTop = 0; }
+      else { s.setAttribute("inert", ""); s.setAttribute("aria-hidden", "true"); }
+    });
+    updateChrome();
     if(n === 2){ runAgent(); }
     if(n === 5){ buildReview(); }
   }
@@ -434,23 +572,25 @@
   function selectedPains(){
     return Array.prototype.map.call(document.querySelectorAll("input[name='pain']:checked"), function(c){ return c.value; });
   }
+  function row(k, v){ return "<div class='row'><span class='k'>" + k + "</span><span>" + v + "</span></div>"; }
   function buildReview(){
     var r = $("ramble").value.trim();
     var excerpt = r.length > 320 ? r.slice(0, 320) + "…" : r;
     $("reviewBox").innerHTML =
-      "<p><span class='k'>Send to</span>" + esc($("cname").value) + " · " + esc($("cbiz").value) + " · " + esc($("cemail").value) + "</p>" +
-      "<p><span class='k'>Field (confirmed by you)</span>" + esc($("industry").value) + " — " + esc($("subfield").value) + "</p>" +
-      "<p><span class='k'>Focus areas</span>" + esc(selectedPains().join(" · ")) + "</p>" +
-      "<p><span class='k'>Team size · Primary goal</span>" + esc($("teamsize").value) + " · " + esc($("goal").value) + "</p>" +
-      "<p><span class='k'>Your ramble (excerpt)</span></p><blockquote>" + esc(excerpt) + "</blockquote>";
+      row("Send to", esc($("cname").value) + " · " + esc($("cbiz").value) + " · " + esc($("cemail").value)) +
+      row("Field (confirmed by you)", esc($("industry").value) + " — " + esc($("subfield").value)) +
+      row("Focus areas", esc(selectedPains().join(" · "))) +
+      row("Team size · Primary goal", esc($("teamsize").value) + " · " + esc($("goal").value)) +
+      row("Your ramble (excerpt)", "<blockquote>" + esc(excerpt) + "</blockquote>");
   }
 
-  document.querySelectorAll("[data-next]").forEach(function(b){
-    b.addEventListener("click", function(){ if(validate(current)) goTo(current + 1); });
+  /* Start (Step 0 primary) → Step 1 */
+  $("startBtn").addEventListener("click", function(){
+    goTo(1);
+    window.setTimeout(function(){ try{ $("ramble").focus({ preventScroll: true }); }catch(e){ $("ramble").focus(); } }, 420);
   });
-  document.querySelectorAll("[data-back]").forEach(function(b){
-    b.addEventListener("click", function(){ showErr(current, null); goTo(current - 1); });
-  });
+  $("nextBtn").addEventListener("click", function(){ if(validate(current)) goTo(current + 1); });
+  $("backBtn").addEventListener("click", function(){ if(current > 0){ showErr(current, null); goTo(current - 1); } });
   /* progress steps are buttons: revisit any step already reached, never skip ahead */
   document.querySelectorAll("[data-goto]").forEach(function(b){
     b.addEventListener("click", function(){
@@ -458,16 +598,9 @@
       if(n <= maxReached && n !== current){ showErr(current, null); goTo(n); }
     });
   });
-  /* sample report — a button, not a link (owner rule); relative nav works from file:// and Pages */
+  /* sample report — a button, not a link (owner rule); prototype-relative path, intentionally unchanged */
   document.querySelectorAll("[data-sample]").forEach(function(b){
     b.addEventListener("click", function(){ window.location.href = "sample-walkthrough.html"; });
-  });
-  /* hero primary CTA: drop the visitor straight into Step 1 */
-  $("startBtn").addEventListener("click", function(){
-    if(current !== 1){ showErr(current, null); goTo(1); }
-    var w = document.querySelector(".wizard");
-    w.classList.remove("pulse"); void w.offsetWidth; w.classList.add("pulse");
-    $("ramble").focus();
   });
   $("sampleBtn").addEventListener("click", function(){
     $("ramble").value = SAMPLE_RAMBLE;
@@ -481,7 +614,7 @@
   });
   $("wizard").addEventListener("submit", function(e){ e.preventDefault(); });
 
-  /* offer details dialog */
+  /* offer details sheet — reachable from Step 0 and from the header on every step */
   var dlg = $("offerDialog");
   document.querySelectorAll("[data-offer-open]").forEach(function(b){
     b.addEventListener("click", function(){ if(dlg.showModal) dlg.showModal(); });
@@ -513,13 +646,15 @@
       "&body=" + encodeURIComponent(body);
     window.location.href = href;
     showErr(5, null);
-    var note = document.createElement("p");
-    note.className = "hint";
-    note.textContent = "Your email draft should now be open, addressed to ai@moorefolio.com. Send it when you're ready — we confirm fit and a start date before any invoice, and the 5-day clock starts at that confirmation.";
-    $("reviewBox").appendChild(note);
+    if(!$("sentNote")){
+      var note = document.createElement("p");
+      note.className = "sentnote"; note.id = "sentNote";
+      note.textContent = "Your email draft should now be open, addressed to ai@moorefolio.com. Send it when you're ready — we confirm fit and a start date before any invoice, and the 5-day clock starts at that confirmation.";
+      $("reviewBox").appendChild(note);
+    }
   });
 
-  updateProgress();
+  goTo(0);
 })();
 </script>
 </body>
