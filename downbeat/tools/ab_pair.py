@@ -100,7 +100,7 @@ def make_pair(render_a, render_b, out_dir, slug, names=('a', 'b'), target_st=-20
                 subprocess.run(['ffmpeg', '-v', 'error', '-n', '-i', w, '-map_metadata', '-1', *codec, dst], check=True)
                 res['files'].append(dst)
     with open(os.path.join(out_dir, 'ab-mapping.txt'), 'x') as f:
-        f.write(f'{slug} A/B mapping — SEALED, producer reveals after the owner picks.\n'
+        f.write(f'{slug} A/B mapping — SEALED until a pick is made.\n'
                 f'A = {names[order[0]]}\nB = {names[order[1]]}\n')
     for L in 'AB':
         p = os.path.join(out_dir, f'{slug}_{L}.mp3')
@@ -164,7 +164,7 @@ def make_lineup(renders, out_dir, slug=None, names=None, target_st=-20.0, sr=441
                 subprocess.run(['ffmpeg', '-v', 'error', '-n', '-i', w, '-map_metadata', '-1', *codec, dst], check=True)
                 res['files'].append(dst)
     with open(os.path.join(out_dir, 'ab-mapping.txt'), 'x') as f:
-        f.write(f'{slug} lineup mapping — SEALED, producer reveals after the owner picks.\n'
+        f.write(f'{slug} lineup mapping — SEALED until a pick is made.\n'
                 + ''.join(f'{L} = {names[k]}\n' for L, k in zip(letters, order)))
     for L in letters:
         p = os.path.join(out_dir, f'{slug}_{L}.mp3')

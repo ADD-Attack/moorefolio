@@ -2,7 +2,7 @@
 
 Per patch: lokey/hikey (playable regions, release triggers excluded), velocity-layer count (max distinct
 lovel/hivel ranges covering any one key), round-robin count (max seq_length, else distinct lorand ranges
-on one key/vel, else 1), true source library (from resolved sample paths — lesson 10: several "VPO"
+on one key/vel, else 1), true source library (from resolved sample paths — several "VPO"
 patches are VSCO/SSO/NoBudgetOrch underneath), and a measured unity-gain reference level:
 one note at REF_VEL for REF_BEATS at 120 BPM through render_part(); ref_rms_dbfs is the RMS over the
 held-note window [0, 1 s], ref_peak_dbfs the peak, both at unity (stage removed).
@@ -25,8 +25,7 @@ SF = '/home/hatch/workspace/song/soundfonts'
 HERE = os.path.dirname(os.path.abspath(__file__))
 REF_VEL, REF_BEATS, BPM = 100, 2, 120
 
-# every patch referenced by the last six build tickets (anthem, ignition, battlefield, eden,
-# song-of-storms, opus-changes-hands), plus VSCO FHornSus (lesson 14's level-match case)
+# every patch referenced by recent builds, plus VSCO FHornSus (a level-match case)
 PATCHES = """
 VPO/Strings/1st-violin-SEC-sustain.sfz VPO/Strings/2nd-violin-SEC-sustain.sfz VPO/Strings/viola-SEC-sustain.sfz
 VPO/Strings/cello-SEC-sustain.sfz VPO/Strings/bass-SEC-sustain.sfz VPO/Strings/1st-violin-SEC-staccato.sfz
@@ -98,7 +97,7 @@ def main():
 
 def add(rels):
     """Incremental: describe only `rels` and merge them into the existing instruments.json (no full re-render).
-    Added 2026-10-22 (robot-jig-bridge-v1): VSCO pizzicato family + marimba."""
+    Added 2026-10-22: VSCO pizzicato family + marimba."""
     p = os.path.join(HERE, 'instruments.json')
     cat = json.load(open(p))
     for rel in rels:

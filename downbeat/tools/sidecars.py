@@ -1,10 +1,10 @@
-"""Canonical score export + portfolio sidecar emitter (sidecar-emitter-v1, 2026-10-22).
+"""Canonical score export + portfolio sidecar emitter.
 
 score.json — the one intermediate every build emits into its ticket folder
 --------------------------------------------------------------------------
 {
   "format": "downbeat-score", "version": 1,
-  "name": "song-of-storms-v1",          # stem for <name>.viz.json / <name>.dance.json
+  "name": "my-track-v1",          # stem for <name>.viz.json / <name>.dance.json
   "source": "free text: where the data came from",
   "duration": 170.55,                   # seconds, the delivered file's length
   "bpm": 180, "meter": "3/4",           # optional, carried into dance.json
@@ -16,10 +16,10 @@ All times in seconds from file start (rounded to 6 dp). `lead: true` marks the d
 note-by-note (handoffs between parts are allowed; the lead may change part per section). `energy` is the
 section's 0..1 visual intensity. Drum roles kick/snare feed the viz; other roles are carried for later use.
 
-Build tickets: call `write_score(path, ...)` (or build the dict and `json.dump`) at the composed stage, then
+Builds: call `write_score(path, ...)` (or build the dict and `json.dump`) at the composed stage, then
 `emit_sidecars(score_path, out_dir)`.
 
-Adapters for already-delivered tracks (no rebuild): `from_storms_notes`, `from_performance_notes`,
+Adapters for existing tracks (no rebuild): `from_storms_notes`, `from_performance_notes`,
 `from_midi_dir`. `energy_from_db` is the documented default when a build has no hand-set energy.
 """
 import glob
@@ -74,7 +74,7 @@ def emit_sidecars(score_json, out_dir, name=None, version=1, emitter='v1', audio
     """score.json (path or dict) -> <name>.viz.json + <name>.dance.json. Never overwrites.
 
     emitter='v1' (default, unchanged): starter-scaffold dance.json (intent/action/palette null, events []).
-    emitter='v2' (sidecar-vocab-v2): ruled cue vocabulary via tools.dance_v2 — needs audio (delivered file, for
+    emitter='v2': the ruled cue vocabulary via tools.dance_v2 — needs audio (the finished file, for
     shimmer/energy) and authored (per-track production values: section intent/stance/feel, moments, builds).
     v2 writes <name>.dance.v2.json and no viz (viz.json is unchanged between emitters)."""
     s = json.load(open(score_json)) if isinstance(score_json, str) else score_json
@@ -114,7 +114,7 @@ def emit_sidecars(score_json, out_dir, name=None, version=1, emitter='v1', audio
 # ------------------------------------------------------------------ adapters
 def from_storms_notes(notes_json, name, duration, section_names, energies, source, drum_roles=('kick', 'snare'),
                       bpm=None, meter=None):
-    """storms-style notes.json: {notes:[{part,t,d,p,v,mel}], SEC:{n:[t0,t1]}}. Drum parts named by role."""
+    """Legacy per-track notes.json: {notes:[{part,t,d,p,v,mel}], SEC:{n:[t0,t1]}}. Drum parts named by role."""
     j = json.load(open(notes_json))
     notes, drums = [], {r: [] for r in drum_roles}
     for n in j['notes']:
@@ -132,7 +132,7 @@ def from_storms_notes(notes_json, name, duration, section_names, energies, sourc
 
 def from_performance_notes(perf_json, name, duration, bpm, beats_per_bar, sections, lead, drum_roles, source,
                            meter=None):
-    """anthem-style performance_notes.json: {part: [[bar0, beat, dur_beats, midi, vel], ...]}.
+    """performance_notes.json: {part: [[bar0, beat, dur_beats, midi, vel], ...]}.
     lead: list of (part, bar_from, bar_to, min_midi) — the designated melody per span.
     drum_roles: {part: role}, e.g. {'drum_low': 'kick', 'drum_mid': 'snare'}."""
     j = json.load(open(perf_json))

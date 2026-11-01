@@ -1,11 +1,8 @@
-"""master(): house loudness classes as presets — gain staging + a true-peak safety limiter (studio-tools-v2, 2026-10-22).
+"""master(): loudness classes as presets — gain staging + a true-peak safety limiter.
 
-PRESETS (charter amendment 2026-10-22 table + the loop class used by the delivered loops):
-  menu       -23 LUFS integrated (menu / ambient loops)       tp -1.0 dBTP
-  loop       -21 LUFS (game loops: glitch jingle, robot jig)  tp -1.0 dBTP
-  cinematic  -17 ±1 LUFS (cinematic / anthem)                 tp -1.0 dBTP
-  drop       -13 ±1 LUFS (drop-driven)                        tp -1.0 dBTP
-A ticket may pass a stricter tp (e.g. the jig's tp=-2.0) or its own target (a brief line is required to deviate).
+PRESETS: named loudness classes, each an integrated-loudness target plus a true-peak ceiling
+(see the PRESETS dict in code). Per-deliverable loudness targets are set by the caller: a caller may
+pass a stricter tp or its own target to override a class.
 
 master(mix, cls, sr=44100, tp=None, target=None, peak_max=0.90) -> (y, info)
   mix: float array (N,2) or (N,). Chain:
@@ -17,7 +14,7 @@ master(mix, cls, sr=44100, tp=None, target=None, peak_max=0.90) -> (y, info)
   3. Measure; if integrated misses target by > 0.05 LU, adjust G and redo 1-2 (max 4 passes); if the measured
      true peak still exceeds tp, lower the ceiling by the excess and redo.
   info: class, target, tp, gain_db, integrated_lufs, true_peak_dbtp, peak, limiter_gr=dict(max_db, samples_limited_pct,
-  per_window={'0-10s': max_db, ...}) (per-window, lesson 36), passes. With no limiting needed, y == mix * G exactly.
+  per_window={'0-10s': max_db, ...}) (per-window), passes. With no limiting needed, y == mix * G exactly.
 """
 import os
 import tempfile

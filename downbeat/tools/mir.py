@@ -1,7 +1,7 @@
-"""MIR layer: estimate / chroma_match / beat_track (mir-tools-v1, owner-approved 2026-10-23).
+"""MIR layer: estimate / chroma_match / beat_track.
 
-Needs librosa: run with the seat venv, `/home/hatch/workspace/downbeat-seat/.venv/bin/python`
-(created with --system-site-packages, so numpy 1.26.4 / scipy 1.11.4 are the system ones; librosa 0.11.0).
+Needs librosa: run with a Python environment that has librosa installed
+(e.g. a venv created with --system-site-packages, so numpy / scipy are the system ones; librosa 0.11.0).
 
   estimate(path)            -> dict(tempo_bpm, key, key_confidence, key_ranking, duration_s, ...)
   chroma_match(a, b)        -> dict(score 0..1, lag_s, frames, chroma_mean_a/b, ...)

@@ -1,7 +1,7 @@
-"""Expression dials — deterministic performance layer (studio-tools-v2, 2026-10-22). Nothing here is called by
+"""Expression dials — deterministic performance layer. Nothing here is called by
 existing tools; every dial is opt-in per part, and a dial at its neutral setting returns its input unchanged.
 
-VIBRATO  (delay_s, depth_cents, rate_hz) — the jig theremin recipe: land on pitch centre, hold it for delay_s,
+VIBRATO  (delay_s, depth_cents, rate_hz) — theremin-style vibrato: land on pitch centre, hold it for delay_s,
   then fade the modulation in over fade_s (default 0.15 s); +-depth_cents sine at rate_hz, phase 0 at the
   fade-in start (so it leaves pitch centre smoothly), back to centre at note-off.
   - vibrato_hook(notes, bpm, dial, ...) -> a function for render_part(..., _midi_hook=...): writes MIDI pitch
@@ -18,7 +18,7 @@ SWING  pct (0 = straight) — swing(notes, pct, grid=0.5): for each pair of `gri
   Opt-in per part: call it on the parts that swing; machine layers simply aren't passed.
 ATTACK  db — attack(x, onsets_s, db, sr, window_s=0.04, split_hz=2000): scales the >split_hz band by db over
   [onset, onset+window_s] (raised-cosine release over the back half of the window) using a zero-phase
-  sosfiltfilt split (lesson 36: a causal subtracted band copy under-delivers). Measured by hf_onset_db().
+  sosfiltfilt split (a causal subtracted band copy under-delivers). Measured by hf_onset_db().
 """
 import numpy as np
 from scipy import signal
@@ -42,15 +42,15 @@ HUMANISE_DEFAULT = dict(seed=1, delay_add=(0.1, 0.6), delay_jitter=0.03, depth_r
                         depth_jitter=0.02, rate_centre=(-0.09, 0.04), rate_drift=(0.06, 0.20),
                         rate_bounds=(4.6, 6.1), swell=(0.10, 0.18), swell_hz=0.35, ramp_s=0.8, tail_s=0.5,
                         level_match=False)
-# v3 (vibrato-humanise-v3): defaults reproduce the owner-approved manual recipe (dial-calibration-v1/test2_build.py
-# HAND): delays dial+0.1..0.6 s (0.6/0.9/1.1 at dial 0.5), peaks stratified across dial x [-20 %, +5 %] (16/21/18 c at
-# 20 c) with NO rescale to mean 1 -- the line mean sits below the dial as the manual's did, and no note goes more than
-# 5 % over it (v2's +30 % read as theremin). level_match off: the manual set raw peaks, so v3 does too.
+# v3: defaults reproduce a hand-tuned manual vibrato set: delays dial+0.1..0.6 s (0.6/0.9/1.1 at dial 0.5),
+# peaks stratified across dial x [-20 %, +5 %] (16/21/18 c at 20 c) with NO rescale to mean 1 -- the line mean
+# sits below the dial as the manual set's did, and no note goes more than 5 % over it (v2's +30 % read as
+# theremin-like). level_match off: the manual set used raw peaks, so v3 does too.
 
 
 def _floored(rng, lo, hi, n):
     """Signed draws with |x| in U(lo, hi), signs balanced across the line (half +, half -, odd one random) and
-    shuffled: no note comes out near-flat and the line can't come out all one side (vibrato-humanise-v2)."""
+    shuffled: no note comes out near-flat and the line can't come out all one side (v2)."""
     sg = np.array([1.0, -1.0] * (n // 2) + ([rng.choice([1.0, -1.0])] if n % 2 else []))
     return rng.permutation(sg) * rng.uniform(lo, hi, n)
 

@@ -1,8 +1,8 @@
-"""Sidecar emitter v2 — the ruled cue vocabulary (sidecar-vocab-v2, 2026-10-25).
+"""Sidecar emitter v2 — the ruled cue vocabulary.
 
 emit_dance_v2(score, audio_path, authored, out_path) -> dict written to <out_path> (never overwrites).
 
-Vocabulary = PIPELINE-SPEC §10 as ruled 2026-10-25 ("spec-10-ruled-2026-10-25") + the 2D Dancers set.
+Vocabulary = the cue spec (§10) + the 2D Dancers set.
   measured / derived from the score (and, for shimmer + energy, the delivered audio):
     events : pulse (strike = accent flag on pulse), thump (kick class, gesture hop), drum gestures
              (snare spin, hat flick, shaker shimmy), cascade (one event, members = pulse ids), freeze
@@ -11,7 +11,7 @@ Vocabulary = PIPELINE-SPEC §10 as ruled 2026-10-25 ("spec-10-ruled-2026-10-25")
     every event carries anticipation_s (pre-beat wind-up, Dancers rule generalised — see ANTIC)
   authored (values come from production data, the emitter writes them):
     sections: intent / action / palette / formation / stance / feel; spans: stance, feel, formation
-  NOT emitted by ruling: echo, exchange (not cue data), pan, tail (deferred: mix-metadata route).
+  NOT emitted: echo, exchange (not cue data), pan, tail (deferred: mix-metadata route).
 
 The authored dict (per track, kept in the ticket folder) supplies:
   {"source": str, "sections": {name: {intent, action, palette, formation, stance, feel}},

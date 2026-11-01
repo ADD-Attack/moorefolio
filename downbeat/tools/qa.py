@@ -1,9 +1,9 @@
 """qa(path): the standard QA battery as one call. Returns a dict and prints a table.
 
-Decoding: ffmpeg -> float32 at the file's NATIVE sample rate (never resampled; charter amendment).
+Decoding: ffmpeg -> float32 at the file's NATIVE sample rate (never resampled).
 Loudness: ffmpeg's `ebur128` filter (libavfilter, EBU R128 / ITU-R BS.1770; installed at /usr/bin/ffmpeg)
 — integrated LUFS, LRA, true peak (peak=true), and the 3 s short-term (S) series at 0.1 s steps used for
-the section ST-LUFS arc. (pyloudnorm is not installed on this machine.)
+the section ST-LUFS arc. (used when pyloudnorm is unavailable.)
 
 Measures
   duration_s, peak (decoded sample peak), true_peak_dbtp, integrated_lufs, lra_lu
@@ -14,11 +14,11 @@ Measures
       rectified spectral flux, 2048/512 STFT, peak-picked at median+2·MAD, ≥50 ms apart)
   bands: L/R correlation <200 Hz, 200–2000 Hz, >2000 Hz, full band, and >300 Hz;
       sub200_side_db = side/mid energy ratio below 200 Hz (mono-lows check: pass if < -20 dB)
-  trailing_silence_s: trailing run with every channel below -90 dBFS (house convention, anthem report)
+  trailing_silence_s: trailing run with every channel below -90 dBFS (house convention)
 
-  REPORT-ONLY perceptual meters (ears protocol 2026-10-22; never gate or mix to these until VERDICTS.md proves one):
+  REPORT-ONLY perceptual meters (never gate or mix to these):
     harsh_3_6k_db / harsh_6_16k_db: band energy (Welch PSD) 3-6 kHz and 6-16 kHz relative to 300-1500 Hz, dB,
-        per section + overall. Register direction only: dubstep B's "flap" lived in these bands (no threshold).
+        per section + overall. Register direction only: a "flap" artefact once lived in these bands (no threshold).
     crest_db: sample peak / RMS, dB; plr_db: peak-to-loudness = sample peak dBFS - section mean ST LUFS.
     limiter_gr: qa() cannot know gain reduction from audio alone. A build whose master chain can report it passes
         limiter_gr=dict(max_db=..., per_section={name: db}) and qa() prints it verbatim, labelled build-reported.
@@ -130,7 +130,7 @@ def qa(path, sections=None, quiet=False, limiter_gr=None):
                onsets_total=int(len(on)), onsets_per_s=round(len(on) / dur, 2),
                trailing_silence_s=round(trail, 3), bands=bands, sections=rows)
     h3, h6 = harsh(x, sr)
-    res['report_only'] = dict(label='REPORT-ONLY (ears protocol): not a gate, do not mix to it',
+    res['report_only'] = dict(label='REPORT-ONLY: not a gate, do not mix to it',
                               harsh_3_6k_db=h3, harsh_6_16k_db=h6,
                               crest_db=round(float(20 * np.log10(peak + 1e-12) - 20 * np.log10(np.sqrt(np.mean(x ** 2)) + 1e-12)), 2),
                               plr_db=round(float(20 * np.log10(peak + 1e-12) - I), 2),

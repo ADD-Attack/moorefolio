@@ -1,10 +1,10 @@
-"""loopcheck(): the full loop audit in one call (studio-tools-v2, 2026-10-22).
+"""loopcheck(): the full loop audit in one call.
 
 loopcheck(path, bpm, bars, beats_per_bar=4, passes=4, start_offset_samples=0, quiet=False)
   path: the LOOP file (WAV/FLAC; never the MP3 — encoder padding breaks the join).
   start_offset_samples: the file starts this many samples AFTER the bar-1 downbeat (e.g. a zero-crossing start);
       interior bar lines are placed at round(b * bar_s * sr) - offset.
-Measures (decoded at native rate, lessons 30/31, SOP §7):
+Measures (decoded at native rate):
   samples, duration_s, expected_s (bars x beats x 60/bpm) and the sample delta to round(expected*sr)
   seam_step: max over channels |x[0] - x[-1]| (sample continuity across the wrap), against the file's
       99th-percentile interior one-sample step

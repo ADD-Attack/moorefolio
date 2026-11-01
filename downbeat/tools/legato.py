@@ -1,4 +1,4 @@
-"""Scripted legato for a monophonic sustain line (legato-prototype-v1, 2026-10-22). Reached via
+"""Scripted legato for a monophonic sustain line. Reached via
 render_part(..., legato=True, legato_opts={...}); with the flag off render_part is unchanged.
 
 No free library here has true legato transitions, so this fakes the connection in the render path:
@@ -18,14 +18,14 @@ No free library here has true legato transitions, so this fakes the connection i
      to centre after the outgoing voice is gated silent.
 Patch matching: VSCO ensemble sustains bow in slowly (ViolinEnsSusVib HF peak ~340 ms after an isolated
 onset), so the outgoing note must be held through the incoming swell — xfade_s ~0.25, ovl_frac ~0.9 —
-or the line dips at every connection (legato-prototype-v1 measured the short 90 ms default as -1.5 dB
+or the line dips at every connection (an earlier prototype measured the short 90 ms default as -1.5 dB
 deeper median dip than plain). Pitches, onsets and velocities are as composed (MIDI note numbers/ticks/velocities untouched; only
 note-offs are extended and bend events added).
 
-  6. Glide strength (legato-prototype-v2, 2026-10-22). glide_strength in [0, 1] scales BOTH the glide target
-     (100 * interval cents) and the glide duration; 1.0 = v1 behaviour exactly (the owner's "trippy glitch-pop"
-     colour), 0 = no bend at all. Overlap, crossfade, attack softening and gating (the dip fill) are untouched
-     by the dial. v2's toned setting is in the v2 ticket report.
+  6. Glide strength. glide_strength in [0, 1] scales BOTH the glide target
+     (100 * interval cents) and the glide duration; 1.0 = the original behaviour exactly (a pronounced
+     "trippy glitch-pop" colour), 0 = no bend at all. Overlap, crossfade, attack softening and gating
+     (the dip fill) are untouched by the dial.
 Limits / fallbacks:
   - Chords: any two notes sharing an onset or overlapping as composed -> the part is NOT monophonic; the
     function logs it and falls back to the plain render_part (current behaviour) for the whole part.

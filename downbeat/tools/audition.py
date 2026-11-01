@@ -1,4 +1,4 @@
-"""audition(): producer-side naked-theme audition on a real patch, no build ticket (studio-tools-v2, 2026-10-22).
+"""audition(): audition a bare melody on a real patch, outside a full build.
 
 audition(melody, patch, out_dir, name=None, window=None, vel=None, target_lufs=-20.0, ring_s=1.5, transpose=0)
   melody: a .mid path (read with sidecars.read_midi, tempo map honoured), a score.json path (its `notes`; the

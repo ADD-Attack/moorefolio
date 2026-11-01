@@ -1,15 +1,15 @@
 """render_part(): render one part through sfizz_render safely, in one call.
 
 What it does, in order (each step prints its own `[render_part]` log line, also appended to `<out>.log`;
-sfizz's own log is empty on success and on crash alike — lessons 15/22 — so it proves nothing):
+sfizz's own log is empty on success and on crash alike, so it proves nothing):
   1. Range assert BEFORE anything renders: every (pitch, velocity) must hit a playable region of the
      source sfz (lokey/hikey + lovel/hivel, release triggers excluded). sfizz plays an unmapped key as
-     silence and says nothing (lessons 32/34). Raises RangeError listing every offending note.
+     silence and says nothing. Raises RangeError listing every offending note.
   2. RAM-loaded flattened sfz copy: `hint_ram_based=1`, absolute sample paths, only regions touching
-     the part's keys (lesson 8: disk streaming drops long samples offline).
+     the part's keys (disk streaming drops long samples offline).
   3. MIDI via midutil.write_midi(humanize=False) — exact ticks — then a no-op CC110 `ring_s` seconds
      after the last note-off, then EOT. sfizz `--use-eot` stops at the last event, not at EOT's delta
-     (lesson 13), so the CC is what buys the ring-out.
+     , so the CC is what buys the ring-out.
   4. Post-render checks: length vs expected, not silent, no int16 clipping.
 
 Gain staging (sfizz_render writes int16 only, no format option):

@@ -2,7 +2,7 @@
 
 parse_regions(path) -> list of effective regions (control/global/master/group/region opcodes merged,
 #define substituted, #include followed, key names -> ints, sample paths absolute).
-flatten(path, out_path, keys=None, volume_db=0.0) writes a RAM-loaded copy (lesson 8: hint_ram_based=1,
+flatten(path, out_path, keys=None, volume_db=0.0) writes a RAM-loaded copy (hint_ram_based=1,
 absolute sample paths) optionally keeping only regions whose key range touches `keys`.
 """
 import os
@@ -103,7 +103,7 @@ def covers(regions, m, v):
 
 
 def rr_to_seq(regions):
-    """Deterministic round robins: lorand/hirand groups -> seq_length/seq_position (robot-jig-bridge-v1).
+    """Deterministic round robins: lorand/hirand groups -> seq_length/seq_position.
     Measured 2026-10-22: sfizz_render's lorand draw is repeatable (two renders of the same MIDI: max diff 0.0),
     so this is NOT needed for determinism. What it buys is a controlled pattern: strict alternation that
     restarts at position 1 on every render (= an explicit RR reset at the loop start), never a random repeat."""

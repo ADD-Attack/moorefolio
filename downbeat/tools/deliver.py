@@ -1,6 +1,6 @@
 """deliver(): scratch encode -> decoded-file QA -> no-clobber copy to the final deliverable names.
 
-Order (lessons 12/25 — the flow whose absence shipped dubstep_tutorial_a_v2_r2.mp3):
+Order (the flow whose absence once shipped a wrong deliverable file):
   0. Refuse up front (FileExistsError) if ANY target already exists — nothing is encoded or touched.
   1. Encode the master WAV to scratch names in `scratch_dir` (MP3 320k CBR via libmp3lame, FLAC).
   2. qa() each DECODED scratch file; gate: decoded peak <= peak_max (0.90) on the MP3 and the FLAC,
