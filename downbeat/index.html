@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Downbeat — the headless music app — Moorefolio</title>
+<meta name="description" content="Downbeat is a music-making tool with no interface: an LLM writes a Python build script, and Downbeat renders it to finished audio. No DAW, no GUI. Code only — bring your own SFZ samples.">
+<style>
+:root { color-scheme: dark; }
+* { box-sizing: border-box; }
+body { margin:0; background:#0b0e13; color:#e8ecf1; font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; line-height:1.65; }
+a { color:#7ee0c2; }
+.wrap { max-width:760px; margin:0 auto; padding:48px 22px 80px; }
+header.site { margin-bottom:8px; font-size:13px; letter-spacing:.14em; text-transform:uppercase; color:#9aa7b8; }
+header.site a { color:#9aa7b8; text-decoration:none; }
+header.site a:hover { color:#7ee0c2; }
+.kicker { color:#7ee0c2; font-size:12px; font-weight:700; letter-spacing:.22em; text-transform:uppercase; margin:26px 0 10px; }
+h1 { font-size:34px; line-height:1.2; margin:0 0 14px; }
+.sub { color:#c3ccd8; font-size:17px; margin:0 0 8px; }
+article h1 { font-size:26px; margin-top:38px; }
+article h2 { font-size:21px; margin-top:32px; }
+article h3 { font-size:17px; margin-top:24px; }
+article table { border-collapse:collapse; width:100%; margin:18px 0; font-size:14.5px; }
+article th, article td { border:1px solid #26303f; padding:8px 10px; text-align:left; vertical-align:top; }
+article th { background:#11161f; }
+article code { background:#11161f; padding:1px 5px; border-radius:4px; font-size:.92em; }
+article blockquote { border-left:3px solid #7ee0c2; margin:18px 0; padding:2px 16px; color:#c3ccd8; }
+.getkit { border:1px solid #26303f; border-radius:10px; padding:18px 22px; margin:26px 0 6px; background:#0e1219; }
+.getkit .zip { display:inline-block; background:#7ee0c2; color:#0b0e13; font-weight:700; padding:10px 18px; border-radius:8px; text-decoration:none; }
+.getkit .install { margin:14px 0 4px; }
+.getkit .files { color:#c3ccd8; margin-bottom:6px; }
+.getkit ul { margin:6px 0 2px; padding-left:20px; }
+footer { margin-top:56px; padding-top:18px; border-top:1px solid #26303f; color:#9aa7b8; font-size:13.5px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="site"><a href="/">MOOREFOLIO</a></header>
+<p class="kicker">Tools</p>
+<h1>Downbeat</h1>
+<p class="sub">The headless music app — an LLM writes a Python build script, Downbeat renders it to finished audio. No DAW, no GUI.</p>
+
+<div class="getkit">
+  <p><a class="zip" href="downbeat.zip">Download Downbeat (.zip)</a></p>
+  <p class="install">Install: unzip, put the <code>downbeat</code> folder in your agent's workspace, then tell your agent: <strong>"Read README.md and INSTALL.md, then set yourself up."</strong> Code only — bring your own SFZ sample libraries.</p>
+  <p class="files">Or take the files one at a time — agents can fetch these URLs directly:</p>
+  <ul>
+    <li><a href="README.md">README.md</a> — what the app is and how it works</li>
+    <li><a href="INSTALL.md">INSTALL.md</a> — layout, dependencies, first run</li>
+    <li><a href="tools/__init__.py">tools/__init__.py</a></li>
+    <li><a href="tools/render.py">tools/render.py</a></li>
+    <li><a href="tools/sfz.py">tools/sfz.py</a></li>
+    <li><a href="tools/synth.py">tools/synth.py</a></li>
+    <li><a href="tools/build_instruments.py">tools/build_instruments.py</a></li>
+    <li><a href="tools/instruments.json">tools/instruments.json</a></li>
+    <li><a href="tools/master.py">tools/master.py</a></li>
+    <li><a href="tools/deliver.py">tools/deliver.py</a></li>
+    <li><a href="tools/qa.py">tools/qa.py</a></li>
+    <li><a href="tools/audition.py">tools/audition.py</a></li>
+    <li><a href="tools/ab_pair.py">tools/ab_pair.py</a></li>
+    <li><a href="tools/legato.py">tools/legato.py</a></li>
+    <li><a href="tools/dials.py">tools/dials.py</a></li>
+    <li><a href="tools/loopcheck.py">tools/loopcheck.py</a></li>
+    <li><a href="tools/mir.py">tools/mir.py</a></li>
+    <li><a href="tools/sidecars.py">tools/sidecars.py</a></li>
+    <li><a href="tools/checkpoint.py">tools/checkpoint.py</a></li>
+    <li><a href="tools/dance_v2.py">tools/dance_v2.py</a></li>
+  </ul>
+</div>
+
+<article>
+<h1>Downbeat — the headless music app</h1>
+<p>Downbeat is a music-making tool with no interface. There is no DAW, no
+timeline, no piano roll — an LLM (or a human who likes code) writes a
+Python build script that describes the music, and Downbeat renders it
+to finished audio: WAV master plus encoded deliverables.</p>
+<p>It exists because an agent can't drag notes around a grid, but it can
+write code. So the composition surface is code, the instruments are
+files, and every step — render, mix, master, encode — is a function
+call that either succeeds or raises.</p>
+<h2>How the app works</h2>
+<p>A build script drives the whole thing:</p>
+<ol>
+<li><strong>Describe the music in code</strong> — notes, timing, velocities and
+   parts as data, assembled by your build script.</li>
+<li><strong>Render the sampled parts</strong> — each part is rendered through sfizz
+   from SFZ instruments, with range checks before anything renders
+   (an unmapped note fails loudly instead of playing silence) and
+   automatic gain staging.</li>
+<li><strong>Synthesise the rest</strong> — a small synth toolkit (band-limited noise
+   buses for drums and swells, plus utilities for legato, vibrato and
+   other performance shaping) covers parts that don't come from
+   samples.</li>
+<li><strong>Master</strong> — loudness-targeted mastering with a true-peak safety
+   limiter.</li>
+<li><strong>Deliver</strong> — encode to MP3/FLAC, verify the <em>decoded</em> files, and
+   copy to the final names with no-clobber semantics: a deliverable
+   that already exists is never overwritten.</li>
+</ol>
+<h2>What's inside</h2>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>tools/render.py</code></td>
+<td>Renders one part through <code>sfizz_render</code>: range assertion against the SFZ first, RAM-loaded flattened SFZ, exact-tick MIDI, gain staging, post-render sanity checks</td>
+</tr>
+<tr>
+<td><code>tools/sfz.py</code></td>
+<td>SFZ parser and flattener shared by the renderer and the catalog builder</td>
+</tr>
+<tr>
+<td><code>tools/synth.py</code></td>
+<td>Synth sources, starting with band-limited noise buses for drums and swells</td>
+</tr>
+<tr>
+<td><code>tools/build_instruments.py</code></td>
+<td>Generates <code>instruments.json</code> from your own SFZ files: playable ranges, velocity layers, round-robins, reference levels</td>
+</tr>
+<tr>
+<td><code>tools/instruments.json</code></td>
+<td>The instrument catalog the renderer checks against (regenerate it for your libraries)</td>
+</tr>
+<tr>
+<td><code>tools/master.py</code></td>
+<td>Loudness-targeted mastering chain with a lookahead true-peak safety limiter</td>
+</tr>
+<tr>
+<td><code>tools/deliver.py</code></td>
+<td>Scratch encode → decoded-file verification → no-clobber copy to final deliverable names</td>
+</tr>
+<tr>
+<td><code>tools/qa.py</code></td>
+<td>Audio checks used by the delivery gate: peaks, jumps, silence, length</td>
+</tr>
+<tr>
+<td><code>tools/audition.py</code>, <code>tools/ab_pair.py</code></td>
+<td>Render short auditions and A/B comparison pairs</td>
+</tr>
+<tr>
+<td><code>tools/legato.py</code>, <code>tools/dials.py</code></td>
+<td>Performance shaping: legato handling and named control "dials"</td>
+</tr>
+<tr>
+<td><code>tools/loopcheck.py</code>, <code>tools/mir.py</code>, <code>tools/sidecars.py</code>, <code>tools/checkpoint.py</code></td>
+<td>Loop verification, music-information helpers, sidecar metadata, and build checkpoints</td>
+</tr>
+</tbody>
+</table>
+<h2>Requirements</h2>
+<ul>
+<li>Python 3 with <code>numpy</code> and <code>scipy</code></li>
+<li><code>sfizz_render</code> on your PATH (the SFZ rendering engine; from the
+  sfizz project)</li>
+<li><code>ffmpeg</code> on your PATH (encoding and loudness measurement)</li>
+<li><strong>Your own SFZ sample libraries.</strong> The bundle ships code only —
+  no samples — which keeps it small and keeps sample licensing where
+  it belongs: with you. Point the catalog builder at your libraries
+  and it generates your <code>instruments.json</code>.</li>
+</ul>
+<h2>Quickstart (for an agent)</h2>
+<ol>
+<li>Unzip and put the <code>downbeat</code> folder in your workspace.</li>
+<li>Read this file and <code>INSTALL.md</code>.</li>
+<li>Run <code>python3 -m tools.build_instruments</code> against your SFZ
+   libraries to build your catalog.</li>
+<li>Write a build script against <code>render_part</code> (sampled parts) and
+   <code>noise_bus</code> (synth parts), then <code>master()</code> and <code>deliver()</code>.</li>
+</ol>
+<p>Downbeat is the tool behind the music published as MooreStudios.
+This page shares the app; bring your own samples, your own build
+scripts, and your own taste.</p>
+</article>
+<footer>Moorefolio — Christopher Moore · <a href="/">Back to the homepage</a></footer>
+</div>
+</body>
+</html>
+
