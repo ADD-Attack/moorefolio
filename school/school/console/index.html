@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Console — Sector CR-09 operations</title>
+<meta name="description" content="A supercomputer operations console with holographic space interfaces, built in HTML, CSS, canvas and SVG.">
+<link rel="stylesheet" href="console.css">
+</head>
+<body>
+<canvas id="bg" class="bg" aria-hidden="true"></canvas>
+<div class="fog" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand"><span class="sig" aria-hidden="true"></span><span>Supercomputer console</span><span class="dim">// operator seat empty</span></div>
+  <div class="topstat"><span class="dim">Sector</span> CR-09 <span class="sep" aria-hidden="true">|</span> <span class="dim">Session</span> <span id="clock">00:00:00</span></div>
+</header>
+
+<main class="room" id="room">
+  <div class="stage" id="stage">
+
+    <div class="col col-l">
+    <!-- 1. Orbital system hologram -->
+    <section class="holo p-orbit tilt-l" aria-labelledby="h-orbit">
+      <div class="frame">
+        <h2 id="h-orbit"><span class="idx">01</span> Orbital system</h2>
+        <div class="viz viz-orbit"><canvas id="cv-orbit" aria-label="Hologram of a star with orbiting planets on tilted orbital rings" role="img"></canvas>
+          <div class="tag tag-earth"><b>Earth</b><span>Low orbit 408 km</span></div>
+          <div class="tag tag-mars"><b>Mars</b><span>225M km</span></div>
+        </div>
+        <dl class="readout">
+          <div><dt>Orbital velocity</dt><dd><span class="v">24.1</span> km/s</dd></div>
+          <div><dt>Trajectory</dt><dd class="ok">Nominal</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 7. Supercomputer rack -->
+    <section class="holo p-rack tilt-l" aria-labelledby="h-rack">
+      <div class="frame">
+        <h2 id="h-rack"><span class="idx">07</span> Supercomputer rack</h2>
+        <div class="rackbody">
+          <div class="nodes" id="nodes" aria-label="24 rack nodes; node 12 selected" role="img"></div>
+          <dl class="readout stack">
+            <div><dt>Node</dt><dd><span class="v">12</span>/24</dd></div>
+            <div><dt>Proc</dt><dd><span class="v" id="tick-proc">92</span>%</dd></div>
+            <div><dt>Core load</dt><dd><span class="v" id="tick-core">89</span>%</dd></div>
+          </dl>
+        </div>
+        <div class="meter"><span class="ml">Proc</span><i><b id="bar-proc" style="width:92%"></b></i></div>
+        <div class="meter"><span class="ml">Core</span><i><b id="bar-core" style="width:89%"></b></i></div>
+      </div>
+    </section>
+
+      <!-- 7b. Quantum node array -->
+      <section class="holo p-quantum tilt-l" aria-labelledby="h-q">
+        <div class="frame">
+          <h2 id="h-q">Supercomputer <span class="sub">// Quantum node array</span></h2>
+          <dl class="readout"><div><dt>Core load</dt><dd><span class="v" id="tick-qcore">89</span>%</dd></div></dl>
+          <canvas id="cv-quantum" class="qnet" aria-hidden="true"></canvas>
+        </div>
+      </section>
+    </div>
+    <div class="col col-c">
+    <!-- 2. Star map -->
+    <section class="holo p-star tilt-top" aria-labelledby="h-star">
+      <div class="frame">
+        <h2 id="h-star"><span class="idx">02</span> Star map <span class="sub">Sector CR-09</span></h2>
+        <div class="viz viz-star"><canvas id="cv-star" aria-label="Constellation network star chart; drag to turn it" role="img"></canvas>
+          <p class="hint">Drag to turn the chart</p>
+        </div>
+        <dl class="readout two">
+          <div><dt>Proxima Centauri</dt><dd><span class="v">4.24</span> LY</dd></div>
+          <div><dt>Kepler-442b</dt><dd class="ok">Habitable zone</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- centre: the empty seat -->
+    <section class="seat" aria-label="The operator's chair, empty">
+      <svg class="chair" viewBox="0 0 400 520" aria-hidden="true">
+        <defs>
+          <linearGradient id="gc" x1="0" x2="1"><stop offset="0" stop-color="#0b1622"/><stop offset=".5" stop-color="#16263a"/><stop offset="1" stop-color="#070d16"/></linearGradient>
+          <linearGradient id="gr" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fd4ff" stop-opacity=".55"/><stop offset="1" stop-color="#5fd4ff" stop-opacity="0"/></linearGradient>
+          <radialGradient id="gh" cx=".5" cy=".3" r=".6"><stop offset="0" stop-color="#2a4a6a" stop-opacity=".7"/><stop offset="1" stop-color="#2a4a6a" stop-opacity="0"/></radialGradient>
+        </defs>
+        <ellipse cx="200" cy="250" rx="200" ry="230" fill="url(#gh)"/>
+        <!-- headrest -->
+        <path d="M146 40 C150 14 250 14 254 40 L250 92 C230 104 170 104 150 92 Z" fill="url(#gc)" stroke="url(#gr)" stroke-width="2"/>
+        <path d="M160 34 C190 26 210 26 240 34" fill="none" stroke="#5fd4ff" stroke-opacity=".3"/>
+        <path d="M184 100 L180 136 M216 100 L220 136" stroke="#1b2c40" stroke-width="7"/>
+        <!-- back -->
+        <path d="M118 150 C120 128 280 128 282 150 L292 300 C296 350 286 382 268 398 L132 398 C114 382 104 350 108 300 Z" fill="url(#gc)" stroke="url(#gr)" stroke-width="2"/>
+        <path d="M140 170 C176 158 224 158 260 170 M134 236 C180 226 220 226 266 236 M132 302 C180 294 220 294 268 302" fill="none" stroke="#5fd4ff" stroke-opacity=".16"/>
+        <path d="M200 150 L200 390" stroke="#000" stroke-opacity=".35" stroke-width="3"/>
+        <!-- armrests -->
+        <path d="M70 330 L104 322 L110 336 L78 344 Z M330 330 L296 322 L290 336 L322 344 Z" fill="#132233" stroke="#5fd4ff" stroke-opacity=".35"/>
+        <path d="M86 342 L92 404 M314 342 L308 404" stroke="#14222f" stroke-width="9"/>
+        <!-- seat cushion -->
+        <path d="M82 400 C120 384 280 384 318 400 L330 432 C290 456 110 456 70 432 Z" fill="#0d1a28" stroke="#5fd4ff" stroke-opacity=".35"/>
+        <!-- lift + base -->
+        <rect x="192" y="452" width="16" height="38" fill="#0b141e"/>
+        <path d="M200 490 L110 512 M200 490 L290 512 M200 490 L160 518 M200 490 L240 518" stroke="#16273a" stroke-width="7" stroke-linecap="round"/>
+      </svg>
+      <canvas id="cv-dust" class="dust" aria-hidden="true"></canvas>
+
+      <!-- 8. Navigation readout -->
+      <div class="holo chip p-nav" aria-labelledby="h-nav">
+        <div class="frame">
+          <h2 id="h-nav"><span class="idx">08</span> Navigation</h2>
+          <div class="navrow">
+            <svg class="reticle" viewBox="0 0 60 60" aria-hidden="true"><circle cx="30" cy="30" r="24"/><circle cx="30" cy="30" r="12"/><path d="M30 0v14M30 46v14M0 30h14M46 30h14"/><circle class="lock" cx="30" cy="30" r="3"/></svg>
+            <dl class="readout stack">
+              <div><dt>Coordinates</dt><dd class="mono">22:41:08 | −33° 15′ 21″</dd></div>
+              <div><dt>Nav lock</dt><dd class="ok">Target acquired</dd></div>
+            </dl>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    </div>
+    <div class="col col-r">
+    <!-- 3. Earth & LEO network -->
+    <section class="holo p-earth tilt-r" aria-labelledby="h-earth">
+      <div class="frame">
+        <h2 id="h-earth"><span class="idx">03</span> Earth <span class="sub">LEO satellite network</span></h2>
+        <div class="viz viz-earth"><canvas id="cv-earth" aria-label="Earth with satellites orbiting it; drag to turn the globe" role="img"></canvas></div>
+        <dl class="readout grid2">
+          <div><dt>LEO satellite network</dt><dd><span class="v">142</span> active</dd></div>
+          <div><dt>Comm link</dt><dd class="ok">Stable</dd></div>
+          <div><dt>Data transfer</dt><dd><span class="v" id="tick-tx">1.2</span> TB/s</dd></div>
+          <div><dt>System health</dt><dd><span class="v">98</span>%</dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 4. Vessel -->
+    <section class="holo p-vessel tilt-r" aria-labelledby="h-vessel">
+      <div class="frame">
+        <h2 id="h-vessel"><span class="idx">04</span> Vessel: ODYSSEY-7</h2>
+        <div class="viz viz-vessel"><canvas id="cv-vessel" aria-label="Rotating wireframe rendering of the vessel ODYSSEY-7" role="img"></canvas></div>
+        <dl class="readout grid2">
+          <div><dt>Status</dt><dd class="ok">Active</dd></div>
+          <div><dt>Propulsion</dt><dd class="ok">Ion drive online</dd></div>
+          <div><dt>Shield</dt><dd><span class="v">92</span>%<i class="mini"><b style="width:92%"></b></i></dd></div>
+          <div><dt>Fuel</dt><dd><span class="v">74</span>%<i class="mini"><b style="width:74%"></b></i></dd></div>
+        </dl>
+      </div>
+    </section>
+
+    <!-- 9. Survey / risk -->
+    <section class="holo p-risk tilt-r" aria-labelledby="h-risk">
+      <div class="frame">
+        <h2 id="h-risk"><span class="idx">09</span> Survey</h2>
+        <dl class="readout stack">
+          <div><dt>Risk</dt><dd class="ok">Low</dd></div>
+          <div><dt>Mineral</dt><dd>Iron · Water ice</dd></div>
+        </dl>
+        <svg class="hexscan" viewBox="0 0 120 104" aria-hidden="true"><polygon points="30,2 90,2 118,52 90,102 30,102 2,52"/><polygon points="45,28 75,28 90,52 75,76 45,76 30,52"/><path d="M60 2V102M2 52H118"/><circle class="ping" cx="60" cy="52" r="5"/></svg>
+      </div>
+    </section>
+
+    </div>
+    <!-- desk: the physical console -->
+    <section class="desk" aria-label="The console desk">
+      <!-- 10. monitors -->
+      <div class="monitors" aria-labelledby="h-mon">
+        <h2 id="h-mon" class="deskh"><span class="idx">10</span> Console monitors <span class="sub">// diagnostic output, abstract</span></h2>
+        <div class="screens">
+          <div class="screen s1"><pre class="code" id="code1" aria-label="Scrolling console text"></pre></div>
+          <div class="screen s2"><canvas id="cv-graph" aria-label="Console bar and line graph" role="img"></canvas></div>
+          <div class="screen s3"><pre class="code" id="code2" aria-label="Scrolling console text"></pre></div>
+        </div>
+        <div class="keys" aria-hidden="true"></div>
+      </div>
+
+      <!-- 6. Surface analysis -->
+      <div class="holo p-surface" aria-labelledby="h-surf">
+        <div class="frame">
+          <div class="viz viz-surface"><canvas id="cv-surface" aria-label="Terrain hologram rising from the console table" role="img"></canvas></div>
+          <h2 id="h-surf" class="cap"><span class="idx">06</span> Surface analysis <span class="sub">Ice cap <span class="v">23</span>%</span></h2>
+        </div>
+      </div>
+
+      <!-- 5. Asteroid field -->
+      <div class="holo p-aster" aria-labelledby="h-aster">
+        <div class="frame">
+          <div class="viz viz-aster"><canvas id="cv-aster" aria-label="Rugged asteroid terrain scan with a sweeping scan line" role="img"></canvas></div>
+          <h2 id="h-aster" class="cap"><span class="idx">05</span> Asteroid field scan <span class="sub">Sector 12</span></h2>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</main>
+
+<footer class="foot"><span>All visuals drawn live by this page in canvas, SVG and CSS.</span> <span class="dim">Motion pauses when your system asks for reduced motion.</span></footer>
+<script src="console.js"></script>
+</body>
+</html>
