@@ -578,7 +578,7 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
   const f = $('#gform'), q = $('#gq'), log = $('#glog'), b = f.querySelector('button'), wait = $('#gwait'), TK = 'brocatos-guide-token';
   const say = (c, t) => { const p = el('p', c, t); log.append(p); log.scrollTop = log.scrollHeight; $('#guide').scrollTop = 1e6; return p; };
   const tourBtn = () => { const c = el('button', 'gskip', 'Continue tour'); c.type = 'button'; c.onclick = () => $('#gnext').click(); return c; };
-  const OFF = 'The live guide is offline right now. The scripted tour carries on.';
+  const OFF = 'Live guide unavailable — continue the scripted tour.';
   let base = null, tok = null, busy = false, state = 'idle';
   const timed = (url, o = {}, ms = 8000) => { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms); return fetch(url, { ...o, signal: ac.signal }).finally(() => clearTimeout(t)); };
   function offline(msg) { state = 'off'; f.hidden = true; $('#gdemo').hidden = true; wait.hidden = false; wait.textContent = msg || OFF; const row = el('span', 'gacts'), tr = el('button', 'gskip', 'Try again'); tr.type = 'button'; tr.onclick = connect; row.append(tourBtn(), tr); wait.append(row); }
@@ -594,7 +594,7 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
     let h = await reach(GUIDE_RELAY_BASE); base = GUIDE_RELAY_BASE;
     if (!h) { h = await reach(GUIDE_RELAY_LOCAL); base = GUIDE_RELAY_LOCAL; }
     if (!h) return offline();
-    if (h.disabled) return offline('The live guide is switched off right now. The scripted tour carries on.');
+    if (h.disabled) return offline();
     tok = saved(); try { if (!tok) await issue(); online(); } catch (e) { offline(); }
   }
   // connect when the card first opens (tour auto-open or orb), not on page load for visitors who never open it
@@ -616,7 +616,7 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
       else if (r.status === 400) w.textContent = 'That didn’t send. Your text is still in the box. Try again.';
       else if (r.status === 429) { const s = +r.headers.get('Retry-After') || 0; w.textContent = s > 30 ? 'This chat has reached its limit for now. The scripted tour carries on. ' : 'One moment, the guide is still on your last question. Try again in a few seconds.'; if (s > 30) w.append(tourBtn()); }
       else if (r.status === 503) { w.remove(); offline(); }
-      else { w.textContent = 'Live guide unavailable — continue the scripted tour. '; w.append(tourBtn()); }
+      else { w.textContent = OFF + ' '; w.append(tourBtn()); }
     } catch (err) { w.remove(); offline(); }
     const rest = Math.max(0, 4000 - (Date.now() - t0)); setTimeout(() => { busy = false; b.disabled = false; }, rest);
     $('#guide').scrollTop = 1e6; q.focus({ preventScroll: true }); };
