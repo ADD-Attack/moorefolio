@@ -32,6 +32,13 @@
       <button id="b-reset" class="sec" type="button">Reset</button>
       <p class="count"><span>Bounce</span> <b id="r-k">0</b></p>
     </div>
+    <div class="transport-2">
+      <div class="seg" role="group" aria-label="What Play runs">
+        <button type="button" data-mode="dark">From dark</button><button type="button" data-mode="live">Live</button>
+      </div>
+      <label class="tog mv"><input type="checkbox" id="motion"> <span>Lamps move</span></label>
+      <p class="sub" id="live-note"></p>
+    </div>
 
     <div class="verdict" id="verdict" aria-live="polite">
       <p class="agree" id="agree">—</p>
@@ -48,6 +55,7 @@
     <div class="group">
       <h2 class="gh">Scene</h2>
       <div class="presets">
+        <button type="button" data-preset="extravaganza">Extravaganza</button>
         <button type="button" data-preset="original">Original room</button>
         <button type="button" data-preset="bleed">Colour bleed</button>
         <button type="button" data-preset="mixed">Mixed lamps</button>
@@ -77,6 +85,20 @@
       <label class="surf">Right wall <input type="range" id="s-right" min="0" max="1.5" step="0.01"><input type="color" id="c-right" aria-label="Right wall colour"><output id="o-right"></output></label>
       <label class="surf">Floor <input type="range" id="s-floor" min="0" max="1.5" step="0.01"><input type="color" id="c-floor" aria-label="Floor colour"><output id="o-floor"></output></label>
     </fieldset>
+
+    <div class="group solver">
+      <h2 class="gh">Solver and margin</h2>
+      <div class="seg" role="group" aria-label="Solver">
+        <button type="button" id="sv-jacobi" data-solver="jacobi">Jacobi</button><button type="button" id="sv-gs" data-solver="gs">Gauss–Seidel</button>
+      </div>
+      <p class="sub" id="sv-note">Jacobi: every patch updates from last bounce's light. This is the theorem's iteration, and the default.</p>
+      <div class="certrun" id="certrun" hidden>
+        <button type="button" id="b-cert" class="sec">Run to certified τ</button>
+        <p class="sub" id="cert-out">Sweeps until the residual proves the error is at most τ = 10⁻³ (relative to the strongest lamp's share).</p>
+      </div>
+      <label class="tog"><input type="checkbox" id="clamp"> <span><b>Design-margin clamp</b>: cap every reflectivity at 0.90, per colour, before the solve</span></label>
+      <p class="sub" id="clamp-out">Off. The surfaces are used as set above.</p>
+    </div>
   </div>
 </section>
 
@@ -101,6 +123,15 @@
       <figcaption>Light added per bounce, one line per colour, log scale. Dashed lines fall at exactly ρ(A) per bounce for each colour.</figcaption>
     </figure>
   </div>
+
+  <h3 class="sci-h">Today's instruments, per colour</h3>
+  <p class="sci-sub">Two different vectors, two different jobs. <b>The certificate bracket</b> comes from the settled light and <em>certifies settling. It does not estimate ρ.</em> <b>The estimate</b> is measured from the bounce differences and updates every bounce. τ = 10⁻³ throughout.</p>
+  <div class="sci" id="sci">
+    <section class="sci-card" data-c="0"><h4 class="cr">Red</h4><dl></dl></section>
+    <section class="sci-card" data-c="1"><h4 class="cg">Green</h4><dl></dl></section>
+    <section class="sci-card" data-c="2"><h4 class="cb">Blue</h4><dl></dl></section>
+  </div>
+  <p class="sci-sub" id="sci-foot">The guaranteed count knows only the brightest surface. It has to cover every room that surface could ever be built into, so it is loose by design. The measured count is what this room actually needed.</p>
 </details>
 
 <article class="notes">
@@ -130,13 +161,44 @@
   <p><b>Brightness can't break it.</b> In the Original room, turn the lamp up to 3. Everything gets three times brighter, and the shrink factor and every verdict stay where they were, because those belong to the room.</p>
   <p><b>A colour that runs away.</b> Paint one wall pure red and push its reflectivity past 1. Watch the red verdict turn while green and blue stay settled. Or start from <em>Channels split</em> and pull all four reflectivities down to 0.90: red settles too.</p>
 </section>
+
+<section>
+  <p class="num">04</p>
+  <h2>What the programme learned today</h2>
+  <p><b>Two instruments, not one.</b> The certificate bracket reads the settled light: if its top end θ is below 1, settling is certified. It brackets ρ loosely (0.6168 to 0.7300 in the Original room), so it is the wrong tool for measuring ρ. The bounce differences are the right one. By bounce 20 in the Original room their bracket is 3 × 10⁻⁵ wide around 0.6939.</p>
+  <p><b>A fence around the answer.</b> When every difference ratio is below 1, the remaining bounces can only add between m/(1−m) and M/(1−M) times the last difference. The settled light is fenced in, and the fence tightens every bounce. If even the smallest ratio reaches 1, the light cannot settle, and the page says <em>divergence certified</em>.</p>
+  <p><b>A budget you can promise in advance.</b> From the brightest surface alone, p<sub>max</sub><sup>k+1</sup>/(1−p<sub>max</sub>) ≤ τ guarantees the answer in any room: 54 bounces for the Original room's 0.85. This room actually needed 14. The gap is the price of knowing nothing about the geometry.</p>
+  <p><b>Gauss–Seidel.</b> GS uses each patch's new light as soon as it is computed. It usually needs fewer sweeps: 9 against Jacobi's 14 here. That is a measurement, not a theorem. Stein–Rosenberg guarantees only that GS is no slower. Its stop is certified anyway: the residual r = e + Ax̃ − x̃ costs one extra pass, and ‖r‖/(1 − c) bounds the true error.</p>
+  <p><b>A design margin.</b> Capping every reflectivity at 0.90 caps the brightness at 1/(1 − 0.9) = 10× the light the lamps put in directly, and it makes every room settle. In <em>Channels split</em> it brings red down from 1.10 to 0.90, and red settles.</p>
+  <p><b>A coarse certificate.</b> Treat each of the four surfaces as a single patch, using its worst patch. If that 4 × 4 room settles, the 26-patch room does too. In the Original room ρ(Q) = 0.9731, far above the true 0.6939 but still below 1. In Colour bleed, red's ρ(Q) is 1.087. The coarse test fails there while the fine room settles: that is the looseness price.</p>
+</section>
+
+<section>
+  <p class="num">06</p>
+  <h2>Live, and the moving lamps</h2>
+  <p><b>Two ways to play.</b> <em>From dark</em> is the theorem’s run: the room starts dark and every bounce is counted. <em>Live</em> keeps the light that’s already on the walls. Each frame the lamps move one tick, then the solver runs at most 3 bounces (or 3 Gauss–Seidel sweeps) starting from where the light already is. That is a warm start. The light chases the lamps rather than starting over.</p>
+  <p><b>Honest while chasing.</b> The certified error bound ‖e + Ax − x‖/(1 − c) is computed for the scene as it stands at that tick, so it always tells you how far the walls are from the light this exact arrangement would settle into. Turn <em>Lamps move</em> off and the bound falls bounce by bounce until the walls catch up.</p>
+  <p><b>The motion is arithmetic, not animation.</b> Every lamp’s position and aim at tick t come from t alone: orbits on ellipses, spotlights turning full circles, a laser swinging ±55°. The same tick always gives the same room. Drag a moving lamp and it stops where you drop it.</p>
+</section>
+
+<section class="field">
+  <p class="num">05</p>
+  <h2>Field notes</h2>
+  <figure><blockquote>For thirty years, game engines baked this process with a fixed bounce count. VRAD, the Source engine’s radiosity tool, defaults to 100 bounces — chosen blind.</blockquote><figcaption>— from the write-up</figcaption></figure>
+  <figure><blockquote>Kajiya’s 1986 rendering-equation paper states the convergence condition, then dismisses it in the same breath: “…which is met in the case of interest to us.”</blockquote><figcaption>— Kajiya 1986</figcaption></figure>
+  <figure><blockquote>The pedigree: Perron 1907 · Frobenius 1912 · Collatz’s bracket 1942 · Fiedler &amp; Pták unify it 1962. The theorem is older than the video game.</blockquote><figcaption>— from the write-up</figcaption></figure>
+  <figure><blockquote>The certificate is the settled light itself: run the room with every patch lit at once, and the light it settles into is the proof it was allowed to settle.</blockquote><figcaption>— Einstein, DISCOVERY-1 S4</figcaption></figure>
+  <figure><blockquote>Brightness grows like 1/(1−ρ): at ρ = 0.99 the light still settles — at ~100× the emitted brightness, after ~460 bounces. Settling is not the same as cheap.</blockquote><figcaption>— Joystick, Cairnward consult</figcaption></figure>
+</section>
 </article>
 </main>
 
-<footer><p>Spider School · W-Ex11-X-R, the Many lamps page re-ranked · model on <code>window.__ex11x</code></p></footer>
+<footer><p>Spider School · W-Ex11-X2, Many lamps with the current science · model on <code>window.__ex11x</code></p></footer>
 <script src="room-model.js"></script>
 <script src="lamps-model.js"></script>
 <script src="presets.js"></script>
+<script src="science.js"></script>
+<script src="motion.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
