@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Side by side — the traditional way and the theorem-guided way, measured</title>
+<meta name="description" content="The many-lamps room solved twice at once: a fixed 100-bounce budget on the left, Einstein's certified stop and a warm start on the right. Every count on the page is counted while it runs.">
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="x3.css">
+</head>
+<body>
+<header class="top">
+  <h1>Side by side</h1>
+  <p class="eyebrow">Same room, same lamps, same target. Only the method differs.</p>
+</header>
+
+<main>
+<section class="duel" aria-label="The two solvers, side by side">
+  <div class="rooms">
+    <figure class="side left">
+      <figcaption><b>Traditional</b> <span>fixed budget, hope-based stop</span></figcaption>
+      <canvas id="room-l" width="640" height="400" aria-label="The room as the traditional solver has it lit. Click to move the magenta lamp."></canvas>
+      <p class="meter"><span class="bar"><i id="bar-l"></i></span> <b id="ops-l">0</b> <span class="u">calcs</span></p>
+      <p class="state" id="state-l">—</p>
+    </figure>
+    <figure class="side right">
+      <figcaption><b>Theorem-guided</b> <span>certified stop, warm start</span></figcaption>
+      <canvas id="room-r" width="640" height="400" aria-label="The room as the theorem-guided solver has it lit. Click to move the magenta lamp."></canvas>
+      <p class="meter"><span class="bar"><i id="bar-r"></i></span> <b id="ops-r">0</b> <span class="u">calcs</span></p>
+      <p class="state" id="state-r">—</p>
+    </figure>
+  </div>
+
+  <div class="verdict" aria-live="polite">
+    <p class="pct"><b id="pct-ops">—</b> <span id="pct-ops-l">fewer calculations</span></p>
+    <p class="pct2"><b id="pct-it">—</b> <span id="pct-it-l">fewer iterations</span></p>
+    <p class="why" id="why">—</p>
+  </div>
+
+  <div class="controls">
+    <div class="seg" role="group" aria-label="Scenario">
+      <button type="button" data-sc="still" aria-pressed="true">Stationary: one edit</button><button type="button" data-sc="move" aria-pressed="false">Moving: 240 ticks</button>
+    </div>
+    <button id="run" class="run" type="button">Run the race</button>
+    <div class="edits" id="edits" role="group" aria-label="Pick the edit">
+      <button type="button" data-edit="move" aria-pressed="true">Move a lamp</button>
+      <button type="button" data-edit="paint" aria-pressed="false">Repaint a wall</button>
+      <button type="button" data-edit="original" aria-pressed="false">Load Original</button>
+      <button type="button" data-edit="extravaganza" aria-pressed="false">Load Extravaganza</button>
+    </div>
+    <p class="hint" id="hint">Or click either room to put the magenta lamp there.</p>
+    <details class="knobs">
+      <summary>Settings</summary>
+      <label><span>Traditional budget</span><input type="range" id="budget" min="10" max="500" step="10" value="100"><output id="o-budget">100</output></label>
+      <label><span>Ticks (moving)</span><input type="range" id="ticks" min="60" max="600" step="60" value="240"><output id="o-ticks">240</output></label>
+      <label><span>Guided cap / tick</span><input type="range" id="cap" min="1" max="4" step="1" value="3"><output id="o-cap">3</output></label>
+      <p class="fixed">Target τ = 10⁻³ of the brightest emission, both sides, never changed.</p>
+    </details>
+  </div>
+</section>
+
+<section class="tele" aria-label="Measured numbers">
+  <h2>The receipts</h2>
+  <div class="tables">
+    <table id="t-still"><caption>Stationary — the last edit</caption><thead><tr><th></th><th>Traditional</th><th>Guided</th></tr></thead><tbody></tbody></table>
+    <table id="t-move"><caption>Moving — the last run</caption><thead><tr><th></th><th>Traditional</th><th>Guided</th></tr></thead><tbody></tbody></table>
+  </div>
+  <figure class="chart"><canvas id="chart" width="1200" height="300" aria-label="Per-tick true error of both sides during the moving run, log scale, with the target line."></canvas>
+    <figcaption>Moving run, per tick: true error vs that tick's exact settled light (log scale). <span class="kl">Traditional</span> · <span class="kr">Guided</span> · <span class="kb">Guided's certified bound</span> · dashed line = τ.</figcaption></figure>
+</section>
+
+<section class="notes">
+  <section><p class="num">01</p><h2>How the calculations are counted</h2>
+    <p>One bounce (or sweep) of one colour on this room is <b>26 × 26 = 676 multiply-adds</b>: every patch gathers from every patch. Three colours, so a full bounce is 2,028. Counters in the code add 676 each time a 26 × 26 product runs. Nothing is estimated.</p>
+    <p>The guided side pays for its guarantee: checking the certificate is one more product (676) per colour per sweep, and it is in its total. Building the scene and the exact answer (a direct solve, 26³ = 17,576 per colour) are the same for both and counted for neither; the exact answer is only there to measure error.</p></section>
+  <section><p class="num">02</p><h2>Traditional is not made stupid</h2>
+    <p>100 bounces is VRAD's default, and for these rooms it is genuinely enough. The left side's error is about 10⁻¹⁵, far inside the target. Nothing on the left is wrong. It just can't know when it's done, so it always spends the whole budget, and from darkness, because nothing carries over.</p>
+    <p id="honest-needed">—</p></section>
+  <section><p class="num">03</p><h2>What the right side knows</h2>
+    <p>After every sweep it computes the residual r = e + Ax − x and the bound ‖x* − x‖ ≤ ‖r‖/(1 − c), where c is the largest row sum of the light matrix. When that bound is under τ it stops. The guarantee needs only c &lt; 1; ρ is shown for scale.</p>
+    <p>On an edit it starts from the light already on the walls, so a small change costs a few sweeps. When lamps move it gets at most a few sweeps per tick and chases. The bound says how close it is, every tick.</p></section>
+</section>
+</main>
+<footer>W-Ex11-X3 · built on the many-lamps model files, byte-identical · every figure on this page is computed in your browser when it loads · pictures use a log display mapping (white point = brightest non-lamp patch of the exact light, shared by both rooms), numbers are exact.</footer>
+<script src="room-model.js"></script>
+<script src="lamps-model.js"></script>
+<script src="presets.js"></script>
+<script src="science.js"></script>
+<script src="motion.js"></script>
+<script src="x3-engine.js"></script>
+<script src="x3-app.js"></script>
+</body>
+</html>

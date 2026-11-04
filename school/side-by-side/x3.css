@@ -1,0 +1,55 @@
+/* W-Ex11-X3. One filled accent: the Run button. Every other control is neutral (lesson 29). */
+button { background: transparent; color: var(--chalk); border: 1px solid var(--line); font-weight: 500; }
+button:hover { background: transparent; border-color: var(--dim); }
+button[aria-pressed="true"] { border-color: var(--chalk); background: #262a35; font-weight: 600; }
+.top h1 { font-size: clamp(24px, 2.4vw, 32px); }
+.top .eyebrow { color: var(--dim); font-family: var(--sans); letter-spacing: 0; font-size: 14px; }
+.duel { max-width: 1320px; margin: 12px auto 0; padding: 0 24px; }
+.rooms { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.side { margin: 0; border: 1px solid var(--line); border-radius: 12px; background: var(--ink-2); overflow: hidden; min-width: 0; }
+.side figcaption { padding: 8px 12px; font-size: 15px; color: var(--chalk); display: flex; gap: 8px; flex-wrap: wrap; align-items: baseline; }
+.side figcaption b { font-size: 17px; } .side figcaption span { color: var(--dim); font-size: 13px; }
+.side.left figcaption b { color: #ffcf8a; } .side.right figcaption b { color: #8fe0a8; }
+.side canvas { display: block; width: 100%; height: auto; background: #08090c; cursor: crosshair; }
+.meter { margin: 8px 12px 0; display: flex; align-items: center; gap: 8px; font: 600 16px var(--mono); }
+.meter .bar { flex: 1; height: 10px; border-radius: 5px; background: #0d0f14; overflow: hidden; min-width: 40px; }
+.meter i { display: block; height: 100%; width: 0; }
+.left .meter i { background: #ffb44a; } .right .meter i { background: #7fd99a; }
+.meter .u { font: 13px var(--sans); color: var(--dim); }
+.state { margin: 4px 12px 10px; font-size: 14px; color: var(--dim); min-height: 2.9em; }
+.state b { color: var(--chalk); } .ok { color: #7fd99a; font-weight: 600; } .warn { color: #ffcf8a; font-weight: 600; }
+.verdict { margin: 16px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 28px; }
+.pct { margin: 0; } .pct b { font: 700 clamp(44px, 6vw, 72px)/1 var(--sans); letter-spacing: -.03em; color: #8fe0a8; }
+.pct span, .pct2 span { font-size: 18px; color: var(--chalk); margin-left: 6px; }
+.pct2 { margin: 0; } .pct2 b { font: 700 clamp(26px, 3vw, 36px)/1 var(--sans); color: var(--chalk); }
+.why { flex-basis: 100%; margin: 6px 0 0; color: var(--dim); font-size: 15px; max-width: 90ch; }
+.controls { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.seg { display: flex; } .seg button { border-radius: 0; } .seg button:first-child { border-radius: 8px 0 0 8px; } .seg button:last-child { border-radius: 0 8px 8px 0; border-left: 0; }
+.run { background: var(--amber); color: var(--ink); border: 0; font-family: var(--sans); font-size: 17px; font-weight: 700; padding: 10px 22px; min-height: 48px; }
+.run:hover { background: var(--amber-2); }
+.edits { display: flex; flex-wrap: wrap; gap: 6px; } .edits[hidden], .hint[hidden] { display: none; }
+.hint { margin: 0; font-size: 13px; color: var(--dim); flex-basis: 100%; }
+.knobs { flex-basis: 100%; font-size: 14px; color: var(--dim); }
+.knobs summary { cursor: pointer; min-height: 44px; display: inline-flex; align-items: center; }
+.knobs label { grid-template-columns: 150px minmax(0, 360px) 50px; }
+input[type=range] { accent-color: #b3ad9f; }
+output { color: var(--chalk); }
+.fixed { margin: 6px 0 0; }
+.tele { max-width: 1320px; margin: 40px auto 0; padding: 0 24px; }
+.tables { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+caption { text-align: left; font-weight: 600; padding-bottom: 6px; }
+th, td { text-align: left; padding: 6px 8px; border-top: 1px solid var(--line); vertical-align: top; }
+thead th { color: var(--dim); font-weight: 500; } tbody th { color: var(--dim); font-weight: 500; width: 30%; }
+td { font-family: var(--mono); font-size: 13px; overflow-wrap: anywhere; } .sm { color: var(--dim); }
+.tele .chart { margin-top: 20px; } .kl { color: #ffb44a; } .kr { color: #7fd99a; } .kb { color: #6aa8ff; }
+@media (max-width: 900px) { .tables { grid-template-columns: 1fr; } }
+@media (max-width: 560px) {
+  .duel, .tele { padding: 0 12px; } .rooms { gap: 8px; }
+  .side figcaption { padding: 6px 8px; } .side figcaption b { font-size: 14px; } .side figcaption span { font-size: 11px; }
+  .meter { margin: 6px 8px 0; font-size: 13px; } .meter .u { display: none; }
+  .state { margin: 4px 8px 8px; font-size: 12px; }
+  .verdict { margin-top: 10px; } .pct span, .pct2 span { font-size: 15px; } .why { font-size: 13px; }
+  .controls { margin-top: 10px; gap: 8px; } .run { flex: 1 1 100%; } .seg { flex: 1 1 100%; } .seg button { flex: 1; font-size: 13px; padding: 8px 6px; }
+  .knobs label { grid-template-columns: 110px minmax(0, 1fr) 40px; }
+}
