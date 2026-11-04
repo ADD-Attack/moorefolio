@@ -179,7 +179,7 @@ button.voice-orb{cursor:pointer;text-align:left;-webkit-tap-highlight-color:tran
 button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 .guide{position:fixed;z-index:61;left:12px;right:12px;bottom:104px;max-width:420px;margin:0 auto;max-height:calc(46vh);overflow:auto;background:#fffdf8;color:var(--ink);border:1px solid #3d5577;border-radius:14px;box-shadow:0 18px 40px rgba(0,0,0,.35);padding:16px 16px 12px}
 .guide::after{content:"";position:fixed;left:50%;bottom:97px;width:14px;height:14px;background:#fffdf8;border-right:1px solid #3d5577;border-bottom:1px solid #3d5577;transform:translateX(-50%) rotate(45deg)}
-.guide[hidden]{display:none}
+.guide[hidden],.guide [hidden]{display:none!important}
 .guide h3{font-size:24px;margin:0 44px 6px 0}
 .gstep{font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--red);margin:0 0 8px}
 .gtext{margin:0 0 10px;font-size:16px;line-height:1.45}
@@ -189,6 +189,14 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 .gnav .btn,.gextra .btn{min-height:44px;padding:0 16px}
 .gskip{min-height:44px;border:0;background:none;color:var(--ink-2);text-decoration:underline;font-size:15px;cursor:pointer;padding:0 4px}
 .gx:focus-visible,.gskip:focus-visible{outline:3px solid var(--navy)}
+.gask{border-top:1px solid #d9d2c3;margin-top:12px;padding-top:10px}
+.gask label{display:block;font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}
+.glog{margin:0 0 8px;display:flex;flex-direction:column;gap:6px}.glog:empty{display:none}
+.glog p{margin:0;padding:8px 10px;border-radius:10px;font-size:15px;line-height:1.4;max-width:88%;overflow-wrap:break-word}
+.glog .me{align-self:flex-end;background:var(--navy);color:#fff}.glog .ai{align-self:flex-start;background:#efe9dc}.glog .sys{align-self:stretch;max-width:none;background:none;color:var(--ink-2);font-style:italic;padding:2px 0}
+.gform{display:flex;gap:8px}.gform[hidden],.gwait[hidden]{display:none}.gform input{flex:1;min-width:0;min-height:44px;font-size:16px;padding:0 12px;border:1px solid #8a94a3;border-radius:10px;font-weight:400}
+.gform .btn{min-height:44px;padding:0 16px}
+.gwait{margin:0;font-size:15px;line-height:1.4;color:var(--ink-2)}
 .ghl{outline:3px solid var(--red);outline-offset:6px;border-radius:10px;scroll-margin-top:14px}
 @media (min-width:900px){.guide{left:auto;right:24px;margin:0}.guide::after{display:none}}   /* keep the last content clear of the fixed orb */
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
@@ -347,6 +355,12 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
   <p class="gtext" id="gtext"></p>
   <div class="gextra" id="gextra"></div>
   <div class="gnav"><button class="gskip" id="gskip" type="button">Skip tour</button><span class="gsp"></span><button class="btn gback" id="gback" type="button">Back</button><button class="btn primary gnext" id="gnext" type="button">Next</button></div>
+  <div class="gask" id="gask">
+    <label for="gq">Ask the guide anything</label>
+    <div class="glog" id="glog" aria-live="polite"></div>
+    <form class="gform" id="gform" hidden><input id="gq" type="text" autocomplete="off" maxlength="500" placeholder="e.g. Can I book for Saturday?"><button class="btn primary" type="submit">Send</button></form>
+    <p class="gwait" id="gwait">The live guide is being connected. The tour above works now.</p>
+  </div>
 </div>
 
 <script>
@@ -551,6 +565,22 @@ if (fast) (async () => { $('#run').click(); pick = 'late'; await $('#go').onclic
   const P = new URLSearchParams(location.search), q = P.get('guide'); qa = P.has('qa');
   let seen = false; try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
   if (q != null) open(+q || 0); else if (!seen && !fast) setTimeout(() => open(0), 900);
+})();
+/* live guide: text agent via the Astra relay. URL is the only config. Empty or unreachable = honest degraded state, never a fake reply. */
+const GUIDE_RELAY_URL = '';   // set to Toolsmith's relay endpoint (BROCATOS-GUIDE-AGENT.md)
+(() => {
+  const f = $('#gform'), q = $('#gq'), log = $('#glog'), hist = [];
+  const say = (c, t) => { const p = el('p', c, t); log.append(p); log.scrollTop = log.scrollHeight; $('#guide').scrollTop = 1e6; return p; };
+  if (!GUIDE_RELAY_URL) return;           // degraded: the "being connected" line stays, no input shown
+  f.hidden = false; $('#gwait').hidden = true; $('#gask label').htmlFor = 'gq';
+  // contract adapter: the one place to match the relay's request/response shape
+  const ask = async m => { const r = await fetch(GUIDE_RELAY_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ message: m, history: hist.slice(-10), page: 'brocatos' }) });
+    if (!r.ok) throw new Error(r.status); const d = await r.json(); const t = d.reply ?? d.text ?? d.message; if (!t) throw new Error('empty'); return String(t); };
+  f.onsubmit = async e => { e.preventDefault(); const m = q.value.trim(); if (!m) return; q.value = ''; say('me', m); const b = f.querySelector('button'); b.disabled = true;
+    const w = say('sys', 'Thinking…');
+    try { const t = await ask(m); w.remove(); say('ai', t); hist.push({ role: 'user', text: m }, { role: 'guide', text: t }); }
+    catch (err) { w.textContent = 'The live guide didn’t answer just now. Try again in a moment, or use the tour.'; }
+    b.disabled = false; $('#guide').scrollTop = 1e6; q.focus({ preventScroll: true }); };
 })();
 </script>
 </body></html>
