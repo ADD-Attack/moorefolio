@@ -115,3 +115,9 @@ sub, sup { font-size: max(12px, .75em); line-height: 0; }
 .transport-2 label.mv { margin: 0; align-items: center; min-height: 44px; }
 .transport-2 .sub { flex: 1 1 100%; margin: 0; }
 @media (max-width: 560px) { .transport-2 { padding: 0 10px 10px; } }
+/* X4 tile-size slider */
+.panel label.res, .res { display: grid; grid-template-columns: minmax(0, 1fr); gap: .3rem; margin-top: .8rem; font-size: .9rem; min-width: 0; }
+.res input { width: 100%; }
+.res output { font-variant-numeric: tabular-nums; opacity: .85; }
+.mesh { display: flex; flex-wrap: wrap; gap: .2rem 1rem; margin-top: .8rem; }
+.mesh label.tog { margin-top: 0; }

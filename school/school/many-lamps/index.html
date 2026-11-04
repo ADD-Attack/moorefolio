@@ -61,6 +61,9 @@
         <button type="button" data-preset="mixed">Mixed lamps</button>
         <button type="button" data-preset="split">Channels split</button>
       </div>
+      <div class="mesh" role="radiogroup" aria-label="Mesh"><label class="tog"><input type="radio" name="mesh" value="uniform" checked> <span>Uniform</span></label><label class="tog"><input type="radio" name="mesh" value="adaptive"> <span>Adaptive: refine where the light is sharp</span></label></div>
+      <label class="res">Tile size <input type="range" id="res" min="0" max="4" step="1" value="0" list="res-stops" aria-describedby="o-res"><output id="o-res"></output></label>
+      <datalist id="res-stops"><option value="0" label="1 m"></option><option value="1" label="50 cm"></option><option value="2" label="25 cm"></option><option value="3" label="12.5 cm"></option><option value="4" label="6.25 cm"></option></datalist>
     </div>
 
     <div class="group lamps">
@@ -144,6 +147,15 @@
 </section>
 
 <section>
+  <p class="num">01½</p>
+  <h2>Little tiny walls</h2>
+  <p>The <em>Tile size</em> slider cuts the same boundary finer: 1 m, 50 cm, 25 cm, 12.5 cm, 6.25 cm, which is 26, 52, 104, 208 or 416 patches. Every setting rebuilds the form factors exactly over the new tiles and re-aims every lamp at the new walls. The cost is the honest part: each bounce, every patch reads every other, so the work per colour goes from 676 calculations to 173,056.</p>
+  <p><b>The light is the same light at every setting. Only the tiles shrink.</b> Each tile is drawn by its brightness per metre, not its total, so a half-size tile with half the light looks the same as the big one. Per-metre brightness moves less than 3% from the coarsest grid to the finest, and ρ moves less than 0.01%. Squint and the rooms match. What changes is the detail: at 6.25 cm the laser's lit patch is 6.25 cm wide, a real spot instead of a metre of wall.</p>
+  <p><b>Adaptive</b> spends the tiles where they matter. It starts from the 26 one-metre patches and halves a tile, down to 6.25 cm, where a laser lands or a spotlight's cone edge falls. It also halves tiles to 25 cm where the settled light jumps by more than ×2 between neighbours. A split is undone only after four lamp moves without being needed, so the mesh doesn't flicker as lamps move. The form factors use the same crossed-strings rule over the uneven tiles, which is exact for unequal pairs. The laser still lights exactly one 6.25 cm patch, with about a third of the patches of 6.25 cm everywhere.</p>
+  <p>The guarantees don't get cheaper or dearer with the grid. The a-priori budget depends on the largest reflectivity, not on the patch count, so the guaranteed number of bounces is the same at every tile size.</p>
+</section>
+
+<section>
   <p class="num">02</p>
   <h2>How the model is built</h2>
   <p class="source"><b>The theorem governs the room; lamps live in the emission.</b> Einstein's theorem (DISCOVERY-1 S4, <code>Wall.sharp_radiosity</code>) is about the matrix A: the iteration x<sub>k+1</sub> = e + A x<sub>k</sub> settles <em>for every</em> emission e exactly when ρ(A) &lt; 1, exactly when a certificate exists. Lamps only change e. Moving, recolouring or dimming a lamp never changes whether a colour settles. Only the surfaces do that.</p>
@@ -199,6 +211,8 @@
 <script src="presets.js"></script>
 <script src="science.js"></script>
 <script src="motion.js"></script>
+<script src="res-models.js"></script>
+<script src="adaptive.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

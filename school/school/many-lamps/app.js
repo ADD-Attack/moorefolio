@@ -1,7 +1,12 @@
 // W-Ex11-X page: draws the lamp room, runs the bounces per colour, exposes everything on window.__ex11x.
 (function () {
   'use strict';
-  const LM = window.LampsModel, M = LM.room, PRESETS = window.LAMP_PRESETS, SC = window.Science, MO = window.Motion, sim = LM.create();
+  const PRESETS = window.LAMP_PRESETS, MO = window.Motion, RES = window.Res;
+  // W-Ex11-X4: the patch edge. At 1 m the page runs the frozen modules themselves; finer detents run res-models.js builds.
+  const FROZEN = { M: window.LampsModel.room, LM: window.LampsModel, SC: window.Science }, BUILT = new Map([[1, FROZEN]]);
+  let seg = 1, LM = FROZEN.LM, M = FROZEN.M, SC = FROZEN.SC, sim = LM.create();
+  const fineOf = p => M.fineOf ? M.fineOf(p) : [p], coarseOf = j => M.coarseOf ? M.coarseOf(j) : j;
+  const patchLen = j => { const { a, b } = M.PATCHES[j]; return Math.abs(a[0] - b[0]) + Math.abs(a[1] - b[1]); };
   const q = new URLSearchParams(location.search);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let scene = 'extravaganza', held = q.has('hold'), playing = !held && !reduced, timer = null, sel = null, hover = -1;
@@ -50,7 +55,7 @@
       if (h.length > MAX_K) h.shift(); h.forEach((e, i) => e.k = i + 1); }
     live.iters++;
   }
-  function liveFrame(forceMotion) { if ((motionOn || forceMotion) && hasMotion()) { tick++; applyTick(); } for (let i = 0; i < CAP; i++) liveIterate(); }
+  function liveFrame(forceMotion) { if ((motionOn || forceMotion) && hasMotion()) { tick++; applyTick(); adaptSync(1); } for (let i = 0; i < CAP; i++) liveIterate(); }
   function loadMotions(name) { motions = new Map(); const P = PRESETS[name]; if (!P) return;
     sim.lamps.forEach((L, i) => { const m = P.lamps[i] && P.lamps[i].motion; if (m) motions.set(L.id, { ...m }); }); }
   // tickTo(T): Live from darkness at tick 0, then T frames (tick + 1 and CAP iterations each). Same T → same state, bit for bit.
@@ -72,13 +77,15 @@
   const GW = 96, GH = 60, img = new ImageData(GW, GH), off = document.createElement('canvas');
   off.width = GW; off.height = GH;
   // angle each patch subtends at each interior sample point (picture only; not part of the model)
-  const PHI = new Float32Array(GW * GH * M.N);
+  let PHI;
+  function buildPHI() { PHI = new Float32Array(GW * GH * M.N);
   for (let gy = 0; gy < GH; gy++) for (let gx = 0; gx < GW; gx++) {
     const px = (gx + .5) / GW * M.W, py = M.H - (gy + .5) / GH * M.H;
     for (let j = 0; j < M.N; j++) { const { a, b } = M.PATCHES[j];
       const ux = a[0] - px, uy = a[1] - py, vx = b[0] - px, vy = b[1] - py;
       PHI[(gy * GW + gx) * M.N + j] = Math.abs(Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy)); }
-  }
+  } }
+  buildPHI();
   // Display mapping (picture only; the model and every readout stay exact):
   // white point W = brightest non-lamp patch value in any colour this bounce; a value x is drawn at log(1 + K·x/W) / log(1 + K) of full brightness.
   // The interior glow uses the same curve against its own brightest point, capped at GLOW_CAP so walls stay brightest.
@@ -91,9 +98,14 @@
   function handlePx(L) { return toPx([L.pos[0] + AIM_R * Math.cos(L.aim), L.pos[1] + AIM_R * Math.sin(L.aim)]); }
 
   function drawRoom() {
-    const X = viewX();
+    const XT = viewX(), LEN = M.PATCHES.map((_, j) => patchLen(j));
+    // X4: brightness density (patch light ÷ patch length). At 1 m every length is 1, so these are the graded values exactly.
+    // Adaptive meshes already run in density (B = E + ρFB), so they draw as they are.
+    const X = seg === 1 || meshMode === 'adaptive' ? XT : XT.map(x => x.map((t, j) => t / LEN[j]));
     // white point: the brightest patch in any colour that is not itself a lamp (a ceiling panel may draw past white; no other patch clips)
-    const lampPatch = new Set(sim.lamps.filter(L => L.type === 'panel').map(L => L.patch));
+    const lampPatch = new Set(sim.lamps.filter(L => L.type === 'panel').flatMap(L => fineOf(L.patch)));
+    // X4: below 1 m a laser's lit patch is a true spot (density ∝ 1/edge), so it may clip like a lamp instead of setting the white point
+    if (fineDraw()) for (const L of sim.lamps) if (L.type === 'laser') L.d.forEach((t, j) => { if (t > 0) lampPatch.add(j); });
     white = 0; for (let c = 0; c < 3; c++) for (let j = 0; j < M.N; j++) if (!lampPatch.has(j)) white = Math.max(white, X[c][j]);
     if (!(white > 0)) for (let c = 0; c < 3; c++) for (let j = 0; j < M.N; j++) white = Math.max(white, X[c][j]);
     const ex = white > 0 ? 1 / white : 1;
@@ -121,17 +133,18 @@
       }
     }
     // patches, coloured by the light they carry
-    const panels = new Set(sim.lamps.filter(L => L.type === 'panel').map(L => L.patch));
+    const panels = new Set(sim.lamps.filter(L => L.type === 'panel').flatMap(L => fineOf(L.patch)));
     for (let j = 0; j < M.N; j++) { const { a, b } = M.PATCHES[j], A = toPx(a), B = toPx(b);
       cx.strokeStyle = `rgb(${[0, 1, 2].map(c => shade(X[c][j] * ex)).join(',')})`; cx.lineWidth = panels.has(j) ? 20 : 15; cx.lineCap = 'butt';
+      if (fineDraw()) { const ux = Math.sign(B[0] - A[0]) * .6, uy = Math.sign(B[1] - A[1]) * .6; A[0] -= ux; A[1] -= uy; B[0] += ux; B[1] += uy; }   // close the hairline seams between small tiles
       cx.beginPath(); cx.moveTo(...A); cx.lineTo(...B); cx.stroke();
       if (j === hover) { cx.strokeStyle = '#ece7dc'; cx.lineWidth = 2; cx.strokeRect(Math.min(A[0], B[0]) - 7, Math.min(A[1], B[1]) - 7, Math.abs(A[0] - B[0]) + 14, Math.abs(A[1] - B[1]) + 14); }
-      cx.strokeStyle = '#08090c'; cx.lineWidth = 2; cx.beginPath(); cx.arc(...A, .5, 0, 7); cx.stroke(); }
+      if (seg >= 0.25 && meshMode !== 'adaptive') { cx.strokeStyle = '#08090c'; cx.lineWidth = 2; cx.beginPath(); cx.arc(...A, .5, 0, 7); cx.stroke(); } }
     // lamp bodies
     for (const L of sim.lamps) {
       const P = lampPx(L), on = sel === L.id;
       if (L.type === 'panel') {
-        if (on) { const { a, b } = M.PATCHES[L.patch], A = toPx(a), B = toPx(b); cx.strokeStyle = '#ece7dc'; cx.lineWidth = 2; cx.strokeRect(Math.min(A[0], B[0]) - 9, Math.min(A[1], B[1]) - 9, Math.abs(A[0] - B[0]) + 18, Math.abs(A[1] - B[1]) + 18); }
+        if (on) { const f = fineOf(L.patch), a = M.PATCHES[f[0]].a, b = M.PATCHES[f[f.length - 1]].b, A = toPx(a), B = toPx(b); cx.strokeStyle = '#ece7dc'; cx.lineWidth = 2; cx.strokeRect(Math.min(A[0], B[0]) - 9, Math.min(A[1], B[1]) - 9, Math.abs(A[0] - B[0]) + 18, Math.abs(A[1] - B[1]) + 18); }
         continue;
       }
       const g = cx.createRadialGradient(P[0], P[1], 2, P[0], P[1], 26); g.addColorStop(0, rgbCss(L.color, .9)); g.addColorStop(1, rgbCss(L.color, 0));
@@ -200,7 +213,7 @@
     return out;
   }
   function render() {
-    const r = readouts();
+    adaptSync(mode === 'live' ? 1 : 4); renderRes(); const r = readouts();
     $('r-k').textContent = r.k; $('r-lum').textContent = r.lum;
     $('verdict').className = 'verdict ' + r.agree.s; $('agree').textContent = r.agree.t;
     ['r', 'g', 'b'].forEach((n, c) => { const row = $('v-' + n), d = r.channels[c];
@@ -366,8 +379,8 @@
   const setSel = patch => sel != null && restart(() => sim.setLamp(sel, patch));
   $('l-type').onchange = e => { const L = sim.lamps.find(l => l.id === sel); if (!L) return;
     const t = e.target.value, p = { type: t };
-    if (t === 'panel') { let best = 0, bd = Infinity; M.PATCHES.forEach((P, j) => { const d = Math.hypot((P.a[0] + P.b[0]) / 2 - L.pos[0], (P.a[1] + P.b[1]) / 2 - L.pos[1]); if (d < bd) { bd = d; best = j; } }); p.patch = best; }
-    else if (L.type === 'panel') { const P = M.PATCHES[L.patch]; p.pos = [(P.a[0] + P.b[0]) / 2 + (P.s === 'left' ? .6 : P.s === 'right' ? -.6 : 0), (P.a[1] + P.b[1]) / 2 + (P.s === 'floor' ? .6 : P.s === 'ceiling' ? -.6 : 0)]; }
+    if (t === 'panel') { let best = 0, bd = Infinity; M.PATCHES.forEach((P, j) => { const d = Math.hypot((P.a[0] + P.b[0]) / 2 - L.pos[0], (P.a[1] + P.b[1]) / 2 - L.pos[1]); if (d < bd) { bd = d; best = j; } }); p.patch = coarseOf(best); }
+    else if (L.type === 'panel') { const f = fineOf(L.patch), P = { a: M.PATCHES[f[0]].a, b: M.PATCHES[f[f.length - 1]].b, s: M.PATCHES[f[0]].s }; p.pos = [(P.a[0] + P.b[0]) / 2 + (P.s === 'left' ? .6 : P.s === 'right' ? -.6 : 0), (P.a[1] + P.b[1]) / 2 + (P.s === 'floor' ? .6 : P.s === 'ceiling' ? -.6 : 0)]; }
     setSel(p); };
   $('l-color').oninput = e => setSel({ color: unhex(e.target.value) });
   $('l-bright').oninput = e => setSel({ brightness: +(+e.target.value).toFixed(2) });
@@ -394,7 +407,7 @@
       const L = sim.lamps.find(l => l.id === drag.id); if (!L) return;
       if (drag.mode === 'move') sim.setLamp(drag.id, { pos: m });
       else if (drag.mode === 'aim') sim.setLamp(drag.id, { aim: Math.atan2(m[1] - L.pos[1], m[0] - L.pos[0]) });
-      else { const pj = nearPatch(m); if (pj >= 0 && pj !== L.patch) sim.setLamp(drag.id, { patch: pj }); }
+      else { const pj = nearPatch(m); if (pj >= 0 && coarseOf(pj) !== L.patch) sim.setLamp(drag.id, { patch: coarseOf(pj) }); }
       render(); return;
     }
     const h = nearPatch(m); if (h !== hover) { hover = h; render(); }
@@ -405,8 +418,63 @@
     const d = { ArrowLeft: [-.1, 0], ArrowRight: [.1, 0], ArrowUp: [0, .1], ArrowDown: [0, -.1] }[ev.key]; if (!d) return;
     ev.preventDefault(); restart(() => sim.setLamp(sel, { pos: [L.pos[0] + d[0], L.pos[1] + d[1]] })); });
 
+  // ---------- X4: change the patch edge; the scene, clamp, solver, mode and motion tick carry over ----------
+  function setResolution(s, force) {
+    s = RES.DETENTS.find(d => Math.abs(d - s) < 1e-9); if (s == null || (s === seg && !force && meshMode === 'uniform')) return seg;
+    meshMode = 'uniform'; adaptSig = '';
+    if (!BUILT.has(s)) BUILT.set(s, RES.build(s));
+    swapModel(BUILT.get(s), null); seg = s;
+    return seg;
+  }
+  // Swap in a new model (uniform detent or adaptive mesh). The scene, ids-by-order, motion, selection carry over;
+  // Live keeps its warm start when both meshes are adaptive (density-preserving transfer), else restarts from dark.
+  function swapModel(b, readySim, transfer) {
+    const keep = sim.scene(), oldIds = sim.lamps.map(L => L.id), k = sim.k, wasLive = mode === 'live', selIdx = oldIds.indexOf(sel);
+    const oldMesh = M.PATCHES, oldX = live && live.x;
+    ({ M, LM, SC } = b);
+    if (readySim) sim = readySim; else { sim = LM.create(); sim.reset(keep); }
+    const newIds = sim.lamps.map(L => L.id), mv = new Map();
+    oldIds.forEach((id, i) => { if (motions.has(id)) mv.set(newIds[i], motions.get(id)); }); motions = mv;
+    sel = selIdx >= 0 ? newIds[selIdx] : null; hover = -1;
+    prevCache = { key: '', x: null }; roomCache = { key: '', v: null };
+    buildPHI(); gsReset();
+    if (wasLive) { liveReset(); if (transfer && oldX) live.x = oldX.map(x => { const tot = AD.transfer(x.map((t, j) => t * plen(oldMesh[j])), oldMesh, M.PATCHES);
+        return tot.map((t, j) => t / plen(M.PATCHES[j])); }); }
+    else sim.advanceTo(k);
+  }
+  const plen = P => Math.abs(P.a[0] - P.b[0]) + Math.abs(P.a[1] - P.b[1]);
+  // ---------- X4 Amendment 1: adaptive mode ----------
+  const AD = window.Adaptive; let meshMode = 'uniform', adaptSig = '', ctl = AD.controller();
+  const fineDraw = () => seg < 1 || meshMode === 'adaptive';
+  function adaptSync(passes) {
+    if (meshMode !== 'adaptive') return; const sg = sceneSig(); if (sg === adaptSig) return;
+    const was = ctl.built, r = ctl.update(sim.scene(), sim.lamps, LM, passes);
+    if (r.built !== was || r.built.LM !== LM) swapModel(r.built, r.sim, true);
+    adaptSig = sceneSig();
+  }
+  function setMeshMode(m) {
+    if (m === meshMode) return meshMode;
+    if (m === 'adaptive') { meshMode = 'adaptive'; ctl = AD.controller(); adaptSig = ''; adaptSync(4); }
+    else setResolution(seg, true);
+    return meshMode;
+  }
+  const resolution = () => ({ seg, n: meshMode === 'uniform' ? M.N : RES.DETENTS.map(d => Math.round(26 / d))[RES.DETENTS.indexOf(seg)], macsPerBounce: meshMode === 'uniform' ? M.N * M.N : (26 / seg) ** 2 });
+  const resEl = $('res');
+  if (resEl) resEl.oninput = () => { setResolution(RES.DETENTS[+resEl.value]); render(); };
+  document.querySelectorAll('input[name=mesh]').forEach(el => el.onchange = () => { setMeshMode(el.value); render(); });
+  function renderRes() { if (!resEl) return; resEl.value = RES.DETENTS.indexOf(seg); resEl.disabled = meshMode === 'adaptive';
+    document.querySelectorAll('input[name=mesh]').forEach(el => el.checked = el.value === meshMode);
+    const cm = seg >= 1 ? seg + ' m' : seg * 100 + ' cm', f = n => n.toLocaleString('en-US');
+    $('o-res').innerHTML = meshMode === 'uniform' ? `<b>${cm}</b> tiles · ${M.N} patches · ${f(M.N * M.N)} calculations per bounce per colour`
+      : `<b>Adaptive</b>: ${M.N} patches now (6.25 cm at the laser and cone edges, 1 m where the light is smooth) · ${f(M.N * M.N)} calculations per bounce per colour, against ${f(416 * 416)} for 6.25 cm everywhere`; }
+
   window.__ex11x = {
-    model: LM, sim, PRESETS,
+    get model() { return LM; }, get sim() { return sim; }, PRESETS,
+    get resolution() { return resolution(); },
+    get mode() { return meshMode; },
+    get adaptive() { return meshMode === 'adaptive' ? { patchCount: M.N, macsPerBounce: M.N * M.N, levels: M.PATCHES.map(p => p.level) } : null; },
+    setMeshMode(m) { setMeshMode(m); render(); return meshMode; },
+    setResolution(s) { setResolution(s); render(); return resolution(); },
     get lamps() { return sim.lamps.map(L => ({ ...L, motion: motions.has(L.id) ? { ...motions.get(L.id) } : null, pos: L.pos.slice(), color: L.color.slice(), d: L.d.slice(),
       cone: L.type === 'spotlight' ? { aim: L.aim, halfWidth: LM.SPOT_HALF } : null, support: L.d.map((t, j) => t > 0 ? j : -1).filter(j => j >= 0) })); },
     get state() { return sim.state(); },
