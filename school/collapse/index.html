@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Collapse — wave function collapse, live</title>
+<meta name="description" content="A grid of cells, each holding every tile it could still become, collapsing one cell at a time — always the tightest one — until a circuit draws itself.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <span class="mark" aria-hidden="true">┼</span>
+  <h1>Collapse</h1>
+  <span class="sub">Wave function collapse, worked live</span>
+  <a class="details" href="#s01">Details ↓</a>
+</header>
+
+<main>
+<section class="sim" aria-label="Simulation">
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="The grid: numbers are the tiles each cell could still become; drawn cells are decided"></canvas>
+
+    <div class="status" role="status" aria-live="polite">
+      <span class="phase-tag" id="phase-tag">Live</span>
+      <span id="status">Every cell can still be any of 12 tiles.</span>
+    </div>
+
+
+    <dl class="readouts" aria-label="Live readouts">
+      <div><dt>Collapsed</dt><dd id="r-collapsed">0.0%</dd></div>
+      <div><dt>Entropy</dt><dd id="r-entropy">3.58 bits</dd></div>
+      <div><dt>Contradictions</dt><dd id="r-contra">0</dd><small id="r-attempts">in 1 attempt</small></div>
+      <div><dt>Phase</dt><dd id="r-phase">Live</dd></div>
+    </dl>
+  </div>
+
+  <form class="strip" id="strip" onsubmit="return false" aria-label="Controls">
+    <fieldset>
+      <legend>Pattern</legend><div class="row">
+      <label class="field"><span>Grid size</span>
+        <select id="c-size"><option value="8">8 × 8</option><option value="12">12 × 12</option><option value="16" selected>16 × 16</option><option value="20">20 × 20</option></select>
+      </label>
+      <label class="field"><span>Tiles</span>
+        <select id="c-set"><option value="full">All twelve</option><option value="pipes">Pipes — no blank (11)</option></select>
+      </label>
+      <label class="field seed"><span>Seed</span>
+        <input id="c-seed" type="number" min="1" max="999999" step="1" value="1" inputmode="numeric">
+      </label>
+      <button type="button" id="c-new" class="new">New pattern</button>
+    </div></fieldset>
+
+    <fieldset>
+      <legend>Run</legend><div class="row">
+      <button type="button" id="c-play" class="play" aria-pressed="false">Pause</button>
+      <button type="button" id="c-step">Step <em>one cell</em></button>
+      <label class="field speed"><span>Cells per second <output id="o-speed">12</output></span>
+        <input id="c-speed" type="range" min="1" max="60" step="1" value="12">
+        <span class="range"><b>1</b><b>60</b></span>
+      </label>
+      <label class="check"><input id="c-auto" type="checkbox" checked> Start a new pattern after each one ends</label>
+    </div></fieldset>
+  </form>
+  <aside class="legend" aria-label="Tile legend">
+    <p class="legend-h">The tiles <span id="legend-count">12</span></p>
+    <ol id="legend"></ol>
+    <p class="legend-key"><i class="sw sw-next"></i>next to collapse</p>
+    <p class="legend-key"><i class="sw sw-wave"></i>just narrowed</p>
+  </aside>
+</section>
+
+<article class="notes">
+  <section id="s01">
+    <p class="num">01</p>
+    <div>
+      <h2>A circuit that decides itself</h2>
+      <p>Every square on the grid starts undecided. The number in it is how many tiles it could still become — <strong>12</strong> at the start, because nothing has been placed yet.</p>
+      <p>Each step, the model picks the square with the <strong>fewest options left</strong> (it wears the copper ring), settles it on one tile, and then tells its neighbours. Any neighbour tile whose edge would no longer meet cleanly is struck off, and those squares flash as their numbers drop. Then it looks for the tightest square again.</p>
+      <p>Watch the ring. It never wanders into open space while a squeezed square is waiting — it works outward from what is already decided, like someone finishing a crossword from the letters they already have. When the last number is gone, every line on the grid meets a matching line or runs off the edge.</p>
+    </div>
+  </section>
+
+  <section id="s02">
+    <p class="num">02</p>
+    <div>
+      <h2>How the model is built</h2>
+      <p><strong>Tiles.</strong> Each tile has four edges, and each edge is either a <em>connector</em> or <em>empty</em>. Of the sixteen ways to set four edges, the model uses the twelve that are not dead ends: one blank, two straights, four corners, four tees and one crossing. The <em>Pipes</em> set drops the blank and keeps eleven. Both are drawn in the legend on the grid.</p>
+      <p><strong>The rule.</strong> Two tiles may sit side by side only if their facing edges match: connector meets connector, empty meets empty. Nothing else limits where a tile can go. The outer border is open; any edge may face it.</p>
+      <p><strong>The loop.</strong> Every cell starts with every tile in the set possible. Then, repeatedly:</p>
+      <ol class="loop">
+        <li>Find the uncollapsed cells with the fewest remaining options. If several tie, pick one of them uniformly at random.</li>
+        <li>Collapse it to one of its remaining options, chosen uniformly at random.</li>
+        <li>Propagate: for each neighbour of a cell that just changed, strike every tile that no longer has a compatible partner across the shared edge. A neighbour that lost anything is checked in turn, until nothing changes.</li>
+      </ol>
+      <p class="eq">Entropy (readout) = mean of log₂(options) over the uncollapsed cells, in bits.
+Start: log₂ 12 ≈ 3.58 bits. A cell with one option left adds 0. Done: 0.</p>
+      <p><strong>Randomness.</strong> All three random choices — the tie, the tile, the next seed — come from one seeded generator (mulberry32). The seed in the controls is always the current attempt's; type one in to replay that pattern exactly. Opening the page or pressing <em>New pattern</em> takes a fresh seed from your browser's own random source.</p>
+      <p><strong>Contradictions.</strong> If propagation ever empties a cell, the Phase readout says <em>Contradiction</em>, the counter goes up by one, and the empty cell is marked in red. The grid holds for two and a half seconds; then a new attempt starts on a seed drawn from the same generator. A finished pattern holds for the same beat before the next one, and both restarts can be switched off.</p>
+      <p><strong>What we measured.</strong> We ran this exact code 8,000 times: seeds 1 to 1,000 at every grid size, with both tile sets. It produced <strong>no contradictions</strong>, and every finished grid had <strong>zero mismatched edges</strong>. That result is about these tile sets, not a promise about wave function collapse in general. With all twelve tiles, no step narrowed anything beyond the four neighbours of the cell it settled. With Pipes, about one step in twenty-two reached two cells out: without a blank, a cell facing empty edges on any two sides has only one tile left, and settling it narrows the cells beyond it.</p>
+      <p><strong>Counters.</strong> <em>New pattern</em> — or a new size, tile set or seed — starts a new session: fresh grid, Collapsed back to 0, Contradictions and attempts back to zero, Phase back to Live. Automatic restarts keep the session's counts.</p>
+    </div>
+  </section>
+
+  <section id="s03">
+    <p class="num">03</p>
+    <div>
+      <h2>Where this shows up</h2>
+      <p><strong>Games and generated worlds.</strong> Maxim Gumin published the WaveFunctionCollapse algorithm in 2016, building tile maps and textures from small examples. Game makers took it up quickly; Oskar Stålberg's work on <em>Bad North</em> and <em>Townscaper</em> is the best-known case of it shaping places people walk around in.</p>
+      <p><strong>Puzzles you already solve this way.</strong> Filling in the square with the fewest candidates first is how most people do Sudoku. Constraint-solving textbooks call it the <em>minimum remaining values</em> heuristic. Striking candidates from neighbours until nothing changes is constraint propagation, the same family as the arc-consistency methods in those books.</p>
+      <p><strong>The name is a borrowed picture.</strong> Nothing quantum happens here. "Collapse" borrows the image of something held in many states settling into one when it is looked at. Here, the looking is a random draw, and the settling spreads to the neighbours.</p>
+    </div>
+  </section>
+</article>
+<footer class="foot">A study page. The model runs entirely in your browser; nothing is sent anywhere.</footer>
+</main>
+
+<script src="wfc.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
