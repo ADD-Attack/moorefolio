@@ -4,7 +4,7 @@
   const LM = window.LampsModel, M = LM.room, PRESETS = window.LAMP_PRESETS, sim = LM.create();
   const q = new URLSearchParams(location.search);
   const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let held = q.has('hold'), playing = !held && !reduced, timer = null, sel = null, hover = -1;
+  let scene = 'original', held = q.has('hold'), playing = !held && !reduced, timer = null, sel = null, hover = -1;
   const MAX_K = 120, BOUNCE_MS = 380, CHN = ['Red', 'Green', 'Blue'], LINE = ['#ff6b5e', '#62dd85', '#6aa8ff'];
   const LUM = [0.2126, 0.7152, 0.0722];
   const $ = id => document.getElementById(id);
@@ -29,20 +29,31 @@
       const ux = a[0] - px, uy = a[1] - py, vx = b[0] - px, vy = b[1] - py;
       PHI[(gy * GW + gx) * M.N + j] = Math.abs(Math.atan2(ux * vy - uy * vx, ux * vx + uy * vy)); }
   }
-  const tone = v => 1 - Math.exp(-1.5 * Math.max(0, v));
-  const shade = t => Math.round(9 + (255 - 9) * Math.pow(t, 1.25));
+  // Display mapping (picture only; the model and every readout stay exact):
+  // white point W = brightest non-lamp patch value in any colour this bounce; a value x is drawn at log(1 + K·x/W) / log(1 + K) of full brightness.
+  // The interior glow uses the same curve against its own brightest point, capped at GLOW_CAP so walls stay brightest.
+  const K = 8, LK = Math.log1p(K), GLOW_CAP = 0.4;
+  const curve = t => Math.log1p(K * Math.min(1, Math.max(0, t))) / LK;
+  const shade = t => Math.round(9 + (255 - 9) * curve(t));
+  let white = 0;
   const AIM_R = 0.7;
   function lampPx(L) { return toPx(L.pos); }
   function handlePx(L) { return toPx([L.pos[0] + AIM_R * Math.cos(L.aim), L.pos[1] + AIM_R * Math.sin(L.aim)]); }
 
   function drawRoom() {
     const X = sim.x;
-    // exposure: the picture is scaled by the brightest channel's mean patch value, so a dim bulb and a runaway room both stay readable (picture only)
-    let ex = 0; for (let c = 0; c < 3; c++) ex = Math.max(ex, X[c].reduce((s, t) => s + t, 0) / M.N); ex = ex > 0 ? 1 / ex : 1;
+    // white point: the brightest patch in any colour that is not itself a lamp (a ceiling panel may draw past white; no other patch clips)
+    const lampPatch = new Set(sim.lamps.filter(L => L.type === 'panel').map(L => L.patch));
+    white = 0; for (let c = 0; c < 3; c++) for (let j = 0; j < M.N; j++) if (!lampPatch.has(j)) white = Math.max(white, X[c][j]);
+    if (!(white > 0)) for (let c = 0; c < 3; c++) for (let j = 0; j < M.N; j++) white = Math.max(white, X[c][j]);
+    const ex = white > 0 ? 1 / white : 1;
+    const F = new Float32Array(GW * GH * 3); let fmax = 0;
+    for (let i = 0; i < GW * GH; i++) { const o = i * M.N;
+      for (let c = 0; c < 3; c++) { let s = 0; const x = X[c]; for (let j = 0; j < M.N; j++) s += x[j] * PHI[o + j]; F[i * 3 + c] = s; if (s > fmax) fmax = s; } }
+    const gk = fmax > 0 ? 1 / fmax : 1;
     for (let i = 0; i < GW * GH; i++) {
-      const o = i * M.N, px = [0, 0, 0];
-      for (let c = 0; c < 3; c++) { let s = 0; const x = X[c]; for (let j = 0; j < M.N; j++) s += x[j] * PHI[o + j]; px[c] = shade(tone(s / Math.PI / 2 * ex * 0.9)); }
-      img.data[i * 4] = px[0]; img.data[i * 4 + 1] = px[1]; img.data[i * 4 + 2] = px[2]; img.data[i * 4 + 3] = 255;
+      for (let c = 0; c < 3; c++) img.data[i * 4 + c] = Math.round(9 + (255 - 9) * GLOW_CAP * curve(F[i * 3 + c] * gk));
+      img.data[i * 4 + 3] = 255;
     }
     off.getContext('2d').putImageData(img, 0, 0);
     cx.fillStyle = '#08090c'; cx.fillRect(0, 0, cv.width, cv.height);
@@ -62,7 +73,7 @@
     // patches, coloured by the light they carry
     const panels = new Set(sim.lamps.filter(L => L.type === 'panel').map(L => L.patch));
     for (let j = 0; j < M.N; j++) { const { a, b } = M.PATCHES[j], A = toPx(a), B = toPx(b);
-      cx.strokeStyle = `rgb(${[0, 1, 2].map(c => shade(tone(X[c][j] * ex * .6))).join(',')})`; cx.lineWidth = panels.has(j) ? 13 : 9; cx.lineCap = 'butt';
+      cx.strokeStyle = `rgb(${[0, 1, 2].map(c => shade(X[c][j] * ex)).join(',')})`; cx.lineWidth = panels.has(j) ? 20 : 15; cx.lineCap = 'butt';
       cx.beginPath(); cx.moveTo(...A); cx.lineTo(...B); cx.stroke();
       if (j === hover) { cx.strokeStyle = '#ece7dc'; cx.lineWidth = 2; cx.strokeRect(Math.min(A[0], B[0]) - 7, Math.min(A[1], B[1]) - 7, Math.abs(A[0] - B[0]) + 14, Math.abs(A[1] - B[1]) + 14); }
       cx.strokeStyle = '#08090c'; cx.lineWidth = 2; cx.beginPath(); cx.arc(...A, .5, 0, 7); cx.stroke(); }
@@ -137,17 +148,21 @@
   function render() {
     const r = readouts();
     $('r-k').textContent = r.k; $('r-lum').textContent = r.lum;
-    $('agree').className = 'agree ' + r.agree.s; $('agree').textContent = r.agree.t;
+    $('verdict').className = 'verdict ' + r.agree.s; $('agree').textContent = r.agree.t;
     ['r', 'g', 'b'].forEach((n, c) => { const row = $('v-' + n), d = r.channels[c];
       row.querySelector('.rho').textContent = d.rho; row.querySelector('.ratio').textContent = d.ratio;
-      for (const t of ['a', 'b', 'c']) { const td = row.querySelector('.' + t); td.className = t + ' ' + d[t].s; td.querySelector('.t').textContent = d[t].t; } });
+      for (const t of ['a', 'b', 'c']) { const td = row.querySelector('.' + t); td.className = t + ' ' + d[t].s; td.querySelector('.t').textContent = d[t].t; }
+      const pill = $('p-' + n); pill.className = d.b.s; pill.querySelector('.t').textContent = d.b.s === 'yes' ? 'settles' : 'runs away'; });
+    $('patch-hud').hidden = hover < 0;
     if (hover >= 0) { const P = M.PATCHES[hover]; $('r-patch').textContent = (hover + 1) + ' · ' + P.s;
       $('r-pr').textContent = fx(sim.x[0][hover], 3); $('r-pg').textContent = fx(sim.x[1][hover], 3); $('r-pb').textContent = fx(sim.x[2][hover], 3); }
     const sf = sim.surfaces;
     for (const s of M.SURFACES) { $('s-' + s).value = sf[s].refl; $('c-' + s).value = hex(sf[s].color); $('o-' + s).textContent = sf[s].refl.toFixed(2); }
     renderLamps();
-    $('b-play').textContent = playing ? 'Pause' : 'Play';
-    drawRoom(); drawChart();
+    const pb = $('b-play'); pb.classList.toggle('on', playing); pb.querySelector('.lbl').textContent = playing ? 'Pause' : (sim.k >= MAX_K ? 'Replay' : 'Play');
+    pb.setAttribute('aria-label', (playing ? 'Pause' : 'Play') + ' the bounces');
+    document.querySelectorAll('[data-preset]').forEach(b => b.setAttribute('aria-pressed', b.dataset.preset === scene));
+    drawRoom(); drawChart(); $('r-white').textContent = fx(white, 4);
   }
   const TNAME = { bulb: 'Bulb', spotlight: 'Spotlight', laser: 'Laser', panel: 'Ceiling panel' };
   function renderLamps() {
@@ -178,7 +193,7 @@
     $('s-' + s).oninput = e => restart(() => sim.setSurface(s, { refl: +(+e.target.value).toFixed(2) }));
     $('c-' + s).oninput = e => restart(() => sim.setSurface(s, { color: unhex(e.target.value) }));
   }
-  document.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => restart(() => { sim.reset(PRESETS[b.dataset.preset]); sel = null; }));
+  document.querySelectorAll('[data-preset]').forEach(b => b.onclick = () => restart(() => { sim.reset(PRESETS[b.dataset.preset]); scene = b.dataset.preset; sel = null; }));
   const ADD = { bulb: { type: 'bulb', pos: [4, 2.5], color: [1, 0.85, 0.6] }, spotlight: { type: 'spotlight', pos: [2, 1.2], aim: Math.PI / 4, color: [0.5, 0.8, 1] }, laser: { type: 'laser', pos: [6, 3.8], aim: Math.PI * 1.15, color: [1, 0.3, 0.3] } };
   document.querySelectorAll('[data-add]').forEach(b => b.onclick = () => restart(() => { sel = sim.addLamp(ADD[b.dataset.add]); }));
   const setSel = patch => sel != null && restart(() => sim.setLamp(sel, patch));
@@ -240,8 +255,8 @@
     advanceFrames(n) { return this.advanceTo(sim.k + n); },
     hold(on = true) { held = on; if (on) playing = false; render(); },
     play() { held = false; playing = true; render(); },
-    reset(scene) { sim.reset(scene); sel = null; render(); return sim.state(); },
-    preset(name) { sim.reset(PRESETS[name]); sel = null; render(); return sim.state(); },
+    reset(s) { sim.reset(s); scene = null; sel = null; render(); return sim.state(); },
+    preset(name) { sim.reset(PRESETS[name]); scene = name; sel = null; render(); return sim.state(); },
     addLamp(L) { const id = sim.addLamp(L); render(); return id; },
     removeLamp(id) { sim.removeLamp(id); render(); },
     setLamp(id, patch) { sim.setLamp(id, patch); render(); },

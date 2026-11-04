@@ -10,50 +10,44 @@
 </head>
 <body>
 <header class="top">
-  <p class="eyebrow">From Einstein's notebook · the room, with many lamps</p>
   <h1>Many lamps</h1>
-  <p class="lede">The same room and the same theorem as before. Now you can add bulbs, spotlights and lasers in any colour, at any brightness, anywhere inside. The walls have colours too, so the light picks up colour as it bounces.</p>
+  <p class="eyebrow">From Einstein's notebook, in colour</p>
 </header>
 
 <main>
 <section class="stage" aria-label="Live demonstration">
-  <div class="scene">
-    <canvas id="room" width="960" height="600" tabindex="0" aria-label="Cross-section of an 8 by 5 metre room with lamps; walls glow with the coloured light they carry. Drag a lamp to move it, drag its small handle to aim it. Arrow keys move the selected lamp."></canvas>
-    <div class="hud hud-tl">
-      <div><span class="k">Bounce</span> <b id="r-k">0</b></div>
-      <div><span class="k">Brightness in the room</span> <b id="r-lum">—</b></div>
+  <!-- Rank 1–3: the room, its transport, its verdict. One block. -->
+  <div class="room-block">
+    <div class="scene">
+      <canvas id="room" width="960" height="600" tabindex="0" aria-label="Cross-section of an 8 by 5 metre room with lamps; walls glow with the coloured light they carry. Drag a lamp to move it, drag its small handle to aim it. Arrow keys move the selected lamp."></canvas>
+      <div class="patch-tip" id="patch-hud" hidden>
+        <b id="r-patch">—</b>
+        <span class="cr">R <b id="r-pr">—</b></span> <span class="cg">G <b id="r-pg">—</b></span> <span class="cb">B <b id="r-pb">—</b></span>
+      </div>
     </div>
-    <div class="hud hud-tr" id="patch-hud">
-      <div><span class="k">Patch</span> <b id="r-patch">point at a wall</b></div>
-      <div class="rgb"><span class="cr">R <b id="r-pr">—</b></span> <span class="cg">G <b id="r-pg">—</b></span> <span class="cb">B <b id="r-pb">—</b></span></div>
+
+    <div class="transport" role="group" aria-label="Run the bounces">
+      <button id="b-play" class="play" type="button"><span class="ico" aria-hidden="true"></span><span class="lbl">Play</span></button>
+      <button id="b-step" class="sec" type="button" aria-label="Advance one bounce">Step</button>
+      <button id="b-reset" class="sec" type="button">Reset</button>
+      <p class="count"><span>Bounce</span> <b id="r-k">0</b></p>
     </div>
-    <p class="hint">Drag a lamp to move it. Drag its small ring to aim it. Arrow keys nudge the selected lamp.</p>
+
+    <div class="verdict" id="verdict" aria-live="polite">
+      <p class="agree" id="agree">—</p>
+      <ul class="pills">
+        <li id="p-r"><i></i><span class="n">Red</span> <span class="t">—</span></li>
+        <li id="p-g"><i></i><span class="n">Green</span> <span class="t">—</span></li>
+        <li id="p-b"><i></i><span class="n">Blue</span> <span class="t">—</span></li>
+      </ul>
+    </div>
   </div>
 
-  <div class="side">
-    <div class="agree" id="agree" aria-live="polite">—</div>
-    <table class="vt" aria-label="The theorem's three tests, run separately for each colour">
-      <thead><tr><th scope="col">Colour</th><th scope="col">ρ(A)</th><th scope="col">Shrink</th><th scope="col">(a) settles</th><th scope="col">(b) ρ&nbsp;&lt;&nbsp;1</th><th scope="col">(c) certificate</th></tr></thead>
-      <tbody>
-        <tr id="v-r"><th scope="row" class="cr">Red</th><td class="rho">—</td><td class="ratio">—</td><td class="a"><span class="dot"></span><span class="t">—</span></td><td class="b"><span class="dot"></span><span class="t">—</span></td><td class="c"><span class="dot"></span><span class="t">—</span></td></tr>
-        <tr id="v-g"><th scope="row" class="cg">Green</th><td class="rho">—</td><td class="ratio">—</td><td class="a"><span class="dot"></span><span class="t">—</span></td><td class="b"><span class="dot"></span><span class="t">—</span></td><td class="c"><span class="dot"></span><span class="t">—</span></td></tr>
-        <tr id="v-b"><th scope="row" class="cb">Blue</th><td class="rho">—</td><td class="ratio">—</td><td class="a"><span class="dot"></span><span class="t">—</span></td><td class="b"><span class="dot"></span><span class="t">—</span></td><td class="c"><span class="dot"></span><span class="t">—</span></td></tr>
-      </tbody>
-    </table>
-
-    <figure class="chart">
-      <canvas id="chart" width="560" height="220" aria-label="Light added per bounce for each colour, log scale"></canvas>
-      <figcaption>Light added per bounce, one line per colour, log scale. Dashed lines fall at exactly ρ(A) per bounce for each colour.</figcaption>
-    </figure>
-
-    <div class="controls">
-      <div class="buttons">
-        <button id="b-play" type="button">Pause</button>
-        <button id="b-step" type="button">One bounce</button>
-        <button id="b-reset" type="button">Reset</button>
-      </div>
+  <!-- Rank 4: controls, each family with what it controls. -->
+  <div class="panel">
+    <div class="group">
+      <h2 class="gh">Scene</h2>
       <div class="presets">
-        <span>Scenes:</span>
         <button type="button" data-preset="original">Original room</button>
         <button type="button" data-preset="bleed">Colour bleed</button>
         <button type="button" data-preset="mixed">Mixed lamps</button>
@@ -61,9 +55,9 @@
       </div>
     </div>
 
-    <div class="controls lamps">
-      <div class="lamp-head"><b>Lamps</b>
-        <span class="add"><button type="button" data-add="bulb">+ Bulb</button><button type="button" data-add="spotlight">+ Spotlight</button><button type="button" data-add="laser">+ Laser</button></span></div>
+    <div class="group lamps">
+      <div class="lamp-head"><h2 class="gh">Lamps</h2>
+        <span class="add"><button type="button" data-add="bulb">+ Bulb</button><button type="button" data-add="spotlight">+ Spot</button><button type="button" data-add="laser">+ Laser</button></span></div>
       <div class="chips" id="chips" role="list"></div>
       <div class="editor" id="editor">
         <label>Type <select id="l-type"><option value="bulb">Bulb</option><option value="spotlight">Spotlight (40° cone)</option><option value="laser">Laser</option><option value="panel">Ceiling panel (the original lamp)</option></select><span></span></label>
@@ -72,27 +66,50 @@
         <label>Aim <input type="range" id="l-aim" min="0" max="359" step="1"><output id="o-aim"></output></label>
         <button type="button" id="l-remove" class="ghost">Remove this lamp</button>
       </div>
+      <p class="hint">In the room: drag a lamp to move it, drag its small ring to aim it. Arrow keys nudge the selected lamp.</p>
     </div>
 
-    <div class="controls">
-      <fieldset>
-        <legend>Surfaces <span>(reflectivity 0 to 1.50, and a colour; each colour channel reflects reflectivity × that channel)</span></legend>
-        <label class="surf">Floor <input type="range" id="s-floor" min="0" max="1.5" step="0.01"><input type="color" id="c-floor" aria-label="Floor colour"><output id="o-floor"></output></label>
-        <label class="surf">Left wall <input type="range" id="s-left" min="0" max="1.5" step="0.01"><input type="color" id="c-left" aria-label="Left wall colour"><output id="o-left"></output></label>
-        <label class="surf">Ceiling <input type="range" id="s-ceiling" min="0" max="1.5" step="0.01"><input type="color" id="c-ceiling" aria-label="Ceiling colour"><output id="o-ceiling"></output></label>
-        <label class="surf">Right wall <input type="range" id="s-right" min="0" max="1.5" step="0.01"><input type="color" id="c-right" aria-label="Right wall colour"><output id="o-right"></output></label>
-      </fieldset>
-    </div>
+    <fieldset class="group">
+      <legend class="gh">Surfaces</legend>
+      <p class="sub">Reflectivity 0 to 1.50, and a colour. Each colour channel reflects reflectivity × that channel. Only these decide whether a colour settles.</p>
+      <label class="surf">Ceiling <input type="range" id="s-ceiling" min="0" max="1.5" step="0.01"><input type="color" id="c-ceiling" aria-label="Ceiling colour"><output id="o-ceiling"></output></label>
+      <label class="surf">Left wall <input type="range" id="s-left" min="0" max="1.5" step="0.01"><input type="color" id="c-left" aria-label="Left wall colour"><output id="o-left"></output></label>
+      <label class="surf">Right wall <input type="range" id="s-right" min="0" max="1.5" step="0.01"><input type="color" id="c-right" aria-label="Right wall colour"><output id="o-right"></output></label>
+      <label class="surf">Floor <input type="range" id="s-floor" min="0" max="1.5" step="0.01"><input type="color" id="c-floor" aria-label="Floor colour"><output id="o-floor"></output></label>
+    </fieldset>
   </div>
 </section>
+
+<!-- Rank 5: the numbers behind the verdict. -->
+<details class="telemetry" open>
+  <summary><h2>The numbers</h2> <span>ρ, shrink factor and the theorem's three tests, per colour</span></summary>
+  <div class="tele-grid">
+    <div>
+      <table class="vt" aria-label="The theorem's three tests, run separately for each colour">
+        <thead><tr><th scope="col">Colour</th><th scope="col">ρ(A)</th><th scope="col">Shrink</th><th scope="col">(a) settles</th><th scope="col">(b) ρ&nbsp;&lt;&nbsp;1</th><th scope="col">(c) certificate</th></tr></thead>
+        <tbody>
+          <tr id="v-r"><th scope="row" class="cr">Red</th><td class="rho">—</td><td class="ratio">—</td><td class="a"><span class="dot"></span><span class="t">—</span></td><td class="b"><span class="dot"></span><span class="t">—</span></td><td class="c"><span class="dot"></span><span class="t">—</span></td></tr>
+          <tr id="v-g"><th scope="row" class="cg">Green</th><td class="rho">—</td><td class="ratio">—</td><td class="a"><span class="dot"></span><span class="t">—</span></td><td class="b"><span class="dot"></span><span class="t">—</span></td><td class="c"><span class="dot"></span><span class="t">—</span></td></tr>
+          <tr id="v-b"><th scope="row" class="cb">Blue</th><td class="rho">—</td><td class="ratio">—</td><td class="a"><span class="dot"></span><span class="t">—</span></td><td class="b"><span class="dot"></span><span class="t">—</span></td><td class="c"><span class="dot"></span><span class="t">—</span></td></tr>
+        </tbody>
+      </table>
+      <p class="tele-line"><span>Brightness in the room (sum of all patches, luminance-weighted)</span> <b id="r-lum">—</b></p>
+      <p class="tele-line"><span>Brightest non-lamp patch value this bounce (the picture's white point W)</span> <b id="r-white">—</b></p>
+    </div>
+    <figure class="chart">
+      <canvas id="chart" width="560" height="220" aria-label="Light added per bounce for each colour, log scale"></canvas>
+      <figcaption>Light added per bounce, one line per colour, log scale. Dashed lines fall at exactly ρ(A) per bounce for each colour.</figcaption>
+    </figure>
+  </div>
+</details>
 
 <article class="notes">
 <section>
   <p class="num">01</p>
   <h2>What you are looking at</h2>
-  <p>The room from the first page: 8 metres by 5, its boundary cut into 26 one-metre patches. Each lamp throws its light onto the patches once. That is bounce 1. After that the room takes over, and every bounce each patch passes on what reached it.</p>
+  <p>The room from the first page: 8 metres by 5, its boundary cut into 26 one-metre patches. Now you can add bulbs, spotlights and lasers in any colour, at any brightness, anywhere inside, and the walls have colours too. Each lamp throws its light onto the patches once. That is bounce 1. After that the room takes over, and every bounce each patch passes on what reached it.</p>
   <p>Colour runs as three separate rooms that share one shape: a red one, a green one and a blue one. A red wall reflects plenty of red and little else. Light that leaves it lands pinkish on the white walls next to it. That is colour bleeding, and the <em>Colour bleed</em> scene shows it arriving bounce by bounce.</p>
-  <p>The table runs the theorem's three tests once per colour. In <em>Channels split</em> the walls reflect more red than they receive, so red runs away while green and blue settle. The theorem is saying three independent things about three independent rooms.</p>
+  <p>The verdict under the room runs the theorem once per colour. In <em>Channels split</em> the walls reflect more red than they receive, so red runs away while green and blue settle. The theorem is saying three independent things about three independent rooms.</p>
 </section>
 
 <section>
@@ -102,7 +119,8 @@
   <p><b>Colour.</b> Each channel c has its own matrix A<sub>c</sub> = diag(ρ<sub>c</sub>)F, where a surface's ρ<sub>c</sub> is its reflectivity times its colour in that channel. F is the exact crossed-strings form-factor matrix from the first page. Each channel runs its own iteration, and each gets its own ρ, certificate and verdicts.</p>
   <p><b>Lamps.</b> A lamp's light lands on the patches according to a distribution d, the share falling on each patch, with d ≥ 0 and Σd = 1. A lamp adds brightness × colour<sub>c</sub> × d to e<sub>c</sub>. From any point inside, the 26 patches split the full circle of directions between them. A <b>bulb</b> sends equal light in every direction, so each patch gets its angle's share of the full turn, and every patch gets some. A <b>spotlight</b> does the same across a 40° cone (20° each side of its aim), and only patches inside the cone get light. A <b>laser</b> puts all of it on the one patch its beam hits. The <b>ceiling panel</b> is the first page's lamp: a glowing patch whose own light is bounce 1.</p>
   <p><b>What the numbers do.</b> The Original room is the first page's default reproduced bit for bit: ρ = 0.6939 in all three colours, and by bounce 30 the shrink factor reads 0.6939 too. Because every step is linear, two lamps together give exactly the sum of each lamp alone (here to within 2 × 10⁻¹⁶). In <em>Channels split</em> every surface reflects 1.10 of red, 0.88 of green and 0.605 of blue, so ρ is 1.10, 0.88 and 0.605.</p>
-  <p class="aside">Honest limits: lamps are pure emitters. They don't block or reflect light. Direction matters only on the first flight; after that, light is tracked per patch, not per ray. The cone and beam drawn on the room are pictures of that first flight. The interior glow is a picture drawn from the patch values, auto-exposed to the brightest colour so dim and runaway rooms both stay visible; it is not part of the model, and the HUD shows the true values. Reflectivity above 1 isn't physical; it is here so you can cross the boundary.</p>
+  <p><b>How the picture maps brightness.</b> The numbers are exact; the picture is a display of them. Each bounce, the brightest patch in any colour, not counting patches that are themselves lamps, becomes the screen's white point W. A patch with value x in a colour is drawn at log(1 + 8x/W) ÷ log 9 of full brightness in that colour. So no wall patch is ever clipped, and a patch with more light always looks brighter. Only a ceiling panel, which is a lamp, can go past white. The glow inside the room is drawn on the same curve from the light arriving at each point, scaled to its own brightest point and capped at 40% of full brightness so the walls, which carry the numbers, stay the brightest things in the picture. A runaway room never washes out, because W grows with it. Hover or tap a wall to read its true values.</p>
+  <p class="aside">Honest limits: lamps are pure emitters. They don't block or reflect light. Direction matters only on the first flight; after that, light is tracked per patch, not per ray. The cone and beam drawn on the room are pictures of that first flight. Reflectivity above 1 isn't physical; it is here so you can cross the boundary.</p>
 </section>
 
 <section>
@@ -110,12 +128,12 @@
   <h2>Things to try</h2>
   <p><b>Superposition.</b> Put a red laser and a blue spotlight on the same wall. Where they overlap, the patch reads the red one plus the blue one, exactly. Light adds.</p>
   <p><b>Brightness can't break it.</b> In the Original room, turn the lamp up to 3. Everything gets three times brighter, and the shrink factor and every verdict stay where they were, because those belong to the room.</p>
-  <p><b>A colour that runs away.</b> Paint one wall pure red and push its reflectivity past 1. Watch the red row of the table go red while green and blue stay green. Or start from <em>Channels split</em> and pull all four reflectivities down to 0.90: red settles too.</p>
+  <p><b>A colour that runs away.</b> Paint one wall pure red and push its reflectivity past 1. Watch the red verdict turn while green and blue stay settled. Or start from <em>Channels split</em> and pull all four reflectivities down to 0.90: red settles too.</p>
 </section>
 </article>
 </main>
 
-<footer><p>Spider School · W-Ex11-X, an owner commission beside W-Ex11 · model on <code>window.__ex11x</code></p></footer>
+<footer><p>Spider School · W-Ex11-X-R, the Many lamps page re-ranked · model on <code>window.__ex11x</code></p></footer>
 <script src="room-model.js"></script>
 <script src="lamps-model.js"></script>
 <script src="presets.js"></script>
