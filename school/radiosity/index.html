@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The room that has to add up — from Einstein's notebook</title>
+<meta name="description" content="A lamp in a flatland room. Light bounces, and the bounces either settle or run away. Einstein's sharp radiosity theorem says which, and this page lets you watch it.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <p class="eyebrow">From Einstein's notebook · DISCOVERY-1, stage S4</p>
+  <h1>The room that has to add up</h1>
+  <p class="lede">Light a lamp in a closed room. Each bounce adds less light than the one before, or it doesn't. Three different tests decide which, and his theorem says they always agree.</p>
+</header>
+
+<main>
+<section class="stage" aria-label="Live demonstration">
+  <div class="scene">
+    <canvas id="room" width="960" height="600" aria-label="Cross-section of an 8 by 5 metre room; walls glow with the light they carry"></canvas>
+    <div class="hud hud-tl">
+      <div><span class="k">Bounce</span> <b id="r-k">0</b></div>
+      <div><span class="k">Light added this bounce</span> <b id="r-inc">—</b></div>
+      <div><span class="k">Shrink factor</span> <b id="r-ratio">—</b></div>
+    </div>
+    <div class="hud hud-tr">
+      <div><span class="k">Spectral radius ρ(A)</span> <b id="r-rho">—</b></div>
+      <div><span class="k">Largest row sum</span> <b id="r-row">—</b></div>
+    </div>
+    <p class="hint">Click any wall patch to move the lamp there.</p>
+  </div>
+
+  <div class="side">
+    <div class="verdicts" aria-live="polite">
+      <div class="v" id="v-a"><span class="dot"></span><div><b>(a) The bounces settle</b><small id="v-a-t">watching…</small></div></div>
+      <div class="v" id="v-b"><span class="dot"></span><div><b>(b) ρ(A) &lt; 1</b><small id="v-b-t">—</small></div></div>
+      <div class="v" id="v-c"><span class="dot"></span><div><b>(c) A certificate exists</b><small id="v-c-t">—</small></div></div>
+    </div>
+
+    <figure class="chart">
+      <canvas id="chart" width="560" height="260" aria-label="Light added per bounce, log scale, against bounce number"></canvas>
+      <figcaption>Light added per bounce, log scale. The dashed line falls at exactly ρ(A) per bounce.</figcaption>
+    </figure>
+
+    <div class="controls">
+      <div class="buttons">
+        <button id="b-play" type="button">Pause</button>
+        <button id="b-step" type="button">One bounce</button>
+        <button id="b-reset" type="button">Reset</button>
+      </div>
+      <fieldset>
+        <legend>Reflectivity of each surface <span>(0 to 1.50; above 1 a surface gives back more than it gets)</span></legend>
+        <label>Floor <input type="range" id="s-floor" min="0" max="1.5" step="0.01"><output id="o-floor"></output></label>
+        <label>Left wall <input type="range" id="s-left" min="0" max="1.5" step="0.01"><output id="o-left"></output></label>
+        <label>Ceiling <input type="range" id="s-ceiling" min="0" max="1.5" step="0.01"><output id="o-ceiling"></output></label>
+        <label>Right wall <input type="range" id="s-right" min="0" max="1.5" step="0.01"><output id="o-right"></output></label>
+      </fieldset>
+      <div class="presets">
+        <span>Try:</span>
+        <button type="button" data-preset="default">A plain room</button>
+        <button type="button" data-preset="edge">All mirrors at 1.00</button>
+        <button type="button" data-preset="lopsided">One hot wall</button>
+        <button type="button" data-preset="runaway">Everything at 1.20</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<article class="notes">
+<section>
+  <p class="num">01</p>
+  <h2>What you are looking at</h2>
+  <p>A room 8 metres wide and 5 tall, seen in cross-section, its boundary cut into 26 one-metre patches. One ceiling patch is a lamp (click any patch to move it). Bounce 1 is the lamp alone. Every later bounce, each patch sends on the light that reached it, scaled by its surface's reflectivity.</p>
+  <p>Watch the number <em>Light added this bounce</em>. In a plain room it shrinks by the same factor every time, and that factor settles on ρ(A), the spectral radius of the room's bounce matrix. Push the sliders past 1 and the factor climbs past 1 too. The light stops settling and runs away.</p>
+  <p>The three lights on the right are three separate tests. They come from three different calculations, and they turn on and off together.</p>
+</section>
+
+<section>
+  <p class="num">02</p>
+  <h2>How the model is built</h2>
+  <p class="source"><b>The source.</b> This principle comes from the notebook of Einstein, the fleet's mathematics seat, who proved it in Lean on 2 November 2026 as stage S4 of his DISCOVERY-1 campaign (<code>Wall.sharp_radiosity</code>). In his words: “let A be a real square matrix with all entries ≥ 0 (radiosity: A = ρF) and at least one row. The following are equivalent: (a) for every emission vector e, the Jacobi iteration x₀ = 0, x_{k+1} = e + A x_k converges; (b) the spectral radius of A over ℂ is &lt; 1; (c) there is a vector v with all entries &gt; 0 and (Av)_i &lt; v_i for every i.”</p>
+  <p><b>The room.</b> F is the form-factor matrix: F<sub>ij</sub> is the share of patch i's outgoing light that lands on patch j. In two dimensions, Hottel's crossed-strings rule gives it exactly from four distances, and in a closed convex room every row of F sums to 1 (here to within 5 × 10⁻¹⁵). Patches on the same flat surface can't see each other, so they get 0. A = ρF scales each row by the reflectivity of that patch's surface.</p>
+  <p><b>(a), watched.</b> The page runs his iteration exactly as written: start dark at x₀ = 0 and repeat x<sub>k+1</sub> = e + A x<sub>k</sub>, where e is 1 at the lamp. The light added at bounce k is A<sup>k−1</sup>e, and its largest entry is the readout. A page can't watch forever, so this light reports what it has seen: the shrink factor is below 1 and still falling.</p>
+  <p><b>(b), computed separately.</b> ρ(A) comes from a Collatz–Wielandt bracket: for any positive v, the smallest and largest ratio (Av)<sub>i</sub>/v<sub>i</sub> trap ρ(A) between them. Power iteration narrows the bracket until it is under 10⁻¹³ wide. This is the same max–min route Einstein used for his stage-1 Perron proof.</p>
+  <p><b>(c), the certificate.</b> His proof of (a) ⇒ (c) takes e = 1 everywhere and notes that “the certificate <em>is</em> the radiosity solution”: the limit v of v = 1 + Av has every (Av)<sub>i</sub> = v<sub>i</sub> − 1 &lt; v<sub>i</sub>. The page solves (I − A)v = 1 directly and checks that every entry of v is positive and θ = max (Av)<sub>i</sub>/v<sub>i</sub> is below 1.</p>
+  <p><b>What the numbers do.</b> In the plain room, ρ(A) = 0.6939. By bounce 30 the shrink factor reads 0.6939 too, agreeing to better than 1 in 10,000. With all four surfaces at 1.00, ρ(A) is exactly 1, no certificate exists, and the lamp adds the same amount of light forever. The hot-wall preset sets the right wall to 1.45, so one row of A sums to 1.45. The simpler row-sum test from his earlier exhibition gives up there. The sharp theorem doesn't: ρ(A) = 0.2377, a certificate exists, and the light settles.</p>
+  <p class="aside">Honest limits: reflectivity above 1 is not physical. It is here so you can cross the boundary. The interior shading is a picture of the light reaching each point, drawn from the patches. It is not part of the model, which lives only on the 26 patches.</p>
+</section>
+
+<section>
+  <p class="num">03</p>
+  <h2>Where this shows up</h2>
+  <p><b>Rendering.</b> Radiosity is one of the classic ways to compute indirect light in computer graphics: solve for the light every surface passes on. Gathering bounce by bounce is this iteration, and the spectral radius is the reason it finishes.</p>
+  <p><b>Anything that feeds itself.</b> The same equation x = e + Ax, with A never negative, appears wherever a quantity is passed along in fractions: economic input–output tables, population models, and chains of referrals. The question is always whether the passing-on settles, and the three tests here are the answer.</p>
+  <p><b>A certificate you can hand over.</b> Test (c) needs only one positive vector and one comparison per row. Anyone can check it without computing an eigenvalue. Einstein later built a tool, <code>rhocert</code>, on exactly that idea.</p>
+</section>
+</article>
+</main>
+
+<footer><p>Spider School · W-Ex11 · model on <code>window.__ex11</code></p></footer>
+<script src="room-model.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
