@@ -189,7 +189,7 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 .gnav .btn,.gextra .btn{min-height:44px;padding:0 16px}
 .gskip{min-height:44px;border:0;background:none;color:var(--ink-2);text-decoration:underline;font-size:15px;cursor:pointer;padding:0 4px}
 .gx:focus-visible,.gskip:focus-visible{outline:3px solid var(--navy)}
-.gask{border-top:1px solid #d9d2c3;margin-top:12px;padding-top:10px}
+.gask{margin:0}
 .gask label{display:block;font:700 12px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}
 .glog{margin:0 0 8px;display:flex;flex-direction:column;gap:6px}.glog:empty{display:none}
 .glog p{margin:0;padding:8px 10px;border-radius:10px;font-size:15px;line-height:1.4;max-width:88%;overflow-wrap:break-word}
@@ -345,23 +345,18 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 
 <footer><div class="wrap"><span><b>Concept demo by Moorefolio.</b> Not the shop's live site.</span><span>Sample calls, names, vendors, applicants and camera views are illustrations.</span></div></footer>
 
-<button class="voice-orb" id="orb" type="button" aria-label="Guide me: open the page tour" aria-controls="guide">
+<button class="voice-orb" id="orb" type="button" aria-label="Ask the guide: open the chat" aria-controls="guide">
   <span class="orb" aria-hidden="true"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>
-  <span class="lbl"><b>Guide me</b><span>Shop tour</span></span>
+  <span class="lbl"><b>Ask the guide</b><span>Any question</span></span>
   <span class="dotlive" aria-hidden="true"></span>
 </button>
 <div class="guide" id="guide" role="dialog" aria-modal="false" aria-labelledby="gtitle" hidden>
   <button class="gx" id="gx" type="button" aria-label="Close the guide">✕</button>
-  <p class="gstep" id="gstep"></p>
-  <h3 id="gtitle"></h3>
-  <p class="gtext" id="gtext"></p>
-  <div class="gextra" id="gextra"></div>
-  <div class="gnav"><button class="gskip" id="gskip" type="button">Skip tour</button><span class="gsp"></span><button class="btn gback" id="gback" type="button">Back</button><button class="btn primary gnext" id="gnext" type="button">Next</button></div>
   <div class="gask" id="gask">
-    <label for="gq">Ask the guide anything</label>
+    <h3 id="gtitle">Ask the guide anything</h3>
     <div class="glog" id="glog" aria-live="polite"></div>
     <p class="gdemo" id="gdemo" hidden><span>DEMO</span> Answers come from a demo AI guide. It can’t book, message Charlie or take requests. <button class="gskip" id="gnew" type="button">New conversation</button></p>
-    <form class="gform" id="gform" hidden><input id="gq" type="text" autocomplete="off" maxlength="2000" placeholder="e.g. Can I book for Saturday?"><button class="btn primary" type="submit">Send</button></form>
+    <form class="gform" id="gform" hidden><input id="gq" aria-labelledby="gtitle" type="text" autocomplete="off" maxlength="2000" placeholder="e.g. Can I book for Saturday?"><button class="btn primary" type="submit">Send</button></form>
     <p class="gwait" id="gwait">Connecting to the live guide…</p>
   </div>
 </div>
@@ -533,55 +528,28 @@ $('#run').onclick = () => { const after = $('#run').dataset.ran !== '1'; drawOps
 
 if (fast) (async () => { $('#run').click(); pick = 'late'; await $('#go').onclick(); pick = 'human'; await $('#go').onclick(); pick = 'book';
   document.querySelectorAll('.callers button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.c === 'book'))); await $('#go').onclick(); scrollTo(0, 0); })();
-/* guided tour: hangs off the orb; first visit only, remembered */
+/* guide card: opens from the orb. Holds only "Ask the guide anything" (scripted tour shelved 2026-11-04 per owner; kept in index.pre-askonly.html) */
 (() => {
-  const KEY = 'brocatos-guide-done', g = $('#guide');
-  const S = [
-    { t: 'Hi Charlie', x: 'This page is your shop, reimagined. Twenty seconds, I’ll walk you through it.', next: 'Show me' },
-    { t: 'The front of the shop', x: 'Customers pick a service and send a request. No phone tag: the request texts you back.', at: '#request' },
-    { t: 'The answering agent', x: 'Every call lands in your inbox as a summary. It never quotes a price. Try a sample call.', at: '#call', play: true },
-    { t: 'One screen for the cameras', x: 'Your lot and bays in one view. Tap a feed to make it the big one. These are drawings, not real feeds.', at: '#dash' },
-    { t: 'The back office', x: 'Vendors chased, hiring sorted. It never spends money and never hires. You decide.', at: '.ops' },
-    { t: 'That’s the tour', x: 'Christopher will walk you through what it costs. Nothing here is switched on for real yet. Tap “Guide me” any time to see this again.', next: 'Done' }
-  ];
-  let i = 0, hl = null, qa = false;
-  const mark = () => { try { localStorage.setItem(KEY, '1'); } catch (e) {} };
-  function show(n) {
-    i = Math.max(0, Math.min(S.length - 1, n)); const s = S[i];
-    if (hl) hl.classList.remove('ghl'); hl = null;
-    $('#gstep').textContent = i ? `Step ${i} of ${S.length - 1}` : 'Quick tour';
-    $('#gtitle').textContent = s.t; $('#gtext').textContent = s.x;
-    const ex = $('#gextra'); ex.textContent = '';
-    if (s.play) { const b = el('button', 'btn', 'Play a sample call'); b.type = 'button'; b.onclick = async () => { b.disabled = true; b.textContent = 'Playing…'; await $('#go').onclick(); b.textContent = 'Text sent: see the phone'; const ph = $('#msgs').closest('.phone') || $('#msgs'); scrollTo({ top: ph.getBoundingClientRect().top + scrollY - 14, behavior: qa ? 'instant' : 'smooth' }); }; ex.append(b); }
-    $('#gback').hidden = i === 0; $('#gskip').hidden = i === S.length - 1;
-    $('#gnext').textContent = s.next || 'Next';
-    if (s.at) { hl = $(s.at); hl.classList.add('ghl'); scrollTo({ top: hl.getBoundingClientRect().top + scrollY - 14, behavior: qa ? 'instant' : 'smooth' }); }
-    else if (i === 0) scrollTo({ top: 0 });
-  }
-  function open(n) { g.hidden = false; $('#orb').setAttribute('aria-expanded', 'true'); show(n || 0); $('#gnext').focus({ preventScroll: true }); }
-  function close() { g.hidden = true; mark(); $('#orb').setAttribute('aria-expanded', 'false'); if (hl) hl.classList.remove('ghl'); hl = null; }
-  $('#orb').onclick = () => g.hidden ? open(0) : close();
-  $('#gx').onclick = close; $('#gskip').onclick = close;
-  $('#gback').onclick = () => show(i - 1);
-  $('#gnext').onclick = () => i === S.length - 1 ? close() : show(i + 1);
+  const g = $('#guide');
+  function open() { g.hidden = false; $('#orb').setAttribute('aria-expanded', 'true'); setTimeout(() => { const q = $('#gq'); if (q && !q.closest('[hidden]')) q.focus({ preventScroll: true }); }, 50); }
+  function close() { g.hidden = true; $('#orb').setAttribute('aria-expanded', 'false'); }
+  $('#orb').onclick = () => g.hidden ? open() : close();
+  $('#gx').onclick = close;
   addEventListener('keydown', e => { if (e.key === 'Escape' && !g.hidden) { close(); $('#orb').focus(); } });
-  const P = new URLSearchParams(location.search), q = P.get('guide'); qa = P.has('qa');
-  let seen = false; try { seen = localStorage.getItem(KEY) === '1'; } catch (e) {}
-  if (q != null) open(+q || 0); else if (!seen && !fast) setTimeout(() => open(0), 900);
+  if (new URLSearchParams(location.search).has('guide')) open();
 })();
 /* live guide: text agent (Astra) behind Toolsmith's chess-style gate, contract v2 (ENDPOINT-CONTRACT.md).
    Handshake: GET /v1/health -> POST /v1/session {} -> token; every turn sends it as Bearer. Expired token: re-issue once, quietly.
-   Unreachable / kill switch / any failure: "offline" line + Continue tour. Never a spinner forever, never a fake reply. */
+   Unreachable / kill switch / any failure: "offline" line + Try again. Never a spinner forever, never a fake reply. */
 const GUIDE_RELAY_BASE = 'https://abraham.tail629694.ts.net:8443';   // Tailscale Funnel (published by Toolsmith)
 const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback: local gate (only usable from a non-HTTPS page)
 (() => {
   const f = $('#gform'), q = $('#gq'), log = $('#glog'), b = f.querySelector('button'), wait = $('#gwait'), TK = 'brocatos-guide-token';
   const say = (c, t) => { const p = el('p', c, t); log.append(p); log.scrollTop = log.scrollHeight; $('#guide').scrollTop = 1e6; return p; };
-  const tourBtn = () => { const c = el('button', 'gskip', 'Continue tour'); c.type = 'button'; c.onclick = () => $('#gnext').click(); return c; };
-  const OFF = 'Live guide unavailable — continue the scripted tour.';
+  const OFF = 'The live guide is unavailable right now.';
   let base = null, tok = null, busy = false, state = 'idle';
   const timed = (url, o = {}, ms = 8000) => { const ac = new AbortController(), t = setTimeout(() => ac.abort(), ms); return fetch(url, { ...o, signal: ac.signal }).finally(() => clearTimeout(t)); };
-  function offline(msg) { state = 'off'; f.hidden = true; $('#gdemo').hidden = true; wait.hidden = false; wait.textContent = msg || OFF; const row = el('span', 'gacts'), tr = el('button', 'gskip', 'Try again'); tr.type = 'button'; tr.onclick = connect; row.append(tourBtn(), tr); wait.append(row); }
+  function offline(msg) { state = 'off'; f.hidden = true; $('#gdemo').hidden = true; wait.hidden = false; wait.textContent = msg || OFF; const row = el('span', 'gacts'), tr = el('button', 'gskip', 'Try again'); tr.type = 'button'; tr.onclick = connect; row.append(tr); wait.append(row); }
   function online() { state = 'on'; wait.hidden = true; f.hidden = false; $('#gdemo').hidden = false; }
   const saved = () => { try { const t = JSON.parse(sessionStorage.getItem(TK)); return t && t.exp * 1000 > Date.now() + 30000 ? t : null; } catch (e) { return null; } };
   async function issue() { const r = await timed(base + '/v1/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: '{}' });
@@ -597,7 +565,7 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
     if (h.disabled) return offline();
     tok = saved(); try { if (!tok) await issue(); online(); } catch (e) { offline(); }
   }
-  // connect when the card first opens (tour auto-open or orb), not on page load for visitors who never open it
+  // connect when the card first opens (orb), not on page load for visitors who never open it
   new MutationObserver(() => { if (!$('#guide').hidden && state === 'idle') connect(); }).observe($('#guide'), { attributes: true, attributeFilter: ['hidden'] });
   if (!$('#guide').hidden) connect();
   $('#gnew').onclick = async () => { log.textContent = ''; try { sessionStorage.removeItem(TK); } catch (e) {} tok = null; try { await issue(); online(); } catch (e) { offline(); } q.focus({ preventScroll: true }); };
@@ -614,9 +582,9 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
       else if (r.status === 401) { w.textContent = 'This chat has expired. '; const n = el('button', 'gskip', 'Start a new chat'); n.type = 'button'; n.onclick = () => $('#gnew').click(); w.append(n); }
       else if (r.status === 413) w.textContent = 'That’s a bit long. Please shorten it and send again.';
       else if (r.status === 400) w.textContent = 'That didn’t send. Your text is still in the box. Try again.';
-      else if (r.status === 429) { const s = +r.headers.get('Retry-After') || 0; w.textContent = s > 30 ? 'This chat has reached its limit for now. The scripted tour carries on. ' : 'One moment, the guide is still on your last question. Try again in a few seconds.'; if (s > 30) w.append(tourBtn()); }
+      else if (r.status === 429) { const s = +r.headers.get('Retry-After') || 0; w.textContent = s > 30 ? 'This chat has reached its limit for now. Please try again later.' : 'One moment, the guide is still on your last question. Try again in a few seconds.'; }
       else if (r.status === 503) { w.remove(); offline(); }
-      else { w.textContent = OFF + ' '; w.append(tourBtn()); }
+      else { w.textContent = OFF + ' Try again in a moment.'; }
     } catch (err) { w.remove(); offline(); }
     const rest = Math.max(0, 4000 - (Date.now() - t0)); setTimeout(() => { busy = false; b.disabled = false; }, rest);
     $('#guide').scrollTop = 1e6; q.focus({ preventScroll: true }); };
