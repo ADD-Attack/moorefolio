@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The forgetting ring — a principle supplied by Einstein</title>
+<meta name="description" content="A ring of coins and one mixing step. Any lean toward even or odd parity shrinks by the same factor, tanh(β)^W, every step. Watch it happen, then measure it.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <p class="eyebrow">Supplied by Einstein · ℤ₂ ring transfer matrix · <span class="mono">YM.Z2.T_spectrum</span></p>
+  <h1>The forgetting ring</h1>
+  <p class="lede">Tip a ring of coins toward even. Mix it once and the tip shrinks. Mix it again and it shrinks by <em>the same factor</em>, every step after.</p>
+</header>
+
+<main>
+<section class="stage" aria-label="Live demonstration">
+  <div class="left">
+  <div class="scene">
+    <canvas id="beam" width="960" height="560" aria-label="A ring of coins above a balance beam. The even pan holds the weight of every even configuration and the odd pan the weight of every odd one."></canvas>
+    <div class="hud hud-tl">
+      <div><span class="k">Step</span> <b id="r-t">0</b></div>
+      <div><span class="k">Parity lean q</span> <b id="r-q">—</b></div>
+    </div>
+    <div class="hud hud-tr">
+      <div><span class="k">Measured shrink</span> <b id="r-meas">—</b></div>
+      <div><span class="k">Theorem predicts</span> <b id="r-pred">—</b></div>
+    </div>
+    <p class="hint" id="probe">Click a coin to flip it, and read that configuration's weight.</p>
+  </div>
+<section class="check" aria-label="The definition, checked">
+  <h2 class="sr">The definition, checked</h2>
+  <div class="checkrow">
+    <div><span class="k">T built from the hidden-ring sum</span><b id="c-build">—</b></div>
+    <div><span class="k">vs the closed form, largest gap</span><b id="c-closed">—</b></div>
+    <div><span class="k">‖T𝟙 − r𝟙‖ / r</span><b id="c-one">—</b></div>
+    <div><span class="k">‖Tp − l p‖ / r</span><b id="c-par">—</b></div>
+    <div><span class="k">r · l</span><b id="c-rl">—</b></div>
+  </div>
+</section>
+  </div>
+
+  <div class="side">
+    <figure class="chart">
+      <canvas id="trace" width="620" height="330" aria-label="Log-scale trace of the parity lean against step"></canvas>
+      <figcaption><span class="lg"><span class="sw sw-m"></span>measured from the matrix</span> <span class="lg"><span class="sw sw-p"></span>theorem's line</span> <span class="lg"><span class="sw sw-f"></span>round-off: not physics</span></figcaption>
+    </figure>
+    <div class="cross" aria-live="polite">
+      <div><span class="k">Lean first below 10⁻³</span> <b id="r-cross">—</b></div>
+      <div><span class="k">Prediction</span> <b id="r-cross-p">—</b></div>
+      <small id="r-floor"></small>
+    </div>
+
+    <div class="controls">
+      <label>β · how strongly each step holds on <output id="o-beta">1.00</output>
+        <input id="s-beta" type="range" min="0.05" max="5" step="0.05" value="1"><span class="range"><span>0.05 · forgets fast</span><span>5 · remembers long</span></span></label>
+      <label>W · coins in the ring <output id="o-W">4</output>
+        <input id="s-W" type="range" min="1" max="8" step="1" value="4"><span class="range"><span>1</span><span>8 · 256 configurations</span></span></label>
+      <label>c · starting lean toward even <output id="o-c">1.00</output>
+        <input id="s-c" type="range" min="-1" max="1" step="0.05" value="1"><span class="range"><span>−1 · all odd</span><span>+1 · all even</span></span></label>
+      <div class="buttons">
+        <button id="b-step" type="button">Step once</button>
+        <button id="b-run" type="button">Run</button>
+        <button id="b-reset" type="button">Reset to start</button>
+      </div>
+      <div class="presets" role="group" aria-label="Instances">
+        <button type="button" data-p="1,4,1">His instance · β 1, W 4</button>
+        <button type="button" data-p="1.5,4,1">Long memory · β 1.5</button>
+        <button type="button" data-p="0.5,6,1">Wide ring · W 6</button>
+      </div>
+      <p class="note" id="note"></p>
+    </div>
+  </div>
+</section>
+
+
+
+<article class="prose">
+  <section>
+    <h2><span>01</span> What you are looking at</h2>
+    <p>A ring of <b class="W">4</b> coins, each heads or tails. The ring has 2<sup>W</sup> configurations, and the bars under the beam give each one a weight. <b class="even">Even</b> configurations (an even number of tails) hang from the left pan; <b class="odd">odd</b> ones from the right.</p>
+    <p>At the start the weights are 1 + c on every even configuration and 1 − c on every odd one. With c = 1, all the weight is even and the beam is pinned left. The <b>parity lean</b> q is (even − odd) ÷ (even + odd): +1 is all even, 0 is level.</p>
+    <p>Each step applies one mixing matrix T to all the weights at once. The beam levels, but not like a pendulum settling. The lean is multiplied by the same number every step. On the log chart that is a straight line, and the dots ride it until the arithmetic itself runs out of digits.</p>
+  </section>
+  <section>
+    <h2><span>02</span> How the model is built</h2>
+    <p><b>The principle was supplied, not found.</b> At the close of the previous exercise the owner ordered that this one stand on mathematics Einstein would hand over. He answered the commission (ticket 20261104-spider-1) with a theorem from his own notebook, checked by the Lean kernel: <span class="mono">T_closed</span>, <span class="mono">T_spectrum</span> and <span class="mono">mass_gap</span> in <span class="mono">Z2Strip.lean</span>, recorded in his STATUS file as stage S3. His sentence for visitors:</p>
+    <blockquote>“Apply this mixing step to a ring of W coins, and any lean toward even or odd parity shrinks by exactly the same factor every step, tanh(β)<sup>W</sup>, no matter where you start.”</blockquote>
+    <p><b>The matrix comes from its definition.</b> The page never types in T. For every pair of configurations σ, σ′ it sums over all 2<sup>W</sup> settings of a hidden ring τ: T(σ,σ′) = Σ<sub>τ</sub> exp(β Σ<sub>x</sub> σ<sub>x</sub>σ′<sub>x</sub>τ<sub>x</sub>τ<sub>x+1</sub>). At W = 8 that is 16,777,216 terms. The theorem says the sum collapses to (2 cosh β)<sup>W</sup> + (2 sinh β)<sup>W</sup>·(parity of σσ′), and the strip under the coins shows the built matrix and that formula agreeing to round-off.</p>
+    <p><b>What the theorem says.</b> For β &gt; 0, every eigenvalue of T is r = (4 cosh β)<sup>W</sup>, l = (4 sinh β)<sup>W</sup>, or 0. The flat vector 𝟙 has eigenvalue r, the parity vector p has eigenvalue l, and they are at right angles. The start 𝟙 + c·p therefore stays on those two directions, and q<sub>t</sub> = c·(l/r)<sup>t</sup> = c·tanh(β)<sup>W·t</sup>.</p>
+    <p><b>What the page measures.</b> The lean, and the shrink factor q<sub>t</sub> ÷ q<sub>t−1</sub>, are read from the weights after repeated multiplication by the built T. They are rescaled each step so the largest weight is 1. The theorem's tanh(β)<sup>W</sup> is printed beside the measurement as a prediction; it never feeds the iteration. At β = 1, W = 4 the measured factor is 0.336429764386 at every step, and the lean first drops below 10⁻³ at step 7, as predicted.</p>
+    <p><b>Where the measurement stops.</b> A double-precision number keeps about 16 digits. Below a lean of 10⁻⁸ the measured factor can wander by more than 10⁻⁶, so it is shown as <i>noisy</i>. Below 10⁻¹³ the lean itself is round-off, so the trace is greyed and the run stops. If the dots seem to stop falling there, that is the arithmetic, not the coins.</p>
+    <p><b>What it does not say.</b> Einstein's file calls log(r/l) a “mass gap”. Here it is only the ratio of two eigenvalues of a finite matrix on a ring of coins. It says nothing about Yang–Mills, four dimensions, or continuum limits. The exact rate belongs to this one lean: a quantity with no parity part has nothing to forget, and the theorem is silent on everything else. The crossing step ⌈ln(10⁻³/|c|) ÷ (W ln tanh β)⌉ is arithmetic on the theorem, not a separate proof. And the result is classical: this model has been solved exactly for a long time. What is new is a machine-checked proof in Mathlib.</p>
+    <p><b>Two edges.</b> At β = 0 the matrix wipes the lean in a single step and the theorem's hypothesis fails, so the slider stops at 0.05. At W = 1 the ring is a single coin whose neighbour is itself, a self-bond. The formula still holds there, and the page says so when you choose it.</p>
+  </section>
+  <section>
+    <h2><span>03</span> Where this shows up</h2>
+    <p>A transfer matrix turns a chain of interacting parts into repeated multiplication by one matrix. The ratio of its two largest eigenvalues then sets how fast information at one end is forgotten further along. This is the standard way physicists read a correlation length off a one-dimensional model.</p>
+    <p>The same shape appears wherever a process is repeated: a shuffle, a noisy channel, a Markov chain. The gap between its first and second eigenvalues fixes the per-step forgetting factor. Here that gap is known in closed form, so you can watch the measurement land on it.</p>
+  </section>
+</article>
+</main>
+<footer class="foot">Built by Spider for W-Ex12 · principle supplied by Einstein (ticket 20261104-spider-1; Z2Strip.lean, sha256 cdaf3b0c…cad7e) · the model is on <span class="mono">window.__ex12</span></footer>
+<script src="ring-model.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
