@@ -194,6 +194,8 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 .glog{margin:0 0 8px;display:flex;flex-direction:column;gap:6px}.glog:empty{display:none}
 .glog p{margin:0;padding:8px 10px;border-radius:10px;font-size:15px;line-height:1.4;max-width:88%;overflow-wrap:break-word}
 .glog .me{align-self:flex-end;background:var(--navy);color:#fff}.glog .ai{align-self:flex-start;background:#efe9dc;white-space:pre-wrap}.glog .sys{align-self:stretch;max-width:none;background:none;color:var(--ink-2);font-style:italic;padding:2px 0}
+.glog .typing{display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--navy);background:#fff}.typing .dots{display:flex;gap:5px}.typing .dots i{width:9px;height:9px;border-radius:50%;background:var(--navy);animation:tdot 1.2s ease-in-out infinite}.typing .dots i:nth-child(2){animation-delay:.2s}.typing .dots i:nth-child(3){animation-delay:.4s}.typing b{font-size:14px;color:var(--ink)}
+@keyframes tdot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
 .gform{display:flex;gap:8px}.gform[hidden],.gwait[hidden]{display:none}.gform input{flex:1;min-width:0;min-height:44px;font-size:16px;padding:0 12px;border:1px solid #8a94a3;border-radius:10px;font-weight:400}
 .gform .btn{min-height:44px;padding:0 16px}
 .gdemo{margin:0 0 8px;font-size:13px;line-height:1.4;color:var(--ink-2)}.gdemo span{font:700 11px/1 var(--mono);letter-spacing:.08em;background:var(--ink);color:#fff;padding:3px 6px;border-radius:4px;margin-right:4px}.glog .sys .gskip{font-style:normal;display:block;padding:0}
@@ -578,13 +580,15 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
   const turn = m => timed(base + '/v1/turn', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok.token }, body: JSON.stringify({ message: m }) }, 70000);
   f.onsubmit = async e => { e.preventDefault(); const m = q.value.trim(); if (!m || busy || state !== 'on') return;
     if ([...m].length > 2000) { say('sys', 'That’s a bit long. Please shorten it to under 2,000 characters.'); return; }
-    busy = true; b.disabled = true; const t0 = Date.now(); say('me', m); const w = say('sys', 'Thinking…');
+    busy = true; b.disabled = true; const t0 = Date.now(); say('me', m); q.value = '';
+    const w = say('ai typing', ''); w.innerHTML = '<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><b>The guide is typing…</b>'; let ok = false;
     try {
       if (!tok || tok.exp * 1000 <= Date.now()) await issue();
       let r = await turn(m);
       if (r.status === 401) { await issue(); r = await turn(m); }   // 401 = rejected before dispatch; quiet re-issue, once
       const d = await r.json().catch(() => ({}));
-      if (r.ok && typeof d.reply === 'string' && d.reply) { w.remove(); say('ai', d.reply); q.value = ''; }
+      w.className = 'sys';
+      if (r.ok && typeof d.reply === 'string' && d.reply) { ok = true; w.remove(); say('ai', d.reply); }
       else if (r.status === 401) { w.textContent = 'This chat has expired. '; const n = el('button', 'gskip', 'Start a new chat'); n.type = 'button'; n.onclick = () => $('#gnew').click(); w.append(n); }
       else if (r.status === 413) w.textContent = 'That’s a bit long. Please shorten it and send again.';
       else if (r.status === 400) w.textContent = 'That didn’t send. Your text is still in the box. Try again.';
@@ -592,6 +596,7 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
       else if (r.status === 503) { w.remove(); offline(); }
       else { w.textContent = OFF + ' Try again in a moment.'; }
     } catch (err) { w.remove(); offline(); }
+    if (!ok && !q.value) q.value = m;   // failure: the unsent text comes back to the box
     const rest = Math.max(0, 4000 - (Date.now() - t0)); setTimeout(() => { busy = false; b.disabled = false; }, rest);
     $('#guide').scrollTop = 1e6; q.focus({ preventScroll: true }); };
 })();
