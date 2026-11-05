@@ -535,10 +535,6 @@ $('#run').onclick = () => { const after = $('#run').dataset.ran !== '1'; drawOps
 
 if (fast) (async () => { $('#run').click(); pick = 'late'; await $('#go').onclick(); pick = 'human'; await $('#go').onclick(); pick = 'book';
   document.querySelectorAll('.callers button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.c === 'book'))); await $('#go').onclick(); scrollTo(0, 0); })();
-/* question box grows with its text (starts one line, capped by CSS max-height) */
-(() => { const t = $('#gq'); if (!t) return; const fit = () => { t.style.height = 'auto'; t.style.height = t.scrollHeight + 2 + 'px'; };
-  t.addEventListener('input', fit); new MutationObserver(fit).observe($('#gform'), { attributes: true, attributeFilter: ['hidden'] });
-  $('#gform').addEventListener('submit', () => setTimeout(fit, 0)); })();
 /* guide card: opens from the orb. Holds only "Ask the guide anything" (scripted tour shelved 2026-11-04 per owner; kept in index.pre-askonly.html) */
 (() => {
   const g = $('#guide');
