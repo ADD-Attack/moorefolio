@@ -201,6 +201,11 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 .gwait{margin:0;font-size:15px;line-height:1.4;color:var(--ink-2)}
 .ghl{outline:3px solid var(--red);outline-offset:6px;border-radius:10px;scroll-margin-top:14px}
 @media (min-width:900px){.guide{left:auto;right:24px;margin:0}.guide::after{display:none}}   /* keep the last content clear of the fixed orb */
+/* orb icon: three trailing dots (typing indicator) */
+.voice-orb .orb{gap:6px}
+.voice-orb .dot3{width:9px;height:9px;border-radius:50%;background:#ead9a8;animation:dottrail 1.2s ease-in-out infinite}
+.voice-orb .dot3:nth-child(2){animation-delay:.2s}.voice-orb .dot3:nth-child(3){animation-delay:.4s}
+@keyframes dottrail{0%,60%,100%{transform:translateY(0);opacity:.35}30%{transform:translateY(-6px);opacity:1}}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
 </style></head>
 <body>
@@ -346,7 +351,7 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 <footer><div class="wrap"><span><b>Concept demo by Moorefolio.</b> Not the shop's live site.</span><span>Sample calls, names, vendors, applicants and camera views are illustrations.</span></div></footer>
 
 <button class="voice-orb" id="orb" type="button" aria-label="Ask the guide: open the chat" aria-controls="guide">
-  <span class="orb" aria-hidden="true"><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span></span>
+  <span class="orb" aria-hidden="true"><span class="dot3"></span><span class="dot3"></span><span class="dot3"></span></span>
   <span class="lbl"><b>Ask the guide</b><span>Any question</span></span>
   <span class="dotlive" aria-hidden="true"></span>
 </button>
