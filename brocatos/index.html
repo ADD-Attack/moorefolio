@@ -196,8 +196,8 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
 .glog .me{align-self:flex-end;background:var(--navy);color:#fff}.glog .ai{align-self:flex-start;background:#efe9dc;white-space:pre-wrap}.glog .sys{align-self:stretch;max-width:none;background:none;color:var(--ink-2);font-style:italic;padding:2px 0}
 .glog .typing{display:flex;align-items:center;gap:10px;padding:10px 14px;border:2px solid var(--navy);background:#fff}.typing .dots{display:flex;gap:5px}.typing .dots i{width:9px;height:9px;border-radius:50%;background:var(--navy);animation:tdot 1.2s ease-in-out infinite}.typing .dots i:nth-child(2){animation-delay:.2s}.typing .dots i:nth-child(3){animation-delay:.4s}.typing b{font-size:14px;color:var(--ink)}
 @keyframes tdot{0%,60%,100%{opacity:.3;transform:translateY(0)}30%{opacity:1;transform:translateY(-4px)}}
-.gform{display:flex;gap:8px}.gform[hidden],.gwait[hidden]{display:none}.gform input{flex:1;min-width:0;min-height:44px;font-size:16px;padding:0 12px;border:1px solid #8a94a3;border-radius:10px;font-weight:400}
-.gform .btn{min-height:44px;padding:0 16px}
+.gform{display:flex;flex-direction:column;gap:8px}.gform[hidden],.gwait[hidden]{display:none}.gform textarea{width:100%;box-sizing:border-box;min-height:92px;max-height:30vh;resize:none;font:400 17px/1.4 var(--body);color:var(--ink);background:#fff;padding:10px 12px;border:1px solid #8a94a3;border-radius:10px;font-weight:400}
+.gform .btn{min-height:48px;padding:0 28px;align-self:flex-end;font-size:17px}
 .gdemo{margin:0 0 8px;font-size:13px;line-height:1.4;color:var(--ink-2)}.gdemo span{font:700 11px/1 var(--mono);letter-spacing:.08em;background:var(--ink);color:#fff;padding:3px 6px;border-radius:4px;margin-right:4px}.glog .sys .gskip{font-style:normal;display:block;padding:0}
 .gacts{display:flex;gap:20px;margin-top:2px}.gacts .gskip{padding:0}
 .gwait{margin:0;font-size:15px;line-height:1.4;color:var(--ink-2)}
@@ -362,8 +362,8 @@ button.voice-orb:focus-visible{outline:3px solid #ead9a8;outline-offset:3px}
   <div class="gask" id="gask">
     <h3 id="gtitle">Ask the guide anything</h3>
     <div class="glog" id="glog" aria-live="polite"></div>
-    <p class="gdemo" id="gdemo" hidden><span>DEMO</span> Answers come from a demo AI guide. It can’t book, message Charlie or take requests. <button class="gskip" id="gnew" type="button">New conversation</button></p>
-    <form class="gform" id="gform" hidden><input id="gq" aria-labelledby="gtitle" type="text" autocomplete="off" maxlength="2000" placeholder="e.g. Can I book for Saturday?"><button class="btn primary" type="submit">Send</button></form>
+    <p class="gdemo" id="gdemo" hidden><button class="gskip" id="gnew" type="button">New conversation</button></p>
+    <form class="gform" id="gform" hidden><textarea id="gq" aria-labelledby="gtitle" rows="3" autocomplete="off" maxlength="2000" placeholder="e.g. Can I book for Saturday?"></textarea><button class="btn primary" type="submit">Send</button></form>
     <p class="gwait" id="gwait">Connecting to the live guide…</p>
   </div>
 </div>
@@ -577,10 +577,12 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
   new MutationObserver(() => { if (!$('#guide').hidden && state === 'idle') connect(); }).observe($('#guide'), { attributes: true, attributeFilter: ['hidden'] });
   if (!$('#guide').hidden) connect();
   $('#gnew').onclick = async () => { log.textContent = ''; try { sessionStorage.removeItem(TK); } catch (e) {} tok = null; try { await issue(); online(); } catch (e) { offline(); } q.focus({ preventScroll: true }); };
+  const fit = () => { q.style.height = 'auto'; q.style.height = (q.scrollHeight + 4) + 'px'; }; q.addEventListener('input', fit);   // grow with the message (CSS caps at 30vh)
+  q.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !e.isComposing && matchMedia('(hover: hover)').matches) { e.preventDefault(); f.requestSubmit(); } });   // desktop Enter sends; phone Enter = new line, Send button sends
   const turn = m => timed(base + '/v1/turn', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + tok.token }, body: JSON.stringify({ message: m }) }, 70000);
   f.onsubmit = async e => { e.preventDefault(); const m = q.value.trim(); if (!m || busy || state !== 'on') return;
     if ([...m].length > 2000) { say('sys', 'That’s a bit long. Please shorten it to under 2,000 characters.'); return; }
-    busy = true; b.disabled = true; const t0 = Date.now(); say('me', m); q.value = '';
+    busy = true; b.disabled = true; const t0 = Date.now(); say('me', m); q.value = ''; fit();
     const w = say('ai typing', ''); w.innerHTML = '<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span><b>The guide is typing…</b>'; let ok = false;
     try {
       if (!tok || tok.exp * 1000 <= Date.now()) await issue();
@@ -596,7 +598,7 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
       else if (r.status === 503) { w.remove(); offline(); }
       else { w.textContent = OFF + ' Try again in a moment.'; }
     } catch (err) { w.remove(); offline(); }
-    if (!ok && !q.value) q.value = m;   // failure: the unsent text comes back to the box
+    if (!ok && !q.value) { q.value = m; fit(); }   // failure: the unsent text comes back to the box
     const rest = Math.max(0, 4000 - (Date.now() - t0)); setTimeout(() => { busy = false; b.disabled = false; }, rest);
     $('#guide').scrollTop = 1e6; q.focus({ preventScroll: true }); };
 })();
