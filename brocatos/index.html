@@ -556,10 +556,11 @@ const GUIDE_RELAY_LOCAL = 'http://127.0.0.1:8793';                   // fallback
     const d = await r.json().catch(() => ({})); if (!r.ok || !d.token) throw r.status;
     tok = { token: d.token, exp: d.exp }; try { sessionStorage.setItem(TK, JSON.stringify(tok)); } catch (e) {} }
   async function reach(u) { if (!u || (location.protocol === 'https:' && u.startsWith('http:'))) return null;
-    try { const r = await timed(u + '/v1/health', {}, 6000); const d = await r.json(); return r.ok && d.ok ? d : null; } catch (e) { return null; } }
+    try { const r = await timed(u + '/v1/health', {}, 12000); const d = await r.json(); return r.ok && d.ok ? d : null; } catch (e) { return null; } }
   async function connect() {
     if (state === 'connecting') return; state = 'connecting'; f.hidden = true; wait.hidden = false; wait.textContent = 'Connecting to the live guide…';
     let h = await reach(GUIDE_RELAY_BASE); base = GUIDE_RELAY_BASE;
+    if (!h) { await new Promise(r => setTimeout(r, 600)); h = await reach(GUIDE_RELAY_BASE); }   // cold Funnel: retry once on the warm connection
     if (!h) { h = await reach(GUIDE_RELAY_LOCAL); base = GUIDE_RELAY_LOCAL; }
     if (!h) return offline();
     if (h.disabled) return offline();
