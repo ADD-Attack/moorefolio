@@ -66,6 +66,39 @@
   </div>
 </section>
 
+<section class="bx" id="boundary" aria-labelledby="bx-h">
+  <div class="bx-head">
+    <p class="eyebrow">Boundary exhibit</p>
+    <h2 id="bx-h">Walk the room across 1</h2>
+    <p class="lede">One dial sets every surface at once. Because each row of F sums to 1, the room's amplification ρ is the dial itself. Below 1 the light settles. At exactly 1 it never does. Above 1 there is nothing to settle to.</p>
+  </div>
+  <div class="bx-grid">
+    <div class="bx-main">
+      <label class="bx-dial">Room amplification ρ <input type="range" id="bx-r" min="0.8" max="1.2" step="0.01" value="0.9"><output id="bx-r-o">0.90</output></label>
+      <div class="bx-ticks" aria-hidden="true"><span>0.80</span><span>1.00</span><span>1.20</span></div>
+      <p class="bx-zone" id="bx-zone" aria-live="polite">—</p>
+      <canvas id="bx-strip" width="780" height="60" aria-label="Settled light on the 26 patches, floor then right wall, ceiling, left wall"></canvas>
+      <p class="bx-refuse" id="bx-refuse" hidden aria-live="polite"></p>
+      <p class="bx-note" id="bx-note"></p>
+      <button type="button" id="bx-walk">Walk ρ from 0.80 to 1.20</button>
+    </div>
+    <div class="bx-side">
+      <dl class="bx-read">
+        <div><dt>Certified ρ bracket</dt><dd id="bx-bracket">—</dd></div>
+        <div><dt>Plain-solve budget (ρᵏ ≤ 10⁻³)</dt><dd id="bx-budget">—</dd></div>
+        <div><dt>Brightness factor 1/(1 − ρ)</dt><dd id="bx-factor">—</dd></div>
+        <div><dt>Settled total light</dt><dd id="bx-total">—</dd></div>
+      </dl>
+      <div class="verdicts">
+        <div class="v" id="bx-v-a"><span class="dot"></span><div><b>(a) The bounces settle</b><small id="bx-v-a-t">—</small></div></div>
+        <div class="v" id="bx-v-b"><span class="dot"></span><div><b>(b) ρ(A) &lt; 1</b><small id="bx-v-b-t">—</small></div></div>
+        <div class="v" id="bx-v-c"><span class="dot"></span><div><b>(c) A certificate exists</b><small id="bx-v-c-t">—</small></div></div>
+      </div>
+      <p class="aside">The budget is the bound ρᵏ ≤ 10⁻³. The exhibit also runs the plain bounces itself (up to 3,000) and reports when they actually came within 10⁻³ of the solution, which can be a little sooner.</p>
+    </div>
+  </div>
+</section>
+
 <article class="notes">
 <section>
   <p class="num">01</p>
@@ -100,5 +133,6 @@
 <footer><p>Spider School · W-Ex11 · model on <code>window.__ex11</code></p></footer>
 <script src="room-model.js"></script>
 <script src="app.js"></script>
+<script src="boundary.js"></script>
 </body>
 </html>

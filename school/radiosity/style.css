@@ -62,3 +62,26 @@ footer { max-width: 1320px; margin: 40px auto 0; padding: 18px 24px 30px; color:
   .hint { position: static; padding: 6px; }
   label { grid-template-columns: 80px 1fr 42px; }
 }
+
+/* Boundary exhibit */
+[hidden] { display: none !important; }
+.bx { max-width: 1320px; margin: 48px auto 0; padding: 0 24px; }
+.bx-head h2 { font-size: clamp(24px, 3vw, 34px); margin: 4px 0 6px; }
+.bx-grid { margin-top: 16px; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.bx-main, .bx-side { background: var(--ink-2); border: 1px solid var(--line); border-radius: 10px; padding: 16px; }
+.bx-side { display: flex; flex-direction: column; gap: 12px; }
+.bx-dial { grid-template-columns: auto 1fr 56px; font-weight: 600; }
+.bx-dial output { font-size: 20px; }
+.bx-ticks { display: flex; justify-content: space-between; font: 12px var(--mono); color: var(--dim); margin: 2px 66px 0 190px; }
+.bx-zone { margin: 14px 0 10px; font: 700 clamp(26px, 3.4vw, 40px)/1.1 var(--mono); letter-spacing: .04em; }
+.bx-zone[data-regime=settles] { color: var(--yes); } .bx-zone[data-regime=line] { color: var(--amber); } .bx-zone[data-regime=diverges] { color: var(--no); }
+#bx-strip { display: block; width: 100%; height: 60px; border-radius: 6px; }
+.bx-refuse { margin: 0; min-height: 60px; padding: 10px 12px; border: 1px dashed var(--no); border-radius: 6px; font-size: 15px; }
+.bx-zone[data-regime=line] ~ .bx-refuse { border-color: var(--amber); }
+.mono { font-family: var(--mono); color: var(--amber-2); }
+.bx-note { color: var(--dim); font-size: 14px; min-height: 2.6em; margin: 8px 0 12px; }
+.bx-read { margin: 0; display: grid; gap: 6px; }
+.bx-read div { display: flex; justify-content: space-between; gap: 12px; border-bottom: 1px solid var(--line); padding-bottom: 6px; }
+.bx-read dt { color: var(--dim); font-size: 14px; } .bx-read dd { margin: 0; font: 600 14px var(--mono); color: var(--amber-2); text-align: right; }
+@media (max-width: 1100px) { .bx-grid { grid-template-columns: 1fr; } }
+@media (max-width: 560px) { .bx { padding: 0 16px; } .bx-ticks { display: none; } .bx-read div { flex-direction: column; gap: 0; } .bx-read dd { text-align: left; } }
