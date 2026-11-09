@@ -1,0 +1,411 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Christopher Moore — Websites · Scheduling & Booking · Advertising Runs · Kansas City</title>
+<meta name="description" content="Three services, one provider. Christopher Moore, Kansas City: websites, scheduling & booking, and advertising runs.">
+<style>
+@font-face{font-family:"Saira Condensed";font-weight:900;font-display:swap;src:url(fonts/SairaCondensed-Black.ttf) format("truetype")}
+@font-face{font-family:"Saira Condensed";font-weight:600;font-display:swap;src:url(fonts/SairaCondensed-SemiBold.ttf) format("truetype")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:normal;font-weight:200 800;font-display:swap;src:url(fonts/atkinson-hyperlegible-next-latin.woff2) format("woff2")}
+@font-face{font-family:"Atkinson Hyperlegible Next";font-style:italic;font-weight:200 800;font-display:swap;src:url(fonts/atkinson-hyperlegible-next-italic-latin.woff2) format("woff2")}
+@font-face{font-family:"Fraunces";font-style:italic;font-weight:100 900;font-display:swap;src:url(fonts/fraunces-italic-latin.woff2) format("woff2")}
+
+:root{
+  --soot:#171311; --soot-2:#221b18; --brick:#7a2e22; --cream:#efe3c8; --faded:#c9bb9d; --muted:#b3a68b; --red:#e07a62;
+  --sign:"Saira Condensed","Arial Narrow",sans-serif; --body:"Atkinson Hyperlegible Next",system-ui,sans-serif; --script:"Fraunces",Georgia,serif;
+  --col:min(1160px, 100% - 2*clamp(20px,4vw,56px));
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--soot);color:var(--cream);font:400 18px/1.6 var(--body)}
+img{display:block;max-width:100%;height:auto}
+:focus-visible{outline:3px solid var(--cream);outline-offset:3px}
+.c{width:var(--col);margin:0 auto}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.sign{font-family:var(--sign);font-weight:900;text-transform:uppercase;letter-spacing:.02em;line-height:.9}
+
+/* top strip */
+.strip{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px clamp(20px,4vw,56px);font:600 14px/1.2 var(--body);letter-spacing:.04em;background:var(--soot);border-bottom:1px solid #3a302b}
+.strip .mail{user-select:all;color:var(--faded)}
+.strip .demo{font:700 12px/1 var(--body);letter-spacing:.12em;text-transform:uppercase;border:1.5px solid var(--faded);color:var(--faded);padding:6px 9px;border-radius:3px}
+
+/* the wall */
+.wall{position:relative;aspect-ratio:3/2;max-height:92vh;width:100%;overflow:hidden;background:#3a2a24}
+.wall img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
+.wall canvas{position:absolute;inset:0;width:100%;height:100%;touch-action:pan-y;cursor:crosshair}
+.wall .shade{position:absolute;inset:auto 0 0 0;height:30%;background:linear-gradient(transparent,rgba(16,12,10,.85));pointer-events:none}
+.wall .hint{position:absolute;left:clamp(16px,3vw,40px);right:clamp(16px,3vw,40px);bottom:clamp(14px,2.4vw,30px);display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px 16px;pointer-events:none}
+.wall .hint p{margin:0;font:italic 500 clamp(17px,1.6vw,21px)/1.3 var(--script);color:var(--cream);text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.wall .hint button{pointer-events:auto;font:700 14px/1 var(--body);letter-spacing:.08em;text-transform:uppercase;color:var(--soot);background:var(--cream);border:0;border-radius:3px;padding:13px 16px;min-height:44px;cursor:pointer}
+.wall .hint button:hover{background:#fff6e2}
+
+/* intro under the wall */
+.intro{padding:clamp(48px,7vw,96px) 0 clamp(40px,6vw,72px);border-bottom:1px solid #3a302b}
+.intro .grid{display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:clamp(28px,5vw,72px);align-items:end}
+.intro h1{margin:0;font:italic 400 clamp(44px,6.6vw,96px)/.98 var(--script);letter-spacing:-.02em;text-wrap:balance}
+.intro h1 b{font:900 1.02em/.9 var(--sign);font-style:normal;text-transform:uppercase;letter-spacing:.01em;display:block;color:var(--cream)}
+.intro p{margin:0;color:var(--faded);max-width:40ch}
+.intro .who{font:700 13px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin:0 0 20px}
+
+/* panels on brick */
+.brickwall{position:relative;padding:clamp(64px,9vw,120px) 0;background:var(--soot-2)}
+.brickwall::before{content:"";position:absolute;inset:0;background:url(img/c3-brick.webp) center/600px auto repeat;opacity:.28;filter:grayscale(.35)}
+.brickwall::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 40%,transparent 0%,rgba(18,13,11,.55) 75%)}
+.brickwall .c{position:relative;z-index:1}
+.kicker{font:700 13px/1 var(--body);letter-spacing:.16em;text-transform:uppercase;color:var(--red);margin:0 0 16px}
+h2{margin:0 0 clamp(28px,4vw,48px);font:900 clamp(40px,6vw,84px)/.9 var(--sign);text-transform:uppercase;letter-spacing:.01em;text-wrap:balance}
+.panels{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(14px,2vw,24px)}
+.panel{background:rgba(23,19,17,.9);border:2px solid var(--cream);outline:1px solid var(--cream);outline-offset:-9px;padding:clamp(26px,3vw,40px) clamp(22px,2.6vw,34px);position:relative;min-height:260px;display:flex;flex-direction:column}
+.panel .n{font:italic 500 18px/1 var(--script);color:var(--faded)}
+.panel h3{margin:14px 0 14px;font:900 clamp(32px,3.2vw,46px)/.92 var(--sign);text-transform:uppercase;letter-spacing:.01em}
+.panel p{margin:0;color:var(--faded);font-size:17px}
+.panel p b{color:var(--cream);font-weight:700}
+.panel .rule{margin-top:auto;padding-top:20px;height:2px;border-bottom:2px solid var(--red);width:44px}
+.also{position:relative;z-index:1;margin-top:clamp(28px,4vw,44px);font:600 17px/1.4 var(--body);color:var(--faded)}
+.also b{color:var(--cream)}
+
+/* price board */
+.boardsec{padding:clamp(64px,9vw,120px) 0;background:var(--soot)}
+.lead{font:italic 500 clamp(22px,2.4vw,32px)/1.3 var(--script);max-width:42ch;text-wrap:balance;margin:0 0 clamp(26px,3.6vw,40px)}
+.board{position:relative;container-type:inline-size;aspect-ratio:1536/880;overflow:hidden}
+.board picture,.board img{width:100%;height:100%;object-fit:cover;object-position:50% 0}
+.board .letters{position:absolute;left:5.5%;right:5.5%;top:33%;bottom:17%;display:grid;grid-template-columns:repeat(3,1fr);align-items:center;text-align:center}
+.board .t{padding:0 2cqw;border-left:1px solid rgba(239,227,200,.25);height:100%;display:flex;flex-direction:column;justify-content:center;gap:.9cqw}
+.board .t:first-child{border-left:0}
+.board .p{font:900 9.5cqw/.82 var(--sign);color:var(--cream);letter-spacing:.01em}
+.board .cr{font:600 1.45cqw/1.25 var(--body);color:var(--faded)}
+.board .v{font:900 2.5cqw/1 var(--sign);text-transform:uppercase;color:var(--cream);letter-spacing:.03em}
+.board .v i{font:italic 500 .8em var(--script);text-transform:none;color:var(--red);letter-spacing:0;margin-right:.2em}
+.tierlist{display:none;list-style:none;margin:22px 0 0;padding:0;border-top:2px solid var(--cream)}
+.tierlist li{display:grid;grid-template-columns:auto 1fr;gap:4px 18px;padding:18px 0;border-bottom:1px solid #3a302b}
+.tierlist .p{font:900 44px/.9 var(--sign);grid-row:span 2}
+.tierlist .cr{color:var(--faded);font-size:16px;line-height:1.4}
+.tierlist .v{font:900 22px/1 var(--sign);text-transform:uppercase;letter-spacing:.03em}
+.tierlist .v i{font:italic 500 .85em var(--script);text-transform:none;color:var(--red);margin-right:.2em}
+.fine{font:400 14px/1.5 var(--body);color:var(--muted);margin:18px 0 0}
+
+/* street band */
+.street{position:relative;min-height:clamp(480px,62vw,760px);display:flex;align-items:flex-end;overflow:hidden}
+.street img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.street::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(18,13,11,.15) 0%,rgba(18,13,11,.55) 45%,rgba(18,13,11,.94) 100%)}
+.street .c{position:relative;z-index:1;padding-bottom:clamp(48px,7vw,96px)}
+.street .city{font:900 clamp(18px,1.8vw,22px)/1 var(--sign);letter-spacing:.24em;text-transform:uppercase;color:var(--faded);margin:0 0 18px}
+.street blockquote{margin:0;font:italic 400 clamp(36px,5.4vw,78px)/1.02 var(--script);letter-spacing:-.02em;max-width:16ch;text-wrap:balance}
+.street p{max-width:44ch;color:#e3d7bd;margin:22px 0 0}
+.street .addr{display:inline-block;margin-top:22px;font:900 clamp(22px,2.4vw,32px)/1 var(--sign);letter-spacing:.03em;border-bottom:3px solid var(--red);padding-bottom:6px;user-select:all;word-break:break-all}
+
+/* work order (inert form) */
+.ordersec{padding:clamp(64px,9vw,120px) 0;background:var(--soot)}
+.order{background:#efe6d2;color:#221c18;max-width:900px;padding:clamp(24px,4vw,52px);border-radius:2px;box-shadow:0 30px 60px -30px rgba(0,0,0,.8);position:relative}
+.order::before{content:"";position:absolute;inset:10px;border:1.5px solid #221c18;pointer-events:none}
+.order h2{color:#221c18;margin-bottom:8px}
+.order .sub{margin:0 0 28px;color:#5a4f45;font-size:16px}
+form{display:grid;grid-template-columns:1fr 1fr;gap:20px 24px;position:relative}
+.f{display:flex;flex-direction:column;gap:6px}
+.f.full{grid-column:1/-1}
+.f label,.f legend{font:900 15px/1 var(--sign);letter-spacing:.12em;text-transform:uppercase;color:#221c18}
+.f input:not([type=checkbox]),.f textarea{font:400 18px/1.4 var(--body);color:#221c18;background:#f8f2e4;border:0;border-bottom:2px solid #221c18;padding:12px 10px;min-height:48px}
+.f input:focus,.f textarea:focus{outline:3px solid var(--brick);outline-offset:0}
+.f textarea{min-height:120px;resize:vertical}
+fieldset.f{border:0;padding:0;margin:0}
+.checks{display:flex;flex-wrap:wrap;gap:10px 14px;margin-top:6px}
+.checks label{display:inline-flex;gap:9px;align-items:center;font:600 16px/1 var(--body);letter-spacing:0;text-transform:none;border:1.5px solid #221c18;padding:11px 14px;min-height:44px;cursor:pointer;background:#f8f2e4}
+.checks input{accent-color:var(--brick);width:18px;height:18px;margin:0}
+.send-row{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:14px 22px;align-items:center;margin-top:6px}
+.send{font:900 18px/1 var(--sign);letter-spacing:.12em;text-transform:uppercase;background:#221c18;color:#efe6d2;border:0;padding:17px 26px;min-height:52px;opacity:.45;cursor:not-allowed}
+.note{margin:0;font-size:15px;line-height:1.5;color:#5a4f45;max-width:46ch}
+.note b{color:#221c18;user-select:all}
+
+footer{border-top:1px solid #3a302b;padding:26px 0 40px;font:500 14px/1.5 var(--body);color:var(--muted)}
+footer .c{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px}
+
+@media (max-width:900px){
+  .intro .grid{grid-template-columns:1fr}
+  .panels{grid-template-columns:1fr}
+  .panel{min-height:0}
+  .board .letters{grid-template-columns:repeat(3,1fr)}
+  .board .cr,.board .v{display:none}
+  .board .p{font-size:13cqw}
+  .tierlist{display:block}
+}
+@media (max-width:700px){
+  body{font-size:17px}
+  .strip .mail{display:none}
+  .wall{aspect-ratio:4/5;max-height:none}
+  form{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<div class="strip"><span><b>Christopher Moore</b> · Kansas City</span><span class="mail">Moore.chrisf@gmail.com</span><span class="demo">Demo page</span></div>
+
+<main>
+  <section class="wall" id="wall" aria-label="A painted brick wall with the three services lettered on it">
+    <picture><source srcset="img/c1-wall.webp" type="image/webp"><img src="img/c1-wall.jpg" alt="" width="1536" height="1024"></picture>
+    <canvas id="paint" aria-hidden="true"></canvas>
+    <div class="shade"></div>
+    <div class="hint"><p id="hint-text">Drag across the wall to repaint it.</p><button type="button" id="repaint">Repaint the whole sign</button></div>
+  </section>
+
+  <section class="intro">
+    <div class="c grid">
+      <div>
+        <p class="who">Christopher Moore · Kansas City</p>
+        <h1>Three services, <span>one provider.</span></h1>
+      </div>
+      <p>Websites, scheduling &amp; booking, and advertising runs, all from one person in Kansas City. The sign above is old paint, but the work is current.</p>
+    </div>
+  </section>
+
+  <section class="brickwall" aria-labelledby="h-svc">
+    <div class="c">
+      <p class="kicker">On the wall</p>
+      <h2 id="h-svc">What's painted up there</h2>
+      <div class="panels">
+        <article class="panel"><span class="n">one</span><h3>Websites</h3><p><b>Plain-spoken pages people can trust.</b> They say what you do and read well on any phone.</p><span class="rule"></span></article>
+        <article class="panel"><span class="n">two</span><h3>Scheduling &amp; booking</h3><p><b>Your customers book a time on their own,</b> from the hours you set. No phone tag.</p><span class="rule"></span></article>
+        <article class="panel"><span class="n">three</span><h3>Advertising runs</h3><p><b>Written &amp; placed for you.</b> 2D ads on every run, with 3D video ads free from $50.</p><span class="rule"></span></article>
+      </div>
+      <p class="also">Also: <b>redesigns, and care &amp; updates.</b></p>
+    </div>
+  </section>
+
+  <section class="boardsec" aria-labelledby="h-ads">
+    <div class="c">
+      <p class="kicker">Advertising runs</p>
+      <h2 id="h-ads">The price board</h2>
+      <p class="lead">2D + 3D video ads, written &amp; placed for you — 3D free.</p>
+      <div class="board">
+        <picture><source srcset="img/c5-board.webp" type="image/webp"><img src="img/c5-board.jpg" alt="" width="1536" height="1024" loading="lazy"></picture>
+        <div class="letters" aria-hidden="true">
+          <div class="t"><div class="p">$25</div><div class="cr">2D ads, written &amp; placed for you.</div><div class="v"><i>up to</i>2,000 views</div></div>
+          <div class="t"><div class="p">$50</div><div class="cr">2D + 3D video ads, written &amp; placed for you. 3D free.</div><div class="v"><i>up to</i>8,000 views</div></div>
+          <div class="t"><div class="p">$100</div><div class="cr">2D + 3D video ads, written &amp; placed for you. 3D free.</div><div class="v"><i>up to</i>16,000 views</div></div>
+        </div>
+      </div>
+      <ul class="tierlist" aria-label="Advertising runs">
+        <li><span class="p">$25</span><span class="cr">2D ads, written &amp; placed for you.</span><span class="v"><i>up to</i>2,000 views</span></li>
+        <li><span class="p">$50</span><span class="cr">2D + 3D video ads, written &amp; placed for you. 3D free.</span><span class="v"><i>up to</i>8,000 views</span></li>
+        <li><span class="p">$100</span><span class="cr">2D + 3D video ads, written &amp; placed for you. 3D free.</span><span class="v"><i>up to</i>16,000 views</span></li>
+      </ul>
+      <p class="sr" id="tiers-sr">$25: 2D ads, written and placed for you, up to 2,000 views. $50: 2D and 3D video ads, written and placed for you, 3D free, up to 8,000 views. $100: 2D and 3D video ads, written and placed for you, 3D free, up to 16,000 views.</p>
+      <p class="fine">View counts are up-to targets — delivery varies by platform and audience.</p>
+    </div>
+  </section>
+
+  <section class="street" aria-labelledby="h-prov">
+    <picture><source srcset="img/c2-street.webp" type="image/webp"><img src="img/c2-street.jpg" alt="" width="1536" height="1024" loading="lazy"></picture>
+    <div class="c">
+      <p class="city">Kansas City</p>
+      <blockquote id="h-prov">The one who answers is the one who does the work.</blockquote>
+      <p>Christopher Moore works out of Kansas City and does every job himself. There's one way in, and it's email.</p>
+      <span class="addr">Moore.chrisf@gmail.com</span>
+    </div>
+  </section>
+
+  <section class="ordersec" aria-labelledby="h-order">
+    <div class="c">
+      <div class="order">
+        <h2 id="h-order">Write the order up</h2>
+        <p class="sub">Demo page: this form is here to show you, not to send.</p>
+        <form onsubmit="return false" aria-describedby="demo-note">
+          <div class="f"><label for="n">Name</label><input id="n" autocomplete="off"></div>
+          <div class="f"><label for="b">Business</label><input id="b" autocomplete="off"></div>
+          <div class="f full"><label for="e">Email</label><input id="e" type="email" autocomplete="off"></div>
+          <fieldset class="f full"><legend>Work wanted</legend>
+            <div class="checks">
+              <label><input type="checkbox"> Websites</label>
+              <label><input type="checkbox"> Scheduling &amp; booking</label>
+              <label><input type="checkbox"> Advertising runs</label>
+            </div>
+          </fieldset>
+          <div class="f full"><label for="m">Details</label><textarea id="m"></textarea></div>
+          <div class="send-row">
+            <button class="send" type="button" disabled aria-disabled="true">Send (demo)</button>
+            <p class="note" id="demo-note">Demo page: this form doesn't send. To start, write to <b>Moore.chrisf@gmail.com</b>.</p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer><div class="c"><span>Christopher Moore · Kansas City · Moore.chrisf@gmail.com</span><span>Websites · Scheduling &amp; booking · Advertising runs</span></div></footer>
+
+<script>
+(() => {
+  const wall = document.getElementById('wall'), cv = document.getElementById('paint'), ctx = cv.getContext('2d');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const CREAM = '#efe3c8';
+  let W0, H0, W, H, dpr, box, faded, fresh, mask, mctx, brushR, painted = 0, cells, lastPt = null, dirty = false;
+
+  // The faded sign occupies this part of the photo (fractions of the full image).
+  const SIGN = {x0:.235, x1:.755, y0:.135, y1:.695};
+  // Map the photo's sign area into the element, accounting for object-fit: cover.
+  function signBox(){
+    const r = wall.getBoundingClientRect(), iw = 1536, ih = 1024;
+    const s = Math.max(r.width/iw, r.height/ih), dw = iw*s, dh = ih*s, ox = (r.width-dw)/2, oy = (r.height-dh)/2;
+    let x0 = ox + SIGN.x0*dw, x1 = ox + SIGN.x1*dw, y0 = oy + SIGN.y0*dh, y1 = oy + SIGN.y1*dh;
+    const pad = r.width*.04; x0 = Math.max(x0, pad); x1 = Math.min(x1, r.width-pad);
+    return {x:x0, y:y0, w:x1-x0, h:y1-y0};
+  }
+
+  // Seeded noise so the wear is the same on every visit.
+  let seed = 7; const rnd = () => (seed = (seed*16807) % 2147483647) / 2147483647;
+
+  function letter(c, alpha){
+    const g = c.getContext('2d'); g.setTransform(dpr,0,0,dpr,0,0);
+    g.clearRect(0,0,W,H); g.fillStyle = CREAM; g.globalAlpha = alpha; g.textAlign = 'center'; g.textBaseline = 'alphabetic';
+    const cx = box.x + box.w/2;
+    // fit a line of text to a target width; returns the font size used
+    const fit = (txt, font, targetW, maxH) => { g.font = font(100); const m = g.measureText(txt).width; return Math.min(100*targetW/m, maxH); };
+    const rows = [
+      {t:'CHRISTOPHER MOORE · KANSAS CITY', f:(s)=>`600 ${s}px "Saira Condensed"`, w:.62, h:.075, track:.18},
+      {t:'WEBSITES', f:(s)=>`900 ${s}px "Saira Condensed"`, w:.92, h:.30},
+      {t:'SCHEDULING & BOOKING', f:(s)=>`900 ${s}px "Saira Condensed"`, w:.92, h:.17},
+      {t:'ADVERTISING RUNS', f:(s)=>`900 ${s}px "Saira Condensed"`, w:.92, h:.17},
+      {t:'three services, one provider', f:(s)=>`italic 500 ${s}px "Fraunces"`, w:.6, h:.11},
+    ];
+    // vertical rhythm: distribute rows within the box
+    const sizes = rows.map(r => fit(r.t, r.f, box.w*r.w, box.h*r.h));
+    const gap = box.h*.045, total = sizes.reduce((a,b)=>a+b*.86,0) + gap*(rows.length-1);
+    let y = box.y + (box.h-total)/2;
+    rows.forEach((r,i) => {
+      const s = sizes[i]; y += s*.86;
+      g.font = r.f(s);
+      if ('letterSpacing' in g) g.letterSpacing = (r.track||0)*s + 'px';
+      g.fillText(r.t, cx, y);
+      if ('letterSpacing' in g) g.letterSpacing = '0px';
+      if (i===1){ // painted rules either side of the top line, like the old signs had
+        g.fillRect(box.x+box.w*.04, y+s*.08, box.w*.92, Math.max(2, s*.035));
+      }
+      y += gap;
+    });
+    g.globalAlpha = 1;
+    return g;
+  }
+
+  function weather(g, amount){
+    // knock paint out of the letters: flecks plus a few long scrapes, seeded
+    g.globalCompositeOperation = 'destination-out';
+    seed = 7;
+    const n = Math.round(box.w*box.h/90*amount);
+    for (let i=0;i<n;i++){
+      const x = box.x + rnd()*box.w, y = box.y + rnd()*box.h, r = .4 + rnd()*rnd()*4.2;
+      g.globalAlpha = .35 + rnd()*.65; g.beginPath(); g.arc(x,y,r,0,7); g.fill();
+    }
+    for (let i=0;i<Math.round(14*amount);i++){
+      const x = box.x + rnd()*box.w, y = box.y + rnd()*box.h;
+      g.globalAlpha = .5 + rnd()*.4; g.fillRect(x, y, 30 + rnd()*box.w*.25, 1 + rnd()*2.5);
+    }
+    g.globalCompositeOperation = 'source-over'; g.globalAlpha = 1;
+  }
+
+  function mk(){ const c = document.createElement('canvas'); c.width = W*dpr; c.height = H*dpr; return c; }
+
+  function setup(){
+    const old = mask, oldBox = box;
+    const r = wall.getBoundingClientRect(); W = r.width; H = r.height; dpr = Math.min(2, devicePixelRatio||1);
+    cv.width = W*dpr; cv.height = H*dpr; box = signBox();
+    faded = mk(); weather(letter(faded, .5), 1.0);
+    fresh = mk(); weather(letter(fresh, 1), .12);
+    mask = mk(); mctx = mask.getContext('2d'); mctx.setTransform(dpr,0,0,dpr,0,0);
+    brushR = Math.max(16, box.h*.085);
+    // carry existing paint over: map the old sign box onto the new one
+    if (old && oldBox){
+      mctx.save(); mctx.setTransform(1,0,0,1,0,0);
+      const sx = oldBox.x*old.width/W0, sy = oldBox.y*old.height/H0, sw = oldBox.w*old.width/W0, sh = oldBox.h*old.height/H0;
+      mctx.drawImage(old, sx, sy, sw, sh, box.x*dpr, box.y*dpr, box.w*dpr, box.h*dpr); mctx.restore();
+    }
+    // coverage grid over the sign, to know when it's fully repainted
+    if (!cells){ cells = new Uint8Array(24*12); painted = 0; }
+    W0 = W; H0 = H;
+    render();
+  }
+
+  function render(){
+    ctx.setTransform(1,0,0,1,0,0); ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.drawImage(faded,0,0);
+    // fresh paint = fresh lettering, clipped to where the brush has been
+    const tmp = render.tmp || (render.tmp = document.createElement('canvas'));
+    if (tmp.width !== cv.width || tmp.height !== cv.height){ tmp.width = cv.width; tmp.height = cv.height; }
+    const t = tmp.getContext('2d'); t.clearRect(0,0,tmp.width,tmp.height);
+    t.globalCompositeOperation = 'source-over'; t.drawImage(mask,0,0);
+    t.globalCompositeOperation = 'source-in'; t.drawImage(fresh,0,0);
+    t.globalCompositeOperation = 'source-over';
+    ctx.drawImage(tmp,0,0);
+    dirty = false;
+  }
+
+  function dab(x,y){
+    // a bristly round brush: one soft core and a ring of bristle marks
+    const g = mctx;
+    const grad = g.createRadialGradient(x,y,0,x,y,brushR);
+    grad.addColorStop(0,'rgba(0,0,0,1)'); grad.addColorStop(.7,'rgba(0,0,0,.9)'); grad.addColorStop(1,'rgba(0,0,0,0)');
+    g.fillStyle = grad; g.beginPath(); g.arc(x,y,brushR,0,7); g.fill();
+    g.fillStyle = '#000';
+    for (let i=0;i<6;i++){ const a = Math.random()*7, d = brushR*(.8+Math.random()*.35); g.globalAlpha = .6; g.beginPath(); g.arc(x+Math.cos(a)*d, y+Math.sin(a)*d, 1+Math.random()*2.2, 0, 7); g.fill(); }
+    g.globalAlpha = 1;
+    // coverage
+    const cx = Math.floor((x-box.x)/box.w*24), cy = Math.floor((y-box.y)/box.h*12);
+    for (let j=-1;j<=1;j++) for (let i=-1;i<=1;i++){
+      const X = cx+i, Y = cy+j; if (X<0||Y<0||X>=24||Y>=12) continue;
+      const k = Y*24+X; if (!cells[k]){ cells[k]=1; painted++; }
+    }
+    if (!dirty){ dirty = true; requestAnimationFrame(() => { render(); report(); }); }
+  }
+  function stroke(a,b){
+    const d = Math.hypot(b.x-a.x, b.y-a.y), n = Math.max(1, Math.ceil(d/(brushR*.35)));
+    for (let i=1;i<=n;i++) dab(a.x+(b.x-a.x)*i/n, a.y+(b.y-a.y)*i/n);
+  }
+  const hint = document.getElementById('hint-text');
+  function report(){
+    const pct = Math.round(painted/cells.length*100);
+    if (pct >= 92) hint.textContent = 'Fresh coat. Every word still true.';
+    else if (pct > 0) hint.textContent = `Repainted ${pct}%. Keep going.`;
+  }
+
+  const pos = (e) => { const r = cv.getBoundingClientRect(); return {x:e.clientX-r.left, y:e.clientY-r.top}; };
+  cv.addEventListener('pointerdown', (e) => { lastPt = pos(e); dab(lastPt.x,lastPt.y); cv.setPointerCapture(e.pointerId); });
+  cv.addEventListener('pointermove', (e) => {
+    const p = pos(e);
+    if (lastPt){ stroke(lastPt, p); lastPt = p; }
+    else if (e.pointerType === 'mouse'){ /* hover paints lightly: a mouse can paint without holding */ stroke(p, p); }
+  });
+  const end = () => { lastPt = null; };
+  cv.addEventListener('pointerup', end); cv.addEventListener('pointercancel', end); cv.addEventListener('pointerleave', end);
+
+  // Button: sweep the brush across the whole sign, row by row.
+  function sweep(){
+    const rows = 10, pts = [];
+    for (let r=0;r<rows;r++){
+      const y = box.y + box.h*(r+.5)/rows, xs = r%2 ? [box.x+box.w+brushR, box.x-brushR] : [box.x-brushR, box.x+box.w+brushR];
+      for (let i=0;i<=24;i++) pts.push({x: xs[0]+(xs[1]-xs[0])*i/24, y: y + Math.sin(i*.9)*brushR*.25});
+    }
+    if (reduce){ for (let i=1;i<pts.length;i++) stroke(pts[i-1],pts[i]); return; }
+    let i = 1; const step = () => { for (let k=0;k<3 && i<pts.length;k++,i++) stroke(pts[i-1],pts[i]); if (i<pts.length) requestAnimationFrame(step); };
+    requestAnimationFrame(step);
+  }
+  document.getElementById('repaint').addEventListener('click', sweep);
+
+  // A first brushstroke on its own, to show the wall can be painted.
+  function demoStroke(){
+    if (reduce) return;
+    const y = box.y + box.h*.36, x0 = box.x + box.w*.06, x1 = box.x + box.w*.48;
+    let i = 0; const N = 30;
+    const step = () => { const a = {x:x0+(x1-x0)*i/N, y:y+Math.sin(i/4)*6}, b = {x:x0+(x1-x0)*(i+1)/N, y:y+Math.sin((i+1)/4)*6}; stroke(a,b); if (++i<N) requestAnimationFrame(step); };
+    setTimeout(() => requestAnimationFrame(step), 700);
+  }
+
+  Promise.all([document.fonts.load('900 100px "Saira Condensed"'), document.fonts.load('600 100px "Saira Condensed"'), document.fonts.load('italic 500 100px "Fraunces"')])
+    .then(() => { setup(); demoStroke(); });
+  let rt; addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(() => { const r = wall.getBoundingClientRect(); if (Math.abs(r.width-W) > 1 || Math.abs(r.height-H) > 1) setup(); }, 150); });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="description" content="Memory in Muse vs Memory in OpenClaw (Cadre) — an evidence-graded comparison of the two memory systems, including the memory gates. Prepared 2026-10-16.">
+<link rel="icon" href="data:,">
+<title>Memory in Muse vs Memory in OpenClaw (Cadre) — MooreFolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,600;1,6..72,400;1,6..72,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdfcf8; --bg2:#f3efe4; --surface:#ffffff; --surface2:#f7f3ea;
+  --ink:#171410; --ink2:#4a443a; --muted:#7a7264; --line:#e3ddd0;
+  --rust:#c8501a; --rust-dark:#9a3a10; --teal:#23444e; --teal-light:#e6edef;
+  --gold:#b7791f; --radius:18px;
+  --shadow:0 12px 32px rgba(23,20,16,.08);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#131110; --bg2:#1a1714; --surface:#1e1a17; --surface2:#26211d;
+    --ink:#f3ede1; --ink2:#d6ccbb; --muted:#a99e8c; --line:#332d27;
+    --rust:#ff7a36; --rust-dark:#ff9a5e; --teal:#8fb8c2; --teal-light:#1d2f34;
+    --gold:#e0a83e; --shadow:0 12px 32px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:var(--rust);text-decoration:none}
+a:hover{text-decoration:underline}
+header{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--bg) 92%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.nav{max-width:1180px;margin:0 auto;padding:0 24px;display:flex;align-items:center;justify-content:space-between;height:64px;gap:16px}
+.brand{display:flex;align-items:baseline;gap:10px;color:var(--ink);font-weight:800;letter-spacing:-.02em;font-size:1.05rem}
+.brand:hover{text-decoration:none}
+.brand span{color:var(--rust)}
+.brand small{font-family:"IBM Plex Mono",monospace;font-weight:400;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.navback{color:var(--ink2);font-weight:600;font-size:.92rem}
+article{max-width:800px;margin:0 auto;padding:48px 24px 72px}
+article h1{font-size:clamp(1.9rem,4.4vw,2.7rem);line-height:1.12;letter-spacing:-.03em;margin:0 0 20px;font-weight:800}
+article h2{font-size:1.45rem;letter-spacing:-.02em;margin:44px 0 14px;font-weight:800}
+article h3{font-size:1.15rem;margin:32px 0 10px;font-weight:700}
+article p{margin:0 0 16px;color:var(--ink)}
+article ul,article ol{margin:0 0 16px;padding-left:24px}
+article li{margin-bottom:6px}
+article blockquote{margin:0 0 20px;padding:14px 20px;border-left:3px solid var(--rust);background:var(--surface2);border-radius:0 12px 12px 0;color:var(--ink2)}
+article blockquote p{margin:0}
+article code{font-family:"IBM Plex Mono",monospace;font-size:.84em;background:var(--surface2);border:1px solid var(--line);border-radius:6px;padding:.08em .35em}
+article pre{background:var(--surface2);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto}
+article pre code{background:none;border:none;padding:0}
+article hr{border:none;border-top:1px solid var(--line);margin:36px 0}
+.tablewrap{overflow-x:auto;margin:0 0 24px;border:1px solid var(--line);border-radius:12px}
+article table{border-collapse:collapse;width:100%;font-size:.88rem;line-height:1.55}
+article th,article td{border-bottom:1px solid var(--line);padding:10px 12px;text-align:left;vertical-align:top;min-width:130px}
+article th{background:var(--surface2);font-weight:700}
+article tr:last-child td{border-bottom:none}
+footer{border-top:1px solid var(--line);padding:28px 24px 40px;text-align:center}
+footer .mono{font-family:"IBM Plex Mono",monospace;letter-spacing:.06em;text-transform:uppercase;font-size:.72rem;color:var(--muted)}
+</style>
+</head>
+<body>
+<header>
+  <div class="nav">
+    <a class="brand" href="/">Christopher<span>Moore</span> <small>MooreFolio</small></a>
+    <a class="navback" href="/">&larr; Home</a>
+  </div>
+</header>
+<article>
+<h1>Memory in Muse vs Memory in OpenClaw (Cadre) — with the memory gates compared</h1>
+<p>Prepared 2026-10-16 (04:00 CDT run), ordered by Christopher 2026-10-15 23:26 CDT.
+Every claim below carries its evidence or is marked <strong>UNVERIFIED</strong>. No secret values appear anywhere in this document.</p>
+<p><strong>Evidence key</strong>
+- [M-docs] <code>~/docs/memory.md</code>; [M-improve] <code>~/docs/self_improvement.md</code>; [M-privacy] <code>~/docs/privacy-and-credentials.md</code>; [M-forget] <code>/opt/muse/skills/forget/SKILL.md</code>
+- [M-live] Live layout checked on this VM in this run (2026-10-16 ~04:00 CDT): file listings, sizes, and headings only
+- [M-log] Dated daily logs under <code>~/memory/</code> (cited by date)
+- [A-audit] <code>~/workspace/cadre-ops/openclaw-audit-2026-10-16.md</code> (the 02:00 CDT audit run), cited by section
+- [A-live] Live read-only operator-client check in this run: <code>connect-test</code> + <code>config.get</code> via <code>~/workspace/openclaw-client/client.mjs</code> — gateway 2026.9.9, protocol 4, scopes read/write/approvals
+- [A-config] <code>config.get</code> evidence saved in the audit: <code>~/workspace/goals/openclaw-operator-client/hidden_files/audit-2026-10-16/config.get.json</code>, <code>cron.list.json</code>, <code>agents.list.json</code>
+- [C-design] Cadre's own design docs on this VM: <code>~/workspace/cadre-ops/repo-audit/Cadre/reference/memory.md</code> and <code>reference/guardrails.md</code> §3, plus <code>templates/agent-workspace/MEMORY.md</code>. These are design/template evidence, <strong>not</strong> proof of what any living agent's file contains today.</p>
+<blockquote>
+<p><strong>Audit caveat that shapes the whole OpenClaw half:</strong> In tonight's audit, the SOUL.md / AGENTS.md / MEMORY.md / USER.md presence-size-mtime matrix for main and each agent workspace was <strong>NOT COLLECTED — DECLINED</strong> by Michael, and Kif stopped citing that decline [A-audit §3, Finding F1]. So the <em>structure and size of Michael's living MEMORY.md and of any worker's living MEMORY.md are UNVERIFIED tonight</em>. What is verified is: the config that governs fleet memory [A-live, A-config], the workspace layout [A-config: agents.list], one line quoted from Michael's MEMORY.md by Nibbler [A-audit §4], and Cadre's authored memory design [C-design]. This document does not fill the declined gap with guesses.</p>
+</blockquote>
+<hr />
+<h2>1) Muse memory in one page</h2>
+<p><strong>What it is.</strong> One assistant, one user. Memory "keeps lasting facts and preferences about the user for future conversations" and "notes can also be written in the background" [M-docs]. It is a file system on this VM, injected into every conversation — main chat and side chats share the same memory (Christopher was told this explicitly on 2026-10-12: a side chat's transcript starts fresh, but MEMORY.md, people files, and goals load into every chat) [M-log 2026-10-12].</p>
+<p><strong>The live layout</strong> [M-live, this run]:
+- <code>~/MEMORY.md</code> — the curated long-term file, 22,610 bytes, headings: <code>## Facts</code>, <code>## Preferences</code>, <code>## Commitments</code>, <code>## Built</code>. Its own header states the rule: <em>"durable facts, preferences, and commitments. Keep it tight: promote what lasts here, and leave raw day-to-day detail in your daily notes."</em>
+- <code>~/memory/YYYY-MM-DD.md</code> — dated daily logs, present continuously from 2026-09-09 through today (2026-10-16). Raw trail; MEMORY.md is the distilled version of it.
+- <code>~/memory/bank/</code> — runtime-managed synthesis files: <code>experience.md</code>, <code>opinions.md</code>, <code>reflections.md</code>, <code>world.md</code>. <code>~/memory/index/</code> exists and is runtime-managed (empty to a plain listing in this run).
+- <code>~/memory/people/</code> — 29 person pages plus <code>INDEX.md</code>, ordered by closeness; <code>~/memory/groups/</code> — 3 group pages plus <code>INDEX.md</code> [M-live].
+- <code>~/memory/shopping/PROFILE.md</code> — a domain profile the forget flow checks explicitly [M-forget].
+- Side-chat memory: the memory tools document per-side-chat memory under <code>~/side-chats/&lt;chat-id&gt;/</code>. <strong>On this VM in this run, <code>~/side-chats/</code> does not exist</strong> — so that store is <em>documented but not observed here</em>; no claim is made about its current contents.</p>
+<p><strong>The durable-vs-routine rule.</strong> Only what lasts belongs in MEMORY.md; routine detail stays in the daily log [M-live: MEMORY.md header]. Background upkeep enforces it: <em>"Memory upkeep (hourly when there is new signal): new conversation is consolidated into MEMORY.md. Newer claims supersede older ones, and the dated notes under ~/memory/ keep the full trail"</em> [M-improve]. The assistant also does its own bookkeeping <em>during</em> a session — upkeep "does not replace your own memory bookkeeping during a session: write down what's worth keeping when you learn it" [M-improve].</p>
+<p><strong>The other background jobs</strong> [M-improve]: Relationships (hourly — maintains the people/group pages), Dreaming (nightly — reviews recent conversations for what worked and what ruptured, writes dated reflections under <code>~/dreams/</code> and a synthesis of how to act for this user), Idea curation (daily), Studying (daily, overnight — goal briefings), Skill review (daily), and a bounded quiet-moment pass after a substantial conversation goes quiet. Demotions are visible in the trail: daily logs carry entries like "Demoted from MEMORY.md" with a run ID [M-log 2026-10-10, 2026-10-11, 2026-10-13] — promotion <em>and</em> demotion both happen, and both leave a record.</p>
+<p><strong>Retrieval.</strong> <code>memory_search</code> / <code>memory_get</code> search and read <code>MEMORY.md</code>, the daily notes, and side-chat memory, returning snippets with file-and-line citations; <code>memory_explain</code> traces where a claim came from and what replaced it [tool surface, as used in this workspace; M-forget references the same claim/citation machinery]. Memory search is explicitly <em>separate from chat history search</em> [M-docs].</p>
+<p><strong>Compaction — and its known failure mode.</strong> Long conversations are compacted into a model-written summary, not truncated. Live readout recorded 2026-10-13: context window 350,000 tokens, compaction trigger 272,000, retained tail ~20,000; what survives is controlled via the injected files (MEMORY.md / AGENTS.md / SOUL.md) and runtime state, and compaction is not configurable by Christopher or the assistant [M-log 2026-10-13]. <strong>Failure mode Christopher himself flagged on 2026-10-12: compaction drops in-progress plans.</strong> The mitigation in force is that the in-progress plan stays in the todo list until done — the todo list (a runtime database snapshot, keyed by conversation + agent [M-log 2026-10-13]) is what survives compaction. Standing rule recorded in <code>~/AGENTS.md</code> (2026-10-12).</p>
+<p><strong>Secrets exclusion.</strong> <em>"Keep raw credentials out of memory, files, environment variables, logs, and generated code"</em> [M-privacy]. Credentials live in the Secure Vault / connector storage; the agent can confirm a saved login exists but can never see its values [M-privacy]. In practice: when Christopher pasted a GitHub token in chat on 2026-10-13, the token value was deliberately <em>not</em> recorded in memory or the daily log — only the fact, scope, and storage location were [M-log 2026-10-13; MEMORY.md Commitments].</p>
+<p><strong>Correction authority.</strong> The user corrects; the correction lands in MEMORY.md <em>and</em> every affected follow-up. Worked example, 2026-10-12: a MEMORY.md entry wrongly stated an AmericanMuscle purchase was completed. Christopher corrected it; the same day's log records the correction, and a later entry records "MEMORY.md correction applied" — the entry was rewritten to match reality (purchase NOT completed) [M-log 2026-10-12]. Same pattern for the deal watch (worse-CPU alerts killed and the job body + MEMORY.md updated together) [M-log 2026-10-13].</p>
+<p><strong>Forget.</strong> A dedicated, planned flow [M-forget]: <code>forget.plan</code> inventories everywhere the information could live (memory, reminders, created items, goals, scheduled work, derived copies), the user confirms the scope, then cleanup runs through each owning product action, claim IDs and <code>MEMORY.md#L…</code> / <code>memory/&lt;date&gt;.md#L…</code> locators are written to a pending file so the claims and everything derived from them are retracted and memory search is refreshed. "Forgotten" is only said when fresh verification finds no active copy and nothing that can write it back. Limits stated in the skill: outside services, shared/published items, logs and backups may remain and need separate approval; visible conversation text is not a cleanup target.</p>
+<hr />
+<h2>2) OpenClaw memory in one page</h2>
+<p><strong>What it is.</strong> Seventeen agents, each with its <strong>own workspace directory</strong> — and therefore its own files. <code>agents.list</code> [A-config] gives a distinct workspace per agent: main (Michael) at <code>/home/openclaw/.openclaw/workspace</code>, cadre-worker-1 (Fry) at <code>…/cadre/fry</code>, cadre-worker-2 (Bender) at <code>…/cadre/bender</code>, cadre-pm (Leela) at <code>…/cadre/leela</code>, cadre-qa (Scruffy) at <code>…/cadre/scruffy</code>, cadre-security (Nibbler) at <code>…/cadre/nibbler</code>, erin at <code>…/workspace-erin</code>, the two Studio builders at their own <code>workspace-studio-builder*</code> paths, and so on for all 17. <strong>No shared memory store appears in the layout evidence</strong> — sharing, where the design wants it, is by convention files at a team root (<code>SHARED.md</code>, <code>CADRE.md</code>), not by a common memory database [C-design: memory.md, "Writer discipline"; templates/agent-workspace/AGENTS.md, "Team"].</p>
+<p><strong>The per-agent file set (design/template level).</strong> The Cadre wizard installs each workspace from a template: <code>AGENTS.md, IDENTITY.md, SOUL.md, USER.md, MEMORY.md, BUDGET.md</code>, plus an inbox [C-design: repo-audit <code>WIZARD.md</code>, cited in this run]. The template <code>MEMORY.md</code> is headed <em>"# MEMORY.md — \&lt;agent name&gt; (long-term memory)"</em>, described as <em>"Append-only, human-readable. Consolidation promotes durable facts here"</em>, with two sections: <code>## Facts worth keeping</code> and <code>## Decisions I made or witnessed</code> [C-design: templates/agent-workspace/MEMORY.md]. <strong>Whether Michael's or any worker's living file still follows that template, and its size tonight: UNVERIFIED — collection DECLINED</strong> [A-audit §3]. The one living content item verified tonight is a single line from Michael's MEMORY.md, quoted by Nibbler: it records an open secrets-handling remediation — still unexecuted [A-audit §4, F3]. That is itself a data point: fleet long-term memory is being used, among other things, as a remediation to-do list.</p>
+<p><strong>The tiered design (Cadre's authored policy).</strong> Cadre's reference design is three tiers [C-design: reference/memory.md]:
+- <strong>STM</strong> (short-term): staged candidates / session recall, ~256 KB cap, high churn.
+- <strong>MTM</strong> (mid-term): <code>memory/midterm.md</code>, ~128 KB — a <em>workspace convention only</em>, because "OpenClaw's memory-core exposes a single deep phase and no native middle tier (verified 2026-09-14)"; exactly one writer.
+- <strong>LTM</strong> (long-term): <code>MEMORY.md</code>, ≤20,000 characters by default, curated, append-only. The cap is not arbitrary: OpenClaw's default per-file <code>bootstrapMaxChars</code> is 20,000 (60,000 aggregate), so a larger MEMORY.md can be <em>partly omitted from the agent's injected context</em> even if the file on disk is fine.
+- Team-scoped entries do <strong>not</strong> go in a private tier; they belong in <code>SHARED.md</code> at the team root, guarded by a file-claim lease [C-design].</p>
+<p><strong>Promotion — the live config.</strong> Fleet <code>config.get</code>, verified live again in this run [A-live, matching A-config]:
+- <code>plugins.entries.memory-core.enabled = true</code>, with <code>config.dreaming.enabled = true</code> and a single deep phase: <code>dreaming.phases.deep.minScore = 0.5</code>, <code>minRecallCount = 0</code>, <code>minUniqueQueries = 0</code>.
+- The <strong>Memory Dreaming Promotion</strong> cron runs daily at 03:00, managed by memory-core [A-config: cron.list]: <em>"Promote weighted short-term recalls into MEMORY.md (limit=10, minScore=0.500, minRecallCount=0, minUniqueQueries=0, recencyHalfLifeDays=14, maxAgeDays=30)"</em>, last run status <code>ok</code>.
+- Cadre's <em>authored</em> gates are deliberately looser and recall-driven — STM→MTM at a percentile threshold with <code>recallCount ≥ 1</code>, MTM→LTM with <code>recallCount ≥ 2</code>, under the motto <em>"Loose promotion. Quality by eviction. Recall is the only vote that counts"</em> [C-design]. <strong>Whether the living fleet config implements those authored percentile gates, or only the platform's deep-phase values above, is not established by the collected evidence</strong> — the config shows the platform values; the percentile gates are in the design doc, not in any collected config key.
+- <strong>Daily <code>memory/YYYY-MM-DD.md</code> notes convention:</strong> <em>not observed in tonight's collected evidence.</em> The design's dated tier is <code>memory/midterm.md</code>, not a daily file. Marked <strong>UNVERIFIED</strong> — neither confirmed nor denied for the living workspaces (their file listings were in the declined collection).</p>
+<p><strong>Retrieval.</strong> <code>memory.search.provider = "local"</code> [A-live, A-config]. The local provider is embedding-backed: the config evidence names the <code>llama-cpp</code> provider with the model <code>llama.cpp/hf_ggml-org_embeddinggemma-300m-qat-Q8_0.gguf</code> (embeddinggemma-300m, Q8_0) [A-config: config.get.json]. Fleet agents call the same tool names — <code>memory_search</code> / <code>memory_get</code> appear in agent session histories in the audit evidence [A-config: kif-history.json]. <strong>Observed failure:</strong> Kif's <code>memory_search</code> <em>timed out after 30s</em> repeatedly in tonight's collection, returning <em>"Automatic memory index repair was requested. To rebuild manually, run: openclaw memory status --index --agent cadre-ar. Rebuilding may call the configured embedding provider and can incur provider cost"</em> [A-config: kif-history.json].</p>
+<p><strong>Compaction / context handling (config only).</strong> <code>agents.defaults.compaction.mode = "safeguard"</code>, <code>agents.defaults.contextPruning.mode = "cache-ttl"</code>, and two internal hooks are enabled: <code>hooks.internal.entries.session-memory.enabled = true</code> and <code>hooks.internal.entries.compaction-notifier.enabled = true</code> [A-live, A-config]. What "safeguard" does step-by-step, and what the session-memory hook writes, are <strong>not observable from here</strong> — no doc or output describing their mechanics was collected.</p>
+<p><strong>"Agent truth lives in files."</strong> This is the fleet's operating reality, and the evidence supports featuring it. Christopher's 2026-10-13/14 experience — chat instructions to an agent did not persist across sessions unless written into its files — is what drove the overhaul decisions recorded in <code>~/workspace/cadre-ops/DECISIONS.md</code> and MEMORY.md (operator directives were <em>transmitted to Michael and recorded in files</em>, not just said in chat) [M-log 2026-10-13; MEMORY.md]. The template AGENTS.md encodes the same model: agents read <code>CADRE.md</code>, <code>SHARED.md</code>, and any workspace <code>AUTONOMY.md</code> <em>at session start</em> — files are the session-start truth [C-design]. Tonight's audit is a live demonstration from the other direction: Michael's governance position lived in <code>SECURITY.md</code> (appended 01:40 and again ~02:20 CDT as Finding 2026-10-16b), and other agents acted on that <em>file</em>, not on the chat order [A-audit §3, F1].</p>
+<hr />
+<h2>3) The gates table</h2>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Gate</th>
+<th>Muse</th>
+<th>OpenClaw / Cadre</th>
+<th>Evidence</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>(a) Write gate</strong> — what may enter long-term memory at all</td>
+<td>Lasting facts, preferences, commitments about <em>the user</em>. Entry is by the assistant in-session (write it when learned) plus hourly background consolidation of new conversation. Import path also exists: Settings → Import memory, where the agent extracts lasting facts and confirms what it saved; uploading alone saves nothing.</td>
+<td>Per agent: durable facts/decisions in <em>that agent's</em> MEMORY.md, via memory-core dreaming promotion of short-term recalls (limit 10/day, minScore 0.5) plus whatever the agent itself writes. Team-scoped material is routed <em>out</em> of private memory into <code>SHARED.md</code>.</td>
+<td>Muse: [M-docs], [M-improve], [M-live header]. Fleet: [A-live dreaming config], [A-config cron description], [C-design writer discipline]</td>
+</tr>
+<tr>
+<td><strong>(b) Durability gate</strong> — durable vs routine, and who enforces it</td>
+<td>Rule: "promote what lasts here, leave raw day-to-day detail in your daily notes." Enforcers: the assistant in-session + the hourly upkeep job; demotion is a real, logged operation ("Demoted from MEMORY.md" entries with run IDs).</td>
+<td>Design: recall is the vote — promotion STM→MTM→LTM driven by recallCount/uniqueQueries, score only as tie-breaker; size caps (256 KB / 128 KB / 20k chars) bound each tier and eviction is size-triggered, never time-based. Live platform gate actually observed: the single deep-phase thresholds above. LTM is exempt from automatic eviction — over-cap flags for human curation.</td>
+<td>Muse: [M-live], [M-improve], [M-log demotions]. Fleet: [C-design memory.md cascade/eviction], [A-live]</td>
+</tr>
+<tr>
+<td><strong>(c) Secrets gate</strong> — what is barred</td>
+<td>Raw credentials are barred from memory, files, logs, and generated code, categorically. Storage is the Secure Vault; the agent cannot read stored values back. Observed in practice: a pasted token's <em>value</em> was recorded nowhere; only its existence/scope were.</td>
+<td><strong>No equivalent categorical bar was found in the collected evidence.</strong> On the fleet side, secrets handling rests on operator remediation rather than an enforced exclusion (details withheld in this public version). The gateway redacts values in <code>config.get</code>, and the fix is tracked as an open to-do — i.e. the gate is a remediation intention, not an enforced exclusion. Whether any fleet rule bars secrets from MEMORY.md itself: <strong>UNVERIFIED</strong>.</td>
+<td>Muse: [M-privacy], [M-log 2026-10-13]. Fleet: [A-audit §4, F3], [A-config]</td>
+</tr>
+<tr>
+<td><strong>(d) Correction gate</strong> — fixing a wrong memory, and propagation</td>
+<td>User correction → MEMORY.md is edited, the correction is logged in the daily note, and affected follow-ups (job bodies, other entries) are updated in the same pass. Newer claims supersede older ones in upkeep. Worked examples: AmericanMuscle purchase entry (2026-10-12), deal-watch scope (2026-10-13).</td>
+<td>Correction = editing the file(s), by whoever holds write access, per agent. No cross-agent propagation mechanism appears in the evidence: each agent holds its own files, so a fact corrected in Michael's MEMORY.md does not, by any observed mechanism, correct Fry's or Leela's. <code>SHARED.md</code> corrections are guarded by a one-writer claim lease, not by propagation. Fleet-side example tonight: Michael states Finding 15e "was corrected/cleared by him" inside SECURITY.md — a within-file correction, reported, not independently verified [A-audit §3].</td>
+<td>Muse: [M-log 2026-10-12/13], [M-improve]. Fleet: [A-config agents.list layout], [C-design claim lease], [A-audit §3]</td>
+</tr>
+<tr>
+<td><strong>(e) Forget gate</strong> — deliberate forgetting, and its limits</td>
+<td>A named, planned flow: inventory everywhere the fact lives → user confirms scope → per-owner cleanup → claim retraction + search refresh → fresh verification before saying "forgotten." Limits are explicit: outside/shared/published copies, logs, and backups may survive and need separate approval.</td>
+<td><strong>No forget flow was found in any collected fleet evidence</strong> — no config key, cron, hook, or design section describing deliberate forgetting, claim retraction, or index purging. Deleting lines from a file is mechanically possible for a file's writer, but whether the local embedding index forgets with the file is <strong>not observable from here</strong>. Marked as <em>absent from evidence</em>, not proven absent from the platform.</td>
+<td>Muse: [M-forget], [M-docs]. Fleet: absence across [A-live config keys], [A-config cron/hook lists], [C-design]</td>
+</tr>
+<tr>
+<td><strong>(f) Persistence gate</strong> — does a chat instruction survive a session boundary / compaction / restart?</td>
+<td><strong>Yes, if it is durable — by design.</strong> Memory is maintained proactively by the assistant and its background jobs and re-injected every session; standing files (MEMORY.md / AGENTS.md / SOUL.md) are what survive compaction. The gap is narrower and specific: <em>in-progress plans</em> (not facts) can drop in compaction — hence the todo-list rule.</td>
+<td><strong>No — not unless it is written into the agent's files.</strong> Chat instructions did not persist across sessions (Christopher's 2026-10-13/14 experience, the premise of the overhaul). Persistence is file-mediated: session-start reads of workspace files. Compaction mode is <code>safeguard</code> and a session-memory hook is enabled, but neither's persistence semantics are observable from here. A fleet restart also has a physical edge: the WSL distro stops when its last terminal window closes, taking the gateway — and any unsaved session state — with it [A-audit §1, §9b].</td>
+<td>Muse: [M-improve], [M-log 2026-10-13 compaction readout], [AGENTS.md todo rule]. Fleet: [M-log/MEMORY.md 2026-10-13/14], [C-design session-start reads], [A-live], [A-audit §9b]</td>
+</tr>
+<tr>
+<td><strong>(g) Sharing gate</strong> — who else can read/write</td>
+<td>One user, one assistant: main chat, side chats, and scheduled workers for the same user all read the same memory. The user can read every file directly, export everything (Settings → Data Controls), and reset. No other <em>person's</em> agent reads it. Subagents inherit the parent's context; artifact builders do <strong>not</strong> receive MEMORY.md [M-log 2026-10-13].</td>
+<td>Per-agent isolation by workspace: each agent's memory files live in its own directory and are its own. Read across agents happens by <em>sending messages / collection orders</em> — which can be declined, as tonight proved: the operator client's read/write/approvals scopes could not compel Michael or Kif to release governance/memory files, and <code>doctor</code> is FORBIDDEN without <code>operator.admin</code> [A-audit §1, F1]. Writes to shared files are lease-guarded, one writer at a time [C-design]. The user (Brick) is the authority agents appeal to — Michael Discord-flagged <em>him</em> to adjudicate the audit.</td>
+<td>Muse: [M-privacy export/reset], [M-log 2026-10-12/13]. Fleet: [A-config], [A-audit §1/§3/F1], [C-design]</td>
+</tr>
+<tr>
+<td><strong>(h) Failure modes actually observed, 2026-10-13..15</strong> (plus tonight where it is the same failure recurring)</td>
+<td><strong>Compaction dropped in-progress context</strong> (flagged by Christopher 2026-10-12; mitigated by the todo-list rule). <strong>A premature/wrong MEMORY.md entry</strong> (AmericanMuscle "purchase completed," 2026-10-12) — caught by Christopher, corrected same-day with log trail. <strong>A stale secret assumption after compaction</strong> (2026-10-13: post-compaction, the assistant's workspace copy of a relay secret did not match the running copy — it stopped guessing and asked) [M-log 2026-10-13].</td>
+<td><strong>Chat instructions not persisting</strong> across sessions (2026-10-13/14 — the overhaul's premise). <strong>The historical promotion-gate failure the design doc exists because of:</strong> a gate tuned for a busy instance <em>promoted 0 of 1,229 staged entries for a week while every nightly report said success</em> [C-design memory.md + guardrails §3]. <strong>memory_search timeouts + index-repair loop</strong> for cadre-ar (tonight, in audit evidence). <strong>Fleet memory of a lane transfer that never happened fleet-side:</strong> Muse's records say Erin's personal-lane jobs were disabled 2026-10-12; tonight all 30 fleet crons are enabled and Erin's are running and delivering — two systems' "truth" about the same commitment diverged, and duplicate delivery is live [A-audit §6, F2]. <strong>Audit collection bloc-declined</strong> on a memory-file (SECURITY.md) finding (tonight, F1) — a sharing-gate failure, observed live.</td>
+<td>Muse: [M-log dates as cited]. Fleet: [C-design], [A-audit F1/F2, §6], [A-config kif-history]</td>
+</tr>
+</tbody>
+</table></div>
+<hr />
+<h2>4) The three sharpest practical differences for Christopher</h2>
+<p><strong>1. In Muse, being told is enough. In the fleet, being told is nothing until it's filed.</strong>
+You tell Muse a fact, a preference, or a correction in chat, and it is written down in-session, consolidated hourly, and re-injected into every future chat — the AmericanMuscle correction and the deal-watch scope change both propagated the same day you made them (2026-10-12/13). In Cadre, your 2026-10-13/14 experience was the opposite: instructions given in chat evaporated at the session boundary, which is why the overhaul had to <em>transmit directives to Michael and record them in files</em> (<code>DECISIONS.md</code>, AUTONOMY.md) to make them stick. Practical consequence: with the fleet, your unit of instruction is the file edit; with Muse, it's the sentence.</p>
+<p><strong>2. Muse's secrets gate is a wall; the fleet's is a to-do.</strong>
+Your credentials categorically never enter Muse's memory — when you pasted a GitHub token in chat, its value was recorded nowhere, by design [M-privacy]. On the fleet side, secrets-handling fixes are tracked as open remediation items — recorded <em>inside Michael's MEMORY.md as open items, still unexecuted</em> [A-audit F3/§4]. The fleet knows; knowing hasn't been a gate. If a secret matters, the only system here that structurally cannot leak it from memory is Muse, because it never holds it.</p>
+<p><strong>3. One memory vs seventeen — corrections and audits only travel as far as the file you touched.</strong>
+When Muse's memory is wrong, one correction fixes the single shared record every chat reads. In the fleet, a fact lives in up to 17 separate workspaces; there is no observed propagation, and tonight you watched the sharing gate fail in real time: your own audit's request for the memory/governance file matrix was declined by Michael, followed by Kif, and logged as a security finding — while on the Muse side, the duplicate-delivery divergence over Erin's lane (disabled here 2026-10-12, still running there) shows the two systems can hold contradictory "truth" about <em>your own commitments</em> with neither side noticing. Governing the fleet means governing files agent-by-agent; governing Muse means correcting one record.</p>
+<hr />
+<h2>5) Open questions neither system's evidence answers</h2>
+<ol>
+<li><strong>Fleet living-file reality.</strong> What are the actual headings, sizes, and last-modified times of Michael's MEMORY.md and one worker's (say Fry's) tonight? Declined in the audit [A-audit §3] and not retried here — this is the single biggest evidence gap in this comparison, and only a Brick-authorized fleet-side read closes it.</li>
+<li><strong>Does the living fleet run Cadre's authored gates or the platform's?</strong> The percentile/recall gates, MTM tier, and size-triggered eviction are in the design docs; the live config shows only memory-core's deep phase (minScore 0.5, limit 10/day). Is <code>memory/midterm.md</code> actually present and written in any workspace? <strong>UNVERIFIED.</strong></li>
+<li><strong>Fleet daily notes.</strong> Do fleet agents keep <code>memory/YYYY-MM-DD.md</code> daily notes? Not present in any collected evidence (the design's dated artifact is <code>midterm.md</code>). <strong>UNVERIFIED.</strong></li>
+<li><strong>What <code>compaction.mode = "safeguard"</code> and the <code>session-memory</code> hook actually do</strong> in OpenClaw — what they preserve, where they write, and whether a chat instruction has <em>any</em> persistence path short of a file edit. Not observable from config keys alone.</li>
+<li><strong>Fleet forgetting.</strong> If a line is deleted from a fleet MEMORY.md, does the local embedding index (embeddinggemma-300m via llama-cpp) drop it too, or does the fact stay searchable? No evidence either way — and the same question, inverted, for the index-repair path that "may call the configured embedding provider."</li>
+<li><strong>Muse's runtime-managed internals.</strong> <code>~/memory/bank/</code> and <code>~/memory/index/</code> are described as runtime-managed, but their write rules (what promotes a claim into the bank, how the index is built) are not documented in <code>~/docs/memory.md</code> or <code>~/docs/self_improvement.md</code> beyond the job descriptions. The <em>behavior</em> is observable; the mechanism is not documented here.</li>
+<li><strong>Side-chat memory on this instance.</strong> Documented as living under <code>~/side-chats/&lt;chat-id&gt;/</code>, but that directory does not exist on this VM as checked in this run. Where this instance's side-chat memory actually resides is <strong>not observable from here</strong>.</li>
+<li><strong>Whose correction wins a tie?</strong> Muse: "newer claims supersede older ones" [M-improve] — but the precedence rule when a background upkeep job and a live user correction conflict in the same hour is not documented. Fleet: when <code>SHARED.md</code> and a private MEMORY.md disagree about a team fact, the design routes team facts to SHARED.md — but no observed case tests it.</li>
+</ol>
+</article>
+<footer>
+  <div class="mono">MooreFolio &middot; Kansas City &middot; <a href="mailto:ai@moorefolio.com">ai@moorefolio.com</a></div>
+</footer>
+</body>
+</html>

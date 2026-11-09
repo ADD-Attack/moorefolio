@@ -1,0 +1,136 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Three bodies — a live gravity model</title>
+<meta name="description" content="Three bodies under mutual Newtonian gravity, integrated live in your browser: the figure-8 orbit, the Pythagorean problem, and seeded random starts.">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="bar">
+  <span class="mark" aria-hidden="true">◎</span>
+  <h1>Three bodies</h1>
+  <span class="sub">Newtonian gravity, integrated live</span>
+  <a class="details" href="#s01">Details ↓</a>
+</header>
+
+<main>
+<section class="sim" aria-label="Simulation">
+  <div class="stage" id="stage">
+    <canvas id="view" aria-label="Three bodies orbiting; trails show their recent paths"></canvas>
+
+    <div class="status" role="status" aria-live="polite">
+      <span class="regime" id="regime">Figure-8</span>
+      <span id="status">All three bodies are inside the view bound.</span>
+    </div>
+
+    <ul class="legend" aria-label="Bodies">
+      <li><i class="dot b0"></i>α <span id="m0">m 1.00</span></li>
+      <li><i class="dot b1"></i>β <span id="m1">m 1.00</span></li>
+      <li><i class="dot b2"></i>γ <span id="m2">m 1.00</span></li>
+    </ul>
+
+    <dl class="pill" aria-label="Live readouts">
+      <div><dt>Energy</dt><dd id="r-energy">−1.28714</dd></div>
+      <div><dt>Drift</dt><dd id="r-drift">0.0000%</dd></div>
+      <div><dt>Time</dt><dd id="r-time">0.00 s</dd></div>
+      <div><dt>Closest</dt><dd id="r-closest">0.000</dd></div>
+    </dl>
+  </div>
+
+  <form class="strip" id="strip" onsubmit="return false" aria-label="Controls">
+    <fieldset class="g-orbit">
+      <legend>Orbit</legend><div class="row">
+      <label class="field"><span>Starting arrangement</span>
+        <select id="c-preset">
+          <option value="figure8">Figure-8 (equal masses)</option>
+          <option value="pythagorean">Pythagorean (3 · 4 · 5)</option>
+          <option value="random">Random (seeded)</option>
+        </select>
+      </label>
+      <label class="field seed" id="seed-field"><span>Seed <em>1 – 99999</em></span>
+        <span class="seedrow"><input id="c-seed" type="number" min="1" max="99999" step="1" value="1" inputmode="numeric"><button type="button" id="c-newseed">New seed</button></span>
+      </label>
+    </div></fieldset>
+
+    <fieldset>
+      <legend>Run</legend><div class="row">
+      <button type="button" id="c-play" class="play" aria-pressed="false">Pause</button>
+      <label class="field"><span>How fast time runs <output id="o-speed">×1.00</output></span>
+        <input id="c-speed" type="range" min="0.25" max="4" step="0.25" value="1">
+        <span class="range"><b>×0.25</b><b>×4</b></span>
+      </label>
+    </div></fieldset>
+
+    <fieldset>
+      <legend>Trails</legend><div class="row">
+      <label class="field"><span>How long the trail lingers <output id="o-trail">7.0 s</output></span>
+        <input id="c-trail" type="range" min="0" max="20" step="0.5" value="7">
+        <span class="range"><b>off</b><b>20 s</b></span>
+      </label>
+    </div></fieldset>
+
+    <fieldset>
+      <legend>Gravity</legend><div class="row">
+      <label class="field"><span>How hard they pull <output id="o-g">G = 1.00</output></span>
+        <input id="c-g" type="range" min="0.5" max="2" step="0.05" value="1">
+        <span class="range"><b>0.50</b><b>2.00 model units</b></span>
+      </label>
+    </div></fieldset>
+
+    <button type="button" id="c-reset" class="reset">Reset everything</button>
+  </form>
+</section>
+
+<article class="notes">
+  <section id="s01">
+    <p class="num">01</p>
+    <div>
+      <h2>What you are looking at</h2>
+      <p>Three point masses — α, β and γ — each pulling on the other two. Nothing else is in the room: no star at the centre, no track, no script. Every frame, the page works out the three pulls and moves the bodies on by a sliver of time. The coloured trail behind each body is where it has just been.</p>
+      <p><strong>Figure-8</strong> is one of the rare starts that repeats. Three equal masses chase each other around a single figure-of-eight, and every 6.33 model seconds they are back where they began. The trail lays the next lap over the first.</p>
+      <p><strong>Pythagorean</strong> starts three masses — 3, 4 and 5 — at rest on the corners of a 3-4-5 triangle. They fall together, swing through near-misses, and trade energy until one is thrown out for good. The status line in the corner says when that happens, and which body went.</p>
+      <p><strong>Random</strong> deals a fresh start from a seed. The same seed always gives the same run, so an interesting one can be found again.</p>
+      <p>The numbers on the scene are measured from the live state. <em>Energy</em> is the system's total. Gravity alone can't change it, so if it moves, the arithmetic is wrong. <em>Drift</em> is how far it has moved since the start. <em>Closest</em> is the gap between the nearest two bodies, and <em>Time</em> is how much model time has passed.</p>
+    </div>
+  </section>
+
+  <section id="s02">
+    <p class="num">02</p>
+    <div>
+      <h2>How the model is built</h2>
+      <p><strong>Force law.</strong> Every pair pulls along the line between them, in proportion to both masses and to one over the distance squared. Units are the model's own: gravity's constant G is 1, so masses, distances and seconds are pure numbers. The gravity slider rescales G from 0.50 to 2.00.</p>
+      <pre class="eq">a<sub>i</sub> = Σ<sub>j≠i</sub>  G m<sub>j</sub> (x<sub>j</sub> − x<sub>i</sub>) / |x<sub>j</sub> − x<sub>i</sub>|³</pre>
+      <p><strong>Integrator.</strong> Velocity Verlet: half a kick from the current pull, a full drift, the pull recomputed, the other half kick. Each frame takes <strong>20 substeps of 1/1200 model second</strong>, so one frame is 1/60 second of model time at speed ×1. The speed control changes the number of substeps per frame (5 at ×0.25, 80 at ×4), never their length.</p>
+      <p><strong>Close encounters.</strong> Inside each substep, a single Verlet step is never allowed to exceed 0.0001 × the tightest pair's free-fall time, r<sup>1.5</sup> / √(G(m<sub>i</sub>+m<sub>j</sub>)), measured again before every step. On the figure-8 it splits each substep into 12 to 21 steps. In the tightest Pythagorean near-miss it splits one substep into about 68,000. Without the split, the near-misses fling bodies out on a numerical error.</p>
+      <p><strong>Energy.</strong> Kinetic plus potential, summed over the live state each frame:</p>
+      <pre class="eq">E = Σ<sub>i</sub> ½ m<sub>i</sub> |v<sub>i</sub>|²  −  Σ<sub>i&lt;j</sub> G m<sub>i</sub> m<sub>j</sub> / r<sub>ij</sub></pre>
+      <p>Drift compares that against the value at the start, or at the last gravity change, since a new G is a new system. On the figure-8 the drift stays below one part in a hundred million over a minute of model time.</p>
+      <p><strong>Presets.</strong> The figure-8 uses Chenciner and Montgomery's published starting values to eight and ten decimals: bodies at (±0.97000436, ∓0.24308753) and (0, 0), velocities (0.4662036850, 0.4323657300) for the outer two and (−0.9324073700, −0.8647314600) for the middle one. The Pythagorean start is masses 3, 4, 5 at (1, 3), (−2, −1), (1, −1), all at rest. Random draws masses from 0.5 to 1.5, positions from −1.5 to 1.5 and velocities from −0.5 to 0.5 on each axis, using the mulberry32 generator on the shown seed. It then removes the net drift, so the centre of mass stays put.</p>
+      <p><strong>Ejection.</strong> A body counts as ejected when three things hold at once: it is more than 5 units from the centre of mass, it is moving away, and its energy against the pair it left behind is zero or above, so it can't fall back. Beyond 5 units while still bound, the status line says it will return. The exact moment the Pythagorean body leaves depends on the arithmetic, because that is what chaos means. In this model it goes at about 61.5 model seconds.</p>
+      <p><strong>Limits.</strong> Two dimensions, point masses, no collisions, no relativity. The model is Newton's and nothing more.</p>
+    </div>
+  </section>
+
+  <section id="s03">
+    <p class="num">03</p>
+    <div>
+      <h2>Where this shows up</h2>
+      <p><strong>Triple stars.</strong> Many stars live in threes. Alpha Centauri, the nearest system to the Sun, is one: a close pair with a small third star far out. Arrangements like that last because the third body is distant. Bring it close, as the Pythagorean preset does, and the system tends to break up the way you just watched.</p>
+      <p><strong>Spacecraft paths.</strong> A probe moving between the Earth and the Moon is the third body in a three-body problem. Its own pull is too small to matter, so mission planners lean on the same equations to find cheap routes and stable parking spots.</p>
+      <p><strong>The limit of prediction.</strong> Newton solved two bodies exactly. Poincaré showed in the 1890s that three bodies in general have no such closed formula. Their futures have to be computed step by step, as this page does, and small differences grow. The Pythagorean problem, posed by Burrau in 1913, wasn't followed to its end until Szebehely and Peters integrated it by computer in 1967.</p>
+      <p><strong>Rare order.</strong> The figure-8 was found numerically by Cris Moore in 1993 and proved to exist by Chenciner and Montgomery in 2000. It is the exception that proves the rule: a start tuned to many decimals, repeating where nearly every other start drifts apart.</p>
+    </div>
+  </section>
+</article>
+</main>
+
+<footer class="foot">
+  <p>One model, run in your browser. Nothing here is pre-recorded.</p>
+</footer>
+
+<script src="sim.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

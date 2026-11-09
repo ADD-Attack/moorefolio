@@ -1,0 +1,1 @@
+NAME NOTE (2026-10-20, build coordinator): the nmrugg lite-single loader opens 'stockfish.wasm' beside its JS, not the versioned filename. Each engine folder therefore carries a symlink stockfish.wasm -> stockfish-19-lite-single.wasm (same bytes, sha256 ee4f115b... in FETCH-RECORD.md). If a deploy pipeline does not preserve symlinks, copy the .wasm to the plain name instead.

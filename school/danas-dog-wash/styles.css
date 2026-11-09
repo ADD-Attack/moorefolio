@@ -1,0 +1,100 @@
+/* Dana's Dog Wash — suds and van paint. Ratios in contrast.txt (computed). */
+:root {
+  --paper: #fbf6ec;   /* warm soap-cream */
+  --ink: #17323a;     /* deep teal ink */
+  --ink-2: #3d5a61;   /* secondary text */
+  --suds: #e3f1ef;    /* pale water */
+  --van: #b23a1e;     /* van-door red */
+  --van-ink: #ffffff;
+  --line: #17323a;
+  --sans: "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --display: "Cooper Black", "Georgia", serif;
+}
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 17px/1.55 var(--sans); }
+.wrap { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0 0 .5em; }
+h2 { font-size: clamp(1.8rem, 4vw, 2.6rem); }
+h3 { font-size: 1.3rem; }
+p { margin: 0 0 1em; }
+
+.top { border-bottom: 3px solid var(--line); }
+.top-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding-top: 14px; padding-bottom: 14px; flex-wrap: wrap; }
+.mark { font-family: var(--display); font-size: 1.35rem; }
+.where { color: var(--ink-2); font-size: .95rem; }
+
+.hero { padding-top: 72px; padding-bottom: 64px; }
+.eyebrow { text-transform: uppercase; letter-spacing: .08em; font-size: .85rem; color: var(--van); font-weight: 700; }
+.hero h1 { font-size: clamp(2.8rem, 9vw, 6.4rem); max-width: 12ch; }
+.lede { font-size: 1.2rem; max-width: 34ch; color: var(--ink-2); }
+.btn { display: inline-block; background: var(--van); color: var(--van-ink); padding: 14px 22px; border-radius: 999px; font-weight: 700; text-decoration: none; border: 3px solid var(--line); box-shadow: 4px 4px 0 var(--line); }
+.btn:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--line); }
+.btn:focus-visible, input:focus-visible { outline: 3px solid var(--van); outline-offset: 3px; }
+
+/* the table */
+.est-band { background: var(--suds); border-top: 3px solid var(--line); border-bottom: 3px solid var(--line); padding: 64px 0; }
+.est { display: grid; grid-template-columns: 1fr 1.3fr; gap: 48px; align-items: start; }
+.est-copy p { color: var(--ink-2); max-width: 38ch; }
+.est-form { background: var(--paper); border: 3px solid var(--line); border-radius: 18px; padding: 24px; box-shadow: 8px 8px 0 var(--line); display: grid; gap: 18px; }
+.svc { border: 0; padding: 0; margin: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.svc legend, .wt > label { font-weight: 700; margin-bottom: 8px; padding: 0; }
+.svc label { display: flex; align-items: center; gap: 8px; border: 2px solid var(--line); border-radius: 10px; padding: 9px 10px; cursor: pointer; font-size: .98rem; background: #fff; }
+.svc label:has(input:checked) { background: var(--ink); color: var(--paper); }
+.svc input { accent-color: var(--van); margin: 0; }
+.wt { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.wt > label { margin: 0; }
+.wt-row { display: flex; align-items: center; gap: 8px; }
+#lbs { width: 6.5ch; font: 700 1.4rem var(--sans); color: var(--ink); border: 2px solid var(--line); border-radius: 8px; padding: 4px 8px; background: #fff; }
+.unit { font-weight: 700; }
+
+.scale input[type=range] { width: 100%; accent-color: var(--van); margin: 0 0 6px; }
+/* bands sized to the slider's 1–120 lb track: 24 / 36 / 30 / 30 */
+.bands { display: grid; grid-template-columns: 24fr 36fr 30fr 30fr; font-size: .78rem; line-height: 1.2; font-weight: 700; }
+.bands span { padding: 6px 4px; border-top: 4px solid var(--ink-2); color: var(--ink-2); }
+.bands small { font-weight: 400; font-size: .72rem; }
+.bands .b-x { border-top-style: dashed; border-top-color: var(--van); color: var(--van); }
+.est-form[data-band=s] .b-s, .est-form[data-band=m] .b-m, .est-form[data-band=l] .b-l { border-top-color: var(--ink); color: var(--ink); background: #fff; }
+.est-form[data-band=x] .b-x { background: #fff; border-top-style: solid; }
+
+.answer { display: grid; gap: 4px; border-radius: 12px; padding: 14px 16px; border: 3px solid var(--line); background: #fff; min-height: 84px; }
+.answer strong { font-family: var(--display); font-size: 1.9rem; line-height: 1.1; }
+.answer.is-no { background: var(--van); color: var(--van-ink); }
+.answer.is-unpriced, .answer.is-ask { background: var(--paper); border-style: dashed; }
+
+/* prices */
+.prices { padding-top: 72px; padding-bottom: 40px; }
+.menu { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+.menu li { border: 3px solid var(--line); border-radius: 16px; padding: 20px; background: #fff; }
+.menu li p { color: var(--ink-2); font-size: .98rem; }
+.menu li .price { font-family: var(--display); font-size: 2rem; color: var(--ink) !important; margin-bottom: .3em; }
+.menu li .price.muted { font-size: 1.25rem; color: var(--ink-2) !important; }
+.tiers { margin: 0; display: grid; gap: 6px; }
+.tiers div { display: flex; justify-content: space-between; border-bottom: 2px dotted var(--ink-2); padding-bottom: 4px; }
+.tiers dt { color: var(--ink-2); }
+.tiers dd { margin: 0; font-family: var(--display); font-size: 1.5rem; }
+
+.rules { padding-top: 40px; padding-bottom: 72px; }
+.rule-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
+.rule { border-top: 3px solid var(--line); padding-top: 16px; }
+.rule p { color: var(--ink-2); }
+
+.book { background: var(--ink); color: var(--paper); padding: 64px 0; }
+.book p { max-width: 46ch; }
+.mail { font: 700 clamp(1.15rem, 4.4vw, 2rem) var(--sans); overflow-wrap: anywhere; color: #ffffff; user-select: all; }
+.foot { padding-top: 24px; padding-bottom: 32px; color: var(--ink-2); font-size: .9rem; }
+
+@media (max-width: 960px) {
+  .est { grid-template-columns: 1fr; gap: 20px; }
+  .menu { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  body { font-size: 16px; }
+  .hero { padding-top: 44px; padding-bottom: 44px; }
+  .est-band { padding: 40px 0; }
+  .est-form { padding: 16px; gap: 14px; box-shadow: 5px 5px 0 var(--line); }
+  .svc label { font-size: .9rem; padding: 8px; }
+  .menu, .rule-grid { grid-template-columns: 1fr; }
+  .bands { font-size: .7rem; }
+  .bands small { font-size: .64rem; }
+}

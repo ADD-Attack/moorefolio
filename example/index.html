@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Christopher Moore | Websites &amp; Booking for Contractors, Kansas City</title>
+<meta name="description" content="Christopher Moore builds websites, online scheduling, and advertising for contractors in Kansas City. His services, shown in two complete website formats — Classic and Glass. Pick yours.">
+<meta name="theme-color" content="#14161a">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Christopher Moore — Websites &amp; booking for contractors">
+<meta property="og:description" content="One service. Three website formats. Pick yours.">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Christopher Moore">
+<meta name="twitter:description" content="Websites, booking, and ads for contractors, Kansas City. One service, two formats.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  "name": "Christopher Moore — Websites & Booking for Contractors",
+  "email": "Moore.chrisf@gmail.com",
+  "priceRange": "$$",
+  "founder": {
+    "@type": "Person",
+    "name": "Christopher Moore",
+    "jobTitle": "Website and scheduling provider for contractors",
+    "email": "Moore.chrisf@gmail.com",
+    "address": { "@type": "PostalAddress", "addressLocality": "Kansas City", "addressRegion": "MO", "addressCountry": "US" }
+  },
+  "address": { "@type": "PostalAddress", "addressLocality": "Kansas City", "addressRegion": "MO", "addressCountry": "US" },
+  "areaServed": ["Kansas City, MO", "Kansas City, KS", "Overland Park, KS", "Shawnee, KS", "Lenexa, KS", "Olathe, KS", "the Kansas City metro"],
+  "description": "One-person website, scheduling, and advertising production for contractors and trades businesses in Kansas City: contractor websites, online scheduling and booking setup, and advertising runs across Nextdoor, Facebook, Instagram, LinkedIn, and TikTok.",
+  "makesOffer": [
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Contractor website design and build" } },
+    { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Online scheduling and booking setup" } },
+    { "@type": "Offer", "price": "25", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising run — up to 2,000 views, 2D ads" } },
+    { "@type": "Offer", "price": "50", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising run — up to 8,000 views, 2D ads plus free 3D video ads" } },
+    { "@type": "Offer", "price": "100", "priceCurrency": "USD", "itemOffered": { "@type": "Service", "name": "Advertising run — up to 16,000 views, 2D ads plus free 3D video ads" } }
+  ]
+}
+</script>
+<style>
+:root{
+  --ink:#14161a; --ink2:#1c1f26; --ink3:#262b35;
+  --paper:#f6f1e7; --paper2:#efe7d8; --card:#fffdf8;
+  --amber:#e19a2f; --amber2:#c97f16; --teal:#177e76;
+  --tx:#23262c; --tx-dim:#5a5f68; --tx-inv:#f3eee3; --tx-inv-dim:#b9bdc8;
+  --line:#ddd2bd; --line-d:#333947;
+  --fb:system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --serif:Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  --helv:"Helvetica Neue",Helvetica,Arial,sans-serif;
+  --fd:'Oswald',sans-serif; --fs:'Source Serif 4',Georgia,serif;
+  --r:14px; --sh:0 18px 44px rgba(20,18,10,.16);
+  --tabh:66px;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:var(--fb);color:var(--tx);background:var(--paper);line-height:1.6;font-size:17px;-webkit-font-smoothing:antialiased;padding-bottom:calc(var(--tabh) + env(safe-area-inset-bottom))}
+.page{overflow-x:clip}
+a{color:var(--teal)}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px;border-radius:4px}
+.skip{position:absolute;left:-999px;top:0;background:var(--amber);color:#191203;padding:.6rem 1rem;z-index:400;font-weight:600}
+.skip:focus{left:.5rem;top:.5rem}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+.wrap{max-width:1180px;margin:0 auto;padding:0 1.25rem}
+.btn{display:inline-flex;align-items:center;gap:.5rem;font-weight:600;font-size:.95rem;text-decoration:none;padding:.72rem 1.3rem;border-radius:10px;border:2px solid transparent;transition:transform .15s,background .15s,color .15s;cursor:pointer}
+.btn:hover{transform:translateY(-2px)}
+.btn-amber{background:var(--amber);color:#1a1305}
+.btn-amber:hover{background:#efa93c}
+
+/* ============ constant top frame ============ */
+header.frame{position:sticky;top:0;z-index:200;background:rgba(15,17,21,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--tx-inv);border-bottom:1px solid var(--line-d)}
+header.frame .bar{display:flex;align-items:center;gap:1.1rem;max-width:1180px;margin:0 auto;padding:.55rem 1.25rem}
+.fbrand{display:flex;align-items:center;gap:.65rem;text-decoration:none;color:var(--tx-inv);min-width:0}
+.fmark{width:36px;height:36px;flex:none;display:grid;place-items:center;background:var(--amber);color:#1a1305;font-family:var(--mono);font-weight:700;font-size:.78rem;border-radius:8px;box-shadow:inset 0 0 0 2px rgba(0,0,0,.18)}
+.fbrand .fname{font-weight:700;font-size:1.02rem;letter-spacing:.02em;line-height:1.12;white-space:nowrap}
+.fbrand .fname small{display:block;font-family:var(--mono);font-weight:500;font-size:.58rem;letter-spacing:.18em;text-transform:uppercase;color:var(--amber);white-space:nowrap}
+.frame .ftag{font-family:var(--serif);font-style:italic;font-size:.98rem;color:var(--tx-inv-dim);margin-left:auto;white-space:nowrap}
+.frame .btn{padding:.52rem 1rem;font-size:.88rem;flex:none}
+@media(max-width:820px){.frame .ftag{display:none}.frame .btn{margin-left:auto}}
+@media(max-width:480px){.fbrand .fname small{display:none}.fbrand .fname{font-size:.94rem}}
+
+/* ============ stage + format switching ============ */
+#stage{background:#0b0e11}
+.format{position:relative}
+.format[hidden]{display:none}
+@keyframes fmtIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+.format.active{animation:fmtIn .5s ease both}
+.fin{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
+.credit{font-size:.78rem;line-height:1.5}
+.credit a{color:inherit;text-decoration:underline;text-underline-offset:2px}
+
+/* ============ FORMAT 1 · CLASSIC (the original v2 design language) ============ */
+.fmt-classic{background:var(--paper);color:var(--tx)}
+.cl-in{max-width:1180px;margin:0 auto;padding:0 1.25rem;position:relative}
+.cl-logo{font-family:var(--fs);font-weight:600;font-size:1.22rem;color:#fff;line-height:1}
+.cl-logo small{display:block;font-family:var(--mono);font-weight:500;font-size:.58rem;letter-spacing:.3em;text-transform:uppercase;color:var(--amber);margin-top:.3rem}
+.fmt-classic .btn-dark{background:var(--ink);color:var(--tx-inv)}
+.fmt-classic .btn-dark:hover{background:var(--ink3)}
+.cl-hero{padding-top:3.4rem}
+.cl-eyebrow{font-family:var(--mono);font-size:.74rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.cl-eyebrow::before{content:"";width:34px;height:2px;background:var(--amber2)}
+.cl-h{font-family:var(--fd);font-weight:700;text-transform:uppercase;line-height:.98;letter-spacing:.01em;font-size:clamp(2.6rem,6.4vw,4.6rem);max-width:14ch;margin:1rem 0 1.1rem;color:var(--ink)}
+.cl-h em{font-style:normal;color:var(--amber2)}
+.cl-lede{font-family:var(--fs);font-size:clamp(1.1rem,2vw,1.32rem);max-width:56ch;color:#3c4048}
+.cl-ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin:1.6rem 0 2.4rem}
+.cl-fig{border-radius:var(--r);overflow:hidden;position:relative;box-shadow:var(--sh)}
+.cl-fig img{width:100%;height:320px;object-fit:cover;display:block}
+.cl-fig figcaption{position:absolute;left:0;right:0;bottom:0;padding:2rem 1.4rem .95rem;color:#fff;font-size:.9rem;background:linear-gradient(transparent,rgba(10,11,14,.82))}
+.cl-stats{margin-top:2.8rem;background:var(--ink);color:var(--tx-inv)}
+.cl-stats .cl-in{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;padding-top:1.15rem;padding-bottom:1.15rem}
+.cl-stat b{display:block;font-family:var(--fd);font-size:1.45rem;font-weight:600;color:#fff;line-height:1.1}
+.cl-stat span{font-size:.83rem;color:var(--tx-inv-dim)}
+@media(max-width:760px){.cl-stats .cl-in{grid-template-columns:1fr 1fr}}
+.cl-tiersband{background:var(--ink);color:var(--tx-inv);padding:2.2rem 0 2.4rem}
+.cl-tiers-k{font-family:var(--mono);font-size:.7rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber);margin-bottom:1.2rem}
+.cl-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.6rem}
+@media(max-width:700px){.cl-tiers{grid-template-columns:1fr;gap:1.2rem}}
+.cl-tier b{display:block;font-family:var(--fd);font-weight:700;font-size:2.1rem;color:#fff;line-height:1}
+.cl-tier .v{display:block;font-family:var(--fd);font-weight:600;font-size:1.02rem;text-transform:uppercase;letter-spacing:.05em;color:var(--amber);margin-top:.35rem}
+.cl-tier .n{display:block;font-size:.88rem;color:var(--tx-inv-dim);margin-top:.3rem}
+.cl-tier .bdg{display:inline-block;font-family:var(--mono);font-size:.62rem;font-weight:700;letter-spacing:.18em;text-transform:uppercase;background:var(--amber);color:#1a1305;border-radius:99px;padding:.22rem .6rem;margin-top:.55rem}
+.cl-sec{padding:3.6rem 0}
+.cl-sec.alt{background:var(--paper2)}
+.cl-kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.cl-kicker::before{content:"";width:30px;height:2px;background:currentColor}
+.cl-h2{font-family:var(--fd);font-weight:600;text-transform:uppercase;letter-spacing:.015em;line-height:1.04;font-size:clamp(1.8rem,3.8vw,2.6rem);margin:.7rem 0 .9rem;color:var(--ink)}
+.cl-sub{font-family:var(--fs);font-size:1.1rem;color:var(--tx-dim);max-width:62ch}
+.cl-svcs{display:grid;grid-template-columns:repeat(2,1fr);gap:1.1rem;margin-top:2.4rem}
+@media(max-width:700px){.cl-svcs{grid-template-columns:1fr}}
+.cl-svc{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.6rem 1.4rem;transition:transform .18s,box-shadow .18s}
+.cl-svc:hover{transform:translateY(-5px);box-shadow:var(--sh)}
+.cl-svc .ic{width:48px;height:48px;border-radius:11px;background:var(--ink);display:grid;place-items:center;margin-bottom:1rem}
+.cl-svc .ic svg{width:25px;height:25px;stroke:var(--amber);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.cl-svc h3{font-family:var(--fd);font-weight:600;font-size:1.16rem;text-transform:uppercase;letter-spacing:.02em;margin-bottom:.45rem;color:var(--ink)}
+.cl-svc p{font-size:.96rem;color:var(--tx-dim)}
+.cl-svc .tag{display:inline-block;font-family:var(--mono);font-size:.64rem;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);border:1px solid var(--teal);border-radius:99px;padding:.16rem .55rem;margin-top:.9rem}
+.cl-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.4rem;counter-reset:clstep}
+@media(max-width:820px){.cl-steps{grid-template-columns:1fr}}
+.cl-step{background:var(--ink);color:var(--tx-inv);border-radius:var(--r);padding:1.7rem 1.4rem;position:relative;overflow:hidden}
+.cl-step::after{content:counter(clstep,decimal-leading-zero);counter-increment:clstep;position:absolute;right:.4rem;top:-1.6rem;font-family:var(--fd);font-weight:700;font-size:5.4rem;color:transparent;-webkit-text-stroke:1.5px rgba(225,154,47,.45)}
+.cl-step h3{font-family:var(--fd);font-size:1.25rem;text-transform:uppercase;letter-spacing:.03em;color:var(--amber);margin-bottom:.5rem}
+.cl-step p{font-size:.94rem;color:var(--tx-inv-dim)}
+.cl-split{display:grid;grid-template-columns:1.05fr .95fr;gap:3rem;align-items:center}
+@media(max-width:900px){.cl-split{grid-template-columns:1fr}}
+.cl-pull{font-family:var(--fs);font-style:italic;font-size:1.3rem;line-height:1.45;border-left:4px solid var(--amber);padding-left:1.1rem;margin:1.4rem 0;color:var(--ink2)}
+.cl-checks{list-style:none;margin-top:1.2rem;display:grid;gap:.8rem}
+.cl-checks li{display:flex;gap:.7rem;align-items:flex-start;font-size:1rem}
+.cl-checks svg{flex:none;width:21px;height:21px;margin-top:.18rem;stroke:var(--teal);fill:none;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.cl-pic{border-radius:var(--r);overflow:hidden;box-shadow:var(--sh)}
+.cl-pic img{width:100%;height:100%;min-height:300px;object-fit:cover;display:block}
+.cl-cta{background:linear-gradient(120deg,#191410,#241a0c 55%,#191410);color:var(--tx-inv);text-align:center;padding:3.8rem 0}
+.cl-cta .cl-h2{color:#fff;margin-top:0}
+.cl-cta .pun{font-family:var(--fs);font-style:italic;color:var(--amber);font-size:1.15rem}
+.cl-cta .row{display:flex;gap:1.2rem;justify-content:center;align-items:center;flex-wrap:wrap;margin-top:1.6rem}
+.cl-phone{font-family:var(--fd);font-weight:600;font-size:clamp(1.5rem,4vw,2.3rem);color:#fff;letter-spacing:.01em;white-space:nowrap}
+.cl-credit{padding-top:1.3rem;padding-bottom:1.5rem;color:var(--tx-dim)}
+
+/* ============ FORMAT 2 · GLASS ============ */
+.fmt-glass{background:#04120d;color:#eef7ee;overflow:hidden}
+#auroraCanvas{position:absolute;inset:0;width:100%;height:100%;z-index:0;display:block}
+.fmt-glass .fin{z-index:1;padding-top:3rem;padding-bottom:3.2rem}
+.glass-panel{background:linear-gradient(135deg,rgba(255,255,255,.13),rgba(255,255,255,.045));border:1px solid rgba(255,255,255,.28);border-radius:20px;backdrop-filter:blur(14px) saturate(1.35);-webkit-backdrop-filter:blur(14px) saturate(1.35);box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 24px 50px rgba(0,0,0,.35)}
+.g-nav{display:flex;align-items:center;gap:1rem;padding:.8rem 1.2rem;border-radius:99px}
+.g-logo{font-weight:600;font-size:1.08rem;letter-spacing:.01em;line-height:1.05}
+.g-logo small{display:block;font-family:var(--mono);font-weight:500;font-size:.56rem;letter-spacing:.3em;text-transform:uppercase;color:#a7f3c9}
+.g-nav nav{margin-left:auto;display:flex;gap:1.4rem;font-size:.9rem;color:rgba(238,247,238,.85)}
+@media(max-width:700px){.g-nav nav{display:none}}
+.g-call{flex:none;margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.3);color:#fff;font-weight:600;font-size:.86rem;padding:.45rem 1rem;border-radius:99px;text-decoration:none}
+.g-nav nav + .g-call{margin-left:0}
+.g-hero{position:relative;padding:3.4rem 0 0;min-height:340px}
+.g-orb{position:absolute;right:4%;top:2.4rem;width:180px;height:180px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#e4ffb8,#57d977 46%,#1d7a4c 80%);opacity:.92;box-shadow:0 0 90px rgba(87,217,119,.45)}
+.g-orb::after{content:"";position:absolute;inset:-16px;border-radius:50%;border:1px solid rgba(167,243,201,.5);animation:gPulse 3.6s ease-out infinite}
+@keyframes gPulse{0%{transform:scale(.82);opacity:.9}70%{transform:scale(1.12);opacity:0}100%{transform:scale(1.12);opacity:0}}
+@media(max-width:760px){.g-orb{width:104px;height:104px;right:0;top:1.2rem}}
+.g-eyebrow{display:inline-flex;align-items:center;gap:.55rem;font-family:var(--mono);font-size:.68rem;letter-spacing:.26em;text-transform:uppercase;color:#c9f7d9;padding:.42rem .9rem;border-radius:99px}
+.g-eyebrow .dot{width:8px;height:8px;border-radius:50%;background:#57d977;box-shadow:0 0 10px #57d977}
+.g-h1{font-weight:200;font-size:clamp(2.9rem,7.4vw,5.5rem);line-height:1.02;letter-spacing:-.015em;margin:1.4rem 0 0;color:#fff;max-width:12ch}
+.g-h1 .l2{display:block;margin-left:14%}
+.g-h1 b{font-weight:600;background:linear-gradient(92deg,#a7f3c9,#2de2c4);-webkit-background-clip:text;background-clip:text;color:transparent}
+.g-lede{margin-top:1.6rem;max-width:560px;padding:1.25rem 1.4rem;font-size:1.06rem;color:rgba(238,247,238,.92)}
+.g-ctas{display:flex;flex-wrap:wrap;gap:.8rem;margin-top:1.4rem}
+.g-btn{display:inline-flex;align-items:center;font-weight:700;font-size:.98rem;text-decoration:none;padding:.85rem 1.7rem;border-radius:99px;background:linear-gradient(135deg,#57d977,#2de2c4);color:#04231a;box-shadow:0 12px 30px rgba(45,226,196,.28);transition:transform .15s}
+.g-btn:hover{transform:translateY(-2px)}
+.g-btn2{display:inline-flex;align-items:center;font-weight:600;font-size:.98rem;text-decoration:none;padding:.85rem 1.5rem;border-radius:99px;color:#fff;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.35);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.g-legend{position:absolute;right:0;top:15.5rem;padding:.85rem 1.1rem;font-size:.86rem;color:rgba(238,247,238,.92);max-width:250px}
+.g-legend b{color:#fff;display:block;font-size:.92rem}
+@media(max-width:900px){.g-legend{display:none}}
+.g-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-top:2.6rem}
+@media(max-width:980px){.g-cards{grid-template-columns:1fr 1fr}}
+@media(max-width:540px){.g-cards{grid-template-columns:1fr}}
+.g-card{padding:1.35rem 1.25rem;transition:transform .25s ease;will-change:transform}
+.g-card .ic{width:44px;height:44px;border-radius:12px;background:rgba(87,217,119,.16);border:1px solid rgba(167,243,201,.35);display:grid;place-items:center;margin-bottom:.9rem}
+.g-card .ic svg{width:23px;height:23px;stroke:#a7f3c9;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.g-card h3{font-size:1.08rem;font-weight:600;color:#fff;margin-bottom:.35rem}
+.g-card p{font-size:.93rem;color:rgba(238,247,238,.82)}
+.g-card .cad{display:block;margin-top:.7rem;font-family:var(--mono);font-size:.62rem;letter-spacing:.22em;text-transform:uppercase;color:#8fe3ae}
+.g-book{margin-top:1rem;padding:1.5rem 1.6rem;display:grid;grid-template-columns:auto 1fr;gap:1.6rem;align-items:center}
+@media(max-width:760px){.g-book{grid-template-columns:1fr}}
+.g-book h3{font-weight:300;font-size:1.7rem;color:#fff;line-height:1.15}
+.g-book h3 b{font-weight:600}
+.g-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:1.2rem;list-style:none}
+@media(max-width:640px){.g-steps{grid-template-columns:1fr}}
+.g-steps li{display:flex;gap:.75rem;font-size:.93rem;color:rgba(238,247,238,.88)}
+.g-steps .n{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#57d977,#2de2c4);color:#04231a;font-weight:700;font-size:.9rem;display:grid;place-items:center}
+.g-steps b{color:#fff;display:block;font-size:.98rem}
+.g-about{margin-top:1rem;padding:1.5rem 1.6rem;display:flex;gap:1.6rem;align-items:center;flex-wrap:wrap}
+.g-about p{flex:1 1 320px;font-size:1rem;color:rgba(238,247,238,.9)}
+.g-about p b{color:#fff}
+.g-about .hrs{flex:none;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:#a7f3c9;line-height:2}
+.g-credit{margin-top:1.6rem;color:rgba(238,247,238,.6)}
+.g-credit a{color:#a7f3c9}
+
+/* ============ advertising (constant, below the stage) ============ */
+.ads{padding:3.8rem 0 3.4rem}
+.ads .kicker{font-family:var(--mono);font-size:.72rem;letter-spacing:.26em;text-transform:uppercase;color:var(--amber2);display:flex;align-items:center;gap:.7rem}
+.ads .kicker::before{content:"";width:30px;height:2px;background:currentColor}
+.ads h2{font-weight:700;text-transform:uppercase;letter-spacing:.01em;line-height:1.05;font-size:clamp(1.8rem,4vw,2.6rem);margin:.7rem 0 .8rem}
+.ads .sub{font-family:var(--serif);font-size:1.1rem;color:var(--tx-dim);max-width:62ch}
+.ads-tiers{display:grid;grid-template-columns:repeat(3,1fr);gap:1.1rem;margin-top:2.2rem}
+@media(max-width:820px){.ads-tiers{grid-template-columns:1fr}}
+.tier{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.7rem 1.5rem;box-shadow:0 8px 22px rgba(20,18,10,.07);display:flex;flex-direction:column}
+.tier.hot{border:2px solid var(--amber);box-shadow:var(--sh)}
+.tier .tp{font-size:clamp(2.4rem,5vw,3.2rem);font-weight:800;line-height:1;letter-spacing:-.02em;color:var(--ink)}
+.tier .tv{display:block;font-family:var(--mono);font-size:.8rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--amber2);margin-top:.5rem}
+.tier ul{list-style:none;margin:1rem 0 1.4rem;display:grid;gap:.45rem;font-size:.95rem;color:var(--tx-dim)}
+.tier .bdg-best{display:block;text-align:center;border-radius:9px;margin-bottom:.7rem}
+.tier .bdg{display:inline-block;font-family:var(--mono);font-size:.64rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;background:var(--amber);color:#1a1305;border-radius:99px;padding:.24rem .6rem}
+.tier .btn{margin-top:auto;justify-content:center}
+.ads-fine{font-size:.86rem;color:var(--tx-dim);margin-top:1rem}
+.ads-logos{display:flex;align-items:center;gap:1.4rem;flex-wrap:wrap;border-top:1px solid var(--line);margin-top:1.6rem;padding-top:1.1rem}
+.ads-logo{display:inline-flex;line-height:0}
+.ads-logo svg{display:block}
+.ads-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1rem;margin-top:2.2rem}
+.ads-card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:1.25rem 1.2rem;box-shadow:0 8px 22px rgba(20,18,10,.07)}
+.ads-card h3{font-size:1.02rem;font-weight:700;text-transform:uppercase;letter-spacing:.04em;display:flex;align-items:baseline;justify-content:space-between;gap:.5rem}
+.ads-card h3 .ads-cpm{font-family:var(--mono);font-weight:500;font-size:.68rem;letter-spacing:.08em;color:var(--tx-dim);text-transform:none;white-space:nowrap}
+.ads-reach{font-size:1.45rem;font-weight:800;line-height:1.15;letter-spacing:-.01em;color:var(--ink);margin-top:.55rem}
+.ads-reach small{display:block;font-size:.86rem;font-weight:500;color:var(--tx-dim);letter-spacing:0;margin-top:.2rem}
+.ads-pv{font-family:var(--mono);font-size:.92rem;font-weight:700;color:var(--amber2);margin-top:.7rem}
+.ads-card p.ads-note{font-size:.9rem;color:var(--tx-dim);margin-top:.4rem}
+.ads-take{font-family:var(--serif);font-style:italic;font-size:clamp(1.15rem,2.6vw,1.45rem);line-height:1.45;text-align:center;color:var(--ink2);max-width:56ch;margin:2.4rem auto 0}
+.ads-src{text-align:center;font-size:.78rem;color:var(--tx-dim);max-width:72ch;margin:.9rem auto 0}
+
+/* ============ footer (constant) ============ */
+footer.site{background:#0e1013;color:var(--tx-inv-dim);padding:2.4rem 0 1.6rem;font-size:.92rem}
+footer.site .frow{display:flex;flex-wrap:wrap;gap:.6rem 2rem;align-items:baseline;justify-content:space-between}
+footer.site .fname2{font-weight:700;color:#fff;text-transform:uppercase;letter-spacing:.05em}
+footer.site a{color:var(--tx-inv-dim)}
+footer.site a:hover{color:var(--amber)}
+footer.site .fsmall{border-top:1px solid var(--line-d);margin-top:1.4rem;padding-top:1rem;display:flex;flex-wrap:wrap;gap:.4rem 2rem;justify-content:space-between;font-size:.82rem}
+
+/* ============ bottom tab bar ============ */
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:300;background:rgba(12,14,17,.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-top:1px solid var(--line-d);padding-bottom:env(safe-area-inset-bottom)}
+.tabbar .tabs{max-width:620px;margin:0 auto;display:flex;gap:.55rem;padding:.55rem .6rem}
+.tab{flex:1;background:#1d2026;border:2px solid #454b55;border-radius:14px;color:var(--tx-inv-dim);font:inherit;cursor:pointer;min-height:calc(var(--tabh) - 1.1rem);padding:.5rem .4rem .55rem;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.16rem;position:relative;-webkit-tap-highlight-color:transparent;box-shadow:0 3px 0 #000;transition:transform .08s, box-shadow .08s, background .15s, color .15s}
+.tab .tnum{font-family:var(--mono);font-size:.6rem;font-weight:500;letter-spacing:.26em}
+.tab .tname{font-weight:700;font-size:1rem;letter-spacing:.02em;display:flex;align-items:center;gap:.5rem}
+.tab .swatch{width:11px;height:11px;border-radius:3px;flex:none}
+.swatch-glass{background:linear-gradient(135deg,#57d977,#2de2c4)}
+.swatch-classic{background:var(--amber)}
+.tab:hover{color:#fff}
+.tab[aria-selected="true"]{background:var(--amber);border-color:var(--amber);color:#171106;box-shadow:0 4px 0 #7a5410}
+.tab[aria-selected="true"] .tnum{color:#171106}
+.tab:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.tab[aria-selected="true"]:active{box-shadow:0 1px 0 #7a5410}
+.tab:focus-visible{outline:3px solid var(--amber);outline-offset:-3px;border-radius:0}
+
+@media (prefers-reduced-motion: reduce){
+  html{scroll-behavior:auto}
+  .format.active{animation:none}
+  .g-orb::after{animation:none}
+  .g-card,.cl-svc,.btn{transition:none}
+}
+
+/* ============ project form modal ============ */
+.pf-overlay{position:fixed;inset:0;z-index:400;background:rgba(10,11,14,.66);backdrop-filter:blur(4px);display:none;align-items:flex-end;justify-content:center}
+.pf-overlay.open{display:flex}
+.pf{background:var(--paper);color:var(--tx);width:100%;max-width:560px;max-height:92vh;overflow:auto;border-radius:18px 18px 0 0;padding:1.6rem 1.4rem calc(1.4rem + env(safe-area-inset-bottom));box-shadow:0 -18px 50px rgba(0,0,0,.4)}
+@media(min-width:640px){.pf-overlay{align-items:center;padding:1rem}.pf{border-radius:18px}}
+.pf h2{font-size:1.5rem;line-height:1.15;margin:.2rem 0 .3rem}
+.pf .pf-sub{color:var(--tx-dim);font-size:.98rem;margin-bottom:1.1rem}
+.pf-x{float:right;background:#1d2026;color:#fff;border:2px solid #454b55;width:40px;height:40px;border-radius:11px;font-size:1.05rem;cursor:pointer;box-shadow:0 3px 0 #000}
+.pf-x:active{transform:translateY(2px);box-shadow:0 1px 0 #000}
+.pf label{display:block;font-weight:600;font-size:.92rem;margin:.85rem 0 .3rem}
+.pf input[type=text],.pf input[type=email],.pf input[type=tel],.pf select,.pf textarea{width:100%;font:inherit;padding:.68rem .8rem;border:2px solid var(--line);border-radius:11px;background:#fff;color:var(--ink)}
+.pf input:focus,.pf select:focus,.pf textarea:focus{outline:3px solid var(--amber);outline-offset:1px;border-color:var(--amber)}
+.pf .pf-checks{display:grid;gap:.45rem;margin-top:.3rem}
+.pf .pf-checks label{display:flex;gap:.6rem;align-items:center;font-weight:500;margin:0;background:#fff;border:2px solid var(--line);border-radius:11px;padding:.6rem .8rem;cursor:pointer}
+.pf .pf-checks input{width:1.15rem;height:1.15rem;accent-color:var(--amber2)}
+.pf-send{width:100%;margin-top:1.2rem;background:var(--amber);color:#171106;border:2px solid var(--amber);border-radius:13px;font:inherit;font-weight:800;font-size:1.05rem;padding:.85rem;cursor:pointer;box-shadow:0 4px 0 #7a5410}
+.pf-send:active{transform:translateY(2px);box-shadow:0 1px 0 #7a5410}
+.pf-send[disabled]{opacity:.6;cursor:wait}
+.pf-err{display:none;margin-top:.9rem;background:#fdecec;border:2px solid #d64545;color:#7c1d1d;border-radius:11px;padding:.7rem .9rem;font-size:.94rem}
+.pf-done{display:none;text-align:center;padding:1.4rem 0 .6rem}
+.pf-done .pf-tick{width:58px;height:58px;margin:0 auto .8rem;border-radius:50%;background:var(--amber);display:grid;place-items:center;font-size:1.7rem;color:#171106;font-weight:800}
+</style>
+</head>
+<body>
+<a class="skip" href="#stage">Skip to the formats</a>
+<div class="page">
+
+<header class="frame">
+  <div class="bar">
+    <a class="fbrand" href="#stage" aria-label="Christopher Moore — formats">
+      <span class="fmark" aria-hidden="true">CM</span>
+      <span class="fname">Christopher Moore<small>Websites &amp; Booking · Contractors · Kansas City</small></span>
+    </a>
+    <p class="ftag">One service. Two formats. Pick yours.</p>
+    <button type="button" class="btn btn-amber js-start">Start a project</button>
+  </div>
+</header>
+
+<main>
+<h1 class="sr-only">Christopher Moore — Websites, booking, and advertising for contractors, Kansas City. One service, two formats.</h1>
+<div id="stage" data-active-format="classic">
+
+  <!-- ================= FORMAT 1 · CLASSIC (the original design) ================= -->
+  <section class="format fmt-classic active" id="panel-classic" data-format="classic" role="tabpanel" aria-labelledby="tab-classic" tabindex="0">
+    <div class="cl-in cl-hero">
+      <p class="cl-eyebrow">Christopher Moore · Kansas City</p>
+      <h2 class="cl-h">Websites that book <em>jobs.</em></h2>
+      <p class="cl-lede">I design and build contractor websites, set up online scheduling so customers book themselves in, and run the ads that keep the phone ringing. One person, start to finish — the one who answers is the one who builds.</p>
+      <div class="cl-ctas">
+        <button type="button" class="btn btn-amber js-start">Start a project</button>
+        <a class="btn btn-dark" href="#advertising">See the ad tiers</a>
+      </div>
+      <figure class="cl-fig">
+        <img src="assets/sites-workbench.jpg" alt="A contractor website on a laptop and phone, resting on a workbench" loading="lazy">
+        <figcaption>Your customers book from the couch, the truck, or the job site — the site works where they are.</figcaption>
+      </figure>
+    </div>
+
+    <div class="cl-stats">
+      <div class="cl-in">
+        <div class="cl-stat"><b>24/7</b><span>online booking — customers book while you work</span></div>
+        <div class="cl-stat"><b>3</b><span>services — website, scheduling, advertising</span></div>
+        <div class="cl-stat"><b>9</b><span>ad platforms — Nextdoor through TikTok</span></div>
+        <div class="cl-stat"><b>1</b><span>person — you work with the provider directly</span></div>
+      </div>
+    </div>
+
+    <div class="cl-sec">
+      <div class="cl-in">
+        <p class="cl-kicker">Services</p>
+        <h2 class="cl-h2">Three services, one provider</h2>
+        <p class="cl-sub">Everything a contractor needs to get found, get booked, and stay booked — built and run by one person.</p>
+        <div class="cl-svcs">
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
+            <h3>Contractor Websites</h3>
+            <p>A site built for a trade business: your services, your service area, and one clear next step on every page — made to be found by the customers near you.</p>
+            <span class="tag">Designed · Built · Live</span>
+          </article>
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 16l2 2 4-4"/></svg></div>
+            <h3>Online Scheduling &amp; Booking</h3>
+            <p>Customers pick a job slot themselves. Confirmations and reminders go out automatically, and every booking lands on your calendar — no phone tag.</p>
+            <span class="tag">Bookings · Reminders · Calendar</span>
+          </article>
+          <article class="cl-svc">
+            <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 16 0M4 11v5a2 2 0 0 0 2 2h1v-9H6a2 2 0 0 0-2 2zM20 11v5a2 2 0 0 1-2 2h-1v-9h1a2 2 0 0 1 2 2zM18 18a4 4 0 0 1-4 3h-2"/></svg></div>
+            <h3>Advertising Runs</h3>
+            <p>Ads on Nextdoor, Facebook, Instagram, LinkedIn, and TikTok — written, placed, and watched by me, in flat-priced runs from $25.</p>
+            <span class="tag">Five platforms</span>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-tiersband">
+      <div class="cl-in">
+        <p class="cl-tiers-k">Advertising runs — flat prices</p>
+        <div class="cl-tiers">
+          <div class="cl-tier"><b>$25</b><span class="v">up to 2,000 views</span><span class="n">2D ads, written &amp; placed for you</span></div>
+          <div class="cl-tier"><b>$50</b><span class="v">up to 8,000 views</span><span class="n">2D + 3D video ads, written &amp; placed for you — 3D free</span></div>
+          <div class="cl-tier"><b>$100</b><span class="v">up to 16,000 views</span><span class="n">2D + 3D video ads, written &amp; placed for you — 3D free</span></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-sec alt">
+      <div class="cl-in">
+        <p class="cl-kicker">How it works</p>
+        <h2 class="cl-h2">From first email to booked jobs</h2>
+        <p class="cl-sub">No sales team, no ticket queue. Three steps and your customers are booking themselves in.</p>
+        <div class="cl-steps">
+          <article class="cl-step"><h3>One conversation</h3><p>Tell me your trade, your service area, and what a good week looks like.</p></article>
+          <article class="cl-step"><h3>I build &amp; connect</h3><p>Your website goes live and scheduling is wired straight to your calendar.</p></article>
+          <article class="cl-step"><h3>Jobs book themselves</h3><p>Customers book online, reminders go out on their own, and ads keep new names coming in.</p></article>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-sec">
+      <div class="cl-in">
+        <div class="cl-split">
+          <div>
+            <p class="cl-kicker">About</p>
+            <h2 class="cl-h2">One person, start to finish</h2>
+            <p class="cl-pull">“The one who answers is the one who does the work.”</p>
+            <p class="cl-sub">Christopher Moore provides websites, scheduling, and advertising to contractors and trades across Kansas City. His background is precision quality work — the same habit shows up here: measure twice, ship once. When you hire him, you get him.</p>
+            <ul class="cl-checks">
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Websites designed and built for trade businesses</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Scheduling with confirmations, reminders, and calendar hookup</span></li>
+              <li><svg viewBox="0 0 24 24"><path d="M4 12.5l5 5L20 6.5"/></svg><span>Advertising runs on Nextdoor, Facebook, Instagram, LinkedIn, and TikTok</span></li>
+            </ul>
+          </div>
+          <div class="cl-pic"><img src="assets/kc-skyline.jpg" alt="The Kansas City skyline at blue hour — the metro Christopher works in" loading="lazy"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-cta">
+      <div class="cl-in">
+        <h2 class="cl-h2">Let&rsquo;s build yours.</h2>
+        <p class="pun">Websites · Scheduling · Advertising — one email starts it.</p>
+        <div class="row">
+          <span class="cl-phone">Moore.chrisf@gmail.com</span>
+          <button type="button" class="btn btn-amber js-start">Start a project</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="cl-in">
+      <p class="credit cl-credit">Format № 01 — the original format: this page's own design before the tabs.</p>
+    </div>
+  </section>
+
+  <!-- ================= FORMAT 2 · GLASS ================= -->
+  <section class="format fmt-glass" id="panel-glass" data-format="glass" role="tabpanel" aria-labelledby="tab-glass" tabindex="0" hidden>
+    <canvas id="auroraCanvas" aria-hidden="true"></canvas>
+    <div class="fin">
+      <div class="g-nav glass-panel">
+        <div class="g-logo">Christopher Moore<small>Websites &amp; Booking</small></div>
+        <nav aria-hidden="true"><span>Services</span><span>How it works</span><span>Advertising</span><span>Contact</span></nav>
+        <button type="button" class="g-call js-start">Start a project</button>
+      </div>
+
+      <div class="g-hero">
+        <div class="g-orb" aria-hidden="true"></div>
+        <p class="g-eyebrow glass-panel"><span class="dot" aria-hidden="true"></span> Christopher Moore — Kansas City</p>
+        <h2 class="g-h1">Work that <span class="l2">books <b>itself.</b></span></h2>
+        <div class="g-lede glass-panel">
+          <p>Websites, online scheduling, and advertising for contractors — designed, built, and run by one person in Kansas City. Your customers book while you're on the tools.</p>
+          <div class="g-ctas">
+            <button type="button" class="g-btn js-start">Start a project</button>
+            <a class="g-btn2" href="#advertising">See the ad tiers</a>
+          </div>
+        </div>
+        <div class="g-legend glass-panel" aria-hidden="true"><b>Now booking</b>New project slots for this season are open.</div>
+      </div>
+
+      <div class="g-cards">
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M3 9h18M8 21h8"/></svg></div>
+          <h3>Contractor Websites</h3>
+          <p>A site built for a trade business — your services, your area, one clear next step on every page.</p>
+          <span class="cad">Designed · Built · Live</span>
+        </article>
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4M9 16l2 2 4-4"/></svg></div>
+          <h3>Scheduling &amp; Booking</h3>
+          <p>Customers pick a job slot themselves. Confirmations and reminders go out on their own; it lands on your calendar.</p>
+          <span class="cad">Bookings · Reminders · Calendar</span>
+        </article>
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M4 11a8 8 0 0 1 16 0M4 11v5a2 2 0 0 0 2 2h1v-9H6a2 2 0 0 0-2 2zM20 11v5a2 2 0 0 1-2 2h-1v-9h1a2 2 0 0 1 2 2zM18 18a4 4 0 0 1-4 3h-2"/></svg></div>
+          <h3>Advertising Runs</h3>
+          <p>Your ads on the platforms your customers actually scroll — written, placed, and watched by me.</p>
+          <span class="cad">Five platforms</span>
+        </article>
+        <article class="g-card glass-panel">
+          <div class="ic" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/><circle cx="12" cy="12" r="3.2"/></svg></div>
+          <h3>Ad Tiers, Flat</h3>
+          <p>$25 — up to 2,000 views, 2D ads. $50 — up to 8,000 views, 2D + free 3D video ads. $100 — up to 16,000 views, 2D + free 3D video ads.</p>
+        </article>
+      </div>
+
+      <div class="g-book glass-panel">
+        <h3>Working together, <b>in three steps.</b></h3>
+        <ol class="g-steps">
+          <li><span class="n" aria-hidden="true">1</span><span><b>One conversation</b>Tell me your trade, your area, and what a good week looks like.</span></li>
+          <li><span class="n" aria-hidden="true">2</span><span><b>I build &amp; connect</b>Your website goes live, scheduling wired to your calendar.</span></li>
+          <li><span class="n" aria-hidden="true">3</span><span><b>Jobs book themselves</b>Bookings and reminders run on their own; ads keep names coming in.</span></li>
+        </ol>
+      </div>
+
+      <div class="g-about glass-panel">
+        <p><b>Christopher Moore is a one-person studio in Kansas City.</b> His background is precision quality work — measure twice, ship once. When you hire him, you get him: the one who answers is the one who builds.</p>
+        <p class="hrs">Websites · Scheduling · Ads<br>Kansas City, Missouri<br>Moore.chrisf@gmail.com</p>
+      </div>
+    </div>
+  </section>
+
+  
+
+</div><!-- /#stage -->
+
+  <!-- ================= ADVERTISING (constant) ================= -->
+  <section class="ads" id="advertising" aria-labelledby="ads-h">
+    <div class="wrap">
+      <p class="kicker">Add-on service</p>
+      <h2 id="ads-h">Advertising, run for you</h2>
+      <p class="sub">The website books the jobs; advertising puts your name in front of the neighborhood before they go looking. I run the ads for contractor clients across the platforms below — pick a run, and I front the ad spend myself, so the price on the card is the whole price. No platform bills, no ad accounts to babysit.</p>
+
+      <div class="ads-tiers">
+        <article class="tier">
+          <p class="tp">$25</p>
+          <span class="tv">up to 2,000 views</span>
+          <ul>
+            <li>2D ads, written &amp; placed for you</li>
+            <li>One platform, your service area</li>
+          </ul>
+          <button type="button" class="btn btn-amber js-start" data-interest="advertising" data-tier="25">Start a run</button>
+        </article>
+        <article class="tier">
+          <p class="tp">$50</p>
+          <span class="tv">up to 8,000 views</span>
+          <ul>
+            <li>2D + 3D video ads, written &amp; placed for you — 3D free</li>
+          </ul>
+          <p><span class="bdg">Website &amp; booking included</span></p>
+          <button type="button" class="btn btn-amber js-start" data-interest="advertising" data-tier="50">Start a run</button>
+        </article>
+        <article class="tier hot">
+          <p class="bdg bdg-best">★ Best value</p>
+          <p class="tp">$100</p>
+          <span class="tv">up to 16,000 views</span>
+          <ul>
+            <li>2D + 3D video ads, written &amp; placed for you — 3D free</li>
+          </ul>
+          <p><span class="bdg">Website &amp; booking included</span></p>
+          <button type="button" class="btn btn-amber js-start" data-interest="advertising" data-tier="100">Start a run</button>
+        </article>
+      </div>
+      <p class="ads-fine">View counts are up-to targets — delivery varies by platform and audience.</p>
+        <div class="ads-logos" aria-label="Advertising platforms">
+          <span class="ads-logo" role="img" aria-label="Nextdoor"><svg viewBox="0 0 24 24" width="26" height="26" fill="#8ED500" aria-hidden="true"><path d="M14.65 9.997a.069.069 0 0 0-.07.069v1.415c-.123-.177-.42-.37-.805-.37-.745 0-1.316.659-1.316 1.445 0 .787.571 1.447 1.316 1.447.386 0 .682-.194.806-.372v.221c0 .05.04.09.09.09h.607a.07.07 0 0 0 .07-.07v-3.806a.069.069 0 0 0-.07-.069zm-3.913.404a.07.07 0 0 0-.069.07c0 .779.064.7-.504.7a.09.09 0 0 0-.09.09v.486c0 .05.04.089.09.089h.504v1.136c0 .676.476 1.003 1.07 1.003.183 0 .32-.017.434-.046a.07.07 0 0 0 .052-.067v-.526a.07.07 0 0 0-.086-.066.984.984 0 0 1-.227.023c-.33 0-.476-.133-.476-.47v-.987h.608a.07.07 0 0 0 .07-.069v-.527a.069.069 0 0 0-.07-.069h-.608v-.701a.069.069 0 0 0-.069-.07zm-8.396.676c-.516 0-.955.236-1.201.598-.02.03-.055.095-.102.095-.226.002-.24-.276-.247-.524a.07.07 0 0 0-.069-.066l-.653-.004a.07.07 0 0 0-.069.07c.014.606.126 1.018.86 1.181.04.01.068.045.068.087v1.36c0 .037.03.068.069.068h.634a.07.07 0 0 0 .069-.07V12.47c0-.312.221-.667.64-.667.4 0 .642.355.642.667v1.404c0 .038.03.069.069.069h.634a.07.07 0 0 0 .069-.07v-1.508c0-.72-.616-1.287-1.413-1.287zm3.207.033c-.851 0-1.472.626-1.472 1.446 0 .876.65 1.431 1.483 1.447.655.012 1.09-.363 1.194-.494a.068.068 0 0 0-.015-.097l-.435-.34c-.047-.047-.084-.021-.112.001-.07.057-.203.22-.626.237-.37.015-.7-.205-.745-.576h2.03a.07.07 0 0 0 .069-.065c.006-.082.006-.142.006-.196 0-.897-.644-1.363-1.377-1.363zm11.652 0c-.812 0-1.472.637-1.472 1.446 0 .81.66 1.447 1.472 1.447.812 0 1.472-.638 1.472-1.447s-.66-1.446-1.472-1.446zm3.229 0c-.812 0-1.472.637-1.472 1.446 0 .81.66 1.447 1.472 1.447.812 0 1.472-.638 1.472-1.447s-.66-1.446-1.472-1.446zm3.314.028a.745.745 0 0 0-.695.476v-.374a.069.069 0 0 0-.069-.069h-.628a.069.069 0 0 0-.07.07v2.632a.07.07 0 0 0 .07.069h.628a.07.07 0 0 0 .07-.07v-1.255c0-.454.24-.737.604-.737.092 0 .175.013.26.035A.069.069 0 0 0 24 11.85v-.624a.07.07 0 0 0-.056-.068.938.938 0 0 0-.201-.02zm-16.666.033a.069.069 0 0 0-.058.108l.88 1.305L7 13.832a.07.07 0 0 0 .056.11h.745a.068.068 0 0 0 .056-.03l.564-.79.563.79a.069.069 0 0 0 .056.03h.74a.069.069 0 0 0 .057-.11l-.899-1.248.88-1.305a.069.069 0 0 0-.058-.108h-.738a.07.07 0 0 0-.058.03l-.548.818-.549-.817a.07.07 0 0 0-.057-.03zm-1.552.565c.286 0 .566.155.633.482h-1.31c.073-.338.392-.482.677-.482zm8.412.067c.42 0 .705.321.705.753 0 .433-.285.754-.705.754s-.705-.321-.705-.754c0-.432.285-.753.705-.753zm3.263.016c.403 0 .694.31.694.737s-.291.737-.694.737c-.403 0-.7-.31-.7-.737 0-.426.297-.737.7-.737zm3.229 0c.403 0 .694.31.694.737s-.291.737-.694.737c-.403 0-.7-.31-.7-.737 0-.426.297-.737.7-.737z"/></svg></span>
+          <span class="ads-logo" role="img" aria-label="Facebook"><svg viewBox="0 0 24 24" width="26" height="26" fill="#1877F2" aria-hidden="true"><path d="M9.101 23.691v-7.98H6.627v-3.667h2.474v-1.58c0-4.085 1.848-5.978 5.858-5.978.401 0 .955.042 1.468.103a8.68 8.68 0 0 1 1.141.195v3.325a8.623 8.623 0 0 0-.653-.036 26.805 26.805 0 0 0-.733-.009c-.707 0-1.259.096-1.675.309a1.686 1.686 0 0 0-.679.622c-.258.42-.374.995-.374 1.752v1.297h3.919l-.386 2.103-.287 1.564h-3.246v8.245C19.396 23.238 24 18.179 24 12.044c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.628 3.874 10.35 9.101 11.647Z"/></svg></span>
+          <span class="ads-logo" role="img" aria-label="Instagram"><svg viewBox="0 0 24 24" width="26" height="26" fill="#E4405F" aria-hidden="true"><path d="M7.0301.084c-1.2768.0602-2.1487.264-2.911.5634-.7888.3075-1.4575.72-2.1228 1.3877-.6652.6677-1.075 1.3368-1.3802 2.127-.2954.7638-.4956 1.6365-.552 2.914-.0564 1.2775-.0689 1.6882-.0626 4.947.0062 3.2586.0206 3.6671.0825 4.9473.061 1.2765.264 2.1482.5635 2.9107.308.7889.72 1.4573 1.388 2.1228.6679.6655 1.3365 1.0743 2.1285 1.38.7632.295 1.6361.4961 2.9134.552 1.2773.056 1.6884.069 4.9462.0627 3.2578-.0062 3.668-.0207 4.9478-.0814 1.28-.0607 2.147-.2652 2.9098-.5633.7889-.3086 1.4578-.72 2.1228-1.3881.665-.6682 1.0745-1.3378 1.3795-2.1284.2957-.7632.4966-1.636.552-2.9124.056-1.2809.0692-1.6898.063-4.948-.0063-3.2583-.021-3.6668-.0817-4.9465-.0607-1.2797-.264-2.1487-.5633-2.9117-.3084-.7889-.72-1.4568-1.3876-2.1228C21.2982 1.33 20.628.9208 19.8378.6165 19.074.321 18.2017.1197 16.9244.0645 15.6471.0093 15.236-.005 11.977.0014 8.718.0076 8.31.0215 7.0301.0839m.1402 21.6932c-1.17-.0509-1.8053-.2453-2.2287-.408-.5606-.216-.96-.4771-1.3819-.895-.422-.4178-.6811-.8186-.9-1.378-.1644-.4234-.3624-1.058-.4171-2.228-.0595-1.2645-.072-1.6442-.079-4.848-.007-3.2037.0053-3.583.0607-4.848.05-1.169.2456-1.805.408-2.2282.216-.5613.4762-.96.895-1.3816.4188-.4217.8184-.6814 1.3783-.9003.423-.1651 1.0575-.3614 2.227-.4171 1.2655-.06 1.6447-.072 4.848-.079 3.2033-.007 3.5835.005 4.8495.0608 1.169.0508 1.8053.2445 2.228.408.5608.216.96.4754 1.3816.895.4217.4194.6816.8176.9005 1.3787.1653.4217.3617 1.056.4169 2.2263.0602 1.2655.0739 1.645.0796 4.848.0058 3.203-.0055 3.5834-.061 4.848-.051 1.17-.245 1.8055-.408 2.2294-.216.5604-.4763.96-.8954 1.3814-.419.4215-.8181.6811-1.3783.9-.4224.1649-1.0577.3617-2.2262.4174-1.2656.0595-1.6448.072-4.8493.079-3.2045.007-3.5825-.006-4.848-.0608M16.953 5.5864A1.44 1.44 0 1 0 18.39 4.144a1.44 1.44 0 0 0-1.437 1.4424M5.8385 12.012c.0067 3.4032 2.7706 6.1557 6.173 6.1493 3.4026-.0065 6.157-2.7701 6.1506-6.1733-.0065-3.4032-2.771-6.1565-6.174-6.1498-3.403.0067-6.156 2.771-6.1496 6.1738M8 12.0077a4 4 0 1 1 4.008 3.9921A3.9996 3.9996 0 0 1 8 12.0077"/></svg></span>
+          <span class="ads-logo" role="img" aria-label="LinkedIn"><svg viewBox="0 0 24 24" width="26" height="26" fill="#0A66C2" aria-hidden="true"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg></span>
+          <span class="ads-logo" role="img" aria-label="TikTok"><svg viewBox="0 0 24 24" width="26" height="26" fill="#111111" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></span>
+        </div>
+
+      <div class="ads-grid">
+        <article class="ads-card">
+          <h3>Nextdoor</h3>
+          <p class="ads-reach">105M+ verified neighbors<small>1 in 3 U.S. households — targetable by ZIP and neighborhood</small></p>
+          <p class="ads-note">The closest thing to the streets you already work.</p>
+        </article>
+        <article class="ads-card">
+          <h3>Facebook</h3>
+          <p class="ads-reach">3.07B monthly users<small>The biggest audience on the list</small></p>
+          <p class="ads-note">Runs through Meta&rsquo;s ad system, same as Instagram.</p>
+        </article>
+        <article class="ads-card">
+          <h3>Instagram</h3>
+          <p class="ads-reach">3B monthly users<small>Where the before-and-after photos live</small></p>
+          <p class="ads-note">Finished-work photos and reels do the selling here.</p>
+        </article>
+        <article class="ads-card">
+          <h3>LinkedIn</h3>
+          <p class="ads-reach">1.2B members<small>~230M in the U.S.</small></p>
+          <p class="ads-note">All business decision-makers — commercial work lives here.</p>
+        </article>
+        <article class="ads-card">
+          <h3>TikTok</h3>
+          <p class="ads-reach">1.59B monthly users<small>170M in the U.S.</small></p>
+          <p class="ads-note">The home of short video — a placement stretches furthest here.</p>
+        </article>
+      </div>
+
+      <p class="ads-take">The neighborhood on Nextdoor. The biggest audiences on Meta. Decision-makers on LinkedIn. I place your budget where it fits your trade.</p>
+      <p class="ads-src">Reach figures: Nextdoor company reporting; Meta disclosures (2025); LinkedIn (2025); DataReportal (2026).</p>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site">
+  <div class="wrap">
+    <div class="frow">
+      <span class="fname2">Christopher Moore</span>
+      <span>Kansas City, Missouri</span>
+      <a href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a>
+    </div>
+    <div class="fsmall">
+      <span>© <span id="yr">2026</span> Christopher Moore — websites &amp; booking for contractors.</span>
+    </div>
+  </div>
+</footer>
+</div><!-- /.page -->
+
+
+<div class="pf-overlay" id="pfOverlay" role="dialog" aria-modal="true" aria-labelledby="pfTitle" hidden>
+  <div class="pf">
+    <button type="button" class="pf-x" id="pfClose" aria-label="Close form">✕</button>
+    <p class="kicker">Start a project</p>
+    <h2 id="pfTitle">Tell me what you need</h2>
+    <p class="pf-sub">Two minutes, no obligation. I read every one myself and reply personally.</p>
+    <form id="pfForm" novalidate>
+      <label for="pfName">Your name *</label>
+      <input type="text" id="pfName" name="Name" autocomplete="name" required>
+      <label for="pfBiz">Business name</label>
+      <input type="text" id="pfBiz" name="Business" autocomplete="organization">
+      <label for="pfTrade">Your trade</label>
+      <select id="pfTrade" name="Trade">
+        <option value="">Pick one…</option>
+        <option>Roofing</option><option>Lawn care &amp; landscaping</option><option>Auto repair</option>
+        <option>Gutters</option><option>Remodeling</option><option>Handyman</option>
+        <option>Cleaning</option><option>Other trade</option>
+      </select>
+      <label for="pfPhone">Phone</label>
+      <input type="tel" id="pfPhone" name="Phone" autocomplete="tel">
+      <label for="pfEmail">Email *</label>
+      <input type="email" id="pfEmail" name="Email" autocomplete="email" required>
+      <label>I'm interested in</label>
+      <div class="pf-checks">
+        <label><input type="checkbox" name="Interest" value="Website" id="pfIntWeb"> A contractor website</label>
+        <label><input type="checkbox" name="Interest" value="Scheduling &amp; booking" id="pfIntSched"> Online scheduling &amp; booking</label>
+        <label><input type="checkbox" name="Interest" value="Advertising run" id="pfIntAds"> An advertising run</label>
+      </div>
+      <div id="pfTierWrap" hidden>
+        <label for="pfTier">Ad tier</label>
+        <select id="pfTier" name="Ad tier">
+          <option value="Not sure yet">Not sure yet</option>
+          <option value="$25 — up to 2,000 views, 2D ads">$25 — up to 2,000 views, 2D ads</option>
+          <option value="$50 — up to 8,000 views, 2D + free 3D video ads">$50 — up to 8,000 views, 2D + free 3D video ads</option>
+          <option value="$100 — up to 16,000 views, 2D + free 3D video ads">$100 — up to 16,000 views, 2D + free 3D video ads</option>
+        </select>
+      </div>
+      <label for="pfMsg">Anything I should know?</label>
+      <textarea id="pfMsg" name="Details" rows="4" placeholder="What you do, where you work, what you're hoping this does for you…"></textarea>
+      <input type="text" name="_honey" style="display:none" tabindex="-1" autocomplete="off">
+      <input type="hidden" name="Format viewed" id="pfFormat" value="classic">
+      <button type="submit" class="pf-send" id="pfSend">Send it to Christopher</button>
+      <p class="pf-err" id="pfErr">That didn't go through — the form service may need a one-time activation on my end. Email me directly at <a href="mailto:Moore.chrisf@gmail.com">Moore.chrisf@gmail.com</a> and I'll take it from there.</p>
+    </form>
+    <div class="pf-done" id="pfDone">
+      <div class="pf-tick">✓</div>
+      <h2>Got it.</h2>
+      <p class="pf-sub">Your project is in my inbox. I reply personally — usually within one business day.</p>
+      <button type="button" class="pf-send" id="pfDoneClose">Done</button>
+    </div>
+  </div>
+</div>
+<div class="tabbar">
+  <div class="tabs" role="tablist" aria-label="Website formats">
+    <button type="button" class="tab" role="tab" id="tab-classic" data-format="classic" aria-selected="true" aria-controls="panel-classic">
+      <span class="tnum">01</span>
+      <span class="tname"><span class="swatch swatch-classic" aria-hidden="true"></span>Classic</span>
+    </button>
+    <button type="button" class="tab" role="tab" id="tab-glass" data-format="glass" aria-selected="false" aria-controls="panel-glass" tabindex="-1">
+      <span class="tnum">02</span>
+      <span class="tname"><span class="swatch swatch-glass" aria-hidden="true"></span>Glass</span>
+    </button>
+  </div>
+</div>
+<div class="sr-only" aria-live="polite" id="fmtLive"></div>
+
+<script>
+(function () {
+  'use strict';
+  var yr = document.getElementById('yr');
+  if (yr) { yr.textContent = new Date().getFullYear(); }
+
+  var formats = ['classic', 'glass'];
+  var labels = { classic: 'Classic', glass: 'Glass' };
+  var stage = document.getElementById('stage');
+  var announcer = document.getElementById('fmtLive');
+  var tabs = Array.prototype.slice.call(document.querySelectorAll('[role="tab"]'));
+  var panels = {};
+  formats.forEach(function (f) { panels[f] = document.getElementById('panel-' + f); });
+
+  var reduce = false;
+  try { reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) {}
+
+  var current = null;
+
+  /* ---- aurora canvas (Glass background) ---- */
+  var cv = document.getElementById('auroraCanvas');
+  var ctx = null;
+  try { ctx = cv ? cv.getContext('2d') : null; } catch (e) { ctx = null; }
+  var rafId = null, glassOn = false, specks = [], W = 0, H = 0;
+
+  function sizeCanvas() {
+    if (!ctx) { return; }
+    var r = cv.parentElement.getBoundingClientRect();
+    var d = Math.min(window.devicePixelRatio || 1, 1.5);
+    W = Math.max(1, r.width); H = Math.max(1, r.height);
+    cv.width = Math.round(W * d); cv.height = Math.round(H * d);
+    ctx.setTransform(d, 0, 0, d, 0, 0);
+    specks = [];
+    for (var i = 0; i < 70; i++) {
+      specks.push({ x: Math.random() * W, y: Math.random() * H, r: Math.random() * 1.5 + 0.4, p: Math.random() * 6.283 });
+    }
+  }
+  function drawAurora(t) {
+    if (!ctx || !W) { return; }
+    var bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#08382b'); bg.addColorStop(0.55, '#052219'); bg.addColorStop(1, '#03120c');
+    ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
+    var bands = [
+      { c: '87,217,119', a: 0.16, y: H * 0.16, sp: 0.9, ph: 0.0 },
+      { c: '45,226,196', a: 0.13, y: H * 0.30, sp: 0.7, ph: 2.1 },
+      { c: '178,255,140', a: 0.10, y: H * 0.46, sp: 0.5, ph: 4.2 }
+    ];
+    ctx.globalCompositeOperation = 'lighter';
+    bands.forEach(function (b) {
+      ctx.beginPath(); ctx.moveTo(0, H);
+      for (var x = 0; x <= W; x += 14) {
+        var y = b.y + Math.sin(x * 0.006 + t * 0.00022 * b.sp + b.ph) * 26 + Math.sin(x * 0.017 + t * 0.00035 * b.sp) * 10;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(W, H); ctx.closePath();
+      var g = ctx.createLinearGradient(0, b.y - 80, 0, b.y + 200);
+      g.addColorStop(0, 'rgba(' + b.c + ',0)');
+      g.addColorStop(0.5, 'rgba(' + b.c + ',' + b.a + ')');
+      g.addColorStop(1, 'rgba(' + b.c + ',0)');
+      ctx.fillStyle = g; ctx.fill();
+    });
+    ctx.globalCompositeOperation = 'source-over';
+    for (var i = 0; i < specks.length; i++) {
+      var s = specks[i];
+      var a = 0.2 + 0.55 * Math.abs(Math.sin(t * 0.001 + s.p));
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.2832);
+      ctx.fillStyle = 'rgba(220,255,220,' + a.toFixed(3) + ')'; ctx.fill();
+    }
+  }
+  function loop(ts) {
+    if (!glassOn) { rafId = null; return; }
+    drawAurora(ts || 0);
+    rafId = requestAnimationFrame(loop);
+  }
+  function startAurora() {
+    if (!ctx) { return; }
+    sizeCanvas();
+    glassOn = true;
+    if (reduce) { drawAurora(1400); return; }
+    if (!rafId) { rafId = requestAnimationFrame(loop); }
+  }
+  function stopAurora() {
+    glassOn = false;
+    if (rafId) { cancelAnimationFrame(rafId); rafId = null; }
+  }
+  var rszT = null;
+  window.addEventListener('resize', function () {
+    if (current !== 'glass' || !ctx) { return; }
+    if (rszT) { clearTimeout(rszT); }
+    rszT = setTimeout(function () { sizeCanvas(); if (reduce) { drawAurora(1400); } }, 150);
+  });
+
+  /* ---- format switching ---- */
+  function fromHash() {
+    var h = (window.location.hash || '').replace('#', '');
+    return formats.indexOf(h) > -1 ? h : null;
+  }
+  function activate(name, opts) {
+    opts = opts || {};
+    if (!panels[name]) { return; }
+    formats.forEach(function (f) {
+      var on = f === name;
+      panels[f].hidden = !on;
+      panels[f].classList.toggle('active', on);
+    });
+    tabs.forEach(function (tab) {
+      var on = tab.getAttribute('data-format') === name;
+      tab.setAttribute('aria-selected', on ? 'true' : 'false');
+      tab.tabIndex = on ? 0 : -1;
+      if (on && opts.focus) { tab.focus(); }
+    });
+    if (stage) { stage.setAttribute('data-active-format', name); }
+    document.body.setAttribute('data-format', name);
+    current = name;
+    if (name === 'glass') { startAurora(); } else { stopAurora(); }
+    if (opts.push) {
+      try { window.history.pushState(null, '', '#' + name); } catch (e) {}
+    }
+    if (announcer && opts.announce !== false) {
+      announcer.textContent = labels[name] + ' website format shown';
+    }
+  }
+  tabs.forEach(function (tab, idx) {
+    tab.addEventListener('click', function () {
+      activate(tab.getAttribute('data-format'), { push: true });
+    });
+    tab.addEventListener('keydown', function (e) {
+      var n = null;
+      if (e.key === 'ArrowRight') { n = formats[(idx + 1) % formats.length]; }
+      else if (e.key === 'ArrowLeft') { n = formats[(idx + formats.length - 1) % formats.length]; }
+      else if (e.key === 'Home') { n = formats[0]; }
+      else if (e.key === 'End') { n = formats[formats.length - 1]; }
+      if (n) { e.preventDefault(); activate(n, { focus: true, push: true }); }
+    });
+  });
+  window.addEventListener('hashchange', function () {
+    var n = fromHash();
+    if (n && n !== current) { activate(n, { push: false }); }
+  });
+
+  /* ---- glass card tilt ---- */
+  var fine = false;
+  try { fine = window.matchMedia('(pointer: fine)').matches; } catch (e) {}
+  if (!reduce && fine) {
+    Array.prototype.forEach.call(document.querySelectorAll('.g-card'), function (card) {
+      card.addEventListener('pointermove', function (e) {
+        var r = card.getBoundingClientRect();
+        if (!r.width) { return; }
+        var px = (e.clientX - r.left) / r.width - 0.5;
+        var py = (e.clientY - r.top) / r.height - 0.5;
+        card.style.transform = 'perspective(700px) rotateX(' + (-py * 7).toFixed(2) + 'deg) rotateY(' + (px * 9).toFixed(2) + 'deg)';
+      });
+      card.addEventListener('pointerleave', function () { card.style.transform = ''; });
+    });
+  }
+
+  activate(fromHash() || 'classic', { push: false, announce: false });
+})();
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var overlay = document.getElementById('pfOverlay');
+  if (!overlay) return;
+  var form = document.getElementById('pfForm');
+  var done = document.getElementById('pfDone');
+  var err = document.getElementById('pfErr');
+  var send = document.getElementById('pfSend');
+  var tierWrap = document.getElementById('pfTierWrap');
+  var intAds = document.getElementById('pfIntAds');
+  var tier = document.getElementById('pfTier');
+  var lastFocus = null;
+
+  function syncTier() { tierWrap.hidden = !intAds.checked; }
+  intAds.addEventListener('change', syncTier);
+
+  function openForm(trigger) {
+    lastFocus = document.activeElement;
+    document.getElementById('pfFormat').value =
+      (document.body && document.body.getAttribute('data-active-format')) || 'classic';
+    if (trigger) {
+      var interest = trigger.getAttribute('data-interest');
+      var t = trigger.getAttribute('data-tier');
+      if (interest === 'advertising') {
+        intAds.checked = true;
+        if (t) {
+          for (var i = 0; i < tier.options.length; i++) {
+            if (tier.options[i].value.indexOf('$' + t) === 0) { tier.selectedIndex = i; break; }
+          }
+        }
+      }
+    }
+    syncTier();
+    form.style.display = ''; done.style.display = 'none'; err.style.display = 'none';
+    overlay.hidden = false;
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+    setTimeout(function () { document.getElementById('pfName').focus(); }, 60);
+  }
+  function closeForm() {
+    overlay.classList.remove('open'); overlay.hidden = true;
+    document.body.style.overflow = '';
+    if (lastFocus && lastFocus.focus) lastFocus.focus();
+  }
+  Array.prototype.forEach.call(document.querySelectorAll('.js-start'), function (b) {
+    b.addEventListener('click', function () { openForm(b); });
+  });
+  document.getElementById('pfClose').addEventListener('click', closeForm);
+  document.getElementById('pfDoneClose').addEventListener('click', closeForm);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeForm(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closeForm(); });
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    if (!form.checkValidity()) { form.reportValidity(); return; }
+    send.disabled = true; send.textContent = 'Sending…'; err.style.display = 'none';
+    var data = {};
+    new FormData(form).forEach(function (v, k) {
+      if (data[k]) { data[k] = data[k] + ', ' + v; } else { data[k] = v; }
+    });
+    data._subject = 'New project inquiry — moorefolio.com/example';
+    data._template = 'table';
+    data._captcha = 'false';
+    fetch('https://formsubmit.co/ajax/Moore.chrisf@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify(data)
+    }).then(function (r) {
+      if (!r.ok) throw new Error('send failed');
+      form.style.display = 'none'; done.style.display = 'block';
+      send.disabled = false; send.textContent = 'Send it to Christopher';
+    }).catch(function () {
+      err.style.display = 'block';
+      send.disabled = false; send.textContent = 'Send it to Christopher';
+    });
+  });
+})();
+</script>
+</body>
+</html>

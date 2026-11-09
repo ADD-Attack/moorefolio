@@ -1,0 +1,697 @@
+{
+ "generated": "2026-10-22T14:01:47",
+ "generator": "tools/build_instruments.py",
+ "soundfonts": "/home/hatch/workspace/song/soundfonts",
+ "reference": "one note, vel 100, 2 beats @ 120 BPM via render_part; RMS over [0,1 s] at unity",
+ "patches": {
+  "VPO/Strings/1st-violin-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/1st-violin-SEC-sustain.sfz",
+   "lokey": 55,
+   "hikey": 105,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 14
+   },
+   "source_primary": "SSO",
+   "regions": 14,
+   "ref_key": 79,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -29.96,
+   "ref_peak_dbfs": -16.1,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/2nd-violin-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/2nd-violin-SEC-sustain.sfz",
+   "lokey": 55,
+   "hikey": 105,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 14
+   },
+   "source_primary": "SSO",
+   "regions": 14,
+   "ref_key": 79,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -34.61,
+   "ref_peak_dbfs": -20.95,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/viola-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/viola-SEC-sustain.sfz",
+   "lokey": 48,
+   "hikey": 93,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 1,
+   "source_library": {
+    "Mattias-Westlund": 15,
+    "VSCO2-CE": 12
+   },
+   "source_primary": "Mattias-Westlund",
+   "regions": 27,
+   "ref_key": 69,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -26.05,
+   "ref_peak_dbfs": -15.88,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/cello-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/cello-SEC-sustain.sfz",
+   "lokey": 36,
+   "hikey": 81,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch": 11
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 11,
+   "ref_key": 58,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -29.34,
+   "ref_peak_dbfs": -16.42,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/bass-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/bass-SEC-sustain.sfz",
+   "lokey": 24,
+   "hikey": 67,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 12
+   },
+   "source_primary": "SSO",
+   "regions": 12,
+   "ref_key": 45,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -32.54,
+   "ref_peak_dbfs": -19.28,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/1st-violin-SEC-staccato.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/1st-violin-SEC-staccato.sfz",
+   "lokey": 55,
+   "hikey": 105,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 2,
+   "source_library": {
+    "SSO": 28
+   },
+   "source_primary": "SSO",
+   "regions": 28,
+   "ref_key": 79,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -31.63,
+   "ref_peak_dbfs": -13.46,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/2nd-violin-SEC-staccato.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/2nd-violin-SEC-staccato.sfz",
+   "lokey": 55,
+   "hikey": 105,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 2,
+   "source_library": {
+    "SSO": 28
+   },
+   "source_primary": "SSO",
+   "regions": 28,
+   "ref_key": 79,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -35.88,
+   "ref_peak_dbfs": -18.75,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/cello-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/cello-SOLO-sustain.sfz",
+   "lokey": 36,
+   "hikey": 81,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch": 19
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 9,
+   "ref_key": 57,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -27.62,
+   "ref_peak_dbfs": -18.44,
+   "render_stage_db": 0.0
+  },
+  "VPO/Strings/1st-violin-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Strings/1st-violin-SOLO-sustain.sfz",
+   "lokey": 55,
+   "hikey": 94,
+   "key_gaps": [
+    58,
+    64,
+    70,
+    71,
+    81,
+    87,
+    88,
+    89,
+    91,
+    93
+   ],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch": 30
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 30,
+   "ref_key": 74,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -27.52,
+   "ref_peak_dbfs": -16.65,
+   "render_stage_db": 0.0
+  },
+  "VPO/Vocals/choir-MIXED-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Vocals/choir-MIXED-sustain.sfz",
+   "lokey": 43,
+   "hikey": 84,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 37
+   },
+   "source_primary": "SSO",
+   "regions": 37,
+   "ref_key": 63,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -26.43,
+   "ref_peak_dbfs": -14.41,
+   "render_stage_db": 0.0
+  },
+  "VPO/Vocals/choir-MALE-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Vocals/choir-MALE-sustain.sfz",
+   "lokey": 43,
+   "hikey": 66,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 19
+   },
+   "source_primary": "SSO",
+   "regions": 19,
+   "ref_key": 55,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -30.53,
+   "ref_peak_dbfs": -16.3,
+   "render_stage_db": 0.0
+  },
+  "VPO/Percussion/timpani-hit.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Percussion/timpani-hit.sfz",
+   "lokey": 36,
+   "hikey": 60,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch": 14
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 14,
+   "ref_key": 48,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -34.57,
+   "ref_peak_dbfs": -17.3,
+   "render_stage_db": 0.0
+  },
+  "VPO/Percussion/timpani-roll.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Percussion/timpani-roll.sfz",
+   "lokey": 36,
+   "hikey": 60,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "Other": 11,
+    "NoBudgetOrch": 14
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 11,
+   "ref_key": 48,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -30.63,
+   "ref_peak_dbfs": -16.64,
+   "render_stage_db": 0.0
+  },
+  "VPO/Woodwinds/flute-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Woodwinds/flute-SEC-sustain.sfz",
+   "lokey": 60,
+   "hikey": 98,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch": 9
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 9,
+   "ref_key": 80,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -24.61,
+   "ref_peak_dbfs": -14.73,
+   "render_stage_db": 0.0
+  },
+  "VPO/Woodwinds/piccolo-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Woodwinds/piccolo-SOLO-sustain.sfz",
+   "lokey": 74,
+   "hikey": 108,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 10
+   },
+   "source_primary": "SSO",
+   "regions": 10,
+   "ref_key": 90,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -24.75,
+   "ref_peak_dbfs": -15.66,
+   "render_stage_db": 0.0
+  },
+  "VPO/Woodwinds/oboe-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Woodwinds/oboe-SEC-sustain.sfz",
+   "lokey": 58,
+   "hikey": 93,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 10
+   },
+   "source_primary": "SSO",
+   "regions": 10,
+   "ref_key": 76,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -30.43,
+   "ref_peak_dbfs": -17.39,
+   "render_stage_db": 0.0
+  },
+  "VPO/Woodwinds/clarinet-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Woodwinds/clarinet-SEC-sustain.sfz",
+   "lokey": 50,
+   "hikey": 94,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch": 11
+   },
+   "source_primary": "NoBudgetOrch",
+   "regions": 11,
+   "ref_key": 70,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -25.59,
+   "ref_peak_dbfs": -15.7,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/tuba-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/tuba-SOLO-sustain.sfz",
+   "lokey": 26,
+   "hikey": 62,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 9
+   },
+   "source_primary": "SSO",
+   "regions": 9,
+   "ref_key": 43,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -21.15,
+   "ref_peak_dbfs": -14.89,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/trumpet-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/trumpet-SEC-sustain.sfz",
+   "lokey": 54,
+   "hikey": 84,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch2": 23
+   },
+   "source_primary": "NoBudgetOrch2",
+   "regions": 23,
+   "ref_key": 69,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -26.88,
+   "ref_peak_dbfs": -15.08,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/trombone-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/trombone-SEC-sustain.sfz",
+   "lokey": 40,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "NoBudgetOrch2": 18
+   },
+   "source_primary": "NoBudgetOrch2",
+   "regions": 18,
+   "ref_key": 57,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -25.88,
+   "ref_peak_dbfs": -14.67,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/french-horn-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/french-horn-SEC-sustain.sfz",
+   "lokey": 35,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "Mattias-Westlund": 26
+   },
+   "source_primary": "Mattias-Westlund",
+   "regions": 26,
+   "ref_key": 55,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -28.01,
+   "ref_peak_dbfs": -18.03,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/french-horn-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/french-horn-SOLO-sustain.sfz",
+   "lokey": 35,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "Iowa": 37,
+    "SSO": 2
+   },
+   "source_primary": "Iowa",
+   "regions": 39,
+   "ref_key": 55,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -25.4,
+   "ref_peak_dbfs": -15.89,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/bass-trombone-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/bass-trombone-SOLO-sustain.sfz",
+   "lokey": 22,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 11
+   },
+   "source_primary": "SSO",
+   "regions": 11,
+   "ref_key": 52,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -26.46,
+   "ref_peak_dbfs": -15.16,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/all-brass-SEC-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/all-brass-SEC-sustain.sfz",
+   "lokey": 26,
+   "hikey": 84,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 9,
+    "Mattias-Westlund": 26,
+    "NoBudgetOrch2": 41
+   },
+   "source_primary": "NoBudgetOrch2",
+   "regions": 76,
+   "ref_key": 55,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -26.75,
+   "ref_peak_dbfs": -15.49,
+   "render_stage_db": 0.0
+  },
+  "VPO/Brass/all-brass-SEC-accent.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Brass/all-brass-SEC-accent.sfz",
+   "lokey": 26,
+   "hikey": 84,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "SSO": 21,
+    "Mattias-Westlund": 52,
+    "NoBudgetOrch2": 82
+   },
+   "source_primary": "NoBudgetOrch2",
+   "regions": 155,
+   "ref_key": 55,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -26.35,
+   "ref_peak_dbfs": -14.76,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/ViolinEnsSpic.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/ViolinEnsSpic.sfz",
+   "lokey": 55,
+   "hikey": 86,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 44
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 44,
+   "ref_key": 69,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -41.41,
+   "ref_peak_dbfs": -22.56,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/CelloEnsSpic.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/CelloEnsSpic.sfz",
+   "lokey": 36,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 52
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 52,
+   "ref_key": 57,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -38.84,
+   "ref_peak_dbfs": -22.16,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/GM-StylePerc.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/GM-StylePerc.sfz",
+   "lokey": 32,
+   "hikey": 104,
+   "key_gaps": [
+    43,
+    44,
+    45,
+    52,
+    57,
+    58,
+    66,
+    73,
+    74,
+    87,
+    89,
+    90,
+    91,
+    92,
+    93,
+    95,
+    96,
+    97,
+    98,
+    99,
+    100
+   ],
+   "velocity_layers": 7,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 220
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 220,
+   "ref_key": 68,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -42.81,
+   "ref_peak_dbfs": -18.95,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/FHornSus.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/FHornSus.sfz",
+   "lokey": 33,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 4,
+   "round_robin": 1,
+   "source_library": {
+    "VSCO-2-CE": 29
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 29,
+   "ref_key": 53,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -37.28,
+   "ref_peak_dbfs": -27.11,
+   "render_stage_db": 21.1
+  },
+  "SalamanderGrandPianoV3/SalamanderGrandPianoV3.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/SalamanderGrandPianoV3/SalamanderGrandPianoV3.sfz",
+   "lokey": 21,
+   "hikey": 108,
+   "key_gaps": [],
+   "velocity_layers": 16,
+   "round_robin": 1,
+   "source_library": {
+    "SalamanderGrandPianoV3": 641
+   },
+   "source_primary": "SalamanderGrandPianoV3",
+   "regions": 480,
+   "ref_key": 63,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -36.99,
+   "ref_peak_dbfs": -19.85,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/ViolinEnsPizz.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/ViolinEnsPizz.sfz",
+   "lokey": 55,
+   "hikey": 86,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 44
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 44,
+   "ref_key": 69,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -36.96,
+   "ref_peak_dbfs": -19.55,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/ViolaEnsPizz.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/ViolaEnsPizz.sfz",
+   "lokey": 48,
+   "hikey": 86,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 46
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 46,
+   "ref_key": 65,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -37.28,
+   "ref_peak_dbfs": -19.28,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/CelloEnsPizz.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/CelloEnsPizz.sfz",
+   "lokey": 36,
+   "hikey": 77,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 52
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 52,
+   "ref_key": 57,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -39.82,
+   "ref_peak_dbfs": -22.95,
+   "render_stage_db": 0.0
+  },
+  "VSCO-2-CE/ContrabassPizz.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/ContrabassPizz.sfz",
+   "lokey": 24,
+   "hikey": 60,
+   "key_gaps": [],
+   "velocity_layers": 2,
+   "round_robin": 2,
+   "source_library": {
+    "VSCO-2-CE": 40
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 40,
+   "ref_key": 42,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -43.41,
+   "ref_peak_dbfs": -29.84,
+   "render_stage_db": 23.8
+  },
+  "VSCO-2-CE/Marimba.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VSCO-2-CE/Marimba.sfz",
+   "lokey": 41,
+   "hikey": 96,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "VSCO-2-CE": 10
+   },
+   "source_primary": "VSCO-2-CE",
+   "regions": 10,
+   "ref_key": 65,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -45.17,
+   "ref_peak_dbfs": -31.01,
+   "render_stage_db": 25.0
+  },
+  "VPO/Woodwinds/flute-SOLO-sustain.sfz": {
+   "path": "/home/hatch/workspace/song/soundfonts/VPO/Woodwinds/flute-SOLO-sustain.sfz",
+   "lokey": 60,
+   "hikey": 98,
+   "key_gaps": [],
+   "velocity_layers": 1,
+   "round_robin": 1,
+   "source_library": {
+    "VSCO2-CE": 10
+   },
+   "source_primary": "VSCO2-CE",
+   "regions": 10,
+   "ref_key": 81,
+   "ref_vel": 100,
+   "ref_rms_dbfs": -25.1,
+   "ref_peak_dbfs": -16.49,
+   "render_stage_db": 0.0
+  }
+ },
+ "updated": "2026-10-28T16:42:39"
+}

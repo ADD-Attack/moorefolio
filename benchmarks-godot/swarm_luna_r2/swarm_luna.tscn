@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="Script" path="res://swarm_luna_r2/swarm_luna.gd" id="1_swarm"]
+
+[node name="SwarmLuna" type="Node3D"]
+script = ExtResource("1_swarm")
+metadata/build = "Run 2 — neon polish and arcade fixes"

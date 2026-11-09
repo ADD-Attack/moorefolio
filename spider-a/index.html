@@ -1,0 +1,457 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Christopher Moore — Websites, Scheduling & Booking, Advertising Runs · Kansas City</title>
+<meta name="description" content="Three services, one provider. Websites, scheduling & booking, and advertising runs from Christopher Moore in Kansas City.">
+<style>
+@font-face{font-family:"Instrument Sans";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/instrument-sans-latin.woff2) format("woff2")}
+@font-face{font-family:"Lora";font-style:normal;font-weight:400 700;font-display:swap;src:url(fonts/lora-latin.woff2) format("woff2")}
+@font-face{font-family:"Lora";font-style:italic;font-weight:400 700;font-display:swap;src:url(fonts/lora-italic-latin.woff2) format("woff2")}
+
+:root{
+  --paper:#f4efe6; --paper-2:#ebe4d7; --card:#fbf8f2;
+  --ink:#1c1a17; --ink-2:#4f4a42; --rule:#d6cdbd;
+  --brick:#8e2f22; --brick-ink:#fff7ee; --brick-soft:#f1dcd4;
+  --sans:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --serif:"Lora",Georgia,"Times New Roman",serif;
+  --gut:clamp(20px,4vw,56px);
+  --max:1240px;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 18px/1.6 var(--serif);text-rendering:optimizeLegibility}
+img{display:block;max-width:100%;height:auto}
+a{color:inherit}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--gut)}
+.sans{font-family:var(--sans)}
+:focus-visible{outline:3px solid var(--brick);outline-offset:3px;border-radius:4px}
+
+/* top bar */
+.bar{border-bottom:1px solid var(--rule)}
+.bar .wrap{display:flex;justify-content:space-between;align-items:center;gap:16px;min-height:64px;font:500 15px/1.3 var(--sans);letter-spacing:.01em}
+.bar .who b{font-weight:650}
+.bar .mail{user-select:all;color:var(--ink-2)}
+.demo-tag{font:600 12px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;background:var(--ink);color:var(--paper);padding:6px 9px;border-radius:999px;white-space:nowrap}
+
+/* hero */
+.hero{padding:clamp(56px,9vw,120px) 0 clamp(40px,6vw,72px)}
+.kicker{font:600 14px/1.2 var(--sans);letter-spacing:.12em;text-transform:uppercase;color:var(--brick);margin:0 0 22px}
+h1{text-wrap:balance;font:640 clamp(46px,8.2vw,118px)/.96 var(--sans);letter-spacing:-.035em;margin:0;max-width:11ch}
+.dek{font-size:clamp(19px,1.6vw,22px);max-width:40ch;color:var(--ink-2);margin:28px 0 0}
+.index{list-style:none;margin:clamp(40px,6vw,72px) 0 0;padding:0;display:grid;grid-template-columns:repeat(3,1fr);border-top:2px solid var(--ink)}
+.index li{border-right:1px solid var(--rule)}
+.index li:last-child{border-right:0}
+.index a{display:flex;flex-direction:column;gap:6px;padding:18px 20px 20px 0;text-decoration:none;font-family:var(--sans)}
+.index li+li a{padding-left:20px}
+.index .n{font:600 13px/1 var(--sans);color:var(--brick);letter-spacing:.06em}
+.index .t{font:620 clamp(19px,1.8vw,24px)/1.15 var(--sans);letter-spacing:-.01em}
+.index .s{font:400 15px/1.4 var(--sans);color:var(--ink-2)}
+.index a:hover .t{text-decoration:underline;text-decoration-thickness:2px;text-underline-offset:4px}
+
+/* sections */
+section.svc{padding:clamp(64px,9vw,120px) 0;border-top:1px solid var(--rule)}
+.svc-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,80px);align-items:start}
+.label{font:600 13px/1 var(--sans);letter-spacing:.1em;text-transform:uppercase;color:var(--brick);margin:0 0 18px;display:flex;gap:10px;align-items:center}
+.label::before{content:"";width:28px;height:2px;background:currentColor}
+h2{text-wrap:balance;font:630 clamp(34px,4.4vw,60px)/1.02 var(--sans);letter-spacing:-.03em;margin:0 0 22px;max-width:14ch}
+:where(.svc) p{margin:0 0 16px;max-width:44ch}
+.note{font:500 14px/1.45 var(--sans);color:var(--ink-2)}
+
+/* instrument shell */
+.inst{background:var(--card);border:1px solid var(--rule);border-radius:18px;padding:clamp(20px,2.6vw,32px);box-shadow:0 1px 0 #fff inset,0 24px 48px -32px rgba(60,40,20,.35)}
+.inst-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;font:600 13px/1.2 var(--sans);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-2);margin-bottom:18px}
+.live{display:inline-flex;align-items:center;gap:8px;color:var(--brick)}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--brick);animation:pulse 2s ease-in-out infinite}
+@keyframes pulse{50%{opacity:.25}}
+
+/* specimen readout */
+.readout{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--rule);border:1px solid var(--rule);border-radius:12px;overflow:hidden}
+.readout div{background:var(--card);padding:18px 18px 16px}
+.readout dt{font:600 12px/1.2 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:0 0 8px}
+.readout dd{margin:0;font:620 clamp(26px,3vw,38px)/1 var(--sans);letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.readout dd small{font-size:.5em;font-weight:500;color:var(--ink-2);letter-spacing:0;margin-left:4px}
+.ruler{margin-top:18px;height:34px;position:relative;border-bottom:2px solid var(--ink)}
+.ruler span{position:absolute;bottom:0;width:1px;background:var(--ink)}
+.ruler em{position:absolute;bottom:8px;font:600 11px/1 var(--sans);font-style:normal;color:var(--ink-2);transform:translateX(-50%)}
+.ruler .you{position:absolute;bottom:-7px;width:12px;height:12px;background:var(--brick);border-radius:50%;transform:translateX(-50%);transition:left .4s cubic-bezier(.2,.7,.2,1)}
+.ruler-cap{font:500 13px/1.4 var(--sans);color:var(--ink-2);margin-top:12px}
+
+/* booking demo */
+.days{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.chip{appearance:none;border:1.5px solid var(--rule);background:var(--paper);color:var(--ink);border-radius:12px;padding:12px 6px;font:600 15px/1.15 var(--sans);cursor:pointer;text-align:center;min-height:44px;transition:border-color .15s,background .15s,transform .15s}
+.chip small{display:block;font-weight:500;font-size:12px;color:var(--ink-2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:4px}
+.chip:hover:not(:disabled){border-color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+.chip[aria-pressed="true"] small{color:#cfc6b6}
+.chip:disabled{color:#8a8274;background:transparent;border-style:dashed;cursor:not-allowed}
+.chip.taken{text-decoration:line-through}
+.chip.taken::after{content:" · taken";font-size:12px;font-weight:500;text-decoration:none}
+.times{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:14px}
+.sub{font:600 12px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);margin:24px 0 12px}
+.inst-head+.sub{margin-top:4px}
+.confirm{margin-top:18px;border-radius:12px;padding:16px 18px;background:var(--brick-soft);border:1px solid #e2bfb3;font:500 16px/1.45 var(--sans);display:flex;gap:14px;align-items:flex-start;min-height:78px}
+.confirm .tick{flex:none;width:28px;height:28px;border-radius:50%;background:var(--brick);color:var(--brick-ink);display:grid;place-items:center;font-weight:700}
+.confirm[data-state="idle"]{background:transparent;border-style:dashed;border-color:var(--rule);color:var(--ink-2)}
+.confirm[data-state="idle"] .tick{background:var(--rule);color:var(--ink-2)}
+.confirm strong{display:block;font-weight:650;color:var(--ink)}
+
+/* ad dial */
+.ads-grid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:clamp(32px,5vw,80px)}
+.lead-creative{font:620 clamp(19px,1.7vw,23px)/1.3 var(--sans);letter-spacing:-.01em;border-left:3px solid var(--brick);padding-left:16px;margin:8px 0 22px;max-width:30ch}
+.tiers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;border:0;padding:0;margin:0 0 22px}
+.tiers legend{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.tier input{position:absolute;opacity:0;pointer-events:none}
+.tier label{display:block;border:1.5px solid var(--rule);border-radius:14px;padding:14px 12px;cursor:pointer;background:var(--paper);transition:border-color .15s,background .15s;height:100%}
+.tier .p{font:650 clamp(26px,2.6vw,34px)/1 var(--sans);letter-spacing:-.02em}
+.tier .v{font:500 13px/1.3 var(--sans);color:var(--ink-2);margin-top:6px}
+.tier input:checked+label{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.tier input:checked+label .v{color:#d7cfc0}
+.tier input:focus-visible+label{outline:3px solid var(--brick);outline-offset:3px}
+.tier label:hover{border-color:var(--ink)}
+.reach{margin:4px 0 0}
+.reach .big{font:640 clamp(40px,5.4vw,72px)/1 var(--sans);letter-spacing:-.035em;font-variant-numeric:tabular-nums}
+.reach .big .upto{font-size:.42em;letter-spacing:-.01em;font-weight:600;color:var(--brick);margin-right:.2em;vertical-align:.45em}
+.reach .unit{font:600 .3em/1 var(--sans);letter-spacing:0;color:var(--ink-2);margin-left:.25em}
+.meter{height:12px;background:var(--paper-2);border-radius:999px;margin:16px 0 8px;position:relative;overflow:hidden}
+.meter b{position:absolute;inset:0 auto 0 0;background:var(--brick);border-radius:999px;width:12.5%;transition:width .7s cubic-bezier(.2,.7,.2,1)}
+.meter-scale{display:flex;justify-content:space-between;font:500 12px/1 var(--sans);color:var(--ink-2)}
+.tier-line{font:500 16px/1.5 var(--sans);margin:18px 0 0;min-height:3em}
+.tier-line b{font-weight:650}
+.fine{font:500 13px/1.45 var(--sans);color:var(--ink-2);margin-top:14px;max-width:52ch}
+
+.creative{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;align-self:center}
+.ad{position:relative;border-radius:14px;overflow:hidden;background:var(--paper-2);aspect-ratio:4/5}
+.ad img{width:100%;height:100%;object-fit:cover}
+.ad .cap{position:absolute;left:10px;top:10px;font:600 11px/1 var(--sans);letter-spacing:.08em;text-transform:uppercase;background:rgba(251,248,242,.92);color:var(--ink);padding:6px 8px;border-radius:6px}
+.ad2d .copy{position:absolute;left:0;right:0;bottom:0;padding:18px 16px 16px;background:linear-gradient(transparent,rgba(20,14,10,.82) 38%);color:#fff7ee}
+.ad2d .copy p{margin:0;font:640 clamp(18px,1.7vw,22px)/1.15 var(--sans);letter-spacing:-.01em;max-width:none}
+.ad2d .copy small{display:block;font:500 12px/1.3 var(--sans);opacity:.85;margin-top:8px}
+.ad3d img{object-position:50% 20%;transform-origin:50% 35%;animation:dolly 9s ease-in-out infinite alternate}
+@keyframes dolly{from{transform:scale(1.02) translateY(0)}to{transform:scale(1.12) translateY(-2%)}}
+.ad3d .copy{position:absolute;left:0;right:0;bottom:0;padding:14px 16px;color:var(--ink);background:linear-gradient(transparent,rgba(244,239,230,.95) 40%)}
+.ad3d .copy p{margin:0;font:640 clamp(18px,1.7vw,22px)/1.15 var(--sans);letter-spacing:-.01em;max-width:none}
+.ad3d .free{position:absolute;right:10px;top:10px;font:700 12px/1 var(--sans);letter-spacing:.08em;background:var(--brick);color:var(--brick-ink);padding:7px 9px;border-radius:6px;text-transform:uppercase}
+.ad3d .lock{position:absolute;inset:0;display:none;place-items:center;align-content:center;text-align:center;background:rgba(28,26,23,.78);font:620 17px/1.35 var(--sans);padding:24px;color:#fff7ee}
+.ad3d.locked .lock{display:grid}
+.ad3d.locked .free,.ad3d.locked .copy{display:none}
+.ad3d.locked img{animation:none;filter:grayscale(1)}
+.ad3d.locked .cap{opacity:.9}
+.ad3d .lock span{display:block;font-weight:500;font-size:14px;color:#e6d9c8;margin-top:10px}
+
+.support{padding:28px 0;border-top:1px solid var(--rule);font:500 17px/1.5 var(--sans);color:var(--ink-2)}
+.support b{color:var(--ink);font-weight:620}
+
+/* provider */
+.provider{position:relative;color:#fff7ee;background:#2a1a14}
+.provider picture,.provider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.provider::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(24,14,10,.88) 0%,rgba(24,14,10,.70) 48%,rgba(24,14,10,.15) 100%)}
+.provider .wrap{position:relative;z-index:1;padding-top:clamp(80px,12vw,160px);padding-bottom:clamp(80px,12vw,160px)}
+.provider h2{color:#fff7ee;max-width:15ch;font-size:clamp(36px,5vw,68px)}
+.provider p{max-width:42ch;color:#f1e6da;margin:0 0 14px}
+.provider .label{color:#f0b9a8}
+.provider .addr{font:600 clamp(18px,1.8vw,22px)/1.3 var(--sans);color:#fff7ee;user-select:all;margin-top:26px;display:inline-block;border-bottom:2px solid #f0b9a8;padding-bottom:4px}
+
+/* form */
+.form-sec{padding:clamp(64px,9vw,120px) 0}
+form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 20px}
+.f{display:flex;flex-direction:column;gap:8px}
+.f.full{grid-column:1/-1}
+.f label,.f legend{font:600 14px/1.2 var(--sans)}
+.f input:not([type=checkbox]),.f textarea{font:400 17px/1.4 var(--serif);color:var(--ink);background:var(--card);border:1.5px solid var(--rule);border-radius:10px;padding:13px 14px;min-height:48px;width:100%}
+.f input:focus,.f textarea:focus{border-color:var(--ink);outline:none;box-shadow:0 0 0 3px rgba(142,47,34,.18)}
+.f textarea{min-height:130px;resize:vertical}
+fieldset.f{border:0;padding:0;margin:0}
+.checks{display:flex;flex-wrap:wrap;gap:10px}
+.checks label{display:inline-flex;align-items:center;gap:8px;border:1.5px solid var(--rule);border-radius:999px;padding:10px 14px;font:500 15px/1 var(--sans);cursor:pointer;background:var(--card);min-height:44px}
+.checks input{accent-color:var(--brick);width:18px;height:18px;margin:0}
+.submit-row{grid-column:1/-1;display:flex;flex-wrap:wrap;align-items:center;gap:16px 20px;margin-top:6px}
+button.send{font:650 17px/1 var(--sans);padding:17px 26px;border-radius:999px;border:0;background:var(--ink);color:var(--paper);opacity:.45;cursor:not-allowed;min-height:52px}
+.demo-note{font:500 15px/1.45 var(--sans);color:var(--ink-2);max-width:46ch}
+.demo-note b{color:var(--ink);font-weight:650;user-select:all}
+
+footer{border-top:2px solid var(--ink);padding:28px 0 40px;font:500 14px/1.5 var(--sans);color:var(--ink-2)}
+footer .wrap{display:flex;flex-wrap:wrap;justify-content:space-between;gap:10px}
+
+/* responsive */
+@media (max-width:980px){
+  .svc-grid,.ads-grid{grid-template-columns:1fr}
+  h2{max-width:18ch}
+}
+@media (max-width:700px){
+  body{font-size:17px}
+  .bar .mail{display:none}
+  .index{grid-template-columns:1fr}
+  .index li{border-right:0;border-bottom:1px solid var(--rule)}
+  .index li+li a{padding-left:0}
+  .index a{padding:16px 0;flex-direction:row;align-items:baseline;gap:12px}
+  .index .s{display:none}
+  .days{grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+  .chip{padding:10px 2px;font-size:14px}
+  .times{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .readout dd{font-size:28px}
+  .creative{grid-template-columns:1fr;gap:12px}
+  .ad{aspect-ratio:4/3}
+  .ad2d img{object-position:50% 70%}
+  form{grid-template-columns:1fr}
+  .provider::after{background:linear-gradient(180deg,rgba(24,14,10,.6),rgba(24,14,10,.9))}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <div class="wrap">
+    <span class="who"><b>Christopher Moore</b> · Kansas City</span>
+    <span class="mail" aria-label="Email">Moore.chrisf@gmail.com</span>
+    <span class="demo-tag">Demo page</span>
+  </div>
+</header>
+
+<main>
+  <section class="hero">
+    <div class="wrap">
+      <p class="kicker">Christopher Moore · Kansas City</p>
+      <h1>Three services, one provider.</h1>
+      <p class="dek">Websites, scheduling &amp; booking, and advertising runs. Each one is running on this page, so you can try it before you write.</p>
+      <ol class="index">
+        <li><a href="#websites"><span class="n">01</span><span class="t">Websites</span><span class="s">You're looking at one.</span></a></li>
+        <li><a href="#booking"><span class="n">02</span><span class="t">Scheduling &amp; booking</span><span class="s">Pick a time below.</span></a></li>
+        <li><a href="#ads"><span class="n">03</span><span class="t">Advertising runs</span><span class="s">Turn the dial below.</span></a></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 01 WEBSITES -->
+  <section class="svc" id="websites" aria-labelledby="h-web">
+    <div class="wrap svc-grid">
+      <div>
+        <p class="label">01 · Websites</p>
+        <h2 id="h-web">You're looking at one.</h2>
+        <p>A clear page that says what you do, reads well on any phone, and is easy to trust.</p>
+        <p class="note">These numbers aren't a mock-up. They're this page, measured in your browser just now. Resize the window and watch the page fit itself.</p>
+      </div>
+      <div class="inst" aria-live="polite">
+        <div class="inst-head"><span>This page, right now</span><span class="live"><i></i>Live</span></div>
+        <dl class="readout">
+          <div><dt>Your screen</dt><dd><span id="r-w">—</span><small>px wide</small></dd></div>
+          <div><dt>Layout in use</dt><dd id="r-layout">—</dd></div>
+          <div><dt>Loaded so far</dt><dd><span id="r-kb">—</span><small>KB</small></dd></div>
+          <div><dt>Ready in</dt><dd><span id="r-ms">—</span><small>ms</small></dd></div>
+        </dl>
+        <div class="ruler" id="ruler" aria-hidden="true"></div>
+        <p class="ruler-cap">Phone · tablet · wide. The dot is you.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 BOOKING -->
+  <section class="svc" id="booking" aria-labelledby="h-book">
+    <div class="wrap svc-grid">
+      <div>
+        <p class="label">02 · Scheduling &amp; booking</p>
+        <h2 id="h-book">Customers book without calling.</h2>
+        <p>They pick a day and a time that suit them, from hours you choose.</p>
+        <p class="note">Try it: pick a slot.</p>
+      </div>
+      <div class="inst">
+        <div class="inst-head"><span>Book a visit</span><span>Demo · nothing is sent</span></div>
+        <p class="sub" id="days-lbl">Day</p>
+        <div class="days" id="days" role="group" aria-labelledby="days-lbl"></div>
+        <p class="sub" id="times-lbl">Time</p>
+        <div class="times" id="times" role="group" aria-labelledby="times-lbl"></div>
+        <div class="confirm" id="confirm" data-state="idle" aria-live="polite">
+          <span class="tick" aria-hidden="true">✓</span>
+          <span id="confirm-text">Pick a day, then a time.</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 ADS -->
+  <section class="svc" id="ads" aria-labelledby="h-ads">
+    <div class="wrap ads-grid">
+      <div>
+        <p class="label">03 · Advertising runs</p>
+        <h2 id="h-ads">Your ad, written and placed for you.</h2>
+        <p class="lead-creative">2D + 3D video ads, written &amp; placed for you — 3D free.</p>
+
+        <fieldset class="tiers">
+          <legend>Choose a run</legend>
+          <div class="tier"><input type="radio" name="tier" id="t25" value="25"><label for="t25"><div class="p">$25</div><div class="v">up to 2,000 views</div></label></div>
+          <div class="tier"><input type="radio" name="tier" id="t50" value="50" checked><label for="t50"><div class="p">$50</div><div class="v">up to 8,000 views</div></label></div>
+          <div class="tier"><input type="radio" name="tier" id="t100" value="100"><label for="t100"><div class="p">$100</div><div class="v">up to 16,000 views</div></label></div>
+        </fieldset>
+
+        <div class="reach" aria-live="polite">
+          <div class="big"><span class="upto">up to</span><span id="views">8,000</span><span class="unit">views</span></div>
+          <div class="meter" aria-hidden="true"><b id="meter"></b></div>
+          <div class="meter-scale" aria-hidden="true"><span>0</span><span>8,000</span><span>16,000</span></div>
+          <p class="tier-line" id="tier-line"></p>
+        </div>
+        <p class="fine">View counts are up-to targets — delivery varies by platform and audience.</p>
+      </div>
+
+      <div class="creative">
+        <figure class="ad ad2d" style="margin:0">
+          <picture><source srcset="img/a1-counter.webp" type="image/webp"><img src="img/a1-counter.jpg" alt="A chipped coffee mug, a pencil and a ring of keys on a worn wooden counter in morning light." width="521" height="653" loading="lazy"></picture>
+          <span class="cap">2D ad · sample</span>
+          <figcaption class="copy"><p>Your customers book while you pour the coffee.</p><small>Scheduling &amp; booking · Christopher Moore, Kansas City</small></figcaption>
+        </figure>
+        <figure class="ad ad3d" id="ad3d" style="margin:0">
+          <picture><source srcset="img/a2-doorway-3d.webp" type="image/webp"><img src="img/a2-doorway-3d.jpg" alt="A small 3D-rendered shop doorway with a brick-red awning, the door open and warm light inside." width="1000" height="1000" loading="lazy"></picture>
+          <span class="cap">3D video ad · sample frame</span>
+          <span class="free">Free</span>
+          <figcaption class="copy"><p>The door's open. Come on in.</p></figcaption>
+          <div class="lock" id="lock">3D video ads come free<br>from the $50 run.<span>Turn the dial to $50 or $100.</span></div>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <div class="support"><div class="wrap">Already have a site? <b>Redesigns, and care &amp; updates once you're live.</b></div></div>
+
+  <!-- PROVIDER -->
+  <section class="provider" aria-labelledby="h-prov">
+    <picture><source srcset="img/a3-brick-light.webp" type="image/webp"><img src="img/a3-brick-light.jpg" alt="" width="1536" height="1024" loading="lazy"></picture>
+    <div class="wrap">
+      <p class="label">Kansas City</p>
+      <h2 id="h-prov">The one who answers is the one who does the work.</h2>
+      <p>Christopher Moore works from Kansas City and does every job himself.</p>
+      <p>There's one way in, and it's email, so every question and every answer is written down.</p>
+      <span class="addr">Moore.chrisf@gmail.com</span>
+    </div>
+  </section>
+
+  <!-- FORM (INERT) -->
+  <section class="form-sec" aria-labelledby="h-form">
+    <div class="wrap svc-grid">
+      <div>
+        <p class="label">Start here</p>
+        <h2 id="h-form">Tell him what you need.</h2>
+        <p class="note">This is a demo page, so the form is here to show you, not to send.</p>
+      </div>
+      <form onsubmit="return false" aria-describedby="demo-note" novalidate>
+        <div class="f"><label for="f-name">Your name</label><input id="f-name" autocomplete="off"></div>
+        <div class="f"><label for="f-biz">Business</label><input id="f-biz" autocomplete="off"></div>
+        <div class="f full"><label for="f-mail">Your email</label><input id="f-mail" type="email" autocomplete="off"></div>
+        <fieldset class="f full"><legend>What can he help with?</legend>
+          <div class="checks">
+            <label><input type="checkbox"> Websites</label>
+            <label><input type="checkbox"> Scheduling &amp; booking</label>
+            <label><input type="checkbox"> Advertising runs</label>
+          </div>
+        </fieldset>
+        <div class="f full"><label for="f-msg">A few lines about it</label><textarea id="f-msg"></textarea></div>
+        <div class="submit-row">
+          <button class="send" type="button" disabled aria-disabled="true">Send (demo)</button>
+          <p class="demo-note" id="demo-note">Demo page: this form doesn't send. To start, write to <b>Moore.chrisf@gmail.com</b>.</p>
+        </div>
+      </form>
+    </div>
+  </section>
+</main>
+
+<footer><div class="wrap"><span>Christopher Moore · Kansas City · Moore.chrisf@gmail.com</span><span>Websites · Scheduling &amp; booking · Advertising runs</span></div></footer>
+
+<script>
+(() => {
+  const $ = (s) => document.querySelector(s);
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* 01 — live specimen readout */
+  const ruler = $('#ruler'), MAXW = 1600;
+  [[390,'390'],[768,'768'],[1440,'1440']].forEach(([x,l]) => {
+    const s = document.createElement('span'); s.style.left = (x/MAXW*100)+'%'; s.style.height = '14px'; ruler.appendChild(s);
+    const e = document.createElement('em'); e.style.left = (x/MAXW*100)+'%'; e.textContent = l; e.style.bottom='18px'; ruler.appendChild(e);
+  });
+  const dot = document.createElement('span'); dot.className = 'you'; ruler.appendChild(dot);
+  const layoutName = (w) => w > 980 ? 'Wide' : w > 700 ? 'Tablet' : 'Phone';
+  function measureWidth(){
+    const w = document.documentElement.clientWidth;
+    $('#r-w').textContent = w.toLocaleString('en-US');
+    $('#r-layout').textContent = layoutName(w);
+    dot.style.left = Math.min(w, MAXW)/MAXW*100 + '%';
+  }
+  measureWidth(); addEventListener('resize', measureWidth);
+  function measureLoad(){
+    const nav = performance.getEntriesByType('navigation')[0];
+    const res = performance.getEntriesByType('resource');
+    let bytes = 0;
+    [nav, ...res].forEach(r => { if (r) bytes += (r.encodedBodySize || r.transferSize || 0); });
+    $('#r-kb').textContent = bytes ? Math.round(bytes/1024).toLocaleString('en-US') : '—';
+    const ms = nav ? Math.round(nav.domContentLoadedEventEnd) : 0;
+    $('#r-ms').textContent = ms ? ms.toLocaleString('en-US') : '—';
+  }
+  addEventListener('load', () => setTimeout(measureLoad, 50));
+  // lazy images arrive as you scroll; the weight updates live as each one lands
+  if ('PerformanceObserver' in window) new PerformanceObserver(measureLoad).observe({type:'resource', buffered:true});
+
+  /* 02 — booking demo */
+  const daysEl = $('#days'), timesEl = $('#times'), conf = $('#confirm'), confText = $('#confirm-text');
+  const SLOTS = ['9:00 am','10:30 am','1:00 pm','2:30 pm'];
+  const days = []; const d = new Date(); d.setHours(12,0,0,0);
+  while (days.length < 5){ d.setDate(d.getDate()+1); if (d.getDay() !== 0 && d.getDay() !== 6) days.push(new Date(d)); }
+  const fmtDay = (x) => x.toLocaleDateString('en-US',{weekday:'short'});
+  const fmtNum = (x) => x.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+  const taken = (di, si) => ((days[di].getDate()*7 + si*3) % 5) === 0; // some slots already filled
+  let selDay = null;
+  days.forEach((x,i) => {
+    const b = document.createElement('button'); b.type='button'; b.className='chip'; b.setAttribute('aria-pressed','false');
+    b.innerHTML = `<small>${fmtDay(x)}</small>${fmtNum(x)}`;
+    b.onclick = () => { selDay = i; [...daysEl.children].forEach(c => c.setAttribute('aria-pressed', c===b)); drawTimes(); setIdle('Now pick a time.'); };
+    daysEl.appendChild(b);
+  });
+  function drawTimes(){
+    timesEl.innerHTML = '';
+    SLOTS.forEach((t,si) => {
+      const b = document.createElement('button'); b.type='button'; b.className='chip'; b.setAttribute('aria-pressed','false'); b.textContent = t;
+      if (selDay === null) b.disabled = true;
+      else if (taken(selDay,si)) { b.disabled = true; b.classList.add('taken'); b.setAttribute('aria-label', t+' (taken)'); }
+      b.onclick = () => {
+        [...timesEl.children].forEach(c => c.setAttribute('aria-pressed', c===b));
+        const x = days[selDay];
+        conf.dataset.state = 'done';
+        confText.innerHTML = `<strong>Booked: ${x.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}, ${t}</strong>That's what your customer would see. (Demo: nothing was booked or sent.)`;
+      };
+      timesEl.appendChild(b);
+    });
+  }
+  function setIdle(msg){ conf.dataset.state='idle'; confText.textContent = msg; }
+  daysEl.children[0].click();
+
+  /* 03 — tier dial */
+  const T = {
+    25:  {views:2000,  line:'<b>2D ads, written &amp; placed for you.</b> Up to 2,000 views.'},
+    50:  {views:8000,  line:'<b>2D + 3D video ads, written &amp; placed for you. 3D free.</b> Up to 8,000 views.'},
+    100: {views:16000, line:'<b>2D + 3D video ads, written &amp; placed for you. 3D free.</b> Up to 16,000 views.'}
+  };
+  const viewsEl = $('#views'), meter = $('#meter'), line = $('#tier-line'), ad3d = $('#ad3d');
+  let shown = 8000, raf;
+  function countTo(n){
+    cancelAnimationFrame(raf);
+    if (reduce){ shown = n; viewsEl.textContent = n.toLocaleString('en-US'); return; }
+    const from = shown, t0 = performance.now(), dur = 650;
+    const step = (t) => { const k = Math.min(1,(t-t0)/dur), e = 1-Math.pow(1-k,3);
+      shown = Math.round(from + (n-from)*e); viewsEl.textContent = shown.toLocaleString('en-US');
+      if (k<1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  }
+  function setTier(v){
+    const t = T[v];
+    countTo(t.views);
+    meter.style.width = (t.views/16000*100)+'%';
+    line.innerHTML = t.line;
+    ad3d.classList.toggle('locked', v === '25');
+  }
+  document.querySelectorAll('input[name=tier]').forEach(r => r.addEventListener('change', () => setTier(r.value)));
+  setTier('50');
+})();
+</script>
+</body>
+</html>
