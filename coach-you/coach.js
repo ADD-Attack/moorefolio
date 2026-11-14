@@ -304,6 +304,7 @@ let dossier = loadDossier();
 let mode = null;             // 'practice' | 'rated'
 let targetElo = 800, gameStartElo = dossier.elo;
 let lastPlySeen = 0, coachBusy = false, paused = false, gameActive = false;
+let resignSync = null; // set by the Resign wiring; poll() keeps the button's enabled state current
 let scoreLog = [], evalTrail = [], lastEval = null, stepMarks = 0;
 let sessionRecord = null, currentCandidates = [], currentLines = [], currentFallback = null;
 let hintDetail = null;
@@ -1203,6 +1204,7 @@ function computeTopCandidate() {
   return currentCandidates.length ? { san: currentCandidates[0].san, uci: currentCandidates[0].uci } : null;
 }
 async function offlineCoachMove(st) {
+  if (!gameActive) return; // resigned or reset while the coach was thinking
   const fen = C.fenFromState(st);
   let m = null;
   try { // in-page Stockfish at the game's target Elo (adapter UCI_Elo/skill)
@@ -1268,6 +1270,7 @@ async function coachTurn() {
   } finally { coachBusy = false; }
 }
 async function handleCoachResponse(resp, packet, isReprompt) {
+  if (!gameActive) return; // resigned or reset while the coach was thinking: drop the late move
   const st = replayState();
   const raw = resp && resp.move;
   const v = C.validateCoachMove(st, raw, currentCandidates);
@@ -1357,14 +1360,16 @@ function renderReview(review, opts) {
   if (offlineMode) addP("Offline review — computed on this page (the coach was offline).");
   else if (opts.reviewNote) addP(opts.reviewNote);
 }
-async function finishGame() {
+async function finishGame(fopts) {
+  fopts = fopts || {};
   gameActive = false;
   await scorePosition();
   const st = replayState();
   const replies = C.allLegalState(st, st.turn);
   const inCheck = C.isAttacked(st.board, C.kingSq(st.board, st.turn), C.opp(st.turn));
   let resultText, score;
-  if (replies.length === 0 && inCheck) {
+  if (fopts.resigned) { resultText = "You resigned — Coach wins."; score = 0; }
+  else if (replies.length === 0 && inCheck) {
     const winner = C.opp(st.turn);
     resultText = winner === PLAYER ? "You won — checkmate!" : "Coach wins — checkmate.";
     score = winner === PLAYER ? 1 : 0;
@@ -1419,6 +1424,7 @@ async function finishGame() {
 }
 // ---------- wiring ----------
 function poll() {
+  if (resignSync) resignSync();
   if (history.length !== lastPlySeen) {
     lastPlySeen = history.length;
     scorePosition();
@@ -1444,6 +1450,23 @@ function init(opts) {
       let dbg = false;
       try { dbg = new URLSearchParams((window.location && window.location.search) || "").get("debug") === "1"; } catch (_) {}
       if (!dbg) fp.remove();
+    }
+    // Resign: two taps (the first arms it for 4 s), ends the game as a loss and runs the normal review.
+    const rsb = $("resignBtn");
+    if (rsb) {
+      let armT = null;
+      const setA = (k, v) => { if (typeof rsb.setAttribute === "function") rsb.setAttribute(k, v); };
+      const cls = (on) => { if (rsb.classList) rsb.classList[on ? "add" : "remove"]("armed"); };
+      const disarm = () => { clearTimeout(armT); armT = null; cls(false); rsb.textContent = "Resign"; setA("aria-label", "Resign this game"); };
+      const sync = () => { rsb.disabled = !(gameActive && !gameOver); if (rsb.disabled) disarm(); };
+      resignSync = sync; sync();
+      rsb.addEventListener("click", () => {
+        if (!(gameActive && !gameOver)) return;
+        if (!armT) { cls(true); rsb.textContent = "Tap again to resign"; setA("aria-label", "Confirm: resign this game");
+          armT = setTimeout(disarm, 4000); return; }
+        disarm(); coachBusy = false; finishGame({ resigned: true });
+      });
+      if (typeof window !== "undefined") window.__coachResign = () => { if (gameActive && !gameOver) finishGame({ resigned: true }); };
     }
     if (typeof window !== "undefined") window.__coachReset = () => {
       if (gameActive && !gameOver) {
@@ -1526,7 +1549,7 @@ return { init, startGame, coachTurn, handleCoachResponse, tryGate, _test: {
   getDossier: () => dossier, getScoreLog: () => scoreLog, getSession: () => sessionRecord,
   getTarget: () => targetElo, setScoreLog: (s) => { scoreLog = s; },
   getOffline: () => offlineMode, getGameId: () => gameId, hasToken: () => !!sessionToken,
-  finishGame, replayState,
+  finishGame, replayState, isGameActive: () => gameActive,
   getWallet: () => loadWallet(), gamesLeft, renderWallet,
   getProfiles: () => profilesState, getActiveProfileId: () => activeProfileId,
   switchProfile, addProfile,

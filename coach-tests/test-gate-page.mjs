@@ -229,7 +229,7 @@ await new Promise((r) => deadServer.close(r));
 // ---------- DOM stub (pattern follows test-page.mjs) ----------
 const IDS = ["board", "boardWrap", "branchLine", "capturedByWhite", "capturedByBlack",
   "whiteName", "blackName", "turnLine", "newGameBtn", "practiceBtn", "hintBtn",
-  "resetBtn", "flipBtn", "soundBtn", "coachBody", "coachState", "coachTicker", "movesBody",
+  "resetBtn", "resignBtn", "flipBtn", "soundBtn", "coachBody", "coachState", "coachTicker", "movesBody",
   "reviewPanel", "reviewBody", "dossierBody", "alertBody", "promoModal",
   "promoChoices", "gate", "gateInput", "gateMsg", "gateBtn", "gateOfflineBtn", "modeLine",
   "centerCol", "capStripTop", "capStripBottom", "gameInfoTitle", "gameInfoKind", "gameInfoProfile",
@@ -1167,7 +1167,41 @@ async function test13() {
      env.registry.get("gamesInfo").textContent);
 }
 
-const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13];
+async function test14() {
+  begin("14 Resign (owner defect 2026-11-14)");
+  ok("resign control is on the page, starts disabled, sits with the game controls",
+     html.includes('id="resignBtn"') && /id="resignBtn"[^>]*disabled/.test(html) &&
+     html.indexOf('id="resetBtn"') < html.indexOf('id="resignBtn"'));
+  mock.reset();
+  mock.turnHandler = (n, body) => {
+    const c = body.candidates.find((x) => x.san === "e5") || body.candidates[0];
+    return { status: 200, json: { move: c.san, coach_line: "Mock line." } };
+  };
+  const env = loadCoach(RELAY);
+  await unlock(env);
+  env.CoachUI.startGame("rated");
+  playSan(env, "e4"); await pump(env);
+  const btn = env.registry.get("resignBtn");
+  ok("resign is enabled once a game is running", btn.disabled === false, "disabled=" + btn.disabled);
+  for (const f of btn.listeners.click || []) await f();
+  await pump(env, 5);
+  ok("first tap only arms it (game still running, nothing sent)", env.CoachUI._test.isGameActive() === true && mock.calls.review.length === 0 &&
+     /again/i.test(btn.textContent), "text=" + btn.textContent);
+  for (const f of btn.listeners.click || []) await f();
+  await pump(env, 60);
+  ok("second tap ends the game", env.CoachUI._test.isGameActive() === false);
+  ok("/v1/review called once with a loss for the player", mock.calls.review.length === 1 && mock.calls.review[0].body.result === "0-1",
+     "reviews=" + mock.calls.review.length + " result=" + (mock.calls.review[0] && mock.calls.review[0].body.result));
+  ok("the game is recorded as a resignation loss", env.CoachUI._test.getDossier().lastResult === "You resigned — Coach wins.",
+     "lastResult=" + env.CoachUI._test.getDossier().lastResult);
+  const plyAfter = env.history().length;
+  await env.CoachUI.handleCoachResponse({ move: "a6", coach_line: "Late." }, null, false);
+  await pump(env, 10);
+  ok("a coach reply arriving after the resign is dropped (no move added)", env.history().length === plyAfter,
+     "before=" + plyAfter + " after=" + env.history().length);
+}
+
+const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14];
 for (const t of tests) {
   try { await t(); }
   catch (e) { fail++; if (perTest[current]) perTest[current].fail++;

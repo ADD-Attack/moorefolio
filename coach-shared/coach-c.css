@@ -508,3 +508,7 @@ body.cc-c.plans footer{ max-width:1200px; margin:0 auto; text-align:left; color:
   body.cc-c.plans .family, body.cc-c.plans .test-code, body.cc-c.plans .byok-band{ padding:26px 20px; }
 }
 body.cc-c.plans #parkedLine{ border-radius:18px; }
+
+/* Resign (owner defect 2026-11-14 12:27): quiet until armed, coral when armed */
+body.cc-c #resignBtn.resign:disabled{opacity:.45;cursor:not-allowed}
+body.cc-c #resignBtn.resign.armed{background:#FF7A59;color:#15213F;border-color:#FF7A59;font-weight:700}
