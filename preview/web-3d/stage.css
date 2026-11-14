@@ -1,0 +1,71 @@
+/* Preview layer: the page sits in front of the roster, not on a grid. */
+:root{
+  --bg:#131110; --bg2:#1a1714; --surface:#1e1a17; --surface2:#26211d;
+  --ink:#f3ede1; --ink2:#d6ccbb; --muted:#b3a894; --line:#3a332c;
+  --rust:#ff7a36; --rust-dark:#ff9a5e; --teal:#8fb8c2; --teal-light:#1d2f34;
+  --gold:#e0a83e; --shadow:0 12px 32px rgba(0,0,0,.35);
+  --panel:rgba(22,19,17,.92);
+}
+html{background:#131110}
+body{background:transparent}
+#stage{position:fixed;inset:0;width:100vw;height:100vh;z-index:-2;display:block;background:#131110}
+.stage-fallback{position:fixed;inset:0;z-index:-1;display:none;pointer-events:none;
+  background:
+    radial-gradient(circle at 72% 38%, rgba(224,168,62,.42) 0 3px, rgba(224,168,62,.16) 4px 40px, transparent 160px),
+    radial-gradient(circle at 72% 24%, rgba(255,122,54,.5) 0 2px, transparent 30px),
+    repeating-radial-gradient(circle at 72% 38%, transparent 0 88px, rgba(214,204,187,.07) 89px 90px),
+    radial-gradient(ellipse at 70% 40%, #2a2219 0, #131110 70%)}
+.no-webgl #stage{display:none}
+.no-webgl .stage-fallback{display:block}
+.no-webgl .dispatch{display:none}
+
+/* Nav + hero: hero copy on a scrim so it reads over the moving web */
+header{background:rgba(19,17,16,.9)}
+.btn-primary{color:#171410}.btn-primary:hover{color:#171410}
+.hero{padding:72px 0 10px;min-height:calc(100vh - 64px);display:flex;flex-direction:column;justify-content:center}
+.hero-grid{grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);align-items:end}
+.hero-grid>div:first-child{background:linear-gradient(90deg,rgba(19,17,16,.92) 0,rgba(19,17,16,.86) 90%,rgba(19,17,16,.0) 100%);
+  padding:28px 40px 30px 0;margin-left:-24px;padding-left:24px;border-radius:0 24px 24px 0}
+.pill{background:var(--surface)}
+.stage-note{align-self:end;justify-self:end;max-width:380px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px 18px;font-size:.88rem;color:var(--ink2);}
+.stage-note p{margin:0 0 10px}
+.stage-note .mono{color:var(--gold)}
+.stage-note b{color:var(--ink)}
+.dispatch{font-size:.86rem;padding:9px 14px;border-color:var(--gold);color:var(--ink);cursor:pointer;font-family:inherit}
+.dispatch:hover{background:rgba(224,168,62,.14)}
+.stats{background:var(--panel);border:1px solid var(--line);border-radius:16px;}
+@media(max-width:900px){
+  .hero{min-height:0;padding-top:40px}
+  .hero-grid{grid-template-columns:1fr;gap:18px}
+  .hero-grid>div:first-child{background:rgba(19,17,16,.88);border-radius:18px;padding:22px 20px;margin:0}
+  .stage-note{justify-self:stretch;max-width:none}
+  /* phones: leave a window onto the web between hero and stats */
+  .stats{margin-top:46vh}
+}
+
+/* Sections are panels floating at different depths over the scene */
+main>section{background:var(--panel);border:1px solid var(--line);border-radius:24px;padding:40px 36px 34px;margin-top:22vh;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+main>section:nth-of-type(even){margin-left:5%}
+main>section:nth-of-type(odd){margin-right:5%}
+@media(max-width:760px){main>section{padding:26px 18px 22px;margin-top:34vh}main>section:nth-of-type(n){margin-left:0;margin-right:0}}
+.contact{margin-top:22vh}
+footer{background:var(--panel);border-radius:16px;padding:22px 20px 30px;margin-top:22vh}
+
+/* Work: a run of threads, not a grid of cards */
+#work .grid{display:flex;flex-direction:column;gap:0;border-left:2px solid var(--line);margin-left:6px}
+#work .card{flex-direction:row;background:transparent;border:0;border-radius:0;border-bottom:1px solid var(--line);position:relative;overflow:visible}
+#work .card::before{content:"";position:absolute;left:-8px;top:30px;width:14px;height:14px;border-radius:50%;background:#131110;border:2px solid var(--teal)}
+#work .card:hover::before{background:var(--gold);border-color:var(--gold)}
+#work .card-media{flex:0 0 120px;aspect-ratio:auto;background:transparent!important;padding:18px 0 0 22px!important;align-items:flex-start!important}
+#work .card-media svg{width:48px!important;height:48px!important;max-width:100%}
+#work .card-media .diagram[viewBox="0 0 300 120"]{width:100px!important;height:auto!important}
+#work .card-body{padding:18px 8px 20px 0}
+#work .card h3{font-size:1.3rem}
+#work .card p{max-width:72ch}
+@media(max-width:620px){#work .card{flex-direction:column}#work .card-media{padding:16px 0 0 18px!important}#work .card-body{padding:8px 4px 18px 18px}}
+.mf-tab{background:var(--surface2)}
+.ref{background:rgba(30,26,23,.7)}
+
+@media(max-width:900px){.navlinks{gap:16px}.navlinks a{white-space:nowrap}.brand small{display:none}.navlinks a[href="#how"],.navlinks a[href="#about"]{display:none}}
+@media(max-width:620px){#work .card-media{display:none!important}#work .card-body{padding:18px 4px 18px 22px}}
+@media (prefers-reduced-motion: reduce){.dispatch{display:none}}
