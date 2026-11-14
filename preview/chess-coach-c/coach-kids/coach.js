@@ -352,6 +352,126 @@ let gatePassword = null;     // memory only, never stored — lets a fresh
                              // game_id get its own session token per game
 let gameId = null, offlineMode = false, offlineEntry = false, regated = false;
 let connectionPromise = null;
+// ---------- fast opening (order 20261114-producer-chess-fastopen) ----------
+// The coach's first moves (up to FAST_OPEN.max, at least FAST_OPEN.min)
+// are played by the in-page engine, picked from the SAME candidate set the
+// coach would be handed at this game's strength, so they land at once.
+// The first of them also goes to the gate as an ordinary /v1/turn whose
+// only candidate is the move already on the board: that real turn opens
+// the game's coach session (the slow part of every first turn) while the
+// opening is played, spends no game (games count at session open), and
+// keeps the coach's history exactly the game's history. When it has
+// answered — and at least FAST_OPEN.min engine moves are in — the coach
+// takes over with the full real move list. ?fastopen=0 turns it off.
+const FAST_OPEN = (() => {
+  let max = 3;
+  try {
+    if (typeof window !== "undefined" && window.COACH_FAST_OPEN !== undefined)
+      max = window.COACH_FAST_OPEN === false ? 0 : Number(window.COACH_FAST_OPEN) || 0;
+    const loc = (typeof window !== "undefined" && window.location) || null;
+    const q = loc && loc.search ? new URLSearchParams(loc.search).get("fastopen") : null;
+    if (q !== null && q !== undefined) max = Number(q) || 0;
+  } catch (_) {}
+  max = Math.max(0, Math.min(3, Math.round(max)));
+  return { min: Math.min(2, max), max };
+})();
+let opening = null;   // per game: {gid, plies, warm, warmDone, warmOk, warmAt}
+// Time-to-move readout: from the poll that sees the player's move to the
+// coach's move landing. window.__coachTtfm holds the list; ?debug=1 also
+// prints each one to the console and a corner HUD.
+const ttfm = { t0: 0, log: [] };
+function nowMs() { return (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now(); }
+function ttfmDebug() {
+  try { return new URLSearchParams((window.location && window.location.search) || "").get("debug") === "1"; } catch (_) { return false; }
+}
+function ttfmStart() { if (!ttfm.t0) ttfm.t0 = nowMs(); }
+function ttfmDone(via) {
+  if (!ttfm.t0) return;
+  const rec = { ply: history.length, via, ms: Math.round(nowMs() - ttfm.t0) };
+  ttfm.t0 = 0; ttfm.log.push(rec);
+  try { if (typeof window !== "undefined") window.__coachTtfm = ttfm.log; } catch (_) {}
+  if (!ttfmDebug()) return;
+  try { console.info("[ttfm] coach move " + Math.ceil(rec.ply / 2) + " via " + via + ": " + rec.ms + " ms"); } catch (_) {}
+  try {
+    let h = document.getElementById("ttfmHud");
+    if (!h && document.createElement && document.body) {
+      h = document.createElement("div"); h.id = "ttfmHud";
+      h.setAttribute("style", "position:fixed;right:8px;bottom:8px;z-index:9999;background:#111;color:#fff;font:12px/1.4 monospace;padding:6px 8px;border-radius:6px;opacity:.85;white-space:pre");
+      document.body.appendChild(h);
+    }
+    if (h) h.textContent = ttfm.log.slice(-6).map((r) => "move " + Math.ceil(r.ply / 2) + " · " + r.via + " · " + r.ms + " ms").join("\n");
+  } catch (_) {}
+}
+async function settleConnection() {
+  if (connectionPromise) { const p = connectionPromise; connectionPromise = null; try { await p; } catch (_) {} }
+}
+function openingWanted() {
+  return !!(FAST_OPEN.max > 0 && opening && opening.gid === gameId && !offlineMode && !regated &&
+    opening.plies < FAST_OPEN.max && !(opening.plies >= FAST_OPEN.min && opening.warmDone) &&
+    history.length < 2 * FAST_OPEN.max);
+}
+// Same strength as the coach: the pool is the coach's own candidate list,
+// narrowed to the moves inside this game's score window (forcing moves
+// the pruner adds unscored are left to the coach's judgment).
+function openingPick(win) {
+  const inList = new Set(currentCandidates.map((c) => c.uci));
+  const scored = (currentLines || []).filter((l) => inList.has(l.uci)).map((l) => ({ uci: l.uci, s:
+    (l.mate !== null && l.mate !== undefined) ? (l.mate > 0 ? 100000 - l.mate * 10 : -100000 - l.mate * 10) : (l.cp || 0) }));
+  let pool = currentCandidates;
+  if (scored.length) {
+    const best = Math.max(...scored.map((x) => x.s));
+    const ok = new Set(scored.filter((x) => best - x.s <= win).map((x) => x.uci));
+    const p = currentCandidates.filter((c) => ok.has(c.uci));
+    if (p.length) pool = p;
+  }
+  return pool.length ? pool[Math.floor(Math.random() * pool.length)] : null;
+}
+function engineOpeningMove(st, fen, win) {
+  const pick = openingPick(win);
+  const m = pick && (C.parseSan(st, pick.san) || C.parseUci(st, pick.uci));
+  if (!m) { opening.plies = FAST_OPEN.max; return false; } // let the coach path take this move
+  const before = history.slice();
+  applyCoachMove(m);
+  opening.plies++;
+  sessionRecord.moves.push({ ply: history.length, san: pick.san, via: "engine-opening" });
+  ttfmDone("engine-opening");
+  setCoachState("");
+  if (opening.plies === 1) startWarmTurn(fen, before, { san: pick.san, uci: pick.uci });
+  return true;
+}
+// The warm-up turn: a real, contract-exact /v1/turn for the position the
+// engine just answered, with that answer as the one candidate (and as the
+// fallback). The gate opens the game's coach session and the coach speaks
+// about the move that was really played; its reply never moves a piece.
+function startWarmTurn(fen, moves, pick) {
+  const o = opening, gid = gameId;
+  o.warm = (async () => {
+    await settleConnection();
+    if (regated || offlineMode || gid !== gameId || !gameActive) return;
+    o.warmAt = Date.now();
+    const resp = await (responder || relayTurn)({ game_id: gid, fen, moves,
+      candidates: [pick], fallback: pick, target_elo: targetElo });
+    if (gid !== gameId || !gameActive) return;
+    o.warmOk = true;
+    if (resp && resp.coach_line) coachLine("Coach: " + resp.coach_line);
+  })().catch((e) => {
+    if (gid !== gameId || !gameActive) return;
+    if (e && e.regate) return; // the gate is showing; the game waits as before
+    if (e && e.byokRejected) {
+      coachLine("Your API key was rejected by your provider, so your coach couldn't move. This game continues with Stockfish only — check the key in Options → Settings.");
+      enterOfflineMode("your API key was rejected");
+      return;
+    }
+    enterOfflineMode("the coach could not be reached (" + ((e && e.message) || e) + ")");
+  }).finally(() => { o.warmDone = true; });
+}
+async function settleOpening() {
+  const o = opening;
+  if (!o || !o.warm) return;
+  if (!o.warmDone) { try { await o.warm; } catch (_) {} }
+  // the gate wants >= 4 s between turns on one token
+  if (o.warmAt) { const w = o.warmAt + 4100 - Date.now(); if (w > 0) await new Promise((r) => setTimeout(r, w)); }
+}
 
 function $(id) { return document.getElementById(id); }
 function newGameId() {
@@ -1074,6 +1194,8 @@ function startGame(kind) {
   // Fresh game_id per game; reuse the gate session's id only when the
   // token came from storage and no password is in memory to re-bind.
   gameId = (!gatePassword && storedGameId) ? storedGameId : newGameId();
+  opening = { gid: gameId, plies: 0, warm: null, warmDone: false, warmOk: false, warmAt: 0 };
+  ttfm.t0 = 0;
   sessionRecord = { startedAt: new Date().toISOString(), branch: BRANCH, mode, gameId,
                     targetStart: targetElo, alerts: [], diag: [], flagged: false, moves: [], offline: false };
   $("reviewPanel").style.display = "none";
@@ -1161,7 +1283,8 @@ async function coachTurn() {
   coachBusy = true;
   setCoachState("Coach is thinking…");
   try {
-    if (connectionPromise) { const p = connectionPromise; connectionPromise = null; try { await p; } catch (_) {} }
+    const engineFirst = openingWanted() && !lessonActive;
+    if (!engineFirst) await settleConnection();
     if (regated) return;
     const st = replayState();
     const fen = C.fenFromState(st);
@@ -1170,6 +1293,11 @@ async function coachTurn() {
     currentCandidates = gentle.candidates;
     if (!currentCandidates.length) { pauseGame("no candidate moves available."); return; }
     currentFallback = computeTopCandidate();
+    // New Player: the gentle set is already the strength window
+    if (engineFirst && !offlineMode && engineOpeningMove(st, fen, Infinity)) return;
+    await settleConnection();
+    await settleOpening();
+    if (regated || gameOver || !gameActive) return;
     if (offlineMode) { await offlineCoachMove(st); return; }
     const packet = { game_id: gameId, fen, moves: history.slice(),
                      candidates: currentCandidates.map((c) => ({ san: c.san, uci: c.uci })),
@@ -1228,6 +1356,8 @@ function applyCoachMove(coreMove) {
   const pageMoves = legalMoves(board, coreMove.from, castling, epSquare).filter((m) => m.to === coreMove.to);
   if (!pageMoves.length) { alertLog("FAILSAFE internal", "validated move not found in page engine"); return; }
   doMove(pageMoves[0], coreMove.promoChoice || null);
+  if (ttfm.t0) setTimeout(() => ttfmDone(sessionRecord && sessionRecord.moves.length
+    ? sessionRecord.moves[sessionRecord.moves.length - 1].via : "coach"), 0);
 }
 // ---------- hints ----------
 async function checkLessonHint() {
@@ -1876,7 +2006,7 @@ function poll() {
     scorePosition();
     maybeCalibrate();
     if (gameOver && gameActive) { finishGame(); return; }
-    if (gameActive && !gameOver && turn === COACH) coachTurn();
+    if (gameActive && !gameOver && turn === COACH) { ttfmStart(); coachTurn(); }
     if (gameActive && !gameOver && turn === PLAYER) checkLessonHint();
   }
   if (gameOver && gameActive) finishGame();

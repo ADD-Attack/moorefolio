@@ -248,6 +248,8 @@ function loadCoach(presetDossier, opts) {
   class FakeUtterance { constructor(t) { this.text = t; } }
   let pollFn = null;
   const win = { __coachManualInit: true, _listeners: {}, location: { search: "?relay=" + encodeURIComponent(RELAY) },
+                // fast opening (20261114) pinned off unless a test opts in
+                COACH_FAST_OPEN: opts && opts.fastOpen !== undefined ? opts.fastOpen : 0,
                 speechSynthesis, SpeechSynthesisUtterance: FakeUtterance,
                 addEventListener: (n, f) => { win._listeners[n] = f; } };
   const sandbox = { console, setTimeout, clearTimeout, clearInterval: () => {},
@@ -288,6 +290,11 @@ function loadCoach(presetDossier, opts) {
 }
 async function pump(env, rounds = 60) { for (let i = 0; i < rounds; i++) { env.poll(); await new Promise((r) => setTimeout(r, 2)); } }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+function playAny(env, sans) {
+  const st = env.CoachUI._test.replayState();
+  for (const san of sans) { const m = env.C.parseSan(st, san); if (m) { env.run("tryMove(" + m.from + ", " + m.to + ")"); return san; } }
+  const m = env.C.allLegalState(st, st.turn)[0]; env.run("tryMove(" + m.from + ", " + m.to + ")"); return "first-legal";
+}
 function playSan(env, san) {
   const st = env.CoachUI._test.replayState();
   const m = env.C.parseSan(st, san);
@@ -1038,7 +1045,37 @@ async function test18() {
      "btn=" + env.registry.get("newGameBtn").style.display + " oog=" + env.registry.get("menuOutOfGames").style.display);
 }
 
-const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18];
+// ---------- Test 19: fast opening (order 20261114-producer-chess-fastopen) ----------
+async function test19() {
+  begin("19 fast opening (New Player): gentle engine moves + warm turn + handoff");
+  mock.reset();
+  const env = loadCoach(baseDossier(), { fastOpen: 3 });
+  await unlock(env);
+  const sess0 = mock.calls.session.length;
+  env.CoachUI.startGame("kids");
+  playSan(env, "e4"); await pump(env, 40);
+  const s = env.CoachUI._test.getSession();
+  ok("coach's 1st move is engine-opening", env.history().length === 2 && s.moves[0] && s.moves[0].via === "engine-opening", JSON.stringify(s.moves));
+  const turns = mock.calls.turn || [];
+  const w = turns[0] && (turns[0].body || turns[0]);
+  ok("exactly one warm /v1/turn, one candidate = the played move", turns.length === 1 && w.candidates.length === 1 && w.candidates[0].san === env.history()[1],
+     JSON.stringify(w && w.candidates));
+  ok("warm turn moves = the true history", w && JSON.stringify(w.moves) === JSON.stringify(["e4"]));
+  ok("warm turn keeps the kids target_elo (850)", w && w.target_elo === 850);
+  ok("warm reply's arrows are NOT drawn (they'd be for an older position)", !String(env.registry.get("annotSvg").innerHTML).includes("<line"),
+     String(env.registry.get("annotSvg").innerHTML).slice(0, 120));
+  playAny(env, ["d4", "d3", "Nc3", "a3"]); await pump(env, 40);
+  ok("2nd move engine (min 2)", env.CoachUI._test.getSession().moves[1].via === "engine-opening");
+  playAny(env, ["Nf3", "Nc3", "a3", "h3"]);
+  for (let i = 0; i < 400 && env.history().length < 6; i++) { await pump(env, 5); await sleep(15); }
+  const m3 = env.CoachUI._test.getSession().moves[2];
+  ok("3rd move handed to the coach after the warm turn answered", m3 && m3.via === "coach", JSON.stringify(env.CoachUI._test.getSession().moves));
+  const h = mock.calls.turn[1] && (mock.calls.turn[1].body || mock.calls.turn[1]);
+  ok("handoff turn has the full real history", h && h.moves.length === 5 && h.moves[0] === "e4", h && JSON.stringify(h.moves));
+  ok("one session for the game", mock.calls.session.length - sess0 === 1, "game sessions=" + (mock.calls.session.length - sess0));
+}
+
+const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15, test16, test17, test18, test19];
 for (const t of tests) { try { await t(); } catch (e) { fail++; if (perTest[current]) perTest[current].fail++; console.log("FAIL test threw: " + (e && e.stack || e)); } }
 console.log("\nSUMMARY");
 for (const [name, r] of Object.entries(perTest)) console.log(name + ": " + r.pass + " passed, " + r.fail + " failed");
