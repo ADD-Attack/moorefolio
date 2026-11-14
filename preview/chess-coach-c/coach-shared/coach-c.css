@@ -1,0 +1,510 @@
+/* Chess Coach — direction C "Big Squares" (owner pick, 2026-11-13).
+ * One shared layer for every coach page. Loaded AFTER each page's own
+ * <style>, scoped under body.cc-c so it wins on specificity; the page
+ * sheets keep their UI Pass 2 size rules (New Player 20px floor etc.)
+ * and this layer never goes below them.
+ * Fonts: Space Grotesk + DM Sans, SIL OFL 1.1, self-hosted beside this
+ * file (no third-party requests).
+ * Contrast (WCAG AA, computed in applied-qa/contrast.py):
+ *   navy on sky 13.7 · navy on white 16.0 · navy on butter 13.1 ·
+ *   navy on coral 6.2 · navy2 on sky 7.7 · navy2 on white 9.1 ·
+ *   white on navy 16.0. Coral and butter are fills, never text on white.
+ */
+@font-face{font-family:"Space Grotesk";font-style:normal;font-weight:300 700;font-display:swap;
+  src:url("fonts/space-grotesk-latin-ext.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Space Grotesk";font-style:normal;font-weight:300 700;font-display:swap;
+  src:url("fonts/space-grotesk-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:100 1000;font-display:swap;
+  src:url("fonts/dm-sans-latin-ext.woff2") format("woff2");
+  unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C0,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"DM Sans";font-style:normal;font-weight:100 1000;font-display:swap;
+  src:url("fonts/dm-sans-latin.woff2") format("woff2");
+  unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+
+/* ---------- tokens ---------- */
+body.cc-c{
+  --sky:#D7ECFF; --butter:#FFE37A; --coral:#FF7A59; --navy:#15213F; --navy2:#3B4766; --white:#FFFFFF;
+  --lt:#FFF6D6; --dk:#FFC4B3;            /* board squares */
+  --display:"Space Grotesk",system-ui,sans-serif;
+  --text:"DM Sans",system-ui,sans-serif;
+  --r-xl:30px; --r-l:24px; --r-m:18px; --r-s:12px;
+  --sq:68px;                              /* one board square */
+  --btn-h:56px;
+  /* old page tokens re-pointed so any leftover var() lands on-system */
+  --ink:var(--navy); --paper:var(--sky); --panel:var(--white); --line:var(--sky); --rust:var(--navy);
+  --light:var(--lt); --dark:var(--dk); --dark2:var(--navy2); --sel:var(--butter); --check:var(--coral);
+  --hint:rgba(21,33,63,.82);
+  margin:0; background:var(--sky); color:var(--navy);
+  font-family:var(--text); font-size:17px; line-height:1.5;
+  -webkit-font-smoothing:antialiased;
+}
+body.cc-c.np{ font-size:20px; --sq:74px; --btn-h:64px; }   /* New Player 20px floor (UI Pass 2) */
+body.cc-c *:focus-visible{ outline:4px solid var(--navy); outline-offset:2px; }
+
+/* ---------- buttons: big rounded squares ---------- */
+body.cc-c button{
+  font-family:var(--display); font-weight:700; font-size:16px; line-height:1.15;
+  min-height:var(--btn-h); padding:12px 20px; border-radius:var(--r-m);
+  border:0; background:var(--navy); color:var(--white); cursor:pointer;
+  transition:transform .12s ease, box-shadow .12s ease;
+}
+body.cc-c.np button{ font-size:20px; }
+body.cc-c button.ghost{ background:var(--white); color:var(--navy); box-shadow:inset 0 0 0 2px rgba(21,33,63,.12); }
+body.cc-c button:hover{ filter:none; transform:translateY(-1px); box-shadow:0 4px 0 rgba(21,33,63,.18); }
+body.cc-c button.ghost:hover{ box-shadow:inset 0 0 0 2px var(--navy); }
+body.cc-c button:active{ transform:translateY(1px); box-shadow:none; }
+body.cc-c button:disabled{ cursor:not-allowed; transform:none; }
+@media (prefers-reduced-motion:reduce){ body.cc-c button{ transition:none; } body.cc-c button:hover,body.cc-c button:active{ transform:none; } }
+
+/* ---------- header ---------- */
+body.cc-c header{
+  max-width:1320px; margin:0 auto; padding:18px 28px 6px; text-align:left;
+  display:grid; grid-template-columns:1fr auto; align-items:center; gap:4px 16px; position:relative;
+}
+body.cc-c header h1{
+  display:flex; align-items:center; gap:12px; margin:0;
+  font-family:var(--display); font-weight:700; font-size:26px; letter-spacing:-.01em; line-height:1.1;
+}
+body.cc-c header h1 .rust{
+  width:40px; height:40px; border-radius:12px; background:var(--coral); color:var(--navy);
+  display:grid; place-items:center; font-size:27px; line-height:1; flex:none;
+}
+body.cc-c .betaPill{
+  background:var(--butter); color:var(--navy); font-family:var(--display); font-weight:700;
+  font-size:13px; letter-spacing:.04em; padding:5px 10px; border-radius:999px;
+}
+body.cc-c header p{ grid-column:1 / -1; margin:2px 0 0; font-style:normal; color:var(--navy2); font-size:16px; }
+body.cc-c.np header p{ font-size:20px; }
+body.cc-c .headerChips{ position:static; grid-column:2; grid-row:1; display:flex; gap:8px; }
+body.cc-c .chipBtn{
+  min-height:44px; padding:8px 16px; border-radius:999px; background:var(--white); color:var(--navy);
+  font-family:var(--text); font-weight:700; font-size:15px; box-shadow:none; white-space:nowrap;
+}
+body.cc-c.np .chipBtn{ font-size:18px; }
+body.cc-c #gamesInfo{
+  top:70px; right:28px; background:var(--white); border:0; border-radius:var(--r-l);
+  padding:18px 20px; font-size:15px; line-height:1.5; box-shadow:0 12px 32px rgba(21,33,63,.18); max-width:340px;
+}
+body.cc-c.np #gamesInfo{ font-size:20px; }
+
+/* ---------- banners ---------- */
+body.cc-c #guestBanner{
+  max-width:1264px; margin:10px auto 0; padding:12px 18px; background:var(--butter); border:0;
+  border-radius:var(--r-l); font-size:16px; text-align:left; display:flex; align-items:center;
+  justify-content:space-between; gap:12px; flex-wrap:wrap;
+}
+body.cc-c #guestBanner[style*="display: none"],body.cc-c #guestBanner[style*="display:none"]{ display:none !important; }
+body.cc-c #guestBanner button{ min-height:44px; background:var(--navy); color:var(--white); box-shadow:none; }
+body.cc-c.np #guestBanner{ font-size:20px; margin:0 0 16px; }
+
+/* ---------- play layout: board left, coach on the right ---------- */
+body.cc-c .layout{
+  max-width:1320px; margin:12px auto 36px; padding:0 28px;
+  display:grid; grid-template-columns:auto minmax(320px,1fr); gap:24px 28px; align-items:start;
+}
+body.cc-c #centerCol, body.cc-c .center{ display:contents; }
+body.cc-c .cc-boardcol{ grid-column:1; grid-row:1 / span 3; display:flex; flex-direction:column; align-items:center; gap:10px;
+  background:var(--white); border-radius:var(--r-xl); padding:18px 18px 14px; }
+body.cc-c .cc-talk{ grid-column:2; grid-row:1; display:flex; flex-direction:column; gap:14px; min-width:0; }
+body.cc-c .side{ grid-column:2; grid-row:2; width:auto; gap:14px; min-width:0; }
+body.cc-c #reviewPanel{ grid-column:2; }
+body.cc-c #reviewPanel.takeover{ grid-column:1 / -1; grid-row:auto; }
+
+body.cc-c .versus{ font-family:var(--display); font-weight:700; font-size:18px; }
+body.cc-c.np .versus{ font-size:22px; }
+body.cc-c #turnLine{ font-style:normal; font-size:16px; color:var(--navy2); min-height:22px; }
+body.cc-c.np #turnLine{ font-size:20px; }
+body.cc-c #turnLine .check{ background:var(--coral); color:var(--navy); padding:1px 8px; border-radius:8px; font-weight:700; }
+body.cc-c .capStrip{ min-height:30px; font-size:26px; }
+body.cc-c .capStrip span[style*="font-size:13px"]{ font-family:var(--text) !important; font-size:14px !important; color:var(--navy2); }
+
+/* board */
+body.cc-c #boardWrap{ border:0; border-radius:var(--r-m); box-shadow:none; background:transparent; overflow:hidden; }
+body.cc-c #board{ grid-template-columns:repeat(8,var(--sq)); grid-template-rows:repeat(8,var(--sq)); }
+body.cc-c .sq{ font-size:calc(var(--sq) * .7); }
+body.cc-c .sq.light{ background:var(--lt); } body.cc-c .sq.dark{ background:var(--dk); }
+body.cc-c .sq .coord{ font-family:var(--text); font-weight:700; font-size:11px; opacity:1; }
+body.cc-c .sq.light .coord, body.cc-c .sq.dark .coord{ color:var(--navy2); }
+body.cc-c .piece.w{ color:var(--white); text-shadow:none; -webkit-text-stroke:1.6px var(--navy); paint-order:stroke fill; }
+body.cc-c .piece.b{ color:var(--navy); text-shadow:none; }
+body.cc-c .sq.sel{ background:var(--butter); box-shadow:inset 0 0 0 5px var(--navy); }
+body.cc-c .sq.lastmove{ box-shadow:inset 0 0 0 100px rgba(255,227,122,.75); }
+body.cc-c .sq.lastmove.sel{ box-shadow:inset 0 0 0 5px var(--navy); }
+body.cc-c .sq.dest::after{ width:30%; height:30%; background:var(--hint); }
+body.cc-c .sq.dest.capture::after{ width:84%; height:84%; background:transparent; border:5px solid var(--navy); box-sizing:border-box; }
+body.cc-c .sq.droptarget{ box-shadow:inset 0 0 0 5px var(--navy); }
+body.cc-c .sq.incheck{ box-shadow:inset 0 0 0 5px var(--navy), inset 0 0 0 100px var(--coral); }
+body.cc-c .sq:hover{ filter:brightness(1.03); }
+
+/* the coach card: one sentence, said big */
+body.cc-c #coachTicker{
+  justify-content:flex-start; text-align:left; gap:14px;
+  background:var(--white); border:0; border-radius:var(--r-xl) var(--r-xl) var(--r-xl) 8px; box-shadow:none;
+  padding:22px 24px; min-height:96px;
+  font-family:var(--display); font-weight:700; font-size:22px; line-height:1.25; letter-spacing:-.01em;
+}
+body.cc-c #coachTicker::before{
+  content:"\2658"; flex:none; width:40px; height:40px; border-radius:50%; background:var(--butter);
+  display:grid; place-items:center; font-family:var(--text); font-weight:400; font-size:24px; line-height:1;
+}
+body.cc-c.np #coachTicker{ font-size:26px; line-height:1.25; min-height:120px; }
+body.cc-c #tickerText{ flex:1; min-width:0; }
+body.cc-c #tickerReplayBtn{ flex:none; margin-left:auto; min-width:56px; min-height:56px; padding:4px 12px; background:var(--sky); color:var(--navy); }
+
+/* control rows */
+body.cc-c .controls{ display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+body.cc-c #newGameBtn{ grid-column:1 / -1; font-size:19px; min-height:64px; }
+body.cc-c .controls:has(#flipBtn){ grid-template-columns:repeat(3,1fr); }
+body.cc-c .controls:has(#flipBtn) button{ min-height:48px; font-size:15px; padding:8px 10px; }
+body.cc-c #gameCostLine{ font-size:15px; color:var(--navy2); text-align:left; font-weight:600; }
+body.cc-c.np #gameCostLine{ font-size:20px; text-align:center; }
+body.cc-c #modeLine{ font-style:normal; color:var(--navy2); font-size:15px; }
+body.cc-c.np #modeLine{ font-size:20px; }
+
+/* panels: white cards with a small caps label */
+body.cc-c .panel{ background:var(--white); border:0; border-radius:var(--r-l); box-shadow:none; }
+body.cc-c .panel h3{
+  border:0; padding:16px 20px 2px; text-align:left; color:var(--navy2);
+  font-family:var(--display); font-weight:700; font-size:13px; letter-spacing:.09em; text-transform:uppercase;
+}
+body.cc-c.np .panel h3{ font-size:22px; letter-spacing:.02em; text-transform:none; color:var(--navy); }
+body.cc-c .panel .body{ padding:8px 20px 18px; font-size:20px; }
+body.cc-c .panel .body.small{ font-size:15px; }
+body.cc-c.np .panel .body, body.cc-c.np .panel .body.small{ font-size:20px; }
+body.cc-c #movesBody{ font-size:15px; }
+body.cc-c.np #movesBody{ font-size:20px; }
+body.cc-c #movesBody td:first-child{ color:var(--navy2); }
+body.cc-c #coachHistToggle{ margin:10px 20px 16px; min-height:44px; background:var(--sky); box-shadow:none; }
+body.cc-c #coachBody{ font-size:16px; }
+body.cc-c.np #coachBody{ font-size:20px; }
+body.cc-c .coachstate{ font-style:normal; color:var(--navy2); }
+body.cc-c #alertBody{ font-size:13px; color:var(--navy2); }
+body.cc-c.np #alertBody{ font-size:12px; }
+body.cc-c #failsafePanel{ background:transparent; box-shadow:inset 0 0 0 2px rgba(21,33,63,.14); }
+body.cc-c .cline .replayBtn{ background:var(--sky); color:var(--navy); box-shadow:none; }
+body.cc-c #reviewPanel.takeover{ border:0; box-shadow:inset 0 0 0 4px var(--navy); }
+body.cc-c .reviewBy{ padding:4px 20px 0; color:var(--navy2); }
+body.cc-c #reviewBody{ font-size:17px; } body.cc-c.np #reviewBody{ font-size:20px; }
+body.cc-c #dossierBody{ line-height:1.6; }
+
+/* ---------- gate ---------- */
+body.cc-c #gate{ background:var(--sky); padding:16px; }
+body.cc-c #gate .card{
+  background:var(--white); border:0; border-radius:36px; padding:40px 36px 34px; max-width:440px; width:100%; text-align:left;
+}
+body.cc-c #gate .card h3{ display:flex; align-items:center; gap:12px; margin:0 0 10px; font-family:var(--display); font-weight:700; font-size:26px; line-height:1.15; color:var(--navy); }
+body.cc-c #gate .card h3 .cc-tile{ width:44px; height:44px; border-radius:13px; background:var(--coral); display:grid; place-items:center; font-size:30px; flex:none; }
+body.cc-c #gate .card p{ margin:0 0 6px; color:var(--navy2); font-size:16px; }
+body.cc-c.np #gate .card p{ font-size:20px; }
+body.cc-c #gate input{
+  font-family:var(--text); font-size:18px; min-height:56px; padding:12px 16px; margin:14px 0 10px;
+  border:2px solid var(--navy2); border-radius:var(--r-m); background:var(--white); color:var(--navy);
+}
+body.cc-c.np #gate input{ font-size:20px; }
+body.cc-c #gate input:focus{ outline:4px solid var(--butter); outline-offset:0; border-color:var(--navy); }
+body.cc-c #gateBtn{ width:100%; font-size:19px; min-height:60px; }
+body.cc-c #gateOfflineBtn{ width:100%; }
+
+/* error / notice lines: navy words on a coral pill — never colour alone, never coral text */
+body.cc-c #gateMsg{ min-height:0; color:var(--navy); font-size:15px; font-weight:600; }
+body.cc-c.np #gateMsg{ font-size:20px; }
+body.cc-c #gateMsg:not(:empty){ background:var(--coral); border-radius:var(--r-s); padding:10px 14px; margin:0 0 12px; }
+body.cc-c #gateMsg:not(:empty)::before{ content:"\00D7\00A0"; font-weight:700; }
+
+/* ---------- options drawer ---------- */
+body.cc-c #optionsDrawer{ background:rgba(21,33,63,.45); }
+body.cc-c .optSheet{ background:var(--white); width:440px; border-radius:var(--r-xl) 0 0 var(--r-xl); padding:22px 24px 30px; }
+body.cc-c.np .optSheet{ width:480px; }
+body.cc-c .optSheet h3{ font-family:var(--display); font-weight:700; font-size:26px; color:var(--navy); }
+body.cc-c .optSheet h4{ margin:22px 0 4px; font-family:var(--display); font-weight:700; font-size:13px; letter-spacing:.09em; text-transform:uppercase; color:var(--navy2); }
+body.cc-c.np .optSheet h4{ font-size:22px; letter-spacing:.02em; text-transform:none; color:var(--navy); }
+body.cc-c .optHead{ position:sticky; top:-22px; background:var(--white); padding:4px 0 8px; z-index:1; }
+body.cc-c #optionsClose{ min-width:48px; min-height:48px; padding:0; border-radius:50%; background:var(--sky); color:var(--navy); font-size:20px; }
+body.cc-c .optRow{ margin:10px 0; font-size:15px; }
+body.cc-c.np .optRow{ font-size:20px; }
+body.cc-c .optRow button{ min-height:44px; padding:8px 14px; font-size:15px; }
+body.cc-c.np .optRow button{ font-size:20px; min-height:52px; }
+body.cc-c .optSheet button.ghost{ background:var(--sky); box-shadow:none; }
+body.cc-c .optSheet button.ghost:hover{ box-shadow:inset 0 0 0 2px var(--navy); }
+body.cc-c .optSheet button[aria-checked="true"]{ background:var(--navy); color:var(--white); }
+body.cc-c .optRow select, body.cc-c .optRow input{
+  font-family:var(--text); font-size:15px; min-height:44px; padding:8px 12px;
+  border:2px solid var(--navy2); border-radius:var(--r-s); background:var(--white); color:var(--navy);
+}
+body.cc-c.np .optRow select, body.cc-c.np .optRow input{ font-size:20px; }
+body.cc-c .optGroup{
+  margin:24px 0 6px; padding-top:16px; border-top:3px solid var(--sky);
+  font-family:var(--display); font-weight:700; font-size:18px; color:var(--navy);
+}
+body.cc-c.np .optGroup{ font-size:22px; }
+body.cc-c #optAcctToggle{ min-width:48px; background:var(--sky); }
+body.cc-c #optByokState{ background:var(--sky); border-radius:999px; padding:4px 12px; font-weight:700; font-size:14px; text-align:right; }
+body.cc-c.np #optByokState{ font-size:20px; }
+body.cc-c #optAcctMsg:not(:empty), body.cc-c #optByokMsg:not(:empty), body.cc-c #optClaimMsg:not(:empty){
+  display:block; background:var(--butter); border-radius:var(--r-s); padding:8px 12px; font-weight:600;
+}
+body.cc-c #optDeleteProfile{ background:var(--white); box-shadow:inset 0 0 0 2px var(--coral); }
+body.cc-c .optFooter{ color:var(--navy2); font-size:14px; }
+body.cc-c.np .optFooter{ font-size:20px; }
+
+/* ---------- modals ---------- */
+body.cc-c #promoModal{ background:rgba(21,33,63,.5); }
+body.cc-c #promoModal .card{ background:var(--white); border-radius:var(--r-xl); padding:24px 26px; }
+body.cc-c #promoModal .card h4{ font-family:var(--display); font-size:22px; margin:0 0 14px; }
+body.cc-c #promoModal .choices{ gap:10px; }
+body.cc-c #promoModal .choices button{ width:80px; height:80px; padding:0; font-size:52px; font-family:var(--text); font-weight:400;
+  background:var(--lt) !important; border-radius:var(--r-m); box-shadow:inset 0 0 0 2px rgba(21,33,63,.15); }
+body.cc-c #promoModal .choices button:hover{ background:var(--butter) !important; box-shadow:inset 0 0 0 3px var(--navy); }
+
+/* ---------- New Player: menu ---------- */
+body.cc-c #kidsMenu{ background:var(--sky) !important; padding:20px 14px; align-items:flex-start !important; }
+body.cc-c #kidsMenu > .card{
+  background:var(--white) !important; border:0 !important; border-radius:36px !important;
+  padding:34px 34px 30px !important; max-width:720px !important; width:100% !important; margin:auto 0; text-align:left !important;
+}
+body.cc-c #kidsMenu h2{ display:flex; align-items:center; gap:14px; margin:0 0 6px; font-family:var(--display); font-weight:700;
+  font-size:44px; line-height:1.02; letter-spacing:-.03em; }
+body.cc-c #kidsMenu h2 .cc-tile{ width:52px; height:52px; border-radius:15px; background:var(--coral); display:grid; place-items:center; font-size:36px; flex:none; letter-spacing:0; }
+body.cc-c #pointsLine{ font-family:var(--display); font-weight:700; font-size:24px; margin:14px 0 6px; }
+body.cc-c #levelBarWrap{ height:16px; background:var(--sky); max-width:none; margin:4px 0; }
+body.cc-c #levelBar{ background:var(--coral); border-radius:999px; }
+body.cc-c #levelNextLine{ color:var(--navy2); margin:6px 0 18px; }
+body.cc-c #continueBtn{ background:var(--butter); color:var(--navy); font-size:22px; min-height:72px; margin:0 0 16px; width:100%; }
+body.cc-c .cc-lessons{ display:grid; grid-template-columns:repeat(4,1fr); gap:12px; }
+body.cc-c .lessonBtn{
+  aspect-ratio:1; display:flex; flex-direction:column; align-items:flex-start; justify-content:flex-end; text-align:left;
+  padding:16px; border-radius:var(--r-l); font-size:20px; line-height:1.1; color:var(--navy); box-shadow:none; position:relative;
+}
+body.cc-c .lessonBtn:nth-child(4n+1){ background:var(--butter); }
+body.cc-c .lessonBtn:nth-child(4n+2){ background:var(--sky); }
+body.cc-c .lessonBtn:nth-child(4n+3){ background:var(--lt); }
+body.cc-c .lessonBtn:nth-child(4n+4){ background:var(--dk); }
+body.cc-c .lessonBtn:hover{ box-shadow:inset 0 0 0 3px var(--navy); }
+body.cc-c .lessonBtn .done{ position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%;
+  background:var(--navy); color:var(--white); display:grid; place-items:center; font-size:20px; }
+body.cc-c #kidsMenu #newGameBtn{ width:100%; margin-top:18px; font-size:24px; min-height:76px; }
+body.cc-c #newGameBtn.locked{ opacity:1; filter:none; background:var(--white); color:var(--navy2); box-shadow:inset 0 0 0 3px var(--sky); }
+body.cc-c #unlockHint{ color:var(--navy2); font-size:20px; margin-top:8px; text-align:center; }
+body.cc-c #menuOutOfGames p{ background:var(--butter); border-radius:var(--r-m); padding:12px 16px; }
+body.cc-c #voiceBox{ margin-top:22px; padding-top:18px; border-top:3px solid var(--sky); display:grid; grid-template-columns:auto 1fr; gap:10px 14px; align-items:center; }
+body.cc-c #voiceBox br{ display:none; }
+body.cc-c #voiceBox label{ font-weight:700; margin:0 !important; }
+body.cc-c #voiceBox select{ font-family:var(--text); font-size:20px; min-height:52px; padding:8px 12px; margin:0 !important; width:100%; max-width:100%;
+  border:2px solid var(--navy2); border-radius:var(--r-s); background:var(--white); color:var(--navy); }
+body.cc-c #voiceBox .cc-voice{ display:flex; gap:10px; min-width:0; }
+body.cc-c #voiceBox .cc-voice select{ flex:1; min-width:0; }
+body.cc-c #voiceSampleBtn{ margin:0 !important; background:var(--sky); box-shadow:none; white-space:nowrap; }
+
+/* New Player: play surface */
+body.cc-c.np .side{ grid-row:2; }
+body.cc-c.np .controls{ grid-template-columns:1fr 1fr; }
+body.cc-c.np .controls button{ min-height:72px; font-size:22px; }
+body.cc-c #undoBtn{ background:var(--butter); color:var(--navy); }
+body.cc-c #menuBtn, body.cc-c #muteBtn{ background:var(--white); color:var(--navy); box-shadow:inset 0 0 0 2px rgba(21,33,63,.12); }
+body.cc-c #capturedByWhite, body.cc-c #capturedByBlack{ min-height:0; font-size:28px; padding-top:4px; padding-bottom:4px; }
+body.cc-c #capturedByWhite:empty, body.cc-c #capturedByBlack:empty{ display:none; }
+body.cc-c .panel:has(#capturedByWhite:empty):has(#capturedByBlack:empty){ display:none; }
+body.cc-c .annMark{ font-family:var(--display); }
+body.cc-c #coachBody .cline.diag{ font-size:12px; }
+
+/* New Player: overlays (the coach card with Next) */
+body.cc-c #bigNextOverlay{ background:rgba(215,236,255,.82); }
+body.cc-c #bigNextOverlay .card{
+  background:var(--white); border:0; border-radius:36px 36px 36px 10px; padding:40px 44px 36px; max-width:min(620px,92vw);
+  box-shadow:0 18px 48px rgba(21,33,63,.22); text-align:left;
+}
+body.cc-c #bigNextOverlay .card::before{ content:"\2658"; display:grid; place-items:center; width:52px; height:52px; border-radius:50%;
+  background:var(--butter); font-size:32px; margin-bottom:16px; }
+body.cc-c #bigNextOverlay .bigmsg{ font-family:var(--display); font-weight:700; font-size:40px; line-height:1.1; letter-spacing:-.02em; margin:0 0 28px; }
+body.cc-c #bigNextBtn{ width:100%; font-size:32px; min-height:88px; border-radius:var(--r-l); background:var(--butter); color:var(--navy); }
+body.cc-c #bigNextClose{ top:14px; right:14px; background:var(--sky); color:var(--navy); border-radius:50%; font-size:24px; min-width:48px; min-height:48px; padding:0; }
+body.cc-c #menuSheet, body.cc-c #outOfGames{ background:rgba(21,33,63,.45); }
+body.cc-c #menuSheet .card, body.cc-c #outOfGames .card{
+  background:var(--white); border:0; border-radius:36px 36px 36px 10px; padding:34px 34px 30px; max-width:min(520px,92vw);
+  font-family:var(--display); font-weight:700; font-size:28px; line-height:1.2; text-align:left; position:relative;
+  display:grid; gap:12px;
+}
+body.cc-c #menuSheet .card p, body.cc-c #outOfGames .card p{ margin:0 0 8px; padding-right:40px; }
+body.cc-c #menuSheet button, body.cc-c #outOfGames button{ min-height:68px; font-size:22px; }
+body.cc-c #keepPlayingBtn, body.cc-c #outOfGamesLessonBtn{ background:var(--butter); color:var(--navy); }
+body.cc-c #outOfGamesClose{ position:absolute; top:14px; right:14px; min-height:48px !important; min-width:48px; padding:0; border-radius:50%; background:var(--sky); }
+
+/* ---------- responsive ---------- */
+@media (max-width:1180px){
+  body.cc-c{ --sq:62px; }
+  body.cc-c.np{ --sq:66px; }
+}
+@media (max-width:980px){
+  body.cc-c .layout{ grid-template-columns:minmax(0,1fr); padding:0 20px; }
+  body.cc-c .cc-boardcol{ grid-column:1; grid-row:auto; justify-self:center; }
+  body.cc-c .cc-talk, body.cc-c .side, body.cc-c #reviewPanel, body.cc-c #reviewPanel.takeover{ grid-column:1; grid-row:auto; }
+  body.cc-c, body.cc-c.np{ --sq:min(76px, calc((100vw - 76px) / 8)); }
+  body.cc-c header{ padding:14px 20px 4px; }
+  body.cc-c .side{ display:grid; grid-template-columns:1fr 1fr; align-items:start; }
+  body.cc-c #failsafePanel{ grid-column:1 / -1; }
+}
+@media (max-width:760px){
+  body.cc-c #board{ grid-template-columns:repeat(8,var(--sq)); grid-template-rows:repeat(8,var(--sq)); }
+  body.cc-c .sq{ font-size:calc(var(--sq) * .7); }
+  body.cc-c .optSheet{ width:100%; border-radius:0; }
+  body.cc-c .cc-lessons{ grid-template-columns:repeat(2,1fr); }
+}
+@media (max-width:600px){
+  body.cc-c, body.cc-c.np{ --sq:calc((100vw - 40px) / 8); }
+  body.cc-c .layout{ padding:0 10px; gap:14px; }
+  body.cc-c .cc-boardcol{ padding:10px 10px 8px; border-radius:var(--r-l); }
+  body.cc-c #boardWrap{ border-radius:var(--r-s); }
+  body.cc-c header{ padding:12px 12px 2px; }
+  body.cc-c header h1{ font-size:22px; gap:10px; }
+  body.cc-c header h1 .rust{ width:34px; height:34px; font-size:23px; border-radius:10px; }
+  body.cc-c header p{ font-size:14px; }
+  body.cc-c.np header p{ font-size:20px; }
+  body.cc-c .chipBtn{ padding:6px 12px; font-size:14px; }
+  body.cc-c.np .chipBtn{ font-size:18px; }
+  body.cc-c #gamesInfo{ left:12px; right:12px; top:64px; max-width:none; }
+  body.cc-c .side{ grid-template-columns:minmax(0,1fr); }
+  body.cc-c #coachTicker{ padding:18px; font-size:19px; min-height:80px; }
+  body.cc-c.np #coachTicker{ font-size:22px; }
+  body.cc-c #coachTicker::before{ width:34px; height:34px; font-size:20px; }
+  body.cc-c #practiceBtn{ font-size:15px; }
+  body.cc-c #guestBanner{ margin:8px 10px 0; }
+  body.cc-c #gate .card{ padding:30px 22px 24px; border-radius:28px; }
+  body.cc-c #kidsMenu{ padding:10px 8px; }
+  body.cc-c #kidsMenu > .card{ padding:24px 16px 22px !important; border-radius:28px !important; }
+  body.cc-c #kidsMenu h2{ font-size:34px; }
+  body.cc-c .lessonBtn{ padding:12px; font-size:20px; }
+  body.cc-c #voiceBox{ grid-template-columns:1fr; }
+  body.cc-c #bigNextOverlay .card{ padding:30px 22px 24px; }
+  body.cc-c #bigNextOverlay .bigmsg{ font-size:32px; }
+  body.cc-c #bigNextBtn{ font-size:28px; min-height:80px; }
+  body.cc-c #promoModal .choices button{ width:64px; height:64px; font-size:42px; }
+}
+
+/* ---------- round 2 fixes ---------- */
+body.cc-c .capStrip:empty, body.cc-c #modeLine:empty, body.cc-c #gameCostLine:empty{ display:none; }
+body.cc-c .optHead{ box-shadow:0 3px 0 var(--sky); }
+body.cc-c header h1{ white-space:nowrap; }
+@media (max-width:980px){
+  body.cc-c .cc-boardcol{ order:1; } body.cc-c .cc-talk{ order:2; }
+  body.cc-c #reviewPanel.takeover{ order:3; } body.cc-c .side{ order:4; }
+}
+@media (max-width:600px){
+  body.cc-c header{ display:flex; flex-wrap:wrap; align-items:center; gap:4px 8px; }
+  body.cc-c header h1{ font-size:19px; gap:8px; flex:1 1 auto; }
+  body.cc-c header h1 .rust{ width:32px; height:32px; font-size:21px; }
+  body.cc-c .betaPill{ font-size:11px; padding:4px 8px; }
+  body.cc-c .headerChips{ gap:6px; }
+  body.cc-c .chipBtn{ min-height:40px; padding:6px 11px; }
+  body.cc-c header p{ flex:1 1 100%; }
+  body.cc-c .sq .coord{ font-size:9px; }
+  body.cc-c .lessonBtn{ aspect-ratio:auto; min-height:112px; }
+}
+@media (max-width:980px){ body.cc-c.np .side{ grid-row:auto; grid-column:1; } }
+@media (max-width:600px){ body.cc-c .headerChips{ order:1; } body.cc-c header p{ order:2; } }
+
+/* =========================================================
+   Plans / landing page (coach-plans) — body.cc-c.plans
+   ========================================================= */
+body.cc-c.plans{ background:var(--white); font-size:18px; line-height:1.55; }
+body.cc-c.plans a{ color:var(--navy); text-decoration-thickness:2px; text-underline-offset:3px; }
+body.cc-c.plans header{ display:flex; justify-content:space-between; align-items:center; max-width:1200px; padding:22px 32px; }
+body.cc-c.plans .wordmark{ display:flex; align-items:center; gap:12px; font-family:var(--display); font-weight:700; font-size:24px; }
+body.cc-c.plans .wordmark .cc-tile{ width:40px; height:40px; border-radius:12px; background:var(--coral); display:grid; place-items:center; font-size:27px; font-family:var(--text); font-weight:400; }
+body.cc-c.plans header a{ font-weight:700; font-size:16px; text-decoration:none; background:var(--sky); padding:12px 20px; border-radius:999px; }
+body.cc-c.plans main{ max-width:1200px; padding:0 32px 56px; }
+body.cc-c.plans .hero{
+  background:var(--sky); border-radius:36px; padding:64px 56px; text-align:left;
+  display:grid; grid-template-columns:1fr auto; gap:28px 48px; align-items:center;
+}
+body.cc-c.plans .hero h1{ grid-column:1; grid-row:1; align-self:end; margin:0; max-width:none;
+  font-family:var(--display); font-weight:700; font-size:clamp(40px,5.2vw,72px); line-height:1; letter-spacing:-.035em; }
+body.cc-c.plans .hero > div:last-child{ grid-column:1; grid-row:2; align-self:start; }
+body.cc-c.plans .demo{ grid-column:2; grid-row:1 / span 2; background:var(--white); border:0; border-radius:28px; padding:20px 20px 12px; }
+body.cc-c.plans .board{ border:0; border-radius:16px; overflow:hidden; grid-template-columns:repeat(8,52px); grid-template-rows:repeat(8,52px); }
+body.cc-c.plans .sq{ font-size:38px; color:var(--navy); }
+body.cc-c.plans .sq.l{ background:var(--lt); } body.cc-c.plans .sq.d{ background:var(--dk); }
+body.cc-c.plans .demo-line{ font-style:normal; font-family:var(--display); font-weight:700; font-size:20px; margin:14px 4px 6px; }
+body.cc-c.plans #demoStepsList{ margin:8px 0 6px; padding-left:24px; font-size:16px; color:var(--navy2); }
+body.cc-c.plans .btn{
+  display:inline-flex; align-items:center; justify-content:center; min-height:60px; padding:16px 30px;
+  background:var(--navy); color:var(--white); border-radius:999px; font-family:var(--display); font-weight:700; font-size:19px; text-decoration:none;
+}
+body.cc-c.plans .btn:hover{ background:var(--navy); box-shadow:0 4px 0 rgba(21,33,63,.25); }
+body.cc-c.plans .hero .btn{ margin-top:0; }
+body.cc-c.plans section{ margin-top:88px; }
+body.cc-c.plans h2{ text-align:left; margin:0 0 32px; font-family:var(--display); font-weight:700; font-size:clamp(34px,4vw,52px); line-height:1; letter-spacing:-.03em; }
+body.cc-c.plans .beats{ gap:20px; }
+body.cc-c.plans .beat, body.cc-c.plans .way-card, body.cc-c.plans .plan-card, body.cc-c.plans .faq-item{ border:0; border-radius:28px; }
+body.cc-c.plans .beat{ padding:32px 28px 34px; }
+body.cc-c.plans .beat:nth-child(1){ background:var(--butter); } body.cc-c.plans .beat:nth-child(2){ background:var(--sky); } body.cc-c.plans .beat:nth-child(3){ background:var(--lt); }
+body.cc-c.plans .beat h3, body.cc-c.plans .way-card h3{ font-family:var(--display); font-weight:700; font-size:28px; line-height:1.05; letter-spacing:-.02em; margin:0 0 12px; }
+body.cc-c.plans .beat p, body.cc-c.plans .way-card p, body.cc-c.plans .faq-item p, body.cc-c.plans .plan-copy{ color:var(--navy); }
+body.cc-c.plans .ways{ gap:20px; }
+body.cc-c.plans .way-card{ background:var(--sky); padding:34px 30px; }
+body.cc-c.plans .way-card:first-child{ background:var(--butter); }
+body.cc-c.plans .way-card p + p{ margin-top:22px; }
+body.cc-c.plans .ways-note{ text-align:left; font-weight:600; margin-top:20px; }
+body.cc-c.plans #plans h2{ margin-bottom:12px; }
+body.cc-c.plans .billing-note{ text-align:left; font-size:17px; }
+body.cc-c.plans #parkedLine{ display:inline-block; background:var(--butter); border-radius:999px; padding:8px 16px; font-weight:700; margin:0 0 22px; min-height:0; }
+body.cc-c.plans .billing-toggle{ justify-content:flex-start; display:inline-flex; background:var(--sky); border-radius:999px; padding:6px; gap:4px; margin:0 0 26px; }
+body.cc-c.plans .toggle-btn{ border:0; background:transparent; color:var(--navy); font-family:var(--text); font-weight:700; font-size:17px; padding:12px 22px; min-height:48px; }
+body.cc-c.plans .toggle-btn.active{ background:var(--navy); color:var(--white); }
+body.cc-c.plans .toggle-btn .save{ background:var(--butter); color:var(--navy); font-size:13px; }
+body.cc-c.plans .toggle-btn.active .save{ background:var(--butter); }
+body.cc-c.plans .plan-cards{ gap:20px; }
+body.cc-c.plans .plan-card{ text-align:left; padding:34px 30px; box-shadow:inset 0 0 0 3px var(--navy); background:var(--white); display:flex; flex-direction:column; align-items:flex-start; }
+body.cc-c.plans .plan-card:nth-child(2){ background:var(--navy); color:var(--white); box-shadow:none; }
+body.cc-c.plans .plan-card:nth-child(2) .plan-copy, body.cc-c.plans .plan-card:nth-child(2) .tagline, body.cc-c.plans .plan-card:nth-child(2) .suffix{ color:var(--white); }
+body.cc-c.plans .plan-card h3{ font-family:var(--display); font-weight:700; font-size:34px; margin:0 0 10px; order:0; }
+body.cc-c.plans .badge{ background:var(--butter); color:var(--navy); font-family:var(--display); font-weight:700; font-size:14px; padding:8px 12px; margin:0 0 12px; }
+body.cc-c.plans .price{ font-family:var(--display); font-weight:700; font-size:60px; line-height:1; letter-spacing:-.03em; margin:4px 0 18px; }
+body.cc-c.plans .price .suffix{ font-family:var(--text); font-weight:500; font-size:18px; letter-spacing:0; color:var(--navy2); }
+body.cc-c.plans .plan-copy{ min-height:0; margin:0 0 14px; }
+body.cc-c.plans .tagline{ font-style:normal; font-weight:600; margin:0 0 18px; }
+body.cc-c.plans .plan-card .btn{ margin-top:auto; }
+body.cc-c.plans .plan-card:nth-child(2) .btn{ background:var(--butter); color:var(--navy); }
+body.cc-c.plans .byok-band{ background:var(--sky); border:0; border-radius:28px; padding:30px 30px; margin-top:24px; text-align:left; }
+body.cc-c.plans .byok-band p{ margin:0 0 18px; max-width:46em; }
+body.cc-c.plans .byok-band summary{ font-family:var(--display); }
+body.cc-c.plans .byok-band details p{ margin:10px 0 0; }
+body.cc-c.plans .family{ background:var(--lt); border:0; border-radius:28px; padding:40px 34px; text-align:left; }
+body.cc-c.plans .family h2{ margin-bottom:14px; }
+body.cc-c.plans .family p{ font-size:20px; max-width:40em; }
+body.cc-c.plans .faq-item{ background:var(--white); box-shadow:inset 0 0 0 3px var(--sky); padding:22px 26px; margin-bottom:14px; }
+body.cc-c.plans .faq-item h3{ font-family:var(--display); font-weight:700; font-size:21px; margin:0 0 6px; }
+body.cc-c.plans .test-code{ background:var(--butter); border:0; border-radius:28px; padding:36px 34px; text-align:left; }
+body.cc-c.plans .test-code h2{ margin-bottom:12px; }
+body.cc-c.plans .test-code input{ font-family:var(--text); font-size:18px; min-height:60px; padding:12px 18px; border:2px solid var(--navy); border-radius:999px; min-width:260px; background:var(--white); color:var(--navy); margin:0 8px 8px 0; }
+body.cc-c.plans .redeem-note:not(:empty){ display:inline-block; background:var(--white); border-radius:var(--r-s); padding:8px 14px; font-weight:600; }
+body.cc-c.plans footer{ max-width:1200px; margin:0 auto; text-align:left; color:var(--navy2); border-top:2px solid var(--sky); padding:26px 32px 44px; font-size:15px; }
+@media (max-width:980px){
+  body.cc-c.plans .hero{ grid-template-columns:1fr; padding:44px 32px; }
+  body.cc-c.plans .hero h1, body.cc-c.plans .hero > div:last-child{ grid-column:1; grid-row:auto; }
+  body.cc-c.plans .demo{ grid-column:1; grid-row:auto; justify-self:start; }
+}
+@media (max-width:720px){
+  body.cc-c.plans .board{ grid-template-columns:repeat(8,calc((100vw - 96px) / 8)); grid-template-rows:repeat(8,calc((100vw - 96px) / 8)); }
+  body.cc-c.plans .sq{ font-size:calc((100vw - 96px) / 8 * .72); }
+}
+@media (max-width:600px){
+  body.cc-c.plans{ font-size:17px; }
+  body.cc-c.plans header{ padding:14px 14px; }
+  body.cc-c.plans .wordmark{ font-size:20px; }
+  body.cc-c.plans .wordmark .cc-tile{ width:34px; height:34px; font-size:23px; }
+  body.cc-c.plans header a{ padding:10px 14px; font-size:15px; }
+  body.cc-c.plans main{ padding:0 14px 40px; }
+  body.cc-c.plans .hero{ padding:30px 18px 24px; border-radius:26px; }
+  body.cc-c.plans .demo{ padding:12px 12px 8px; border-radius:20px; justify-self:stretch; }
+  body.cc-c.plans .hero .btn{ display:flex; width:100%; }
+  body.cc-c.plans section{ margin-top:60px; }
+  body.cc-c.plans .price{ font-size:50px; }
+  body.cc-c.plans .billing-toggle{ display:flex; }
+  body.cc-c.plans .toggle-btn{ flex:1; padding:10px 12px; }
+  body.cc-c.plans .test-code input{ width:100%; min-width:0; margin-right:0; }
+  body.cc-c.plans .test-code .btn{ width:100%; }
+  body.cc-c.plans .family, body.cc-c.plans .test-code, body.cc-c.plans .byok-band{ padding:26px 20px; }
+}
+body.cc-c.plans #parkedLine{ border-radius:18px; }
