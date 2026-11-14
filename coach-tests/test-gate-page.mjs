@@ -47,7 +47,7 @@ const mock = {
                    byok: [], redeem: [], claim: [] };
     this.passkeys = [];
     this.healthStatus = 200;
-    this.turnHandler = null;
+    this.turnHandler = null; this.turnDelayMs = 0;
     this.billingMode = "unconfigured";
     this.byok = null; this.byokTestMode = "ok"; this.byokPaid = false;
     this.guest = false; this.guestExpired = false;
@@ -75,7 +75,8 @@ const server = http.createServer(async (req, res) => {
     return send(200, { token, exp: Math.floor(Date.now() / 1000) + 3600 });
   }
   if (req.url === "/v1/turn") {
-    mock.calls.turn.push({ headers: req.headers, body });
+    mock.calls.turn.push({ headers: req.headers, body, at: Date.now() });
+    if (mock.turnDelayMs) await new Promise((r) => setTimeout(r, mock.turnDelayMs));
     if (!String(req.headers.authorization || "").startsWith("Bearer tok-")) return send(401, { error: "no token" });
     const out = mock.turnHandler ? mock.turnHandler(mock.calls.turn.length, body)
                                  : { status: 200, json: { move: body.candidates[0].san, coach_line: "Mock coach move." } };
@@ -320,6 +321,9 @@ function loadCoach(relayUrl, opts = {}) {
   let pollFn = null;
   const sessionStorage = makeStorage();
   const win = { __coachManualInit: true, _listeners: {},
+                // fast opening (20261114) pinned off unless a test opts in:
+                // these scenarios script the coach's first turns
+                COACH_FAST_OPEN: opts.fastOpen !== undefined ? opts.fastOpen : 0,
                 location: { search: "?relay=" + encodeURIComponent(relayUrl) },
                 addEventListener: (n, f) => { win._listeners[n] = f; } };
   const sandbox = {
@@ -383,11 +387,18 @@ function loadCoach(relayUrl, opts = {}) {
            history: () => run("history.slice()") };
 }
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 async function pump(env, rounds = 100) {
   for (let i = 0; i < rounds; i++) {
     env.poll();
     await new Promise((r) => setTimeout(r, 2));
   }
+}
+function playAny(env, sans) {
+  const st = env.C.stateFromSans(env.history());
+  for (const san of sans) { const m = env.C.parseSan(st, san); if (m) { env.run("tryMove(" + m.from + ", " + m.to + ")"); return san; } }
+  const legal = env.C.allLegalState(st, st.turn); const m = legal[0];
+  env.run("tryMove(" + m.from + ", " + m.to + ")"); return "first-legal";
 }
 function playSan(env, san) {
   const st = env.C.stateFromSans(env.history());
@@ -1201,7 +1212,104 @@ async function test14() {
      "before=" + plyAfter + " after=" + env.history().length);
 }
 
-const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14];
+// ---------- Test 15: fast opening (order 20261114-producer-chess-fastopen) ----------
+// The suites above pin COACH_FAST_OPEN=0 because they script the coach's
+// first turns; this block runs the shipped default (3).
+async function test15() {
+  begin("15 fast opening: engine first moves + warm turn + handoff");
+  const coachJs = fs.readFileSync(path.join(branchDir, "coach.js"), "utf8");
+  ok("pages ship fast opening on (max 3, min 2)", coachJs.includes("let max = 3;") && coachJs.includes("Math.min(2, max)"));
+  const SPACING = 4000;
+  const exactKeys = (b) => Object.keys(b).sort().join(",") === "candidates,fallback,fen,game_id,moves,target_elo";
+  // A: slow warm turn — the engine plays all three opening moves, then the coach takes over.
+  mock.reset(); mock.turnDelayMs = 900;
+  let env = loadCoach(RELAY, { fastOpen: 3 });
+  await unlock(env);
+  const sess0 = mock.calls.session.length;
+  env.CoachUI.startGame("rated");
+  const t0 = Date.now();
+  playSan(env, "e4"); await pump(env, 20);
+  ok("coach's 1st move landed before the relay answered", env.history().length === 2 && Date.now() - t0 < 600,
+     "history=" + JSON.stringify(env.history()) + " ms=" + (Date.now() - t0));
+  let s = env.CoachUI._test.getSession();
+  ok("1st coach move is recorded as engine-opening", s.moves[0] && s.moves[0].via === "engine-opening", JSON.stringify(s.moves));
+  await pump(env, 20);
+  ok("exactly one warm /v1/turn went out", mock.calls.turn.length === 1, "turns=" + mock.calls.turn.length);
+  const w = mock.calls.turn[0] && mock.calls.turn[0].body;
+  ok("warm turn body is contract-exact (6 fields)", w && exactKeys(w), w && Object.keys(w).join(","));
+  ok("warm turn carries the true history before the coach move", w && JSON.stringify(w.moves) === JSON.stringify(["e4"]), w && JSON.stringify(w.moves));
+  ok("warm turn's only candidate is the move the engine played", w && w.candidates.length === 1 && w.candidates[0].san === env.history()[1], w && JSON.stringify(w.candidates));
+  ok("warm fallback equals that candidate", w && w.fallback.san === w.candidates[0].san && w.fallback.uci === w.candidates[0].uci);
+  ok("warm turn uses the game's game_id and target_elo", w && w.game_id === env.CoachUI._test.getGameId() && w.target_elo === 850, w && (w.game_id + " " + w.target_elo));
+  ok("warm candidate is strict SAN/UCI", w && /^[a-h][1-8][a-h][1-8][qrbn]?$/.test(w.candidates[0].uci) && !/^P/.test(w.candidates[0].san));
+  playAny(env, ["d4", "d3", "Nc3", "a3"]); await pump(env, 20);
+  ok("coach's 2nd move is engine too (warm still in flight)", env.history().length === 4 && env.CoachUI._test.getSession().moves[1].via === "engine-opening",
+     JSON.stringify(env.CoachUI._test.getSession().moves));
+  playAny(env, ["Nf3", "Nc3", "a3", "h3"]); await pump(env, 20);
+  ok("3rd move: warm not back yet, engine plays it (cap 3)", env.history().length === 6 && env.CoachUI._test.getSession().moves[2].via === "engine-opening",
+     JSON.stringify(env.CoachUI._test.getSession().moves));
+  ok("still exactly one /v1/turn during the opening", mock.calls.turn.length === 1, "turns=" + mock.calls.turn.length);
+  const hist6 = env.history();
+  const p4 = playAny(env, ["Bc4", "Be2", "a3", "h3"]);
+  for (let i = 0; i < 400 && env.history().length < 8; i++) { await pump(env, 5); await sleep(15); }
+  ok("4th move came from the coach", env.CoachUI._test.getSession().moves[3] && env.CoachUI._test.getSession().moves[3].via === "coach",
+     JSON.stringify(env.CoachUI._test.getSession().moves));
+  const h = mock.calls.turn[1] && mock.calls.turn[1].body;
+  ok("handoff turn carries the full real history incl. engine moves", h && JSON.stringify(h.moves) === JSON.stringify(hist6.concat([env.history()[6]])), h && JSON.stringify(h.moves));
+  ok("handoff turn is a normal multi-candidate packet", h && exactKeys(h) && h.candidates.length > 1, h && h.candidates.length);
+  ok("handoff turn respects the gate's 4 s spacing", mock.calls.turn[1] && mock.calls.turn[1].at - mock.calls.turn[0].at >= SPACING,
+     mock.calls.turn[1] && (mock.calls.turn[1].at - mock.calls.turn[0].at) + " ms");
+  ok("one session per game (no extra game opened)", mock.calls.session.length - sess0 === 1, "game sessions=" + (mock.calls.session.length - sess0));
+  ok("warm reply's coach line is shown", collectText(env.registry.get("coachBody")).includes("Mock coach move."));
+  ok("not labelled offline", !env.CoachUI._test.getOffline() && env.registry.get("modeLine").textContent === "", env.registry.get("modeLine").textContent);
+  await sleep(20);
+  const tt = env.run("window.__coachTtfm") || [];
+  ok("TTFM readout recorded per coach move", tt.length === 4 && tt[0].via === "engine-opening" && tt[3].via === "coach", JSON.stringify(tt));
+
+  // B: fast warm turn — handoff after the minimum two engine moves.
+  mock.reset(); mock.turnDelayMs = 0;
+  env = loadCoach(RELAY, { fastOpen: 3 });
+  await unlock(env);
+  env.CoachUI.startGame("rated");
+  playSan(env, "e4"); await pump(env, 40);
+  playAny(env, ["d4", "d3", "Nc3", "a3"]); await pump(env, 40);
+  ok("fast warm: 2nd move is still engine (min 2)", env.CoachUI._test.getSession().moves[1].via === "engine-opening", JSON.stringify(env.CoachUI._test.getSession().moves));
+  playAny(env, ["Nf3", "Nc3", "a3", "h3"]);
+  for (let i = 0; i < 400 && env.history().length < 6; i++) { await pump(env, 5); await sleep(15); }
+  ok("fast warm: 3rd move is the coach's", env.CoachUI._test.getSession().moves[2] && env.CoachUI._test.getSession().moves[2].via === "coach",
+     JSON.stringify(env.CoachUI._test.getSession().moves));
+  ok("fast warm: 2 turns total, second has 5 plies", mock.calls.turn.length === 2 && mock.calls.turn[1].body.moves.length === 5,
+     "turns=" + mock.calls.turn.length);
+
+  // C: warm turn fails (503) — the game goes visibly offline, exactly like a failed first turn.
+  mock.reset(); mock.turnHandler = () => ({ status: 503, json: { error: "relay disabled" } });
+  env = loadCoach(RELAY, { fastOpen: 3 });
+  await unlock(env);
+  env.CoachUI.startGame("rated");
+  playSan(env, "e4"); await pump(env, 60);
+  ok("warm 503: the engine move still landed", env.history().length === 2);
+  ok("warm 503: game is offline-labelled", env.CoachUI._test.getOffline() && env.registry.get("modeLine").textContent.includes("offline"),
+     env.registry.get("modeLine").textContent);
+  const n = mock.calls.turn.length;
+  for (const opts of [["d4", "d3", "a3"], ["Nf3", "Nc3", "h3"], ["Bc4", "Be2", "a4"]]) {
+    const L = env.history().length;
+    playAny(env, opts);
+    for (let i = 0; i < 200 && env.history().length < L + 2; i++) { await pump(env, 5); await sleep(10); }
+  }
+  ok("warm 503: game continues offline with no more relay calls", env.history().length === 8 && mock.calls.turn.length === n,
+     "history=" + env.history().length + " turns=" + mock.calls.turn.length);
+
+  // D: ?fastopen=0 restores the old first turn exactly.
+  mock.reset();
+  env = loadCoach(RELAY, { fastOpen: 0 });
+  await unlock(env);
+  env.CoachUI.startGame("rated");
+  playSan(env, "e4"); await pump(env);
+  ok("fast opening off: first coach move comes from a normal coach turn", mock.calls.turn.length === 1 &&
+     mock.calls.turn[0].body.candidates.length > 1 && env.CoachUI._test.getSession().moves[0].via === "coach");
+}
+
+const tests = [test1, test2, test3, test4, test5, test6, test7, test8, test9, test10, test11, test12, test13, test14, test15];
 for (const t of tests) {
   try { await t(); }
   catch (e) { fail++; if (perTest[current]) perTest[current].fail++;
