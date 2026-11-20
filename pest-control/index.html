@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CritterGone Pest Control — Ants, Roaches &amp; More</title>
+<style>
+:root{--g:#1f6f43;--g2:#2e9e5f;--d:#18261e;--c:#f6f3ea;--o:#e8772e}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,Segoe UI,Arial,sans-serif;color:var(--d);background:var(--c);line-height:1.5}
+header{display:flex;justify-content:space-between;align-items:center;padding:16px 6vw;background:#fff;border-bottom:1px solid #ddd;position:sticky;top:0;z-index:5}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:1.4rem;color:var(--g)}
+.logo span.mark{width:38px;height:38px;border-radius:50%;background:var(--g);color:#fff;display:grid;place-items:center;font-size:1.2rem}
+nav a{margin-left:22px;text-decoration:none;color:var(--d);font-weight:600}
+.hero{padding:90px 6vw;background:linear-gradient(135deg,#dff3e6,#f6f3ea);text-align:center}
+.hero h1{font-size:clamp(2rem,5vw,3.6rem);margin:0 0 12px}
+.hero p{max-width:620px;margin:0 auto 26px;font-size:1.15rem}
+.btn{display:inline-block;background:var(--o);color:#fff;padding:14px 30px;border-radius:30px;font-weight:700;text-decoration:none;border:0;font-size:1rem;cursor:pointer}
+section{padding:70px 6vw}
+h2{text-align:center;font-size:2rem;margin:0 0 36px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;max-width:1100px;margin:0 auto}
+.card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 10px #0001}
+.card .ic{font-size:2.2rem}
+.card h3{margin:.4rem 0}
+#contact{background:var(--g);color:#fff}
+#contact form{max-width:520px;margin:0 auto;display:grid;gap:12px}
+#contact input,#contact textarea{padding:12px;border-radius:8px;border:0;font:inherit}
+footer{text-align:center;padding:24px;background:var(--d);color:#ccc;font-size:.9rem}
+#crawl{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none;z-index:50}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo"><span class="mark">C</span> CritterGone <small style="font-weight:400;color:#888">[logo placeholder]</small></div>
+  <nav><a href="#services">Services</a><a href="#why">Why Us</a><a href="#contact">Contact</a></nav>
+</header>
+<div class="hero">
+  <h1>Pests out. Peace of mind in.</h1>
+  <p>CritterGone protects homes and businesses from ants, roaches and every creepy-crawly in between. Fast, safe, guaranteed.</p>
+  <a class="btn" href="#contact">Get a Free Quote</a>
+</div>
+<section id="services">
+  <h2>What We Eliminate</h2>
+  <div class="grid">
+    <div class="card"><div class="ic">🐜</div><h3>Ants</h3><p>Carpenter, fire and sugar ants — colonies removed at the source.</p></div>
+    <div class="card"><div class="ic">🪳</div><h3>Roaches</h3><p>German and American roaches cleared with targeted, kitchen-safe treatments.</p></div>
+    <div class="card"><div class="ic">🕷️</div><h3>Spiders</h3><p>Web removal and perimeter protection.</p></div>
+    <div class="card"><div class="ic">🐭</div><h3>Rodents</h3><p>Trapping, exclusion and sealing entry points.</p></div>
+    <div class="card"><div class="ic">🛏️</div><h3>Bed Bugs</h3><p>Heat and spot treatments for a good night's sleep.</p></div>
+  </div>
+</section>
+<section id="why" style="background:#fff">
+  <h2>Why CritterGone?</h2>
+  <div class="grid">
+    <div class="card"><h3>Same-day service</h3><p>Call in the morning, pest-free by evening.</p></div>
+    <div class="card"><h3>Family &amp; pet safe</h3><p>Low-toxicity products, applied carefully.</p></div>
+    <div class="card"><h3>90-day guarantee</h3><p>If they come back, so do we — free.</p></div>
+  </div>
+</section>
+<section id="contact">
+  <h2>Book Your Free Inspection</h2>
+  <form onsubmit="event.preventDefault();this.querySelector('button').textContent='Thanks! We’ll call you soon.'">
+    <input placeholder="Your name" required>
+    <input type="tel" placeholder="Phone" required>
+    <textarea rows="4" placeholder="What's bugging you?"></textarea>
+    <button class="btn">Request Quote</button>
+  </form>
+  <p style="text-align:center;margin-top:22px">Or call <b>(555) 010-BUGS</b></p>
+</section>
+<footer>© CritterGone Pest Control (demo placeholder company)</footer>
+
+<canvas id="crawl"></canvas>
+<script>
+(function(){
+const cv=document.getElementById('crawl'),ctx=cv.getContext('2d');
+let W,H,dpr=Math.min(devicePixelRatio||1,2);
+function size(){W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;ctx.setTransform(dpr,0,0,dpr,0,0)}
+size();addEventListener('resize',size);
+const R=Math.random;
+function mk(type){
+  const ant=type==='ant';
+  return{type,x:R()*W,y:R()*H,a:R()*6.283,
+    sp:ant?50+R()*40:80+R()*70, s:ant?1:1.6+R()*.4,
+    turn:0,tt:0,ph:R()*10,pause:0};
+}
+const bugs=[];
+for(let i=0;i<22;i++)bugs.push(mk('ant'));
+for(let i=0;i<9;i++)bugs.push(mk('roach'));
+function leg(x,y,a,l,ph,k){
+  const sw=Math.sin(ph)*k;
+  ctx.beginPath();ctx.moveTo(x,y);
+  ctx.lineTo(x+Math.cos(a+sw)*l,y+Math.sin(a+sw)*l);ctx.stroke();
+}
+function drawAnt(b){
+  ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.a);ctx.scale(b.s,b.s);
+  ctx.strokeStyle='#1a1a1a';ctx.lineWidth=1;
+  const p=b.ph*(b.pause>0?0:1);
+  for(let i=0;i<3;i++){
+    const x=-1+i*3,o=i%2?Math.PI:0;
+    leg(x,0,1.9,8,p+o,.6);leg(x,0,-1.9,8,p+o+Math.PI,.6);
+  }
+  ctx.beginPath();ctx.moveTo(6,0);ctx.lineTo(11,-4);ctx.moveTo(6,0);ctx.lineTo(11,4);ctx.stroke();
+  ctx.fillStyle='#2a1208';
+  ctx.beginPath();ctx.ellipse(-9,0,6,4,0,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(-1,0,3.5,2.5,0,0,7);ctx.fill();
+  ctx.beginPath();ctx.ellipse(5,0,3,2.7,0,0,7);ctx.fill();
+  ctx.restore();
+}
+function drawRoach(b){
+  ctx.save();ctx.translate(b.x,b.y);ctx.rotate(b.a);ctx.scale(b.s,b.s);
+  ctx.strokeStyle='#3a1f0c';ctx.lineWidth=1.3;
+  const p=b.ph*(b.pause>0?0:1);
+  for(let i=0;i<3;i++){
+    const x=-3+i*4,o=i%2?Math.PI:0;
+    leg(x,0,1.7,11,p+o,.7);leg(x,0,-1.7,11,p+o+Math.PI,.7);
+  }
+  ctx.beginPath();
+  const w=Math.sin(b.ph*.5)*4;
+  ctx.moveTo(10,0);ctx.quadraticCurveTo(18,-8+w,24,-12);
+  ctx.moveTo(10,0);ctx.quadraticCurveTo(18,8-w,24,12);ctx.stroke();
+  ctx.fillStyle='#5a2d10';
+  ctx.beginPath();ctx.ellipse(0,0,13,7.5,0,0,7);ctx.fill();
+  ctx.fillStyle='#7a4018';
+  ctx.beginPath();ctx.ellipse(-2,0,9,6,0,0,7);ctx.fill();
+  ctx.strokeStyle='#3a1f0c';ctx.beginPath();ctx.moveTo(-2,-6);ctx.lineTo(-2,6);ctx.stroke();
+  ctx.fillStyle='#2e1608';
+  ctx.beginPath();ctx.ellipse(11,0,4,4.5,0,0,7);ctx.fill();
+  ctx.restore();
+}
+let last=performance.now();
+function step(t){
+  const dt=Math.min((t-last)/1000,.05);last=t;
+  ctx.clearRect(0,0,W,H);
+  for(const b of bugs){
+    if(b.pause>0){b.pause-=dt}
+    else{
+      b.tt-=dt;
+      if(b.tt<=0){b.tt=.3+R()*1.2;b.turn=(R()-.5)*(b.type==='ant'?4:6);
+        if(R()<.08){b.pause=.2+R()*(b.type==='roach'?.5:1.2)}}
+      b.a+=b.turn*dt;
+      b.x+=Math.cos(b.a)*b.sp*dt;b.y+=Math.sin(b.a)*b.sp*dt;
+      b.ph+=dt*b.sp*.28;
+    }
+    const m=40;
+    if(b.x<-m)b.x=W+m;else if(b.x>W+m)b.x=-m;
+    if(b.y<-m)b.y=H+m;else if(b.y>H+m)b.y=-m;
+    b.type==='ant'?drawAnt(b):drawRoach(b);
+  }
+  requestAnimationFrame(step);
+}
+requestAnimationFrame(step);
+})();
+</script>
+</body>
+</html>
